@@ -62,10 +62,6 @@ Use GitHub Issues to report bugs or suggest improvements. Include:
 - Include edge cases
 - Verify performance impact
 
-## License
-
-Contributions are licensed under the Apache 2.0 with Attribution
-
 ## Getting Help
 
 Join our [Discord community](https://discord.gg/gG3gDm9GmF) for questions and discussions.
