@@ -1,0 +1,26 @@
+provider "aws" {
+  alias = "fail_aws"
+  region = "us-west-2"
+}
+
+# Create Elasticsearch domain with insufficient nodes
+resource "aws_elasticsearch_domain" "fail_example" {
+  provider = aws.fail_aws
+  domain_name = "fail-es-domain"
+  elasticsearch_version = "7.10"
+
+  cluster_config {
+    instance_type = "t3.small.elasticsearch"
+    instance_count = 2
+    zone_awareness_enabled = false
+  }
+
+  ebs_options {
+    ebs_enabled = true
+    volume_size = 10
+  }
+
+  tags = {
+    Environment = "development"
+  }
+}
