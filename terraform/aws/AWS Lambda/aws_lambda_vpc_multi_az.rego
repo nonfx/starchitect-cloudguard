@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "Lambda.5",
 	"title": "VPC Lambda functions should operate in multiple Availability Zones",
 	"description": "This control checks if Lambda functions connected to VPC operate in multiple Availability Zones for high availability and fault tolerance.",
-	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_Lambda.5"]}, "severity": "Medium", "reviewer": "ssghait.007@gmail.com"},
+	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_Lambda.5"]}, "severity": "Medium"},
 }
 
 resource_type := "MULTIPLE"

@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "EC2.170",
 	"title": "EC2 launch templates should use Instance Metadata Service Version 2 (IMDSv2)",
 	"description": "This control checks if EC2 launch templates are configured to use IMDSv2. IMDSv2 provides enhanced security through token-based authentication for instance metadata requests.",
-	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_EC2.170"]}, "severity": "Low", "reviewer": "ssghait.007@gmail.com"},
+	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_EC2.170"]}, "severity": "Low"},
 }
 
 resource_type := "MULTIPLE"

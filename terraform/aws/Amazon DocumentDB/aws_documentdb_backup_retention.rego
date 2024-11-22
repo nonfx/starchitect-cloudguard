@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "DocumentDB.2",
 	"title": "Amazon DocumentDB clusters should have an adequate backup retention period",
 	"description": "Amazon DocumentDB clusters must maintain backup retention periods of at least 7 days to ensure data recovery capabilities.",
-	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_DocumentDB.2"]}, "severity": "Medium", "reviewer": "ssghait.007@gmail.com"},
+	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_DocumentDB.2"]}, "severity": "Medium"},
 }
 
 resource_type := "MULTIPLE"

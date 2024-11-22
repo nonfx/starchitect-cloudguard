@@ -3,13 +3,13 @@ package rules.aws_lightsail_bucket_instance_attachment
 import data.fugue
 
 __rego__metadoc__ := {
-	"author": "rajat@nonfx.com",
 	"id": "3.8",
 	"title": "Ensure Lightsail instances are attached to the buckets",
 	"description": "Attaching an Amazon Lightsail instance to a Lightsail storage bucket gives it full programmatic access to the bucket and its objects",
 	"custom": {
 		"controls": {"CIS-AWS-Compute-Services-Benchmark_v1.0.0": ["CIS-AWS-Compute-Services-Benchmark_v1.0.0_3.8"]},
 		"severity": "Medium",
+		"author": "Starchitect Agent",
 	},
 }
 

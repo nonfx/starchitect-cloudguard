@@ -3,11 +3,10 @@ package rules.aws_elasticache_monitoring_logging
 import data.fugue
 
 __rego__metadoc__ := {
-	"author": "sachin@nonfx.com",
 	"id": "5.6",
 	"title": "Ensure Monitoring and Logging is Enabled for ElastiCache",
 	"description": "Implementing monitoring and logging for Amazon ElastiCache allows you to gain visibility into the performance, health, and behavior of your ElastiCache clusters.",
-	"custom": {"controls": {"CIS-AWS-Database-Services-Benchmark_v1.0.0": ["CIS-AWS-Database-Services-Benchmark_v1.0.0_5.6"]}, "severity": "Medium", "reviewer": "ssghait.007@gmail.com"},
+	"custom": {"controls": {"CIS-AWS-Database-Services-Benchmark_v1.0.0": ["CIS-AWS-Database-Services-Benchmark_v1.0.0_5.6"]}, "severity": "Medium", "author": "Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

@@ -3,7 +3,6 @@ package rules.aws_security_group_admin_ports
 import data.fugue
 
 __rego__metadoc__ := {
-	"author": "chandra@nonfx.com",
 	"id": "5.2",
 	"title": "Ensure no security groups allow ingress from 0.0.0.0/0 to remote server administration ports such as 22 and 3389 (Remote Desktop Protocol)",
 	"description": "Security groups provide stateful filtering of ingress and egress network traffic to AWS resources. It is recommended that no security group allows unrestricted ingress access to remote server administration ports such as 22 & 3389",
@@ -13,6 +12,7 @@ __rego__metadoc__ := {
 			"CIS-AWS-Foundations-Benchmark_v3.0.0_5.3",
 		]},
 		"severity": "Low",
+		"author": "Starchitect Agent",
 	},
 }
 

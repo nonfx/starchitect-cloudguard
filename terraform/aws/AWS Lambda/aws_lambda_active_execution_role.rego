@@ -4,13 +4,13 @@ import data.fugue
 import future.keywords.in
 
 __rego__metadoc__ := {
-	"author": "chandra@nonfx.com",
 	"id": "AWS_LAMBDA_4.7",
 	"title": "Ensure Lambda functions are referencing active execution roles",
 	"description": "In order to have the necessary permissions to access the AWS cloud services and resources Amazon Lambda functions should be associated with active(available) execution roles.",
 	"custom": {
 		"controls": {"CIS-AWS-Compute-Services-Benchmark_v1.0.0": ["CIS-AWS-Compute-Services-Benchmark_v1.0.0_4.7"]},
 		"severity": "Low",
+		"author": "Starchitect Agent",
 	},
 }
 

@@ -3,11 +3,10 @@ package rules.aws_cloudwatch_cloudtrail
 import data.fugue
 
 __rego__metadoc__ := {
-	"author": "chandra@nonfx.com",
 	"id": "4.5_CloudTrail.5",
 	"title": "Ensure CloudTrail configuration changes are monitored",
 	"description": "Real-time monitoring of API calls can be achieved by directing CloudTrail Logs to CloudWatch Logs, or an external Security information and event management (SIEM) environment, where metric filters and alarms can be established. It is recommended that a metric filter and alarm be utilized for detecting changes to CloudTrail's configurations.",
-	"custom": {"controls": {"CIS-AWS-Foundations-Benchmark_v3.0.0": ["CIS-AWS-Foundations-Benchmark_v3.0.0_4.5"], "AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_CloudTrail.5"]}, "severity": "Medium", "reviewer": "ssghait.007@gmail.com"},
+	"custom": {"controls": {"CIS-AWS-Foundations-Benchmark_v3.0.0": ["CIS-AWS-Foundations-Benchmark_v3.0.0_4.5"], "AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_CloudTrail.5"]}, "severity": "Medium", "author": "Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

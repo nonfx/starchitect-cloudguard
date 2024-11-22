@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "RDS.2",
 	"title": "RDS DB Instances should prohibit public access",
 	"description": "RDS DB instances must prohibit public access by ensuring the PubliclyAccessible configuration is disabled for security.",
-	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_RDS.2"]}, "severity": "Critical", "author": "llmagent"},
+	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_RDS.2"]}, "severity": "Critical", "author": "Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

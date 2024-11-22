@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "Neptune.8",
 	"title": "Neptune DB clusters should be configured to copy tags to snapshots",
 	"description": "Neptune DB clusters must be configured to automatically copy all tags to snapshots for consistent metadata and access policies.",
-	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_Neptune.8"]}, "severity": "Low", "reviewer": "ssghait.007@gmail.com"},
+	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_Neptune.8"]}, "severity": "Low"},
 }
 
 resource_type := "MULTIPLE"

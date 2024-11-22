@@ -3,13 +3,13 @@ package rules.apigateway_use_ssl_certificates
 import data.fugue
 
 __rego__metadoc__ := {
-	"author": "sachin@nonfx.com",
 	"id": "APIGateway.2",
 	"title": "API Gateway REST API stages should be configured to use SSL certificates for backend authentication",
 	"description": "This control checks whether Amazon API Gateway REST API stages have SSL certificates configured. Backend systems use these certificates to authenticate that incoming requests are from API Gateway.",
 	"custom": {
 		"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_APIGateway.2"]},
 		"severity": "High",
+		"author": "Starchitect Agent",
 	},
 }
 

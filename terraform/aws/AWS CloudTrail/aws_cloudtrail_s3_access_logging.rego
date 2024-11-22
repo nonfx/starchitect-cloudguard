@@ -3,7 +3,6 @@ package rules.aws_cloudtrail_s3_access_logging
 import data.fugue
 
 __rego__metadoc__ := {
-	"author": "sachin@nonfx.com",
 	"id": "3.4_CloudTrail.7",
 	"title": "Ensure S3 bucket access logging is enabled on the CloudTrail S3 bucket",
 	"description": "S3 Bucket Access Logging generates a log that contains access records for each request made to your S3 bucket. An access log record contains details about the request, such as the request type, the resources specified in the request worked, and the time and date the request was processed. It is recommended that bucket access logging be enabled on the CloudTrail S3 bucket.",
@@ -13,6 +12,7 @@ __rego__metadoc__ := {
 			"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_CloudTrail.7"],
 		},
 		"severity": "Medium",
+		"author": "Starchitect Agent",
 	},
 }
 

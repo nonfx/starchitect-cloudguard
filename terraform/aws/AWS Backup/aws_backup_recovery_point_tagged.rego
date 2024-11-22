@@ -4,13 +4,13 @@ import data.fugue
 import future.keywords.in
 
 __rego__metadoc__ := {
-	"author": "sachin@nonfx.com",
 	"id": "Backup.2",
 	"title": "AWS Backup recovery points should be tagged",
 	"description": "This control checks whether an AWS Backup recovery point has any user-defined tags. The control fails if the recovery point doesn't have any user-defined tags. System tags, which are automatically applied and begin with aws:, are ignored.",
 	"custom": {
 		"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_Backup.2"]},
 		"severity": "Medium",
+		"author": "Starchitect Agent",
 	},
 }
 

@@ -3,13 +3,13 @@ package rules.aws_aurora_encryption_in_transit
 import data.fugue
 
 __rego__metadoc__ := {
-	"author": "chandra@nonfx.com",
 	"id": "2.4",
 	"title": "Ensure Data in Transit is Encrypted",
 	"description": "Use SSL (Secure Sockets Layer) to secure data in transit. Aurora supports SSL-encrypted connections between your application and your DB instance",
 	"custom": {
 		"controls": {"CIS-AWS-Database-Services-Benchmark_v1.0.0": ["CIS-AWS-Database-Services-Benchmark_v1.0.0_2.4"]},
 		"severity": "High",
+		"author": "Starchitect Agent",
 	},
 }
 

@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "SageMaker.4",
 	"title": "SageMaker endpoint production variants should have an initial instance count greater than 1",
 	"description": "This control checks if SageMaker endpoint production variants have multiple instances for high availability and redundancy across Availability Zones.",
-	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_SageMaker.4"]}, "severity": "Medium", "author": "llmagent"},
+	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_SageMaker.4"]}, "severity": "Medium", "author": "Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

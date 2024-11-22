@@ -3,13 +3,13 @@ package rules.aws_dynamodb_fgac_enabled
 import data.fugue
 
 __rego__metadoc__ := {
-	"author": "sachin@nonfx.com",
 	"id": "4.2",
 	"title": "Ensure Fine-Grained Access Control is implemented",
 	"description": "Fine-Grained Access Control (FGAC) on Amazon DynamoDB allows you to control access to data at the row level. Using IAM policies, you can restrict access based on the content within the request.",
 	"custom": {
 		"controls": {"CIS-AWS-Database-Services-Benchmark_v1.0.0": ["CIS-AWS-Database-Services-Benchmark_v1.0.0_4.2"]},
 		"severity": "High",
+		"author": "Starchitect Agent",
 	},
 }
 

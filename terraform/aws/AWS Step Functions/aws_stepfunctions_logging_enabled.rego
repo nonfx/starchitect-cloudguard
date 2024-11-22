@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "StepFunctions.1",
 	"title": "Step Functions state machines should have logging turned on",
 	"description": "AWS Step Functions state machines must enable logging for monitoring execution history and debugging multi-point failures.",
-	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_StepFunctions.1"]}, "severity": "Medium", "author": "llmagent"},
+	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_StepFunctions.1"]}, "severity": "Medium", "author": "Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

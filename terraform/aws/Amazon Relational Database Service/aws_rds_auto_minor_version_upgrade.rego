@@ -5,11 +5,10 @@ package rules.rds_auto_minor_version_upgrade
 import data.fugue
 
 __rego__metadoc__ := {
-	"author": "ankit@nonfx.com",
 	"id": "2.3.2",
 	"title": "Ensure Auto Minor Version Upgrade feature is Enabled for RDS Instances",
 	"description": "Ensure that RDS database instances have the Auto Minor Version Upgrade flag enabled in order to receive automatically minor engine upgrades during the specified maintenance window. So, RDS instances can get the new features, bug fixes, and security patches for their database engines.",
-	"custom": {"controls": {"CIS-AWS-Foundations-Benchmark_v3.0.0": ["CIS-AWS-Foundations-Benchmark_v3.0.0_2.3.2"]}, "severity": "Low", "author": "llmagent", "reviewer": "ssghait.007@gmail.com"},
+	"custom": {"controls": {"CIS-AWS-Foundations-Benchmark_v3.0.0": ["CIS-AWS-Foundations-Benchmark_v3.0.0_2.3.2"]}, "severity": "Low", "author": "Starchitect Agent"},
 }
 
 # Set resource type to MULTIPLE for advanced rule

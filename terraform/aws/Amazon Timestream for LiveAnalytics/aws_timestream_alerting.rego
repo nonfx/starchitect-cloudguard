@@ -3,11 +3,10 @@ package rules.aws_timestream_monitoring_alerting
 import data.fugue
 
 __rego__metadoc__ := {
-	"author": "sachin@nonfx.com",
 	"id": "10.8",
 	"title": "Ensure Monitoring and Alerting is Enabled - alerting",
 	"description": "Utilize Amazon CloudWatch to monitor key metrics, events, and logs related to Amazon Timestream. Set up appropriate alarms and notifications to detect security incidents or abnormal behavior proactively",
-	"custom": {"controls": {"CIS-AWS-Database-Services-Benchmark_v1.0.0": ["CIS-AWS-Database-Services-Benchmark_v1.0.0_10.8"]}},
+	"custom": {"controls": {"CIS-AWS-Database-Services-Benchmark_v1.0.0": ["CIS-AWS-Database-Services-Benchmark_v1.0.0_10.8"]}, "author": "Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

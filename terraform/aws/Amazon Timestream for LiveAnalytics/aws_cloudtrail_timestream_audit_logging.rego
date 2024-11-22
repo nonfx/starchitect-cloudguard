@@ -3,13 +3,13 @@ package rules.aws_cloudtrail_timestream_audit_logging
 import data.fugue
 
 __rego__metadoc__ := {
-	"author": "rajat@nonfx.com",
 	"id": "10.6",
 	"title": "Ensure Audit Logging is Enabled for Amazon Timestream",
 	"description": "Enable AWS CloudTrail to capture and log API calls and activities related to Amazon Timestream. Configure CloudTrail to store the logs in a secure location and regularly review the logs for any unauthorized or suspicious activities.",
 	"custom": {
 		"controls": {"CIS-AWS-Database-Services-Benchmark_v1.0.0": ["CIS-AWS-Database-Services-Benchmark_v1.0.0_10.6"]},
 		"severity": "Medium",
+		"author": "Starchitect Agent",
 	},
 }
 

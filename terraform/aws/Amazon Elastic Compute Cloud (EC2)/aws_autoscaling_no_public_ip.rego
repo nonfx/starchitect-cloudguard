@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "Autoscaling.5",
 	"title": "Auto Scaling group launch configurations should not have Public IP addresses",
 	"description": "Auto Scaling group launch configurations must disable public IP addresses for EC2 instances to enhance network security.",
-	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_Autoscaling.5"]}, "severity": "High", "reviewer": "ssghait.007@gmail.com"},
+	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_Autoscaling.5"]}, "severity": "High"},
 }
 
 resource_type := "MULTIPLE"

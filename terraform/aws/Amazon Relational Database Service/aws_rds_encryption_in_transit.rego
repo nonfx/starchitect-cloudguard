@@ -3,13 +3,13 @@ package rules.aws_rds_encryption_in_transit
 import data.fugue
 
 __rego__metadoc__ := {
-	"author": "sachin@nonfx.com",
 	"id": "3.6",
 	"title": "Enable Encryption in Transit",
 	"description": "Amazon Relational Database uses SSL/TLS to encrypt data during transit. To secure your data in transit the individual should identify their client application and what is supported by SSL/TLS to configure it correctly",
 	"custom": {
 		"controls": {"CIS-AWS-Database-Services-Benchmark_v1.0.0": ["CIS-AWS-Database-Services-Benchmark_v1.0.0_3.6"]},
 		"severity": "Low",
+		"author": "Starchitect Agent",
 	},
 }
 

@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "CodeBuild.7",
 	"title": "CodeBuild report group exports should be encrypted at rest",
 	"description": "CodeBuild report group exports must be encrypted at rest to protect test results stored in S3 buckets.",
-	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_CodeBuild.7"]}, "severity": "Medium", "author": "llmagent", "reviewer": "ssghait.007@gmail.com"},
+	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_CodeBuild.7"]}, "severity": "Medium", "author": "Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

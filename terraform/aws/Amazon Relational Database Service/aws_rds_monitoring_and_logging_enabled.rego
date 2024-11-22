@@ -3,11 +3,10 @@ package rules.aws_rds_monitoring_and_logging_enabled
 import data.fugue
 
 __rego__metadoc__ := {
-	"author": "sachin@nonfx.com",
 	"id": "3.9",
 	"title": "Ensure Monitoring and Logging is Enabled",
 	"description": "Ensures that monitoring and logging are enabled for RDS instances to track activity and detect potential security issues.",
-	"custom": {"controls": {"CIS-AWS-Database-Services-Benchmark_v1.0.0": ["CIS-AWS-Database-Services-Benchmark_v1.0.0_3.9"]}, "severity": "Low", "author": "llmagent", "reviewer": "ssghait.007@gmail.com"},
+	"custom": {"controls": {"CIS-AWS-Database-Services-Benchmark_v1.0.0": ["CIS-AWS-Database-Services-Benchmark_v1.0.0_3.9"]}, "severity": "Low", "author": "Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

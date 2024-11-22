@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "RDS.6",
 	"title": "Enhanced monitoring should be configured for RDS DB instances",
 	"description": "This control checks if enhanced monitoring is enabled for RDS DB instances with appropriate monitoring interval and role configuration.",
-	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_RDS.6"]}, "severity": "Low", "author": "llmagent"},
+	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_RDS.6"]}, "severity": "Low", "author": "Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

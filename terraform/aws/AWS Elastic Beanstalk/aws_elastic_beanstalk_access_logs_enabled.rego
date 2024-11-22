@@ -3,11 +3,10 @@ package rules.aws_elastic_beanstalk_access_logs_enabled
 import data.fugue
 
 __rego__metadoc__ := {
-	"author": "ankit@nonfx.com",
 	"id": "6.3",
 	"title": "Ensure access logs are enabled",
 	"description": "When you enable load balancing, your AWS Elastic Beanstalk environment is equipped with an Elastic Load Balancing load balancer to distribute traffic among the instances in your environment",
-	"custom": {"controls": {"CIS-AWS-Compute-Services-Benchmark_v1.0.0": ["CIS-AWS-Compute-Services-Benchmark_v1.0.0_6.3"]}},
+	"custom": {"controls": {"CIS-AWS-Compute-Services-Benchmark_v1.0.0": ["CIS-AWS-Compute-Services-Benchmark_v1.0.0_6.3"]}, "author": "Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

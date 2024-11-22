@@ -3,11 +3,10 @@ package rules.aws_qldb_access_control_authentication
 import data.fugue
 
 __rego__metadoc__ := {
-	"author": "chandra@nonfx.com",
 	"id": "11.5",
 	"title": "Ensure to Implement Access Control and Authentication",
 	"description": "Utilize QLDB's built-in authentication and access control mechanisms. Define IAM policies to control which users or roles can perform specific actions on QLDB resources. Leverage IAM roles for cross-service access, securely integrating QLDB with other AWS services.",
-	"custom": {"controls": {"CIS-AWS-Database-Services-Benchmark_v1.0.0": ["CIS-AWS-Database-Services-Benchmark_v1.0.0_11.5"]}},
+	"custom": {"controls": {"CIS-AWS-Database-Services-Benchmark_v1.0.0": ["CIS-AWS-Database-Services-Benchmark_v1.0.0_11.5"]}, "author": "Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

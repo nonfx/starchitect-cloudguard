@@ -3,13 +3,13 @@ package rules.aws_dynamodb_audit_activity_cloudtrail
 import data.fugue
 
 __rego__metadoc__ := {
-	"author": "chandra@nonfx.com",
 	"id": "4.7.b",
 	"title": "Ensure Monitor and Audit Activity is enabled - Audit Logging",
 	"description": "Regular monitoring and auditing of activity in Amazon DynamoDB help ensure your database's security, performance, and compliance.",
 	"custom": {
 		"controls": {"CIS-AWS-Database-Services-Benchmark_v1.0.0": ["CIS-AWS-Database-Services-Benchmark_v1.0.0_4.7"]},
 		"severity": "High",
+		"author": "Starchitect Agent",
 	},
 }
 

@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "Redshift.3",
 	"title": "Amazon Redshift clusters should have automatic snapshots enabled",
 	"description": "Amazon Redshift clusters should have automated snapshots enabled with a minimum retention period of 7 days to support data recovery and system resilience.",
-	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_Redshift.3"]}, "severity": "Medium", "author": "llmagent"},
+	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_Redshift.3"]}, "severity": "Medium", "author": "Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

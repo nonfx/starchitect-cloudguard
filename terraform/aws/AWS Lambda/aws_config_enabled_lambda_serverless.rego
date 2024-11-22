@@ -3,13 +3,13 @@ package rules.aws_config_enabled_lambda_serverless
 import data.fugue
 
 __rego__metadoc__ := {
-	"author": "sachin@nonfx.com",
 	"id": "4.1",
 	"title": "Ensure AWS Config is Enabled for Lambda and Serverless",
 	"description": "With AWS Config, you can track configuration changes to the Lambda functions (including deleted functions), runtime environments, tags, handler name, code size, memory allocation, timeout settings, and concurrency settings, along with Lambda IAM execution role, subnet, and security group associations",
 	"custom": {
 		"severity": "Medium",
 		"controls": {"CIS-AWS-Compute-Services-Benchmark_v1.0.0": ["CIS-AWS-Compute-Services-Benchmark_v1.0.0_4.1"]},
+		"author": "Starchitect Agent",
 	},
 }
 

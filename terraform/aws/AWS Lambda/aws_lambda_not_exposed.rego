@@ -4,11 +4,10 @@ import data.aws.lambda.permissions_library as lib
 import data.fugue
 
 __rego__metadoc__ := {
-	"author": "chandra@nonfx.com",
 	"id": "4.6",
 	"title": "Ensure Lambda functions are not exposed to everyone",
 	"description": "A publicly accessible Amazon Lambda function is open to the public and can be reviewed by anyone. To protect against unauthorized users that are sending requests to invoke these functions they need to be changed so they are not exposed to the public.",
-	"custom": {"controls": {"CIS-AWS-Compute-Services-Benchmark_v1.0.0": ["CIS-AWS-Compute-Services-Benchmark_v1.0.0_4.6"]}},
+	"custom": {"controls": {"CIS-AWS-Compute-Services-Benchmark_v1.0.0": ["CIS-AWS-Compute-Services-Benchmark_v1.0.0_4.6"]}, "author": "Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

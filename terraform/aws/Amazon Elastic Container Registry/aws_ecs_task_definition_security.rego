@@ -7,7 +7,7 @@ __rego__metadoc__ := {
 	"id": "ECS.1",
 	"title": "Amazon ECS task definitions should have secure networking modes and user definitions",
 	"description": "This control checks if ECS task definitions use secure networking modes and user definitions to prevent privilege escalation and unauthorized access.",
-	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_ECS.1"]}, "severity": "High", "author": "llmagent"},
+	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_ECS.1"]}, "severity": "High", "author": "Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

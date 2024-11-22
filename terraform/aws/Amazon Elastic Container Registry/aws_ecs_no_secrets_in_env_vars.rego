@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "ECS.8",
 	"title": "Secrets should not be passed as container environment variables",
 	"description": "ECS task definitions should avoid passing secrets as environment variables and instead use AWS Systems Manager Parameter Store for secure credential management.",
-	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_ECS.8"]}, "severity": "High", "reviewer": "ssghait.007@gmail.com"},
+	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_ECS.8"]}, "severity": "High"},
 }
 
 resource_type := "MULTIPLE"

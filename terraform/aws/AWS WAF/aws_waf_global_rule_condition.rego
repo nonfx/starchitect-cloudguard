@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "WAF.6",
 	"title": "AWS WAF Classic global rules should have at least one condition",
 	"description": "AWS WAF Classic global rules must contain at least one condition to ensure proper traffic inspection and control. Rules without conditions allow traffic to pass without inspection, which may create security vulnerabilities.",
-	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_WAF.6"]}, "author": "llmagent"},
+	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_WAF.6"]}, "author": "Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

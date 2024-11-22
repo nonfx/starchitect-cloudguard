@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "NetworkFirewall.5",
 	"title": "The default stateless action for Network Firewall policies should be drop or forward for fragmented packets",
 	"description": "Network Firewall policies must configure default stateless actions as drop or forward for fragmented packets to prevent unintended traffic.",
-	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_NetworkFirewall.5"]}, "severity": "Medium", "author": "llmagent", "reviewer": "ssghait.007@gmail.com"},
+	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_NetworkFirewall.5"]}, "severity": "Medium", "author": "Starchitect Agent"},
 }
 
 # Define resource type

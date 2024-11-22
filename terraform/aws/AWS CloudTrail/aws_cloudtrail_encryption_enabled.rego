@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "CloudTrail.2",
 	"title": "CloudTrail should have encryption at-rest enabled",
 	"description": "CloudTrail trails must use AWS KMS key encryption for server-side encryption of log files at rest.",
-	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_CloudTrail.2"]}, "severity": "Medium", "author": "llmagent", "reviewer": "ssghait.007@gmail.com"},
+	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_CloudTrail.2"]}, "severity": "Medium", "author": "Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

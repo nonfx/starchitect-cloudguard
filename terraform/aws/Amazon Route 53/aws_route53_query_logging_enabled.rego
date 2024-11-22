@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "Route53.2",
 	"title": "Route 53 public hosted zones should log DNS queries",
 	"description": "Route 53 public hosted zones must enable DNS query logging for security monitoring and compliance requirements. DNS query logs provide visibility into DNS queries and help detect malicious activities.",
-	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_Route53.2"]}, "severity": "Medium", "author": "llmagent"},
+	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_Route53.2"]}, "severity": "Medium", "author": "Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

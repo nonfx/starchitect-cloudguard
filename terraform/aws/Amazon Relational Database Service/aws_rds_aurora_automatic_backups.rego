@@ -3,13 +3,13 @@ package rules.aws_rds_aurora_automatic_backups
 import data.fugue
 
 __rego__metadoc__ := {
-	"author": "rajat@nonfx.com",
 	"id": "2.10",
 	"title": "Ensure Automatic Backups and Retention Policies are configured",
 	"description": "Backups help protect your data from accidental loss or database failure. With Amazon Aurora, you can turn on automatic backups and specify a retention period. The backups include a daily snapshot of the entire DB instance and transaction logs",
 	"custom": {
 		"controls": {"CIS-AWS-Database-Services-Benchmark_v1.0.0": ["CIS-AWS-Database-Services-Benchmark_v1.0.0_2.10"]},
 		"severity": "Medium",
+		"author": "Starchitect Agent",
 	},
 }
 

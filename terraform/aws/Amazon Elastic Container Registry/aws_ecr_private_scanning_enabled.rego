@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "ECR.1",
 	"title": "ECR private repositories should have image scanning configured",
 	"description": "This control checks whether ECR private repositories have image scanning enabled. The control fails if scan_on_push is not enabled.",
-	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_ECR.1"]}, "severity": "High", "author": "llmagent", "reviewer": "ssghait.007@gmail.com"},
+	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_ECR.1"]}, "severity": "High", "author": "Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

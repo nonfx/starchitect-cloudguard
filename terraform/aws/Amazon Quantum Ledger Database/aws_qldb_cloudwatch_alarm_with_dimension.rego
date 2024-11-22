@@ -3,11 +3,10 @@ package rules.aws_qldb_cloudwatch_alarm_with_dimension
 import data.fugue
 
 __rego__metadoc__ := {
-	"author": "sachin@nonfx.com",
 	"id": "11.6.a",
 	"title": "Ensure Monitoring and Logging is Enabled - Monitoring",
 	"description": "Enable QLDB's built-in logging to capture important system events and database activity. Monitor the logs for any suspicious activities or errors. Leverage Amazon CloudWatch to collect and analyze logs, set up alarms, and receive notifications for potential security incidents.",
-	"custom": {"controls": {"CIS-AWS-Database-Services-Benchmark_v1.0.0": ["CIS-AWS-Database-Services-Benchmark_v1.0.0_11.6"]}},
+	"custom": {"controls": {"CIS-AWS-Database-Services-Benchmark_v1.0.0": ["CIS-AWS-Database-Services-Benchmark_v1.0.0_11.6"]}, "author": "Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

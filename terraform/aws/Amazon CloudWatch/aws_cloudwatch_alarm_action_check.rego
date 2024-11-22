@@ -3,13 +3,13 @@ package rules.aws_cloudwatch_alarm_action_check
 import data.fugue
 
 __rego__metadoc__ := {
-	"author": "ankit@nonfx.com",
 	"id": "CloudWatch.15",
 	"title": "CloudWatch alarms should have specified actions configured",
 	"description": "This control checks whether an Amazon CloudWatch alarm has at least one action configured for the ALARM state. The control fails if the alarm doesn't have an action configured for the ALARM state. Optionally, you can include custom parameter values to also require alarm actions for the INSUFFICIENT_DATA or OK states. This control focuses on whether a CloudWatch alarm has an alarm action configured, whereas CloudWatch.17 focuses on the activation status of a CloudWatch alarm action. We recommend CloudWatch alarm actions to automatically alert you when a monitored metric is outside the defined threshold. Monitoring alarms help you identify unusual activities and quickly respond to security and operational issues when an alarm goes into a specific state. The most common type of alarm action is to notify one or more users by sending a message to an Amazon Simple Notification Service (Amazon SNS) topi",
 	"custom": {
 		"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_CloudTrail.15"]},
 		"severity": "High",
+		"author": "Starchitect Agent",
 	},
 }
 

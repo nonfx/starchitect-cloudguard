@@ -3,13 +3,13 @@ package rules.aws_organizations_tag_policies_enabled
 import data.fugue
 
 __rego__metadoc__ := {
-	"author": "rajat@nonfx.com",
 	"id": "2.4",
 	"title": "Ensure an Organizational EC2 Tag Policy has been Created",
 	"description": "A tag policy enables you to define tag compliance rules to help you maintain consistency in the tags attached to your organization's resources",
 	"custom": {
 		"controls": {"CIS-AWS-Compute-Services-Benchmark_v1.0.0": ["CIS-AWS-Compute-Services-Benchmark_v1.0.0_2.4"]},
 		"severity": "Medium",
+		"author": "Starchitect Agent",
 	},
 }
 

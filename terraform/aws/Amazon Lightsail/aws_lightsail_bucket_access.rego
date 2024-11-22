@@ -4,13 +4,13 @@ import data.aws.iam.policy_document_library as lib
 import data.fugue
 
 __rego__metadoc__ := {
-	"author": "rajat@nonfx.com",
 	"id": "3.7",
 	"title": "Ensure you are using an IAM policy to manage access to buckets in Lightsail",
 	"description": "The following policy grants a user access to manage a specific bucket in the Amazon Lightsail object storage service",
 	"custom": {
 		"controls": {"CIS-AWS-Compute-Services-Benchmark_v1.0.0": ["CIS-AWS-Compute-Services-Benchmark_v1.0.0_3.7"]},
 		"severity": "Medium",
+		"author": "Starchitect Agent",
 	},
 }
 

@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "Neptune.6",
 	"title": "Neptune DB cluster snapshots should be encrypted at rest",
 	"description": "This control checks if Neptune DB cluster snapshots are encrypted at rest to protect data confidentiality and meet security compliance requirements.",
-	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_Neptune.6"]}, "severity": "Medium", "reviewer": "ssghait.007@gmail.com"},
+	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_Neptune.6"]}, "severity": "Medium"},
 }
 
 resource_type := "MULTIPLE"

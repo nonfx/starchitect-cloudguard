@@ -1,11 +1,10 @@
 package rules.password_reuse_prevention
 
 __rego__metadoc__ := {
-	"author": "sachin@nonfx.com",
 	"id": "1.9",
 	"title": "Ensure IAM password policy prevents password reuse",
 	"description": "IAM password policies can prevent the reuse of a given password by the same user. It is recommended that the password policy prevent the reuse of passwords.",
-	"custom": {"controls": {"CIS-AWS-Foundations-Benchmark_v3.0.0": ["CIS-AWS-Foundations-Benchmark_v3.0.0_1.9"]}, "severity": "Medium", "author": "llmagent", "reviewer": "ssghait.007@gmail.com"},
+	"custom": {"controls": {"CIS-AWS-Foundations-Benchmark_v3.0.0": ["CIS-AWS-Foundations-Benchmark_v3.0.0_1.9"]}, "severity": "Medium", "author": "Starchitect Agent"},
 }
 
 import data.fugue

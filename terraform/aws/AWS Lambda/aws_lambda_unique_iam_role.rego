@@ -4,13 +4,13 @@ import data.fugue
 import future.keywords.in
 
 __rego__metadoc__ := {
-	"author": "chandra@nonfx.com",
 	"id": "AWS_Lambda_4.5",
 	"title": "Ensure every Lambda function has its own IAM Role",
 	"description": "Every Lambda function should have a one to one IAM execution role and the roles should not be shared between functions.",
 	"custom": {
 		"controls": {"CIS-AWS-Compute-Services-Benchmark_v1.0.0": ["CIS-AWS-Compute-Services-Benchmark_v1.0.0_4.5"]},
 		"severity": "Low",
+		"author": "Starchitect Agent",
 	},
 }
 

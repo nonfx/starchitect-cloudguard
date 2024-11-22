@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "ElasticBeanstalk.1",
 	"title": "Elastic Beanstalk environments should have enhanced health reporting enabled",
 	"description": "Elastic Beanstalk environments must enable enhanced health reporting for better infrastructure monitoring and rapid response to health changes.",
-	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_ElasticBeanstalk.1"]}, "severity": "Low", "reviewer": "ssghait.007@gmail.com"},
+	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_ElasticBeanstalk.1"]}, "severity": "Low"},
 }
 
 resource_type := "MULTIPLE"

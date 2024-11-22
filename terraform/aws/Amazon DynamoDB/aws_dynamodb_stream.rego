@@ -3,13 +3,13 @@ package rules.aws_dynamodb_stream
 import data.fugue
 
 __rego__metadoc__ := {
-	"author": "chandra@nonfx.com",
 	"id": "4.6",
 	"title": "Ensure DynamoDB Streams and AWS Lambda for Automated Compliance Checking is Enabled",
 	"description": "Enabling DynamoDB Streams and integrating AWS Lambda allows you to automate compliance checking and perform actions based on changes made to your DynamoDB data.",
 	"custom": {
 		"controls": {"CIS-AWS-Database-Services-Benchmark_v1.0.0": ["CIS-AWS-Database-Services-Benchmark_v1.0.0_4.6"]},
 		"severity": "Medium",
+		"author": "Starchitect Agent",
 	},
 }
 

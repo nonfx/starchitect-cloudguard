@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "EKS.3",
 	"title": "EKS clusters should use encrypted Kubernetes secrets",
 	"description": "EKS clusters must encrypt Kubernetes secrets using AWS KMS keys for enhanced security of sensitive data stored in etcd.",
-	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_EKS.3"]}, "severity": "Medium", "reviewer": "ssghait.007@gmail.com"},
+	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_EKS.3"]}, "severity": "Medium"},
 }
 
 resource_type := "MULTIPLE"

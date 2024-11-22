@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "KMS.1",
 	"title": "IAM customer managed policies should not allow decryption actions on all KMS keys",
 	"description": "This control checks if IAM customer managed policies allow decryption actions (kms:Decrypt or kms:ReEncryptFrom) on all KMS keys. Following least privilege principles, policies should restrict these actions to specific keys.",
-	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_KMS.1"]}, "severity": "Medium", "reviewer": "ssghait.007@gmail.com"},
+	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_KMS.1"]}, "severity": "Medium"},
 }
 
 resource_type := "MULTIPLE"

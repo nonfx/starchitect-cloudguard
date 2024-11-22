@@ -4,11 +4,10 @@ import data.fugue
 import future.keywords
 
 __rego__metadoc__ := {
-	"author": "ankit@nonfx.com",
 	"id": "11.2",
 	"title": "Ensure Network Access is Secure for QLDB",
 	"description": "By applying certain network access such as Virtual Private Cloud (VPC) it protects the private network that has been established from any external networks from interfering. It allows internal networks to communicate with one another with the network that has been established. The Access Control List (ACLs) allows only specific individuals to access the resources. Also, by monitoring and logging the activity within the database it helps the individual know what is being logged within the activity and determine what next step they should take to address it.",
-	"custom": {"controls": {"CIS-AWS-Database-Services-Benchmark_v1.0.0": ["CIS-AWS-Database-Services-Benchmark_v1.0.0_11.2"]}},
+	"custom": {"controls": {"CIS-AWS-Database-Services-Benchmark_v1.0.0": ["CIS-AWS-Database-Services-Benchmark_v1.0.0_11.2"]}, "author": "Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

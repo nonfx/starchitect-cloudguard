@@ -3,13 +3,13 @@ package rules.aws_dynamodb_vpc_endpoint_configured
 import data.fugue
 
 __rego__metadoc__ := {
-	"author": "chandra@nonfx.com",
 	"id": "4.5",
 	"title": "Ensure VPC Endpoints are configured for DynamoDB",
 	"description": "Using VPC endpoints with Amazon DynamoDB allows you to securely access DynamoDB resources within your Amazon Virtual Private Cloud (VPC). This keeps your traffic off the public internet.",
 	"custom": {
 		"controls": {"CIS-AWS-Database-Services-Benchmark_v1.0.0": ["CIS-AWS-Database-Services-Benchmark_v1.0.0_4.5"]},
 		"severity": "Medium",
+		"author": "Starchitect Agent",
 	},
 }
 

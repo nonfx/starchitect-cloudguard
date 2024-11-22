@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "EFS.4",
 	"title": "EFS access points should enforce a user identity",
 	"description": "EFS access points must enforce user identity by defining POSIX user identity during creation for secure application access management.",
-	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_EFS.4"]}, "severity": "Medium", "reviewer": "ssghait.007@gmail.com"},
+	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_EFS.4"]}, "severity": "Medium"},
 }
 
 resource_type := "MULTIPLE"

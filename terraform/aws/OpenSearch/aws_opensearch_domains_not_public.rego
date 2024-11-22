@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "Opensearch.2",
 	"title": "OpenSearch domains should not be publicly accessible",
 	"description": "OpenSearch domains must be deployed within VPCs to prevent public accessibility and ensure secure network configuration.",
-	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_Opensearch.2"]}, "severity": "Critical", "reviewer": "ssghait.007@gmail.com"},
+	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_Opensearch.2"]}, "severity": "Critical"},
 }
 
 resource_type := "MULTIPLE"

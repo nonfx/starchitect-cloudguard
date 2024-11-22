@@ -3,13 +3,13 @@ package rules.aws_aurora_audit_logging_enabled
 import data.fugue
 
 __rego__metadoc__ := {
-	"author": "rajat@nonfx.com",
 	"id": "2.6",
 	"title": "Ensure Database Audit Logging is Enabled",
 	"description": "Amazon Aurora provides advanced auditing capabilities through AWS CloudTrail and Amazon RDS Database Activity Streams",
 	"custom": {
 		"controls": {"CIS-AWS-Database-Services-Benchmark_v1.0.0": ["CIS-AWS-Database-Services-Benchmark_v1.0.0_2.6"]},
 		"severity": "Medium",
+		"author": "Starchitect Agent",
 	},
 }
 

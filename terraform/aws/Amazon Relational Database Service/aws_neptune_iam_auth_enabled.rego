@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "Neptune.7",
 	"title": "Neptune DB clusters should have IAM database authentication enabled",
 	"description": "This control checks whether Neptune DB clusters have IAM database authentication enabled. IAM database authentication provides secure, passwordless access management using AWS Signature Version 4 signing process.",
-	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_Neptune.7"]}, "severity": "Medium", "reviewer": "ssghait.007@gmail.com"},
+	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_Neptune.7"]}, "severity": "Medium"},
 }
 
 resource_type := "MULTIPLE"

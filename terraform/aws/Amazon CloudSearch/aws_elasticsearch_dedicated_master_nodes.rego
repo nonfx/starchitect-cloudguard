@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "ES.7",
 	"title": "Elasticsearch domains should be configured with at least three dedicated master nodes",
 	"description": "This control checks whether Elasticsearch domains have at least three dedicated master nodes for high availability and fault tolerance.",
-	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_ES.7"]}, "severity": "Medium", "reviewer": "ssghait.007@gmail.com"},
+	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_ES.7"]}, "severity": "Medium"},
 }
 
 resource_type := "MULTIPLE"

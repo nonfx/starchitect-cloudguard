@@ -3,13 +3,13 @@ package rules.cloudfront_logging_enabled
 import data.fugue
 
 __rego__metadoc__ := {
-	"author": "sachin@nonfx.com",
 	"id": "CloudFront.5",
 	"title": "CloudFront distributions should have logging enabled",
 	"description": "This control checks whether server access logging is enabled on CloudFront distributions. The control fails if access logging is not enabled for a distribution. CloudFront access logs provide detailed information about every user request that CloudFront receives. Each log contains information such as the date and time the request was received, the IP address of the viewer that made the request, the source of the request, and the port number of the request from the viewer. These logs are useful for applications such as security and access audits and forensics investigation",
 	"custom": {
 		"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_CloudFront.5"]},
 		"severity": "Medium",
+		"author": "Starchitect Agent",
 	},
 }
 

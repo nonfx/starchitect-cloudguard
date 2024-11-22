@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "RDS.5",
 	"title": "RDS DB instances should be configured with multiple Availability Zones",
 	"description": "RDS DB instances must be configured with multiple Availability Zones for high availability and automated failover capabilities. Multi-AZ deployments enhance availability during system upgrades, DB instance failure, and Availability Zone disruption.",
-	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_RDS.5"]}, "severity": "Medium", "author": "llmagent"},
+	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_RDS.5"]}, "severity": "Medium", "author": "Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

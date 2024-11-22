@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "EKS.1",
 	"title": "EKS cluster endpoints should not be publicly accessible",
 	"description": "EKS cluster endpoints must be private to prevent unauthorized access, requiring secure IAM and RBAC authentication methods.",
-	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_EKS.1"]}, "severity": "High", "reviewer": "ssghait.007@gmail.com"},
+	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_EKS.1"]}, "severity": "High"},
 }
 
 resource_type := "MULTIPLE"

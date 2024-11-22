@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "Kinesis.1",
 	"title": "Kinesis streams should be encrypted at rest",
 	"description": "This control checks if Kinesis Data Streams use server-side encryption at rest using AWS KMS keys. Encryption at rest helps protect stored data from unauthorized access.",
-	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_Kinesis.1"]}, "severity": "Medium", "reviewer": "ssghait.007@gmail.com"},
+	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_Kinesis.1"]}, "severity": "Medium"},
 }
 
 resource_type := "MULTIPLE"

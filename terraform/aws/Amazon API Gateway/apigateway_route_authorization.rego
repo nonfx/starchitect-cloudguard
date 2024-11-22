@@ -3,13 +3,13 @@ package rules.apigateway_route_authorization
 import data.fugue
 
 __rego__metadoc__ := {
-	"author": "sachin@nonfx.com",
 	"id": "APIGateway.8",
 	"title": "API Gateway routes should specify an authorization type",
 	"description": "This control checks if Amazon API Gateway routes have an authorization type. The control fails if the API Gateway route doesn't have any authorization type.",
 	"custom": {
 		"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_APIGateway.8"]},
 		"severity": "Medium",
+		"author": "Starchitect Agent",
 	},
 }
 

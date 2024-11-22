@@ -3,13 +3,13 @@ package rules.aws_docdb_backup_window
 import data.fugue
 
 __rego__metadoc__ := {
-	"author": "sachin@nonfx.com",
 	"id": "7.10",
 	"title": "Ensure to Configure Backup Window",
 	"description": "",
 	"custom": {
 		"controls": {"CIS-AWS-Database-Services-Benchmark_v1.0.0": ["CIS-AWS-Database-Services-Benchmark_v1.0.0_7.10"]},
 		"severity": "Medium",
+		"author": "Starchitect Agent",
 	},
 }
 

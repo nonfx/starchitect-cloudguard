@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "WAF.1",
 	"title": "AWS WAF Classic Global Web ACL logging should be enabled",
 	"description": "This control checks whether logging is enabled for an AWS WAF global web ACL. Logging is crucial for monitoring web traffic, maintaining security compliance, and meeting business requirements.",
-	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_WAF.1"]}, "severity": "Medium", "author": "llmagent"},
+	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_WAF.1"]}, "severity": "Medium", "author": "Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

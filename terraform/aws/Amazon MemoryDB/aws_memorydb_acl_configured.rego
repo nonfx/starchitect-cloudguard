@@ -3,13 +3,13 @@ package rules.aws_memorydb_acl_configured
 import data.fugue
 
 __rego__metadoc__ := {
-	"author": "sachin@nonfx.com",
 	"id": "6.3",
 	"title": "Ensure MemoryDB ACLs are properly configured",
 	"description": "Ensure that Amazon MemoryDB clusters have ACLs properly configured to control access effectively, including user authentication and access strings.",
 	"custom": {
 		"controls": {"CIS-AWS-Database-Services-Benchmark_v1.0.0": ["CIS-AWS-Database-Services-Benchmark_v1.0.0_6.3"]},
 		"severity": "High",
+		"author": "Starchitect Agent",
 	},
 }
 

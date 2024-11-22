@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "Redshift.7",
 	"title": "Redshift clusters should use enhanced VPC routing",
 	"description": "Redshift clusters must use enhanced VPC routing to force COPY and UNLOAD traffic through VPC for better security control.",
-	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_Redshift.7"]}, "severity": "Medium", "author": "llmagent"},
+	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_Redshift.7"]}, "severity": "Medium", "author": "Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

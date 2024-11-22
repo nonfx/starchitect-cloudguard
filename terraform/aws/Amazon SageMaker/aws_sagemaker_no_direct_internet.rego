@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "SageMaker.1",
 	"title": "Amazon SageMaker notebook instances should not have direct internet access",
 	"description": "SageMaker notebook instances must disable direct internet access and use VPC endpoints for secure network connectivity.",
-	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_SageMaker.1"]}, "severity": "High", "author": "llmagent", "reviewer": "ssghait.007@gmail.com"},
+	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_SageMaker.1"]}, "severity": "High", "author": "Starchitect Agent"},
 }
 
 resource_type = "MULTIPLE"

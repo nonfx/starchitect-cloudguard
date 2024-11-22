@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "RDS.16",
 	"title": "RDS DB clusters should be configured to copy tags to snapshots",
 	"description": "RDS DB clusters must be configured to automatically copy all resource tags to snapshots when created.",
-	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_RDS.16"]}, "severity": "Low", "author": "llmagent"},
+	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_RDS.16"]}, "severity": "Low", "author": "Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

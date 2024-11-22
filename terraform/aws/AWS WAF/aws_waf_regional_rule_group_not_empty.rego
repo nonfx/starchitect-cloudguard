@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "WAF.3",
 	"title": "AWS WAF Classic Regional rule groups should have at least one rule",
 	"description": "This control checks if AWS WAF Regional rule groups contain at least one rule. Rule groups without rules allow traffic to pass without inspection, potentially creating security vulnerabilities.",
-	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_WAF.3"]}, "severity": "Medium", "author": "llmagent"},
+	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_WAF.3"]}, "severity": "Medium", "author": "Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

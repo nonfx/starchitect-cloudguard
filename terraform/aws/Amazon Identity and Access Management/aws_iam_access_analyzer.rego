@@ -3,13 +3,13 @@ package rules.aws_iam_access_analyzer
 import data.fugue
 
 __rego__metadoc__ := {
-	"author": "rajat@nonfx.com",
 	"id": "1.20",
 	"title": "Ensure IAM Access Analyzer is enabled for all regions",
 	"description": "Enable IAM Access Analyzer for IAM policies about all resources in each region. IAM Access Analyzer scans policies to show the accessible resources and helps in determining unintended user access.",
 	"custom": {
 		"controls": {"CIS-AWS-Foundations-Benchmark_v3.0.0": ["CIS-AWS-Foundations-Benchmark_v3.0.0_1.20"]},
 		"severity": "Medium",
+		"author": "Starchitect Agent",
 	},
 }
 

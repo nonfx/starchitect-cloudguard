@@ -4,13 +4,13 @@ import data.fugue
 import future.keywords.in
 
 __rego__metadoc__ := {
-	"author": "sachin@nonfx.com",
 	"id": "Backup.5",
 	"title": "AWS Backup backup plans should be tagged",
 	"description": "This control checks whether an AWS Backup backup plan has user-defined tags. The control fails if the backup plan doesn't have any user-defined tag keys. System tags, which are automatically applied and begin with aws:, are ignored.",
 	"custom": {
 		"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_Backup.5"]},
 		"severity": "Low",
+		"author": "Starchitect Agent",
 	},
 }
 

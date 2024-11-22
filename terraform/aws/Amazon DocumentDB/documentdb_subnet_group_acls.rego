@@ -3,11 +3,10 @@ package rules.documentdb_subnet_group_acls
 import data.fugue
 
 __rego__metadoc__ := {
-	"author": "sachin@nonfx.com",
 	"id": "CIS_AWS_DB_7.1_7.2",
 	"title": "Ensure DocumentDB clusters are in VPCs with proper network ACLs",
 	"description": "This rule ensures that DocumentDB clusters are associated with subnets that are part of a VPC and have network ACLs configured. This helps in isolating DocumentDB instances within a secure Virtual Private Cloud (VPC) and controlling inbound and outbound traffic.",
-	"custom": {"controls": {"CIS-AWS-Database-Services-Benchmark_v1.0.0": ["CIS-AWS-Database-Services-Benchmark_v1.0.0_7.1", "CIS-AWS-Database-Services-Benchmark_v1.0.0_7.2"]}, "severity": "High", "reviewer": "ssghait.007@gmail.com"},
+	"custom": {"controls": {"CIS-AWS-Database-Services-Benchmark_v1.0.0": ["CIS-AWS-Database-Services-Benchmark_v1.0.0_7.1", "CIS-AWS-Database-Services-Benchmark_v1.0.0_7.2"]}, "severity": "High", "author": "Starchitect Agent"},
 }
 
 # Define the resource type due to handling multiple AWS resources.

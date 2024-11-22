@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "WAF.4",
 	"title": "AWS WAF Classic Regional web ACLs should have at least one rule or rule group",
 	"description": "AWS WAF Classic Regional web ACLs must contain at least one rule or rule group for proper traffic inspection and control.",
-	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_WAF.4"]}, "severity": "Medium", "author": "llmagent"},
+	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_WAF.4"]}, "severity": "Medium", "author": "Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

@@ -4,13 +4,13 @@ import data.fugue
 import future.keywords.every
 
 __rego__metadoc__ := {
-	"author": "sachin@nonfx.com",
 	"id": "4.3",
 	"title": "Ensure AWS Secrets manager is configured and being used by Lambda for databases",
 	"description": "Lambda functions often have to access a database or other services within your environment.",
 	"custom": {
 		"severity": "Medium",
 		"controls": {"CIS-AWS-Compute-Services-Benchmark_v1.0.0": ["CIS-AWS-Compute-Services-Benchmark_v1.0.0_4.3"]},
+		"author": "Starchitect Agent",
 	},
 }
 

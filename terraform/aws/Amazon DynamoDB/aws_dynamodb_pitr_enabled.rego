@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "DynamoDB.2",
 	"title": "DynamoDB tables should have point-in-time recovery enabled",
 	"description": "This control checks whether point-in-time recovery (PITR) is enabled for DynamoDB tables. PITR provides continuous backups of your DynamoDB table data, allowing you to restore to any point in time within the last 35 days.",
-	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_DynamoDB.2"]}, "severity": "Medium", "reviewer": "ssghait.007@gmail.com"},
+	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_DynamoDB.2"]}, "severity": "Medium"},
 }
 
 resource_type := "MULTIPLE"

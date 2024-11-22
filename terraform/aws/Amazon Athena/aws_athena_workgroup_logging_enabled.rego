@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "ATHENA_4",
 	"title": "Athena workgroups should have logging enabled",
 	"description": "This control checks whether Amazon Athena workgroups have CloudWatch metrics logging enabled. Logging helps track query metrics for security monitoring and compliance purposes.",
-	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_Athena.4"]}, "severity": "Medium", "reviewer": "ssghait.007@gmail.com"},
+	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_Athena.4"]}, "severity": "Medium"},
 }
 
 resource_type := "MULTIPLE"

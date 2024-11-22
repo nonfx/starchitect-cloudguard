@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "AutoScaling.9",
 	"title": "Amazon EC2 Auto Scaling groups should use Amazon EC2 launch templates",
 	"description": "EC2 Auto Scaling groups must use launch templates instead of launch configurations for better access to latest features.",
-	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_AutoScaling.9"]}, "severity": "Medium", "reviewer": "ssghait.007@gmail.com"},
+	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_AutoScaling.9"]}, "severity": "Medium"},
 }
 
 resource_type := "MULTIPLE"

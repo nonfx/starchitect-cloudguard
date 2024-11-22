@@ -3,13 +3,13 @@ package rules.aws_aurora_iam_roles_and_policies_created
 import data.fugue
 
 __rego__metadoc__ := {
-	"author": "rajat@nonfx.com",
 	"id": "2.5",
 	"title": "Ensure IAM Roles and Policies are Created",
 	"description": "AWS Identity and Access Management (IAM) helps manage access to AWS resources. While you cannot directly associate IAM roles with Amazon Aurora instances, you can use IAM roles and policies to define which AWS IAM users and groups have management permissions for Amazon RDS resources and what actions they can perform",
 	"custom": {
 		"controls": {"CIS-AWS-Database-Services-Benchmark_v1.0.0": ["CIS-AWS-Database-Services-Benchmark_v1.0.0_2.5"]},
 		"severity": "Medium",
+		"author": "Starchitect Agent",
 	},
 }
 

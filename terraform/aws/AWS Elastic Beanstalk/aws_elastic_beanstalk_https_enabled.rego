@@ -3,11 +3,10 @@ package rules.aws_elastic_beanstalk_https_enabled
 import data.fugue
 
 __rego__metadoc__ := {
-	"author": "chandra@nonfx.com",
 	"id": "6.4",
 	"title": "Ensure that HTTPS is enabled on load balancer",
 	"description": "The simplest way to use HTTPS with an Elastic Beanstalk environment is to assign a server certificate to your environment's load balancer. When you configure your load balancer to terminate HTTPS, the connection between the client and the load balancer is secure.",
-	"custom": {"controls": {"CIS-AWS-Compute-Services-Benchmark_v1.0.0": ["CIS-AWS-Compute-Services-Benchmark_v1.0.0_6.4"]}},
+	"custom": {"controls": {"CIS-AWS-Compute-Services-Benchmark_v1.0.0": ["CIS-AWS-Compute-Services-Benchmark_v1.0.0_6.4"]}, "author": "Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

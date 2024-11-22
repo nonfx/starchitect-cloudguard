@@ -3,13 +3,13 @@ package rules.aws_elasticache_secure_access
 import data.fugue
 
 __rego__metadoc__ := {
-	"author": "chandra@nonfx.com",
 	"id": "5.1",
 	"title": "Ensure Secure Access to ElastiCache",
 	"description": "Securing access to Amazon ElastiCache involves implementing appropriate authentication and authorization mechanisms.",
 	"custom": {
 		"controls": {"CIS-AWS-Database-Services-Benchmark_v1.0.0": ["CIS-AWS-Database-Services-Benchmark_v1.0.0_5.1"]},
 		"severity": "High",
+		"author": "Starchitect Agent",
 	},
 }
 

@@ -3,13 +3,13 @@ package rules.aws_ec2_detailed_monitoring
 import data.fugue
 
 __rego__metadoc__ := {
-	"author": "rajat@nonfx.com",
 	"id": "2.6",
 	"title": "Ensure detailed monitoring is enable for production EC2 Instances",
 	"description": "Ensure that detailed monitoring is enabled for your Amazon EC2 instances.",
 	"custom": {
 		"controls": {"CIS-AWS-Compute-Services-Benchmark_v1.0.0": ["CIS-AWS-Compute-Services-Benchmark_v1.0.0_2.6"]},
 		"severity": "Medium",
+		"author": "Starchitect Agent",
 	},
 }
 

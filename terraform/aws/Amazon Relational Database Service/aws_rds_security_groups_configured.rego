@@ -3,13 +3,13 @@ package rules.aws_rds_security_groups_configured
 import data.fugue
 
 __rego__metadoc__ := {
-	"author": "rajat@nonfx.com",
 	"id": "3.4",
 	"title": "Ensure to Configure Security Groups for RDS Instances",
 	"description": "Configuring security groups benefits the user because it helps manage networks within the database and gives only certain permission for traffic that leaves and enters the database.",
 	"custom": {
 		"controls": {"CIS-AWS-Database-Services-Benchmark_v1.0.0": ["CIS-AWS-Database-Services-Benchmark_v1.0.0_3.4"]},
 		"severity": "Medium",
+		"author": "Starchitect Agent",
 	},
 }
 

@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "S3.9",
 	"title": "S3 general purpose buckets should have server access logging enabled",
 	"description": "This control checks whether server access logging is enabled for S3 buckets. Server access logging provides detailed records of requests made to buckets and assists in security audits.",
-	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_S3.9"]}, "severity": "Medium", "author": "llmagent"},
+	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_S3.9"]}, "severity": "Medium", "author": "Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

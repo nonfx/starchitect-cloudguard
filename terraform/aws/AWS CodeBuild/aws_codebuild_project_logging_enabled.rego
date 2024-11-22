@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "CodeBuild.4",
 	"title": "CodeBuild project environments should have a logging AWS Configuration",
 	"description": "CodeBuild projects must have at least one logging option enabled (S3 or CloudWatch) for security monitoring and forensics.",
-	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_CodeBuild.4"]}, "severity": "Medium", "author": "llmagent", "reviewer": "ssghait.007@gmail.com"},
+	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_CodeBuild.4"]}, "severity": "Medium", "author": "Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

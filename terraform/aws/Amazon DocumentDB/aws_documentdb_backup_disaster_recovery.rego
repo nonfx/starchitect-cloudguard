@@ -3,13 +3,13 @@ package rules.aws_documentdb_disaster_recovery
 import data.fugue
 
 __rego__metadoc__ := {
-	"author": "rajat@nonfx.com",
 	"id": "7.9",
 	"title": "Ensure to Implement Backup and Disaster Recovery",
 	"description": "Set up automated backups for your DocumentDB instances to ensure data durability and recoverability. Consider implementing a disaster recovery plan that includes data replication across different availability zones or regions.",
 	"custom": {
 		"controls": {"CIS-AWS-Database-Services-Benchmark_v1.0.0": ["CIS-AWS-Database-Services-Benchmark_v1.0.0_7.9"]},
 		"severity": "Medium",
+		"author": "Starchitect Agent",
 	},
 }
 

@@ -3,11 +3,10 @@ package rules.aws_workspaces_user_volume_encrypted
 import data.fugue
 
 __rego__metadoc__ := {
-	"author": "ankit@nonfx.com",
 	"id": "WorkSpaces.1",
 	"title": "WorkSpaces user volumes should be encrypted at rest",
 	"description": "This control checks whether a user volume in an Amazon WorkSpaces WorkSpace is encrypted at rest. The control fails if the WorkSpace user volume isn't encrypted at rest.",
-	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_WorkSpaces.1"]}},
+	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_WorkSpaces.1"]}, "author": "Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

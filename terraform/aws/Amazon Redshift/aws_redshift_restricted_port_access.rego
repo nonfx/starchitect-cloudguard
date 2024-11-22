@@ -7,7 +7,7 @@ __rego__metadoc__ := {
 	"id": "Redshift.15",
 	"title": "Redshift security groups should allow ingress on the cluster port only from restricted origins",
 	"description": "This control checks if Redshift clusters have security groups that allow unrestricted access (0.0.0.0/0 or ::/0) to cluster ports. Security groups should restrict access to specific IP ranges following the principle of least privilege.",
-	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_Redshift.15"]}, "severity": "High", "author": "llmagent", "reviewer": "ssghait.007@gmail.com"},
+	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_Redshift.15"]}, "severity": "High", "author": "Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

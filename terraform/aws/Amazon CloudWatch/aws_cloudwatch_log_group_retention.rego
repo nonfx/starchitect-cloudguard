@@ -3,13 +3,13 @@ package rules.aws_cloudwatch_log_group_retention
 import data.fugue
 
 __rego__metadoc__ := {
-	"author": "ankit@nonfx.com",
 	"id": "CloudWatch.16",
 	"title": "CloudWatch log groups should be retained for a specified time period",
 	"description": "This control checks whether an Amazon CloudWatch log group has a retention period of at least the specified number of days. The control fails if the retention period is less than the specified number. Unless you provide a custom parameter value for the retention period, Security Hub uses a default value of 365 days. CloudWatch Logs centralize logs from all of your systems, applications, and AWS services in a single, highly scalable service. You can use CloudWatch Logs to monitor, store, and access your log files from Amazon Elastic Compute Cloud (EC2) instances, AWS CloudTrail, Amazon Route 53, and other sources. Retaining your logs for at least 1 year can help you comply with log retention standards.",
 	"custom": {
 		"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_CloudWatch.16"]},
 		"severity": "Medium",
+		"author": "Starchitect Agent",
 	},
 }
 

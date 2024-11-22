@@ -4,13 +4,13 @@ import data.fugue
 import future.keywords.in
 
 __rego__metadoc__ := {
-	"author": "rajat@nonfx.com",
 	"id": "2.13",
 	"title": "Ensure Secrets and Sensitive Data are not stored directly in EC2 User Data",
 	"description": "User Data can be specified when launching an ec2 instance. Examples include specifying parameters for configuring the instance or including a simple script.",
 	"custom": {
 		"controls": {"CIS-AWS-Compute-Services-Benchmark_v1.0.0": ["CIS-AWS-Compute-Services-Benchmark_v1.0.0_2.13"]},
 		"severity": "Medium",
+		"author": "Starchitect Agent",
 	},
 }
 

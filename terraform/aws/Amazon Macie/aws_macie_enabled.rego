@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "Macie.1",
 	"title": "Amazon Macie should be enabled",
 	"description": "This control checks if Amazon Macie is enabled for the AWS account. Macie uses machine learning and pattern matching to discover and protect sensitive data in S3 buckets.",
-	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_Macie.1"]}, "severity": "Medium", "reviewer": "ssghait.007@gmail.com"},
+	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_Macie.1"]}, "severity": "Medium"},
 }
 
 resource_type := "MULTIPLE"

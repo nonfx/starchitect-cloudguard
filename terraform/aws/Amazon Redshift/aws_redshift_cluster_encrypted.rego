@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "Redshift.10",
 	"title": "Redshift clusters should be encrypted at rest",
 	"description": "Redshift clusters must be encrypted at rest using KMS encryption to protect data stored on disk.",
-	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_Redshift.10"]}, "severity": "Medium", "author": "llmagent"},
+	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_Redshift.10"]}, "severity": "Medium", "author": "Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

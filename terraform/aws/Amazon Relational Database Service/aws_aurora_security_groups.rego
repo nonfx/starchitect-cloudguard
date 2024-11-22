@@ -3,13 +3,13 @@ package rules.aws_aurora_security_groups
 import data.fugue
 
 __rego__metadoc__ := {
-	"author": "rajat@nonfx.com",
 	"id": "2.2",
 	"title": "Ensure the Use of Security Groups",
 	"description": "Security groups act as a firewall for associated Amazon RDS DB instances, controlling both inbound and outbound traffic",
 	"custom": {
 		"controls": {"CIS-AWS-Database-Services-Benchmark_v1.0.0": ["CIS-AWS-Database-Services-Benchmark_v1.0.0_2.2"]},
 		"severity": "Medium",
+		"author": "Starchitect Agent",
 	},
 }
 

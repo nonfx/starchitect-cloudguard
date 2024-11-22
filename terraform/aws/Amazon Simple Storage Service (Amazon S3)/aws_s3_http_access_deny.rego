@@ -5,13 +5,13 @@ import data.aws.s3.s3_library as lib
 import data.fugue
 
 __rego__metadoc__ := {
-	"author": "rajat@nonfx.com",
 	"id": "2.1.1",
 	"title": "Ensure S3 Bucket Policy is set to deny HTTP requests",
 	"description": "At the Amazon S3 bucket level, you can configure permissions through a bucket policy making the objects accessible only through HTTPS.",
 	"custom": {
 		"controls": {"CIS-AWS-Foundations-Benchmark_v3.0.0": ["CIS-AWS-Foundations-Benchmark_v3.0.0_2.1.1"]},
 		"severity": "Medium",
+		"author": "Starchitect Agent",
 	},
 }
 

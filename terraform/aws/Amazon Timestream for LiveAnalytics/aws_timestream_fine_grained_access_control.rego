@@ -3,11 +3,10 @@ package rules.aws_timestream_fine_grained_access_control
 import data.fugue
 
 __rego__metadoc__ := {
-	"author": "sachin@nonfx.com",
 	"id": "10.5",
 	"title": "Ensure Fine-Grained Access Control is Enabled",
 	"description": "Leverage Timestream's fine-grained access control capabilities to control table or row level access. Define access policies that limit access to specific tables, columns, or rows based on user roles or conditions. Implement data filtering and row-level security to restrict access to sensitive information",
-	"custom": {"controls": {"CIS-AWS-Database-Services-Benchmark_v1.0.0": ["CIS-AWS-Database-Services-Benchmark_v1.0.0_10.5"]}},
+	"custom": {"controls": {"CIS-AWS-Database-Services-Benchmark_v1.0.0": ["CIS-AWS-Database-Services-Benchmark_v1.0.0_10.5"]}, "author": "Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

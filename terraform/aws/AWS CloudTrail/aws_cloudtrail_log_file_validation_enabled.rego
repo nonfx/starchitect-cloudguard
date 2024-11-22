@@ -3,7 +3,6 @@ package rules.aws_cloudtrail_log_file_validation_enabled
 import data.fugue
 
 __rego__metadoc__ := {
-	"author": "sachin@nonfx.com",
 	"id": "3.2_CloudTrail.4",
 	"title": "Ensure CloudTrail log file validation is enabled",
 	"description": "CloudTrail log file validation creates a digitally signed digest file containing a hash of each log that CloudTrail writes to S3. These digest files can be used to determine whether a log file was changed, deleted, or unchanged after CloudTrail delivered the log. It is recommended that file validation be enabled on all CloudTrails.",
@@ -13,6 +12,7 @@ __rego__metadoc__ := {
 			"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_CloudTrail.4"],
 		},
 		"severity": "Medium",
+		"author": "Starchitect Agent",
 	},
 }
 

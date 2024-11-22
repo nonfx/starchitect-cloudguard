@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "SecretsManager.4",
 	"title": "Secrets Manager secrets should be rotated within a specified number of days",
 	"description": "Secrets Manager secrets must be rotated within specified timeframe to minimize unauthorized access and security risks.",
-	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_SecretsManager.4"]}, "severity": "Medium", "author": "llmagent"},
+	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_SecretsManager.4"]}, "severity": "Medium", "author": "Starchitect Agent"},
 }
 
 # Define resource type as MULTIPLE to handle multiple resources

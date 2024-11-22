@@ -3,13 +3,13 @@ package rules.aws_ami_private
 import data.fugue
 
 __rego__metadoc__ := {
-	"author": "rajat@nonfx.com",
 	"id": "2.1.5",
 	"title": "Ensure Images are not Publicly Available",
 	"description": "EC2 allows you to make an AMI public, sharing it with all AWS accounts",
 	"custom": {
 		"controls": {"CIS-AWS-Compute-Services-Benchmark_v1.0.0": ["CIS-AWS-Compute-Services-Benchmark_v1.0.0_2.1.5"]},
 		"severity": "Medium",
+		"author": "Starchitect Agent",
 	},
 }
 

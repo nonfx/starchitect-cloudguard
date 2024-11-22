@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "MQ.2",
 	"title": "ActiveMQ brokers should stream audit logs to CloudWatch",
 	"description": "This control checks if Amazon MQ ActiveMQ brokers are configured to stream audit logs to CloudWatch Logs for security monitoring and compliance.",
-	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_MQ.2"]}, "severity": "Medium", "reviewer": "ssghait.007@gmail.com"},
+	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_MQ.2"]}, "severity": "Medium"},
 }
 
 resource_type := "MULTIPLE"

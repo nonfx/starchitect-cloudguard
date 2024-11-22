@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "EC2.25",
 	"title": "Amazon EC2 launch templates should not assign public IPs to network interfaces",
 	"description": "This control checks whether EC2 launch templates are configured to assign public IP addresses to network interfaces. Assigning public IPs directly exposes instances to the internet and increases security risks.",
-	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_EC2.25"]}, "severity": "High", "reviewer": "ssghait.007@gmail.com"},
+	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_EC2.25"]}, "severity": "High"},
 }
 
 resource_type := "MULTIPLE"

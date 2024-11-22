@@ -3,13 +3,13 @@ package rules.aws_batch_cloudwatch_logs
 import data.fugue
 
 __rego__metadoc__ := {
-	"author": "sachin@nonfx.com",
 	"id": "5.1",
 	"title": "Ensure AWS Batch is configured with AWS CloudWatch Logs",
 	"description": "You can configure Batch jobs to send log information to CloudWatch Logs.",
 	"custom": {
 		"severity": "Medium",
 		"controls": {"CIS-AWS-Compute-Services-Benchmark_v1.0.0": ["CIS-AWS-Compute-Services-Benchmark_v1.0.0_5.1"]},
+		"author": "Starchitect Agent",
 	},
 }
 

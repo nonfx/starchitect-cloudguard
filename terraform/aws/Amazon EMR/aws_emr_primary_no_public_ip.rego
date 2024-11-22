@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "EMR.1",
 	"title": "Amazon EMR cluster primary nodes should not have public IP addresses",
 	"description": "This control checks if EMR cluster primary nodes have public IP addresses. The control fails if public IPs are associated with primary node instances to maintain network security.",
-	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_EMR.1"]}, "severity": "High", "author": "llmagent"},
+	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_EMR.1"]}, "severity": "High", "author": "Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

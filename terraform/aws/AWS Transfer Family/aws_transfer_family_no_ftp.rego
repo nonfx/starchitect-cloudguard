@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "Transfer.2",
 	"title": "Transfer Family servers should not use FTP protocol for endpoint connection",
 	"description": "AWS Transfer Family servers must avoid FTP protocol for secure endpoint connections to prevent data interception risks.",
-	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_Transfer.2"]}, "severity": "Medium", "author": "llmagent"},
+	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_Transfer.2"]}, "severity": "Medium", "author": "Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

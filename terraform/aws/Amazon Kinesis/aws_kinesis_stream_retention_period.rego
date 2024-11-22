@@ -8,7 +8,7 @@ __rego__metadoc__ := {
 	"id": "Kinesis.3",
 	"title": "Kinesis streams should have an adequate data retention period",
 	"description": "This control checks if Kinesis data streams retain data for at least 168 hours (7 days). Adequate retention periods ensure data preservation and accessibility.",
-	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_Kinesis.3"]}, "severity": "Medium", "reviewer": "ssghait.007@gmail.com"},
+	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_Kinesis.3"]}, "severity": "Medium"},
 }
 
 # Specify that this rule applies to multiple resource types

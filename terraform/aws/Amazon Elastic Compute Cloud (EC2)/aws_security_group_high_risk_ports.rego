@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "EC2.19",
 	"title": "Security groups should not allow unrestricted access to ports with high risk",
 	"description": "This control checks if security groups restrict access to high-risk ports from unrestricted sources.",
-	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_EC2.19"]}, "severity": "Critical", "author": "llmagent", "reviewer": "ssghait.007@gmail.com"},
+	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_EC2.19"]}, "severity": "Critical", "author": "Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

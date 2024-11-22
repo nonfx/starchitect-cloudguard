@@ -3,13 +3,13 @@ package rules.aws_ec2_default_security_group
 import data.fugue
 
 __rego__metadoc__ := {
-	"author": "rajat@nonfx.com",
 	"id": "2.7",
 	"title": "Ensure Default EC2 Security groups are not being used",
 	"description": "When an EC2 instance is launched a specified custom security group should be assigned to the instance",
 	"custom": {
 		"controls": {"CIS-AWS-Compute-Services-Benchmark_v1.0.0": ["CIS-AWS-Compute-Services-Benchmark_v1.0.0_2.7"]},
 		"severity": "Medium",
+		"author": "Starchitect Agent",
 	},
 }
 

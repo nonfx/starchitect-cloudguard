@@ -3,11 +3,10 @@ package rules.aws_waf_rules_cloudwatch_metrics_enabled
 import data.fugue
 
 __rego__metadoc__ := {
-	"author": "ankit@nonfx.com",
 	"id": "WAF.12",
 	"title": "AWS WAF rules should have CloudWatch metrics enabled",
 	"description": "This control checks whether an AWS WAF rule or rule group has Amazon CloudWatch metrics enabled. The control fails if the rule or rule group doesn't have CloudWatch metrics enabled.",
-	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_WAF.12"]}},
+	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_WAF.12"]}, "author": "Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

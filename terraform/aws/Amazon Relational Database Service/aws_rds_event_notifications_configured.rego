@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "RDS.20",
 	"title": "RDS event notification subscriptions should be configured for critical database instance events",
 	"description": "RDS event notification subscriptions must be configured to monitor critical database instance events for maintenance, configuration changes, and failures.",
-	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_RDS.20"]}, "severity": "Low", "author": "llmagent", "reviewer": "ssghait.007@gmail.com"},
+	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_RDS.20"]}, "severity": "Low", "author": "Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

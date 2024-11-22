@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "SQS.1",
 	"title": "Amazon SQS queues should be encrypted at rest",
 	"description": "Enforce AWS SQS queue encryption at rest using SSE-SQS or SSE-KMS to protect message contents from unauthorized access.",
-	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_SQS.1"]}, "severity": "Medium", "author": "llmagent", "reviewer": "ssghait.007@gmail.com"},
+	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_SQS.1"]}, "severity": "Medium", "author": "Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

@@ -4,13 +4,13 @@ import data.aws.s3.s3_library as lib
 import data.fugue
 
 __rego__metadoc__ := {
-	"author": "rajat@nonfx.com",
 	"id": "2.1.3",
 	"title": "Ensure all data in Amazon S3 has been discovered, classified, and secured when required",
 	"description": "Amazon S3 buckets can contain sensitive data, that for security purposes should be discovered, monitored, classified and protected. Macie along with other 3rd party tools can automatically provide an inventory of Amazon S3 buckets.",
 	"custom": {
 		"controls": {"CIS-AWS-Foundations-Benchmark_v3.0.0": ["CIS-AWS-Foundations-Benchmark_v3.0.0_2.1.3"]},
 		"severity": "Medium",
+		"author": "Starchitect Agent",
 	},
 }
 

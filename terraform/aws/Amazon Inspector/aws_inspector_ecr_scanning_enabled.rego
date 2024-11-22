@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "Inspector.2",
 	"title": "Amazon Inspector ECR scanning should be enabled",
 	"description": "This control checks if Amazon Inspector ECR scanning is enabled for container images. Enhanced scanning helps identify software vulnerabilities in container images.",
-	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_Inspector.2"]}, "severity": "High", "reviewer": "ssghait.007@gmail.com"},
+	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_Inspector.2"]}, "severity": "High"},
 }
 
 resource_type := "MULTIPLE"

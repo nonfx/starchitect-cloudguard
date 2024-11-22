@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "EC2.18",
 	"title": "Security groups should only allow unrestricted incoming traffic for authorized ports",
 	"description": "Security groups should only allow unrestricted incoming traffic on authorized ports to protect network security.",
-	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_EC2.18"]}, "severity": "High", "author": "llmagent"},
+	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_EC2.18"]}, "severity": "High", "author": "Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

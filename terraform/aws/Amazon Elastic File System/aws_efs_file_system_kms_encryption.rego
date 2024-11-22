@@ -3,13 +3,13 @@ package rules.aws_efs_file_system_kms_encryption
 import data.fugue
 
 __rego__metadoc__ := {
-	"author": "ankit@nonfx.com",
 	"id": "2.4.1",
 	"title": "Ensure that encryption is enabled for EFS file systems",
 	"description": "EFS data should be encrypted at rest using AWS KMS (Key Management Service).",
 	"custom": {
 		"controls": {"CIS-AWS-Foundations-Benchmark_v3.0.0": ["CIS-AWS-Foundations-Benchmark_v3.0.0_2.4.1"]},
 		"severity": "High",
+		"author": "Starchitect Agent",
 	},
 }
 

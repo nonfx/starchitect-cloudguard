@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "RDS.10",
 	"title": "IAM authentication should be configured for RDS instances",
 	"description": "RDS instances must have IAM database authentication enabled for secure, token-based access instead of passwords.",
-	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_RDS.10"]}, "severity": "Medium", "author": "llmagent", "reviewer": "ssghait.007@gmail.com"},
+	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_RDS.10"]}, "severity": "Medium", "author": "Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

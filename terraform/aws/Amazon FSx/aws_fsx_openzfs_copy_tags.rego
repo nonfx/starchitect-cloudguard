@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "FSx.1",
 	"title": "FSx for OpenZFS file systems should be configured to copy tags to backups and volumes",
 	"description": "FSx OpenZFS file systems must be configured to automatically copy tags to backups and volumes for proper resource tracking.",
-	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_FSx.1"]}, "severity": "Low", "reviewer": "ssghait.007@gmail.com"},
+	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_FSx.1"]}, "severity": "Low"},
 }
 
 resource_type := "MULTIPLE"

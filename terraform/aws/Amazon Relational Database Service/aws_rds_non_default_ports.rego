@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "RDS.23",
 	"title": "RDS instances should not use a database engine default port",
 	"description": "RDS instances must use non-default database engine ports to enhance security by avoiding predictable port configurations.",
-	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_RDS.23"]}, "severity": "Low", "author": "llmagent"},
+	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_RDS.23"]}, "severity": "Low", "author": "Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

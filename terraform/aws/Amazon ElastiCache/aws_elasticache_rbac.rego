@@ -3,13 +3,13 @@ package rules.aws_elasticache_rbac
 import data.fugue
 
 __rego__metadoc__ := {
-	"author": "sachin@nonfx.com",
 	"id": "5.8",
 	"title": "Ensure Authentication and Access Control is Enabled",
 	"description": "Individual creates IAM roles that would give specific permission to what the user can and cannot do within that database. The Access Control List (ACLs) allows only specific individuals to access the resources",
 	"custom": {
 		"controls": {"CIS-AWS-ElastiCache-Benchmark_v1.0.0": ["CIS-AWS-ElastiCache-Benchmark_v1.0.0_5.8"]},
 		"severity": "High",
+		"author": "Starchitect Agent",
 	},
 }
 

@@ -3,13 +3,13 @@ package rules.aws_ec2_systems_manager
 import data.fugue
 
 __rego__metadoc__ := {
-	"author": "rajat@nonfx.com",
 	"id": "2.9",
 	"title": "Ensure use of AWS Systems Manager to manage EC2 instances",
 	"description": "An inventory and management of Amazon Elastic Compute Cloud (Amazon EC2) instances is made possible with AWS Systems Manager.",
 	"custom": {
 		"controls": {"CIS-AWS-Compute-Services-Benchmark_v1.0.0": ["CIS-AWS-Compute-Services-Benchmark_v1.0.0_2.9"]},
 		"severity": "Medium",
+		"author": "Starchitect Agent",
 	},
 }
 

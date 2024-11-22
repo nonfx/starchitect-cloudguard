@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "DataSync.1",
 	"title": "DataSync tasks should have logging enabled",
 	"description": "AWS DataSync tasks must have logging enabled to track system activities, enhance accountability, and maintain security compliance.",
-	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_DataSync.1"]}, "severity": "Medium", "author": "llmagent", "reviewer": "ssghait.007@gmail.com"},
+	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_DataSync.1"]}, "severity": "Medium", "author": "Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

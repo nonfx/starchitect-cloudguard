@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "SNS.1",
 	"title": "SNS topics should be encrypted at-rest using AWS KMS",
 	"description": "SNS topics must use AWS KMS for server-side encryption to enhance data protection and access control.",
-	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_SNS.1"]}, "severity": "Medium", "author": "llmagent", "reviewer": "ssghait.007@gmail.com"},
+	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_SNS.1"]}, "severity": "Medium", "author": "Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

@@ -3,13 +3,13 @@ package rules.aws_config_enabled_all_regions
 import data.fugue
 
 __rego__metadoc__ := {
-	"author": "sachin@nonfx.com",
 	"id": "3.3",
 	"title": "Ensure AWS Config is enabled in all regions",
 	"description": "AWS Config is a web service that performs configuration management of supported AWS resources within your account and delivers log files to you. The recorded information includes the configuration item (AWS resource), relationships between configuration items (AWS resources), any configuration changes between resources. It is recommended AWS Config be enabled in all regions.",
 	"custom": {
 		"controls": {"CIS-AWS-Foundations-Benchmark_v3.0.0": ["CIS-AWS-Foundations-Benchmark_v3.0.0_3.3"]},
 		"severity": "High",
+		"author": "Starchitect Agent",
 	},
 }
 

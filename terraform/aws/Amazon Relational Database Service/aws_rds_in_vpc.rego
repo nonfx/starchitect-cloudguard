@@ -3,13 +3,13 @@ package rules.aws_rds_in_vpc
 import data.fugue
 
 __rego__metadoc__ := {
-	"author": "rajat@nonfx.com",
 	"id": "3.3",
 	"title": "Ensure RDS instances are deployed in a VPC",
 	"description": "RDS instances should be deployed within a VPC to enhance security and network isolation. This rule checks if RDS instances are associated with a VPC subnet group and if the VPC exists.",
 	"custom": {
 		"controls": {"CIS-AWS-Database-Services-Benchmark_v1.0.0": ["CIS-AWS-Database-Services-Benchmark_v1.0.0_3.3"]},
 		"severity": "Medium",
+		"author": "Starchitect Agent",
 	},
 }
 

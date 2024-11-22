@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "EC2.17",
 	"title": "Amazon EC2 instances should not use multiple ENIs",
 	"description": "This control checks if EC2 instances use multiple Elastic Network Interfaces (ENIs). The control fails if an instance has more than one ENI attached.",
-	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_EC2.17"]}, "severity": "Low", "reviewer": "ssghait.007@gmail.com"},
+	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_EC2.17"]}, "severity": "Low"},
 }
 
 resource_type := "MULTIPLE"

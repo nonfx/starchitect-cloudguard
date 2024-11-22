@@ -2,11 +2,10 @@
 package rules.ebs_volume_encryption_enabled
 
 __rego__metadoc__ := {
-	"author": "sachin@nonfx.com",
 	"id": "2.2.1",
 	"title": "Ensure EBS Volume Encryption is Enabled in all Regions",
 	"description": "Elastic Compute Cloud (EC2) supports encryption at rest when using the Elastic Block Store (EBS) service. While disabled by default, forcing encryption at EBS volume creation is supported.",
-	"custom": {"controls": {"CIS-AWS-Foundations-Benchmark_v3.0.0": ["CIS-AWS-Foundations-Benchmark_v3.0.0_2.2.1"], "CIS-AWS-Compute-Services-Benchmark_v1.0.0": ["CIS-AWS-Compute-Services-Benchmark_v1.0.0_2.2.1"]}, "severity": "Low", "reviewer": "ssghait.007@gmail.com"},
+	"custom": {"controls": {"CIS-AWS-Foundations-Benchmark_v3.0.0": ["CIS-AWS-Foundations-Benchmark_v3.0.0_2.2.1"], "CIS-AWS-Compute-Services-Benchmark_v1.0.0": ["CIS-AWS-Compute-Services-Benchmark_v1.0.0_2.2.1"]}, "severity": "Low", "author": "Starchitect Agent"},
 }
 
 import data.fugue

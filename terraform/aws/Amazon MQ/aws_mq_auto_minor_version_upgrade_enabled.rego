@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "MQ.3",
 	"title": "Amazon MQ brokers should have automatic minor version upgrade enabled",
 	"description": "This control checks if Amazon MQ brokers have automatic minor version upgrades enabled to maintain security patches and improvements.",
-	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_MQ.3"]}, "severity": "Low", "reviewer": "ssghait.007@gmail.com"},
+	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_MQ.3"]}, "severity": "Low"},
 }
 
 resource_type := "MULTIPLE"

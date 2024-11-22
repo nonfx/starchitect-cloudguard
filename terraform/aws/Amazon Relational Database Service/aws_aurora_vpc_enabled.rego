@@ -3,13 +3,13 @@ package rules.aws_rds_in_vpc
 import data.fugue
 
 __rego__metadoc__ := {
-	"author": "rajat@nonfx.com",
 	"id": "2.1",
 	"title": "Ensure Amazon VPC (Virtual Private Cloud) has been created",
 	"description": "Amazon VPCs allow you to launch AWS resources into a defined virtual network, providing network isolation and controlling inbound and outbound traffic.",
 	"custom": {
 		"controls": {"CIS-AWS-Database-Services-Benchmark_v1.0.0": ["CIS-AWS-Database-Services-Benchmark_v1.0.0_2.1"]},
 		"severity": "Medium",
+		"author": "Starchitect Agent",
 	},
 }
 

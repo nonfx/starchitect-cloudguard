@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "DMS.1",
 	"title": "Database Migration Service replication instances should not be public",
 	"description": "AWS DMS replication instances must not be publicly accessible to maintain security and prevent unauthorized access to database migration resources.",
-	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_DMS.1"]}, "severity": "Critical", "author": "llmagent", "reviewer": "ssghait.007@gmail.com"},
+	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_DMS.1"]}, "severity": "Critical", "author": "Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

@@ -5,13 +5,13 @@ import data.fugue
 resource_type := "MULTIPLE"
 
 __rego__metadoc__ := {
-	"author": "chandra@nonfx.com",
 	"id": "7.4",
 	"title": "Ensure Encryption in Transit is Enabled for RDS",
 	"description": "Amazon RDS uses SSL/TLS to encrypt data during transit. To secure your data in transit, the individual should identify their client application and what is supported by TLS to configure it correctly.",
 	"custom": {
 		"controls": {"CIS-AWS-Database-Services-Benchmark_v1.0.0": ["CIS-AWS-Database-Services-Benchmark_v1.0.0_7.4"]},
 		"severity": "Medium",
+		"author": "Starchitect Agent",
 	},
 }
 

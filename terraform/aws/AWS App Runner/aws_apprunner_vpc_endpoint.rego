@@ -3,12 +3,12 @@ package rules.aws_apprunner_vpc_endpoint
 import data.fugue
 
 __rego__metadoc__ := {
-	"author": "sachin@nonfx.com",
 	"id": "10.1",
 	"title": "App Runner needs access to your application source, so it can't be encrypted. Therefore, be sure to secure the connection between your development or deployment environment and App Runner",
 	"custom": {
 		"controls": {"CIS-AWS-Compute-Services-Benchmark_v1.0.0": ["CIS-AWS-Compute-Services-Benchmark_v1.0.0_10.1"]},
 		"severity": "Medium",
+		"author": "Starchitect Agent",
 	},
 }
 

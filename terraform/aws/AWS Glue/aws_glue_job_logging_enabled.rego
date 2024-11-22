@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "Glue.2",
 	"title": "AWS Glue jobs should have logging enabled",
 	"description": "AWS Glue jobs must have logging enabled to track system activities, detect security breaches, and maintain compliance requirements.",
-	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_Glue.2"]}, "severity": "Medium", "reviewer": "ssghait.007@gmail.com"},
+	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_Glue.2"]}, "severity": "Medium"},
 }
 
 resource_type := "MULTIPLE"

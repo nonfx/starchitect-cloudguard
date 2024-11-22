@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "RDS.8",
 	"title": "RDS DB instances should have deletion protection enabled",
 	"description": "This control checks if RDS DB instances have deletion protection enabled to prevent accidental or unauthorized database deletion.",
-	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_RDS.8"]}, "severity": "Low", "author": "llmagent"},
+	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_RDS.8"]}, "severity": "Low", "author": "Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

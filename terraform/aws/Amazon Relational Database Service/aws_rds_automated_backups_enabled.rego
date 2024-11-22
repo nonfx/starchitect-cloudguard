@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "RDS.11",
 	"title": "RDS instances should have automatic backups enabled",
 	"description": "RDS instances must have automated backups enabled with a minimum retention period of 7 days for data recovery and system resilience.",
-	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_RDS.11"]}, "severity": "Medium", "author": "llmagent"},
+	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_RDS.11"]}, "severity": "Medium", "author": "Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

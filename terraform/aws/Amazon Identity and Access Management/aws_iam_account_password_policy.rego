@@ -1,11 +1,10 @@
 package rules.aws_iam_account_password_policy
 
 __rego__metadoc__ := {
-	"author": "sachin@nonfx.com",
 	"id": "1.8",
 	"title": "Ensure IAM password policy requires minimum length of 14 or greater",
 	"description": "Password policies are, in part, used to enforce password complexity requirements. IAM password policies can be used to ensure password are at least a given length. It is recommended that the password policy require a minimum password length 14.",
-	"custom": {"controls": {"CIS-AWS-Foundations-Benchmark_v3.0.0": ["CIS-AWS-Foundations-Benchmark_v3.0.0_1.8"]}, "severity": "Low", "author": "llmagent", "reviewer": "ssghait.007@gmail.com"},
+	"custom": {"controls": {"CIS-AWS-Foundations-Benchmark_v3.0.0": ["CIS-AWS-Foundations-Benchmark_v3.0.0_1.8"]}, "severity": "Low", "author": "Starchitect Agent"},
 }
 
 import data.fugue

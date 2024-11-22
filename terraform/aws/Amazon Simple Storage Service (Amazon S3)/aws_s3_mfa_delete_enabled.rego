@@ -4,13 +4,13 @@ import data.aws.s3.s3_library as lib
 import data.fugue
 
 __rego__metadoc__ := {
-	"author": "rajat@nonfx.com",
 	"id": "2.1.2",
 	"title": "Ensure MFA Delete is enabled on S3 buckets",
 	"description": "Once MFA Delete is enabled on your sensitive and classified S3 bucket it requires the user to have two forms of authentication.",
 	"custom": {
 		"controls": {"CIS-AWS-Foundations-Benchmark_v3.0.0": ["CIS-AWS-Foundations-Benchmark_v3.0.0_2.1.2"]},
 		"severity": "Medium",
+		"author": "Starchitect Agent",
 	},
 }
 

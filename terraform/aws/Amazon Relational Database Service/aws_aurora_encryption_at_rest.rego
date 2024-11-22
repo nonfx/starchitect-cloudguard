@@ -3,13 +3,13 @@ package rules.aws_aurora_encryption_at_rest
 import data.fugue
 
 __rego__metadoc__ := {
-	"author": "rajat@nonfx.com",
 	"id": "2.3",
 	"title": "Ensure Data at Rest is Encrypted",
 	"description": "Amazon Aurora allows you to encrypt your databases using keys you manage through AWS Key Management Service (KMS).",
 	"custom": {
 		"controls": {"CIS-AWS-Database-Services-Benchmark_v1.0.0": ["CIS-AWS-Database-Services-Benchmark_v1.0.0_2.3"]},
 		"severity": "Medium",
+		"author": "Starchitect Agent",
 	},
 }
 

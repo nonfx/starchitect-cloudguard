@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "IAM.2",
 	"title": "IAM users should not have IAM policies attached",
 	"description": "IAM users should not have direct policy attachments; instead, policies should be attached to groups or roles to reduce access management complexity and minimize the risk of excessive privileges.",
-	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_IAM.2"]}, "severity": "Medium", "reviewer": "ssghait.007@gmail.com"},
+	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_IAM.2"]}, "severity": "Medium"},
 }
 
 resource_type := "MULTIPLE"

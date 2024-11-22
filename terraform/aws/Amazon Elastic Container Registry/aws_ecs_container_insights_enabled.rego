@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "ECS.12",
 	"title": "ECS clusters should use Container Insights",
 	"description": "ECS clusters must enable Container Insights for monitoring metrics, logs, and diagnostics to maintain reliability and performance.",
-	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_ECS.12"]}, "severity": "Medium", "reviewer": "ssghait.007@gmail.com"},
+	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_ECS.12"]}, "severity": "Medium"},
 }
 
 resource_type := "MULTIPLE"

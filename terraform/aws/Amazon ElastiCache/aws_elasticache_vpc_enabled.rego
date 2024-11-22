@@ -3,13 +3,13 @@ package rules.aws_elasticache_vpc_enabled
 import data.fugue
 
 __rego__metadoc__ := {
-	"author": "sachin@nonfx.com",
 	"id": "5.5",
 	"title": "Ensure Virtual Private Cloud (VPC) is Enabled for ElastiCache",
 	"description": "Implementing VPC security best practices for Amazon ElastiCache involves configuring your Virtual Private Cloud (VPC) and associated resources to enhance the security of your ElastiCache clusters.",
 	"custom": {
 		"controls": {"CIS-AWS-Database-Services-Benchmark_v1.0.0": ["CIS-AWS-Database-Services-Benchmark_v1.0.0_5.5"]},
 		"severity": "Medium",
+		"author": "Starchitect Agent",
 	},
 }
 

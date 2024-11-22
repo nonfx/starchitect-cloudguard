@@ -3,13 +3,13 @@ package rules.aws_lambda_insights_enabled
 import data.fugue
 
 __rego__metadoc__ := {
-	"author": "sachin@nonfx.com",
 	"id": "4.2",
 	"title": "Ensure Cloudwatch Lambda insights is enabled",
 	"description": "Ensure that Amazon CloudWatch Lambda Insights is enabled for your Amazon Lambda functions for enhanced monitoring",
 	"custom": {
 		"severity": "Medium",
 		"controls": {"CIS-AWS-Compute-Services-Benchmark_v1.0.0": ["CIS-AWS-Compute-Services-Benchmark_v1.0.0_4.2"]},
+		"author": "Starchitect Agent",
 	},
 }
 

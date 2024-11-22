@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "RDS.17",
 	"title": "RDS DB instances should be configured to copy tags to snapshots",
 	"description": "This control checks whether RDS DB instances are configured to automatically copy tags to snapshots when they are created.",
-	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_RDS.17"]}, "severity": "Low", "author": "llmagent", "reviewer": "ssghait.007@gmail.com"},
+	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_RDS.17"]}, "severity": "Low", "author": "Starchitect Agent"},
 }
 
 # Define the resource type we're evaluating
