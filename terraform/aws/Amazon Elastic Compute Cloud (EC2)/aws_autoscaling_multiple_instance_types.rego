@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "AutoScaling.6",
 	"title": "Auto Scaling groups should use multiple instance types in multiple Availability Zones",
 	"description": "This control checks whether Auto Scaling groups are configured to use multiple instance types across multiple Availability Zones for enhanced availability and resilience.",
-	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_AutoScaling.6"]}, "severity": "Medium"},
+	"custom": {"controls":{"AWS-Foundational-Security-Best-Practices_v1.0.0":["AWS-Foundational-Security-Best-Practices_v1.0.0_AutoScaling.6"]},"severity":"Medium","author":"Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

@@ -7,7 +7,7 @@ __rego__metadoc__ := {
 	"id": "5.1",
 	"title": "Ensure no Network ACLs allow ingress from 0.0.0.0/0 to remote server administration port 22",
 	"description": "The Network Access Control List (NACL) function provide stateless filtering of ingress and egress network traffic to AWS resources. It is recommended that no NACL allows unrestricted ingress access to remote server administration port 22",
-	"custom": {"controls": {"CIS-AWS-Foundations-Benchmark_v3.0.0": ["CIS-AWS-Foundations-Benchmark_v3.0.0_5.1"]}, "severity": "Low", "author": "Starchitect Agent"},
+	"custom": {"controls":{"CIS-AWS-Foundations-Benchmark_v3.0.0":["CIS-AWS-Foundations-Benchmark_v3.0.0_5.1"]},"severity":"Low","author":"Starchitect Agent"},
 }
 
 # Define the type of resource this policy will apply to

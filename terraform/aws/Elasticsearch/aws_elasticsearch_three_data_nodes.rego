@@ -6,10 +6,7 @@ __rego__metadoc__ := {
 	"id": "ES.6",
 	"title": "Elasticsearch domains should have at least three data nodes",
 	"description": "This rule ensures Elasticsearch domains are configured with at least three data nodes and zone awareness enabled for high availability.",
-	"custom": {
-		"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_ES.6"]},
-		"severity": "Medium",
-	},
+	"custom": {"controls":{"AWS-Foundational-Security-Best-Practices_v1.0.0":["AWS-Foundational-Security-Best-Practices_v1.0.0_ES.6"]},"severity":"Medium","author":"Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

@@ -6,11 +6,7 @@ __rego__metadoc__ := {
 	"id": "3.4",
 	"title": "Ensure to Configure Security Groups for RDS Instances",
 	"description": "Configuring security groups benefits the user because it helps manage networks within the database and gives only certain permission for traffic that leaves and enters the database.",
-	"custom": {
-		"controls": {"CIS-AWS-Database-Services-Benchmark_v1.0.0": ["CIS-AWS-Database-Services-Benchmark_v1.0.0_3.4"]},
-		"severity": "Medium",
-		"author": "Starchitect Agent",
-	},
+	"custom": {"controls":{"CIS-AWS-Database-Services-Benchmark_v1.0.0":["CIS-AWS-Database-Services-Benchmark_v1.0.0_3.4"]},"severity":"Medium","author":"Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

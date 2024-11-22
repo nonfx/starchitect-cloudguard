@@ -7,11 +7,7 @@ __rego__metadoc__ := {
 	"id": "4.4",
 	"title": "Ensure least privilege is used with Lambda function access",
 	"description": "Lambda is fully integrated with IAM, allowing you to control precisely what each Lambda function can do within the AWS Cloud. As you develop a Lambda function, you expand the scope of this policy to enable access to other resources. For example, for a function that processes objects put into an S3 bucket, it requires read access to objects stored in that bucket. Do not grant the function broader permissions to write or delete data, or operate in other buckets.",
-	"custom": {
-		"severity": "Medium",
-		"controls": {"CIS-AWS-Compute-Services-Benchmark_v1.0.0": ["CIS-AWS-Compute-Services-Benchmark_v1.0.0_4.4"]},
-		"author": "Starchitect Agent",
-	},
+	"custom": {"severity":"Medium","controls":{"CIS-AWS-Compute-Services-Benchmark_v1.0.0":["CIS-AWS-Compute-Services-Benchmark_v1.0.0_4.4"]},"author":"Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "2.3",
 	"title": "Ensure That Retention Policies on Cloud Storage Buckets Used for Exporting Logs Are Configured Using Bucket Lock",
 	"description": "Storage buckets used for exporting logs must have retention policies configured with Bucket Lock to prevent unauthorized deletion of logs.",
-	"custom": {"controls": {"CIS-Google-Cloud-Platform-Foundation-Benchmark_v3.0.0": ["CIS-Google-Cloud-Platform-Foundation-Benchmark_v3.0.0_2.3"]}, "severity": "High", "author": "Starchitect Agent"},
+	"custom": {"controls":{"CIS-Google-Cloud-Platform-Foundation-Benchmark_v3.0.0":["CIS-Google-Cloud-Platform-Foundation-Benchmark_v3.0.0_2.3"]},"severity":"High","author":"Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

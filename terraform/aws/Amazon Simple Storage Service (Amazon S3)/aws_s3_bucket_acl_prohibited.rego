@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "S3.12",
 	"title": "ACLs should not be used to manage user access to S3 general purpose buckets",
 	"description": "This control checks if S3 buckets use ACLs for managing user access. ACLs are legacy access control mechanisms and bucket policies or IAM policies should be used instead.",
-	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_S3.12"]}, "severity": "Medium", "author": "Starchitect Agent"},
+	"custom": {"controls":{"AWS-Foundational-Security-Best-Practices_v1.0.0":["AWS-Foundational-Security-Best-Practices_v1.0.0_S3.12"]},"severity":"Medium","author":"Starchitect Agent"},
 }
 
 resource_type = "MULTIPLE"

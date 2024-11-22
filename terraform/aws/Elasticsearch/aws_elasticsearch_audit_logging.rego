@@ -6,10 +6,7 @@ __rego__metadoc__ := {
 	"id": "ES.5",
 	"title": "Elasticsearch domains should have audit logging enabled",
 	"description": "Elasticsearch domains must enable audit logging to track user activities and maintain security compliance through CloudWatch Logs.",
-	"custom": {
-		"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_ES.5"]},
-		"severity": "Medium",
-	},
+	"custom": {"controls":{"AWS-Foundational-Security-Best-Practices_v1.0.0":["AWS-Foundational-Security-Best-Practices_v1.0.0_ES.5"]},"severity":"Medium","author":"Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

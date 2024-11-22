@@ -6,11 +6,7 @@ __rego__metadoc__ := {
 	"id": "2.12",
 	"title": "Ensure EBS volumes attached to an EC2 instance is marked for deletion upon instance termination",
 	"description": "This rule ensures that Amazon Elastic Block Store volumes that are attached to Amazon Elastic Compute Cloud (Amazon EC2) instances are marked for deletion when an instance is terminated. If an Amazon EBS volume isn’t deleted when the instance that it’s attached to is terminated, it may violate the concept of least functionality.",
-	"custom": {
-		"controls": {"CIS-AWS-Compute-Services-Benchmark_v1.0.0": ["CIS-AWS-Compute-Services-Benchmark_v1.0.0_2.12"]},
-		"severity": "Medium",
-		"author": "Starchitect Agent",
-	},
+	"custom": {"controls":{"CIS-AWS-Compute-Services-Benchmark_v1.0.0":["CIS-AWS-Compute-Services-Benchmark_v1.0.0_2.12"]},"severity":"Medium","author":"Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

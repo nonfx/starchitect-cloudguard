@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "ElastiCache.3",
 	"title": "ElastiCache replication groups should have automatic failover enabled",
 	"description": "ElastiCache replication groups must enable automatic failover to ensure high availability and minimize downtime during node failures.",
-	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_ElastiCache.3"]}, "severity": "Medium"},
+	"custom": {"controls":{"AWS-Foundational-Security-Best-Practices_v1.0.0":["AWS-Foundational-Security-Best-Practices_v1.0.0_ElastiCache.3"]},"severity":"Medium","author":"Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

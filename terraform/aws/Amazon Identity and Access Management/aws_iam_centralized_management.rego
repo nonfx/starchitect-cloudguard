@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "1.21",
 	"title": "Ensure IAM users are managed centrally via identity federation or AWS Organizations for multi-account environments",
 	"description": "In multi-account environments, IAM user centralization facilitates greater user control. User access beyond the initial account is then provide via role assumption. Centralization of users can be accomplished through federation with an external identity provider or through the use of AWS Organizations.",
-	"custom": {"controls": {"CIS-AWS-Foundations-Benchmark_v3.0.0": ["CIS-AWS-Foundations-Benchmark_v3.0.0_1.21"]}, "severity": "Low", "author": "Starchitect Agent"},
+	"custom": {"controls":{"CIS-AWS-Foundations-Benchmark_v3.0.0":["CIS-AWS-Foundations-Benchmark_v3.0.0_1.21"]},"severity":"Low","author":"Starchitect Agent"},
 }
 
 # Policy evaluation

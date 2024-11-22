@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "4.5",
 	"title": "Ensure 'Enable Connecting to Serial Ports' Is Not Enabled for VM Instance",
 	"description": "VM instances should not have serial port access enabled as it allows connections from any IP address without IP-based restrictions.",
-	"custom": {"controls": {"CIS-Google-Cloud-Platform-Foundation-Benchmark_v3.0.0": ["CIS-Google-Cloud-Platform-Foundation-Benchmark_v3.0.0_4.5"]}, "severity": "High", "author": "Starchitect Agent"},
+	"custom": {"controls":{"CIS-Google-Cloud-Platform-Foundation-Benchmark_v3.0.0":["CIS-Google-Cloud-Platform-Foundation-Benchmark_v3.0.0_4.5"]},"severity":"High","author":"Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

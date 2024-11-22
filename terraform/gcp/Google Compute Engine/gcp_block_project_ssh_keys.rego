@@ -6,10 +6,7 @@ __rego__metadoc__ := {
 	"id": "4.3",
 	"title": "Ensure Block Project-Wide SSH Keys Is Enabled for VM Instances",
 	"description": "Block project-wide SSH keys on VM instances to enhance security by preventing shared key access across all project instances.",
-	"custom": {
-		"controls": {"CIS-Google-Cloud-Platform-Foundation-Benchmark_v3.0.0": ["CIS-Google-Cloud-Platform-Foundation-Benchmark_v3.0.0_4.3"]},
-		"severity": "High",
-	},
+	"custom": {"controls":{"CIS-Google-Cloud-Platform-Foundation-Benchmark_v3.0.0":["CIS-Google-Cloud-Platform-Foundation-Benchmark_v3.0.0_4.3"]},"severity":"High","author":"Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

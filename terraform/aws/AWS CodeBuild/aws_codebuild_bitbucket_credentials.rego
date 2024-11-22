@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "CodeBuild.1",
 	"title": "CodeBuild Bitbucket source repository URLs should not contain sensitive credentials",
 	"description": "CodeBuild Bitbucket repository URLs must not contain personal access tokens or credentials to prevent unauthorized access and data exposure.",
-	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_CodeBuild.1"]}, "severity": "Critical", "author": "Starchitect Agent"},
+	"custom": {"controls":{"AWS-Foundational-Security-Best-Practices_v1.0.0":["AWS-Foundational-Security-Best-Practices_v1.0.0_CodeBuild.1"]},"severity":"Critical","author":"Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

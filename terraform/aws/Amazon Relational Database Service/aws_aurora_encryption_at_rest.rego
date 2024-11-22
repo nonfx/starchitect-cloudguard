@@ -6,11 +6,7 @@ __rego__metadoc__ := {
 	"id": "2.3",
 	"title": "Ensure Data at Rest is Encrypted",
 	"description": "Amazon Aurora allows you to encrypt your databases using keys you manage through AWS Key Management Service (KMS).",
-	"custom": {
-		"controls": {"CIS-AWS-Database-Services-Benchmark_v1.0.0": ["CIS-AWS-Database-Services-Benchmark_v1.0.0_2.3"]},
-		"severity": "Medium",
-		"author": "Starchitect Agent",
-	},
+	"custom": {"controls":{"CIS-AWS-Database-Services-Benchmark_v1.0.0":["CIS-AWS-Database-Services-Benchmark_v1.0.0_2.3"]},"severity":"Medium","author":"Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

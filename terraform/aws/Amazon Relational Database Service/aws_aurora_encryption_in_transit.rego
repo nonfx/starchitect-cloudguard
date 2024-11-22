@@ -6,11 +6,7 @@ __rego__metadoc__ := {
 	"id": "2.4",
 	"title": "Ensure Data in Transit is Encrypted",
 	"description": "Use SSL (Secure Sockets Layer) to secure data in transit. Aurora supports SSL-encrypted connections between your application and your DB instance",
-	"custom": {
-		"controls": {"CIS-AWS-Database-Services-Benchmark_v1.0.0": ["CIS-AWS-Database-Services-Benchmark_v1.0.0_2.4"]},
-		"severity": "High",
-		"author": "Starchitect Agent",
-	},
+	"custom": {"controls":{"CIS-AWS-Database-Services-Benchmark_v1.0.0":["CIS-AWS-Database-Services-Benchmark_v1.0.0_2.4"]},"severity":"High","author":"Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

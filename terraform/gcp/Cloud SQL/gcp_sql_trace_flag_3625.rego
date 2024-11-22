@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "6.3.6",
 	"title": "Ensure '3625 (trace flag)' database flag for all Cloud SQL Server instances is set to 'on'",
 	"description": "It is recommended to set 3625 (trace flag) database flag for Cloud SQL SQL Server instance to on.",
-	"custom": {"controls": {"CIS-Google-Cloud-Platform-Foundation-Benchmark_v3.0.0": ["CIS-Google-Cloud-Platform-Foundation-Benchmark_v3.0.0_6.3.6"]}, "severity": "Medium", "author": "Starchitect Agent"},
+	"custom": {"controls":{"CIS-Google-Cloud-Platform-Foundation-Benchmark_v3.0.0":["CIS-Google-Cloud-Platform-Foundation-Benchmark_v3.0.0_6.3.6"]},"severity":"Medium","author":"Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

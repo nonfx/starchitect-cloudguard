@@ -6,11 +6,7 @@ __rego__metadoc__ := {
 	"id": "APIGateway.5",
 	"title": "API Gateway REST API cache data should be encrypted at rest",
 	"description": "This control checks whether all methods in API Gateway REST API stages that have cache enabled are encrypted. The control fails if any method in an API Gateway REST API stage is configured to cache and the cache is not encrypted.",
-	"custom": {
-		"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_APIGateway.5"]},
-		"severity": "Medium",
-		"author": "Starchitect Agent",
-	},
+	"custom": {"controls":{"AWS-Foundational-Security-Best-Practices_v1.0.0":["AWS-Foundational-Security-Best-Practices_v1.0.0_APIGateway.5"]},"severity":"Medium","author":"Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

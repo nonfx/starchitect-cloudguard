@@ -7,11 +7,7 @@ __rego__metadoc__ := {
 	"id": "9.5",
 	"title": "Ensure Audit Logging is Enabled",
 	"description": "This control is important because it helps ensure activity within the cluster and identifies who has last modified the document and who has access to it, in case of breaches. It also ensures compliance with regulation requirements.",
-	"custom": {
-		"controls": {"CIS-AWS-Database-Services-Benchmark_v1.0.0": ["CIS-AWS-Database-Services-Benchmark_v1.0.0_9.5"]},
-		"severity": "Medium",
-		"author": "Starchitect Agent",
-	},
+	"custom": {"controls":{"CIS-AWS-Database-Services-Benchmark_v1.0.0":["CIS-AWS-Database-Services-Benchmark_v1.0.0_9.5"]},"severity":"Medium","author":"Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

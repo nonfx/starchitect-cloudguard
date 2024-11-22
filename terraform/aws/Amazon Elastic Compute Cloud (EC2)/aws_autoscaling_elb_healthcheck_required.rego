@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "AutoScaling.1",
 	"title": "Auto Scaling groups associated with a load balancer should use ELB health checks",
 	"description": "This control checks whether Auto Scaling groups that are associated with a load balancer are using Elastic Load Balancing (ELB) health checks. The control fails if an Auto Scaling group with an attached load balancer is not using ELB health checks.",
-	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_AutoScaling.1"]}, "severity": "Low"},
+	"custom": {"controls":{"AWS-Foundational-Security-Best-Practices_v1.0.0":["AWS-Foundational-Security-Best-Practices_v1.0.0_AutoScaling.1"]},"severity":"Low","author":"Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

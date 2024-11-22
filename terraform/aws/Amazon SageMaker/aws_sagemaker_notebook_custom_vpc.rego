@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "SageMaker.2",
 	"title": "SageMaker notebook instances should be launched in a custom VPC",
 	"description": "This control checks whether SageMaker notebook instances are launched within a custom VPC. Launching instances in a custom VPC provides enhanced network security and control.",
-	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_SageMaker.2"]}, "severity": "High", "author": "Starchitect Agent"},
+	"custom": {"controls":{"AWS-Foundational-Security-Best-Practices_v1.0.0":["AWS-Foundational-Security-Best-Practices_v1.0.0_SageMaker.2"]},"severity":"High","author":"Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "Redshift.9",
 	"title": "Redshift clusters should not use the default database name",
 	"description": "Redshift clusters must use custom database names instead of default 'dev' name for enhanced security and compliance.",
-	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_Redshift.9"]}, "severity": "Medium", "author": "Starchitect Agent"},
+	"custom": {"controls":{"AWS-Foundational-Security-Best-Practices_v1.0.0":["AWS-Foundational-Security-Best-Practices_v1.0.0_Redshift.9"]},"severity":"Medium","author":"Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

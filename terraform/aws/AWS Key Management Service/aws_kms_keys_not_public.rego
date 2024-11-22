@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "KMS.5",
 	"title": "KMS keys should not be publicly accessible",
 	"description": "This control checks if KMS keys have policies that allow public access. KMS keys should follow the principle of least privilege and restrict access to authorized principals only.",
-	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_KMS.5"]}, "severity": "Critical"},
+	"custom": {"controls":{"AWS-Foundational-Security-Best-Practices_v1.0.0":["AWS-Foundational-Security-Best-Practices_v1.0.0_KMS.5"]},"severity":"Critical","author":"Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

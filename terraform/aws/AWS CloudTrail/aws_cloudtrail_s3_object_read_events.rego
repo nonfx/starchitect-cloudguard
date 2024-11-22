@@ -6,10 +6,7 @@ __rego__metadoc__ := {
 	"id": "3.9",
 	"title": "Ensure that Object-level logging for read events is enabled for S3 bucket",
 	"description": "S3 object-level API operations such as GetObject, DeleteObject, and PutObject are called data events. By default, CloudTrail trails don't log data events and so it is recommended to enable Object-level logging for S3 buckets.",
-	"custom": {
-		"controls": {"CIS-AWS-Foundations-Benchmark_v3.0.0": ["CIS-AWS-Foundations-Benchmark_v3.0.0_3.9"]},
-		"severity": "Medium",
-	},
+	"custom": {"controls":{"CIS-AWS-Foundations-Benchmark_v3.0.0":["CIS-AWS-Foundations-Benchmark_v3.0.0_3.9"]},"severity":"Medium","author":"Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

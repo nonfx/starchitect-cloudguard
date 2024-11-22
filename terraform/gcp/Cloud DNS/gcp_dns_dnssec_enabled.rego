@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "3.3",
 	"title": "Ensure That DNSSEC Is Enabled for Cloud DNS",
 	"description": "Cloud Domain Name System (DNS) zones should have DNSSEC enabled to protect against DNS hijacking and man-in-the-middle attacks.",
-	"custom": {"controls": {"CIS-Google-Cloud-Platform-Foundation-Benchmark_v3.0.0": ["CIS-Google-Cloud-Platform-Foundation-Benchmark_v3.0.0_3.3"]}, "severity": "Medium", "author": "Starchitect Agent"},
+	"custom": {"controls":{"CIS-Google-Cloud-Platform-Foundation-Benchmark_v3.0.0":["CIS-Google-Cloud-Platform-Foundation-Benchmark_v3.0.0_3.3"]},"severity":"Medium","author":"Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

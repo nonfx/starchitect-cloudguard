@@ -6,10 +6,7 @@ __rego__metadoc__ := {
 	"id": "ELB.7",
 	"title": "Classic Load Balancers should have connection draining enabled",
 	"description": "This control checks if Classic Load Balancers have connection draining enabled to ensure graceful handling of deregistering or unhealthy instances.",
-	"custom": {
-		"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_ELB.7"]},
-		"severity": "Medium",
-	},
+	"custom": {"controls":{"AWS-Foundational-Security-Best-Practices_v1.0.0":["AWS-Foundational-Security-Best-Practices_v1.0.0_ELB.7"]},"severity":"Medium","author":"Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

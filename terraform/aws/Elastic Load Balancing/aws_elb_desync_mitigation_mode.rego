@@ -6,10 +6,7 @@ __rego__metadoc__ := {
 	"id": "ELB.12",
 	"title": "Application Load Balancer should be configured with defensive or strictest desync mitigation mode",
 	"description": "Application Load Balancers must be configured with defensive or strictest desync mitigation mode to prevent HTTP desync attacks.",
-	"custom": {
-		"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_ELB.12"]},
-		"severity": "Medium",
-	},
+	"custom": {"controls":{"AWS-Foundational-Security-Best-Practices_v1.0.0":["AWS-Foundational-Security-Best-Practices_v1.0.0_ELB.12"]},"severity":"Medium","author":"Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

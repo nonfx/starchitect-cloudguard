@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "6.2.8",
 	"title": "Ensure cloudsql.enable_pgaudit database flag is enabled for PostgreSQL instances",
 	"description": "PostgreSQL instances should have cloudsql.enable_pgaudit database flag enabled for comprehensive security logging and monitoring.",
-	"custom": {"controls": {"CIS-Google-Cloud-Platform-Foundation-Benchmark_v3.0.0": ["CIS-Google-Cloud-Platform-Foundation-Benchmark_v3.0.0_6.2.8"]}, "severity": "Medium", "author": "Starchitect Agent"},
+	"custom": {"controls":{"CIS-Google-Cloud-Platform-Foundation-Benchmark_v3.0.0":["CIS-Google-Cloud-Platform-Foundation-Benchmark_v3.0.0_6.2.8"]},"severity":"Medium","author":"Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

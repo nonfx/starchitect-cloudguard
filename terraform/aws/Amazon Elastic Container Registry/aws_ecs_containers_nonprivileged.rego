@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "ECS.4",
 	"title": "ECS containers should run as non-privileged",
 	"description": "This control checks if ECS containers are running with privileged access. Containers should not have privileged access to ensure proper security isolation.",
-	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_ECS.4"]}, "severity": "High"},
+	"custom": {"controls":{"AWS-Foundational-Security-Best-Practices_v1.0.0":["AWS-Foundational-Security-Best-Practices_v1.0.0_ECS.4"]},"severity":"High","author":"Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

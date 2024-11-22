@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "Neptune.5",
 	"title": "Neptune DB clusters should have automated backups enabled",
 	"description": "This control checks if Neptune DB clusters have automated backups enabled with a retention period of at least 7 days.",
-	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_Neptune.5"]}, "severity": "Medium"},
+	"custom": {"controls":{"AWS-Foundational-Security-Best-Practices_v1.0.0":["AWS-Foundational-Security-Best-Practices_v1.0.0_Neptune.5"]},"severity":"Medium","author":"Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

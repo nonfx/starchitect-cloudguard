@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "RDS.25",
 	"title": "RDS database instances should use a custom administrator username",
 	"description": "RDS database instances must use custom administrator usernames instead of default values to enhance security and prevent unauthorized access.",
-	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_RDS.25"]}, "severity": "Medium", "author": "Starchitect Agent"},
+	"custom": {"controls":{"AWS-Foundational-Security-Best-Practices_v1.0.0":["AWS-Foundational-Security-Best-Practices_v1.0.0_RDS.25"]},"severity":"Medium","author":"Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

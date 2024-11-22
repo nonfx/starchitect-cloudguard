@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "EC2.9",
 	"title": "Amazon EC2 instances should not have a public IPv4 address",
 	"description": "This control checks whether EC2 instances have a public IPv4 address. The control fails if an EC2 instance has a public IP address configured.",
-	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_EC2.9"]}, "severity": "High"},
+	"custom": {"controls":{"AWS-Foundational-Security-Best-Practices_v1.0.0":["AWS-Foundational-Security-Best-Practices_v1.0.0_EC2.9"]},"severity":"High","author":"Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

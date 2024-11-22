@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "EC2.10",
 	"title": "Amazon EC2 should be configured to use VPC endpoints that are created for the Amazon EC2 service",
 	"description": "This control checks if VPC endpoints are created for the EC2 service in VPCs that contain EC2 instances. The control fails if a VPC containing EC2 instances does not have an EC2 VPC endpoint.",
-	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_EC2.10"]}, "severity": "Medium"},
+	"custom": {"controls":{"AWS-Foundational-Security-Best-Practices_v1.0.0":["AWS-Foundational-Security-Best-Practices_v1.0.0_EC2.10"]},"severity":"Medium","author":"Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

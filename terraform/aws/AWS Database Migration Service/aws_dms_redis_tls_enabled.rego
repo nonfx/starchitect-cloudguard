@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "DMS.12",
 	"title": "DMS endpoints for Redis OSS should have TLS enabled",
 	"description": "DMS endpoints for Redis OSS must have TLS enabled to ensure secure encrypted communication during data migration.",
-	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_DMS.12"]}, "severity": "Medium", "author": "Starchitect Agent"},
+	"custom": {"controls":{"AWS-Foundational-Security-Best-Practices_v1.0.0":["AWS-Foundational-Security-Best-Practices_v1.0.0_DMS.12"]},"severity":"Medium","author":"Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

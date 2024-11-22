@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "9.7.a",
 	"title": "Ensure Monitoring is Enabled for AWS Neptune",
 	"description": "Monitoring and alerting through AWS CloudWatch is essential for maintaining the health, availability, and performance of AWS Neptune databases.",
-	"custom": {"controls": {"CIS-AWS-Database-Services-Benchmark_v1.0.0": ["CIS-AWS-Database-Services-Benchmark_v1.0.0_9.7"]}, "author": "Starchitect Agent"},
+	"custom": {"controls":{"CIS-AWS-Database-Services-Benchmark_v1.0.0":["CIS-AWS-Database-Services-Benchmark_v1.0.0_9.7"]},"author":"Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

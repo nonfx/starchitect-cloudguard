@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "2.15",
 	"title": "Ensure 'Access Approval' is 'Enabled'",
 	"description": "GCP Access Approval enables you to require your organizations' explicit approval whenever Google support try to access your projects. This adds an additional control and logging of who in your organization approved/denied these requests.",
-	"custom": {"controls": {"CIS-Google-Cloud-Platform-Foundation-Benchmark_v3.0.0": ["CIS-Google-Cloud-Platform-Foundation-Benchmark_v3.0.0_2.15"]}, "severity": "Medium", "author": "Starchitect Agent"},
+	"custom": {"controls":{"CIS-Google-Cloud-Platform-Foundation-Benchmark_v3.0.0":["CIS-Google-Cloud-Platform-Foundation-Benchmark_v3.0.0_2.15"]},"severity":"Medium","author":"Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "2.13",
 	"title": "Ensure Cloud Asset Inventory Is Enabled",
 	"description": "GCP Cloud Asset Inventory provides historical view of GCP resources and IAM policies through a time-series database. The service should be enabled for security tracking and compliance auditing.",
-	"custom": {"controls": {"CIS-Google-Cloud-Platform-Foundation-Benchmark_v3.0.0": ["CIS-Google-Cloud-Platform-Foundation-Benchmark_v3.0.0_2.13"]}, "severity": "Medium", "author": "Starchitect Agent"},
+	"custom": {"controls":{"CIS-Google-Cloud-Platform-Foundation-Benchmark_v3.0.0":["CIS-Google-Cloud-Platform-Foundation-Benchmark_v3.0.0_2.13"]},"severity":"Medium","author":"Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

@@ -6,11 +6,7 @@ __rego__metadoc__ := {
 	"id": "4.7.b",
 	"title": "Ensure Monitor and Audit Activity is enabled - Audit Logging",
 	"description": "Regular monitoring and auditing of activity in Amazon DynamoDB help ensure your database's security, performance, and compliance.",
-	"custom": {
-		"controls": {"CIS-AWS-Database-Services-Benchmark_v1.0.0": ["CIS-AWS-Database-Services-Benchmark_v1.0.0_4.7"]},
-		"severity": "High",
-		"author": "Starchitect Agent",
-	},
+	"custom": {"controls":{"CIS-AWS-Database-Services-Benchmark_v1.0.0":["CIS-AWS-Database-Services-Benchmark_v1.0.0_4.7"]},"severity":"High","author":"Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

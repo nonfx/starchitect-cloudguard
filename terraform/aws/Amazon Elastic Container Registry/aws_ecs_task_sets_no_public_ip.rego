@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "ECS.16",
 	"title": "ECS task sets should not automatically assign public IP addresses",
 	"description": "ECS task sets should disable automatic public IP address assignment to prevent unauthorized internet access to container applications.",
-	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_ECS.16"]}, "severity": "High"},
+	"custom": {"controls":{"AWS-Foundational-Security-Best-Practices_v1.0.0":["AWS-Foundational-Security-Best-Practices_v1.0.0_ECS.16"]},"severity":"High","author":"Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

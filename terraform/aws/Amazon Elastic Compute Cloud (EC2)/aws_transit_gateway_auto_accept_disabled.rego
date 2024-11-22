@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "EC2.23",
 	"title": "Amazon EC2 Transit Gateways should not automatically accept VPC attachment requests",
 	"description": "This control checks if EC2 Transit Gateways are configured to automatically accept VPC attachment requests. The control fails if AutoAcceptSharedAttachments is enabled.",
-	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_EC2.23"]}, "severity": "High", "author": "Starchitect Agent"},
+	"custom": {"controls":{"AWS-Foundational-Security-Best-Practices_v1.0.0":["AWS-Foundational-Security-Best-Practices_v1.0.0_EC2.23"]},"severity":"High","author":"Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

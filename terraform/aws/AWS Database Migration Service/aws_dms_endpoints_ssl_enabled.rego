@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "DMS.9",
 	"title": "DMS endpoints should use SSL",
 	"description": "DMS endpoints must use SSL connections to encrypt data during migration, ensuring secure data transfer between source and target databases.",
-	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_DMS.9"]}, "severity": "Medium", "author": "Starchitect Agent"},
+	"custom": {"controls":{"AWS-Foundational-Security-Best-Practices_v1.0.0":["AWS-Foundational-Security-Best-Practices_v1.0.0_DMS.9"]},"severity":"Medium","author":"Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

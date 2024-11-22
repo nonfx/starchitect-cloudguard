@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "WAF.2",
 	"title": "AWS WAF Classic Regional rules should have at least one condition",
 	"description": "AWS WAF Classic Regional rules must contain at least one condition to ensure proper traffic inspection and control. Rules without conditions allow all traffic to pass without inspection, potentially creating security vulnerabilities.",
-	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_WAF.2"]}, "severity": "Medium", "author": "Starchitect Agent"},
+	"custom": {"controls":{"AWS-Foundational-Security-Best-Practices_v1.0.0":["AWS-Foundational-Security-Best-Practices_v1.0.0_WAF.2"]},"severity":"Medium","author":"Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

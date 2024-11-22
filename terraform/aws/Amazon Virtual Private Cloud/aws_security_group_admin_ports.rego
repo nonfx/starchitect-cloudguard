@@ -6,14 +6,7 @@ __rego__metadoc__ := {
 	"id": "5.2",
 	"title": "Ensure no security groups allow ingress from 0.0.0.0/0 to remote server administration ports such as 22 and 3389 (Remote Desktop Protocol)",
 	"description": "Security groups provide stateful filtering of ingress and egress network traffic to AWS resources. It is recommended that no security group allows unrestricted ingress access to remote server administration ports such as 22 & 3389",
-	"custom": {
-		"controls": {"CIS-AWS-Foundations-Benchmark_v3.0.0": [
-			"CIS-AWS-Foundations-Benchmark_v3.0.0_5.2",
-			"CIS-AWS-Foundations-Benchmark_v3.0.0_5.3",
-		]},
-		"severity": "Low",
-		"author": "Starchitect Agent",
-	},
+	"custom": {"controls":{"CIS-AWS-Foundations-Benchmark_v3.0.0":["CIS-AWS-Foundations-Benchmark_v3.0.0_5.2","CIS-AWS-Foundations-Benchmark_v3.0.0_5.3"]},"severity":"Low","author":"Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

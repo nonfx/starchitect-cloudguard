@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "Lambda.2",
 	"title": "Lambda functions should use supported runtimes",
 	"description": "This control checks if Lambda functions use supported runtimes. Functions with unsupported or deprecated runtimes may pose security risks due to lack of updates.",
-	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_Lambda.2"]}, "severity": "Medium"},
+	"custom": {"controls":{"AWS-Foundational-Security-Best-Practices_v1.0.0":["AWS-Foundational-Security-Best-Practices_v1.0.0_Lambda.2"]},"severity":"Medium","author":"Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

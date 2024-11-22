@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "5.2",
 	"title": "Ensure Batch roles are configured for cross-service confused deputy prevention",
 	"description": "The Cross-service confused deputy problem is a security issue where an entity that doesn't have permission to perform an action can coerce a more-privileged entity to perform the action",
-	"custom": {"severity": "Medium", "controls": {"CIS-AWS-Compute-Services-Benchmark_v1.0.0": ["CIS-AWS-Compute-Services-Benchmark_v1.0.0_5.2"]}, "author": "Starchitect Agent"},
+	"custom": {"severity":"Medium","controls":{"CIS-AWS-Compute-Services-Benchmark_v1.0.0":["CIS-AWS-Compute-Services-Benchmark_v1.0.0_5.2"]},"author":"Starchitect Agent"},
 }
 
 # Mark the rule to observe multiple resource types

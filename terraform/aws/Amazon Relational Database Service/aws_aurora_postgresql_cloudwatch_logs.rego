@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "RDS.37",
 	"title": "Aurora PostgreSQL DB clusters should publish logs to CloudWatch Logs",
 	"description": "This control checks whether Aurora PostgreSQL DB clusters are configured to publish logs to Amazon CloudWatch Logs.",
-	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_RDS.37"]}, "severity": "Medium", "author": "Starchitect Agent"},
+	"custom": {"controls":{"AWS-Foundational-Security-Best-Practices_v1.0.0":["AWS-Foundational-Security-Best-Practices_v1.0.0_RDS.37"]},"severity":"Medium","author":"Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

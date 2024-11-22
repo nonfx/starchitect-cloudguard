@@ -6,11 +6,7 @@ __rego__metadoc__ := {
 	"id": "2.2",
 	"title": "Ensure the Use of Security Groups",
 	"description": "Security groups act as a firewall for associated Amazon RDS DB instances, controlling both inbound and outbound traffic",
-	"custom": {
-		"controls": {"CIS-AWS-Database-Services-Benchmark_v1.0.0": ["CIS-AWS-Database-Services-Benchmark_v1.0.0_2.2"]},
-		"severity": "Medium",
-		"author": "Starchitect Agent",
-	},
+	"custom": {"controls":{"CIS-AWS-Database-Services-Benchmark_v1.0.0":["CIS-AWS-Database-Services-Benchmark_v1.0.0_2.2"]},"severity":"Medium","author":"Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

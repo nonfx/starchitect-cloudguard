@@ -6,10 +6,7 @@ __rego__metadoc__ := {
 	"id": "ELB.10",
 	"title": "Classic Load Balancer should span multiple Availability Zones",
 	"description": "Classic Load Balancers must be configured to operate across multiple Availability Zones for high availability and fault tolerance.",
-	"custom": {
-		"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_ELB.10"]},
-		"severity": "Medium",
-	},
+	"custom": {"controls":{"AWS-Foundational-Security-Best-Practices_v1.0.0":["AWS-Foundational-Security-Best-Practices_v1.0.0_ELB.10"]},"severity":"Medium","author":"Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

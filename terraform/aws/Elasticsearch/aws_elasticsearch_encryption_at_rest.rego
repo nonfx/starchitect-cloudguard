@@ -6,10 +6,7 @@ __rego__metadoc__ := {
 	"id": "ES.1",
 	"title": "Elasticsearch domains should have encryption at-rest enabled",
 	"description": "This control checks whether Elasticsearch domains have encryption at rest enabled using AWS KMS. Encryption at rest provides an additional layer of data security and helps meet compliance requirements.",
-	"custom": {
-		"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_ES.1"]},
-		"severity": "Medium",
-	},
+	"custom": {"controls":{"AWS-Foundational-Security-Best-Practices_v1.0.0":["AWS-Foundational-Security-Best-Practices_v1.0.0_ES.1"]},"severity":"Medium","author":"Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

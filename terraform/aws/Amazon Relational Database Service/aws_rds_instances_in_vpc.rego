@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "RDS.18",
 	"title": "RDS instances should be deployed in a VPC",
 	"description": "This control checks whether RDS instances are deployed in a VPC. The control fails if an RDS instance is not deployed in a VPC.",
-	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_RDS.18"]}, "severity": "High", "author": "Starchitect Agent"},
+	"custom": {"controls":{"AWS-Foundational-Security-Best-Practices_v1.0.0":["AWS-Foundational-Security-Best-Practices_v1.0.0_RDS.18"]},"severity":"High","author":"Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

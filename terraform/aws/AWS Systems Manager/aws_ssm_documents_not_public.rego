@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "SSM.4",
 	"title": "SSM documents should not be public",
 	"description": "SSM documents owned by the account should not be public to prevent unauthorized access and protect sensitive information about AWS resources.",
-	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_SSM.4"]}, "severity": "Critical", "author": "Starchitect Agent"},
+	"custom": {"controls":{"AWS-Foundational-Security-Best-Practices_v1.0.0":["AWS-Foundational-Security-Best-Practices_v1.0.0_SSM.4"]},"severity":"Critical","author":"Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

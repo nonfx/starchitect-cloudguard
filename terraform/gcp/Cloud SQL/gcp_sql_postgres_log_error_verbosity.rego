@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "6.2.1",
 	"title": "Ensure PostgreSQL log_error_verbosity flag is set appropriately",
 	"description": "Ensure PostgreSQL log_error_verbosity flag is set to 'DEFAULT' or stricter for proper error message logging in Cloud SQL instances.",
-	"custom": {"controls": {"CIS-Google-Cloud-Platform-Foundation-Benchmark_v3.0.0": ["CIS-Google-Cloud-Platform-Foundation-Benchmark_v3.0.0_6.2.1"]}, "severity": "Medium", "author": "Starchitect Agent"},
+	"custom": {"controls":{"CIS-Google-Cloud-Platform-Foundation-Benchmark_v3.0.0":["CIS-Google-Cloud-Platform-Foundation-Benchmark_v3.0.0_6.2.1"]},"severity":"Medium","author":"Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

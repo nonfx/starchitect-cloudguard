@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "KMS.2",
 	"title": "IAM principals should not have IAM inline policies that allow decryption actions on all KMS keys",
 	"description": "This control checks if IAM inline policies allow decryption actions on all KMS keys. Following least privilege principle, policies should restrict KMS actions to specific keys.",
-	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_KMS.2"]}, "severity": "Medium"},
+	"custom": {"controls":{"AWS-Foundational-Security-Best-Practices_v1.0.0":["AWS-Foundational-Security-Best-Practices_v1.0.0_KMS.2"]},"severity":"Medium","author":"Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

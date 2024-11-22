@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "4.3_CloudWatch.1",
 	"title": "Ensure usage of 'root' account is monitored",
 	"description": "The use of the root account should be avoided as much as possible. When the root account is used, it's critical to monitor this activity in real-time by directing CloudTrail Logs to CloudWatch Logs, or an external SIEM environment, and establishing corresponding metric filters and alarms.",
-	"custom": {"controls": {"CIS-AWS-Foundations-Benchmark_v3.0.0": ["CIS-AWS-Foundations-Benchmark_v3.0.0_4.3"], "AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_CloudWatch.1"]}, "severity": "High", "author": "Starchitect Agent"},
+	"custom": {"controls":{"CIS-AWS-Foundations-Benchmark_v3.0.0":["CIS-AWS-Foundations-Benchmark_v3.0.0_4.3"],"AWS-Foundational-Security-Best-Practices_v1.0.0":["AWS-Foundational-Security-Best-Practices_v1.0.0_CloudWatch.1"]},"severity":"High","author":"Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

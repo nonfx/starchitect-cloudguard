@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "RDS.27",
 	"title": "RDS DB clusters should be encrypted at rest",
 	"description": "RDS DB clusters must be encrypted at rest to protect data confidentiality and meet compliance requirements for data storage security.",
-	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_RDS.27"]}, "severity": "Medium", "author": "Starchitect Agent"},
+	"custom": {"controls":{"AWS-Foundational-Security-Best-Practices_v1.0.0":["AWS-Foundational-Security-Best-Practices_v1.0.0_RDS.27"]},"severity":"Medium","author":"Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

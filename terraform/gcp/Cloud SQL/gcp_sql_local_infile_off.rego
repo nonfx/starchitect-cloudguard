@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "6.1.3",
 	"title": "Ensure That the 'Local_infile' Database Flag for Cloud SQL MySQL Instance Is Set to 'Off'",
 	"description": "It is recommended to set the local_infile database flag for a Cloud SQL MySQL instance to off to prevent unauthorized local data loading.",
-	"custom": {"controls": {"CIS-Google-Cloud-Platform-Foundation-Benchmark_v3.0.0": ["CIS-Google-Cloud-Platform-Foundation-Benchmark_v3.0.0_6.1.3"]}, "severity": "High", "author": "Starchitect Agent"},
+	"custom": {"controls":{"CIS-Google-Cloud-Platform-Foundation-Benchmark_v3.0.0":["CIS-Google-Cloud-Platform-Foundation-Benchmark_v3.0.0_6.1.3"]},"severity":"High","author":"Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

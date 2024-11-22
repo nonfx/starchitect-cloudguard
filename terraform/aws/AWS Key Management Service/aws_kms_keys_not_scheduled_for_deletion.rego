@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "KMS.3",
 	"title": "AWS KMS keys should not be scheduled for deletion",
 	"description": "This control checks if any KMS keys are scheduled for deletion. KMS keys and their encrypted data cannot be recovered once deleted, potentially causing permanent data loss.",
-	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_KMS.3"]}, "severity": "Critical"},
+	"custom": {"controls":{"AWS-Foundational-Security-Best-Practices_v1.0.0":["AWS-Foundational-Security-Best-Practices_v1.0.0_KMS.3"]},"severity":"Critical","author":"Starchitect Agent"},
 }
 
 # Define resource type

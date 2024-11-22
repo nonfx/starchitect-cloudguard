@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "EKS.8",
 	"title": "EKS clusters should have audit logging enabled",
 	"description": "EKS clusters must enable audit logging for security compliance, sending control plane logs to CloudWatch for monitoring and diagnostics.",
-	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_EKS.8"]}, "severity": "Medium"},
+	"custom": {"controls":{"AWS-Foundational-Security-Best-Practices_v1.0.0":["AWS-Foundational-Security-Best-Practices_v1.0.0_EKS.8"]},"severity":"Medium","author":"Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

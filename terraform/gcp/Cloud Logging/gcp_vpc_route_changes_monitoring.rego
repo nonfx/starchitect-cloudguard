@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "2.8",
 	"title": "Ensure That the Log Metric Filter and Alerts Exist for VPC Network Route Changes",
 	"description": "Monitor VPC network route changes through log metric filters and alerts to ensure traffic flows through expected paths.",
-	"custom": {"controls": {"CIS-Google-Cloud-Platform-Foundation-Benchmark_v3.0.0": ["CIS-Google-Cloud-Platform-Foundation-Benchmark_v3.0.0_2.8"]}, "severity": "Medium", "author": "Starchitect Agent"},
+	"custom": {"controls":{"CIS-Google-Cloud-Platform-Foundation-Benchmark_v3.0.0":["CIS-Google-Cloud-Platform-Foundation-Benchmark_v3.0.0_2.8"]},"severity":"Medium","author":"Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

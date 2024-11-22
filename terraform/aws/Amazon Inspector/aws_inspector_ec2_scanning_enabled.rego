@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "Inspector.1",
 	"title": "Amazon Inspector EC2 scanning should be enabled",
 	"description": "This control checks if Amazon Inspector EC2 scanning is enabled. Inspector helps identify security vulnerabilities and network accessibility issues in EC2 instances.",
-	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_Inspector.1"]}, "severity": "High", "author": "Starchitect Agent"},
+	"custom": {"controls":{"AWS-Foundational-Security-Best-Practices_v1.0.0":["AWS-Foundational-Security-Best-Practices_v1.0.0_Inspector.1"]},"severity":"High","author":"Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "EMR.2",
 	"title": "Amazon EMR block public access setting should be enabled",
 	"description": "This control checks if EMR block public access is enabled for the AWS account. The control fails if block public access is disabled or if ports other than 22 are allowed for inbound traffic.",
-	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_EMR.2"]}, "severity": "Critical", "author": "Starchitect Agent"},
+	"custom": {"controls":{"AWS-Foundational-Security-Best-Practices_v1.0.0":["AWS-Foundational-Security-Best-Practices_v1.0.0_EMR.2"]},"severity":"Critical","author":"Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

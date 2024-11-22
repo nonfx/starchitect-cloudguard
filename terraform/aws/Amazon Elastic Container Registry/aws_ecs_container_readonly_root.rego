@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "ECS.5",
 	"title": "ECS containers should be limited to read-only access to root filesystems",
 	"description": "This control checks if ECS containers are configured with read-only root filesystem access to prevent unauthorized modifications and enhance security.",
-	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_ECS.5"]}, "severity": "High", "author": "Starchitect Agent"},
+	"custom": {"controls":{"AWS-Foundational-Security-Best-Practices_v1.0.0":["AWS-Foundational-Security-Best-Practices_v1.0.0_ECS.5"]},"severity":"High","author":"Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

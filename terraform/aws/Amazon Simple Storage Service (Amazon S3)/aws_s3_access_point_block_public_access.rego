@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "S3.19",
 	"title": "S3 access points should have block public access settings enabled",
 	"description": "S3 access points must have block public access settings enabled to prevent unauthorized access and maintain security. All block public access settings should be enabled by default for new access points and cannot be changed after creation.",
-	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_S3.19"]}, "severity": "High", "author": "Starchitect Agent"},
+	"custom": {"controls":{"AWS-Foundational-Security-Best-Practices_v1.0.0":["AWS-Foundational-Security-Best-Practices_v1.0.0_S3.19"]},"severity":"High","author":"Starchitect Agent"},
 }
 
 # Define resource type for multiple resources

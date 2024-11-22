@@ -6,11 +6,7 @@ __rego__metadoc__ := {
 	"id": "APIGateway.9",
 	"title": "Access logging should be configured for API Gateway V2 Stages",
 	"description": "This control checks if Amazon API Gateway V2 stages have access logging configured. This control fails if access log settings aren't defined.",
-	"custom": {
-		"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_APIGateway.9"]},
-		"severity": "Medium",
-		"author": "Starchitect Agent",
-	},
+	"custom": {"controls":{"AWS-Foundational-Security-Best-Practices_v1.0.0":["AWS-Foundational-Security-Best-Practices_v1.0.0_APIGateway.9"]},"severity":"Medium","author":"Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

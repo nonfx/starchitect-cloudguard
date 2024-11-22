@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "9.7.b",
 	"title": "Ensure Monitoring and Alerting is Enabled - Alerting",
 	"description": "",
-	"custom": {"controls": {"CIS-AWS-Database-Services-Benchmark_v1.0.0": ["CIS-AWS-Database-Services-Benchmark_v1.0.0_9.7"]}, "author": "Starchitect Agent"},
+	"custom": {"controls":{"CIS-AWS-Database-Services-Benchmark_v1.0.0":["CIS-AWS-Database-Services-Benchmark_v1.0.0_9.7"]},"author":"Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

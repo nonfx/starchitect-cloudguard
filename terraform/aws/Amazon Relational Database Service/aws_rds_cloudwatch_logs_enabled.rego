@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "RDS.9",
 	"title": "RDS DB instances should publish logs to CloudWatch Logs",
 	"description": "This control checks if RDS DB instances are configured to publish logs to CloudWatch Logs for monitoring and auditing purposes.",
-	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_RDS.9"]}, "severity": "Medium", "author": "Starchitect Agent"},
+	"custom": {"controls":{"AWS-Foundational-Security-Best-Practices_v1.0.0":["AWS-Foundational-Security-Best-Practices_v1.0.0_RDS.9"]},"severity":"Medium","author":"Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

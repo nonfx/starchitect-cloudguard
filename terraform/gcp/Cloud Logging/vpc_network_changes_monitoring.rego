@@ -7,7 +7,7 @@ __rego__metadoc__ := {
 	"id": "2.9",
 	"title": "Ensure That the Log Metric Filter and Alerts Exist for VPC Network Changes",
 	"description": "Monitor VPC network changes through log metric filters and alerts to ensure network traffic security and integrity.",
-	"custom": {"controls": {"CIS-Google-Cloud-Platform-Foundation-Benchmark_v3.0.0": ["CIS-Google-Cloud-Platform-Foundation-Benchmark_v3.0.0_2.9"]}, "severity": "Medium", "author": "Starchitect Agent"},
+	"custom": {"controls":{"CIS-Google-Cloud-Platform-Foundation-Benchmark_v3.0.0":["CIS-Google-Cloud-Platform-Foundation-Benchmark_v3.0.0_2.9"]},"severity":"Medium","author":"Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

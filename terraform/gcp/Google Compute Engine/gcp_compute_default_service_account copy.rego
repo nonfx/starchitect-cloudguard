@@ -6,10 +6,7 @@ __rego__metadoc__ := {
 	"id": "4.2",
 	"title": "Ensure instances are not configured to use the default service account with full access to all Cloud APIs",
 	"description": "VM instances should not use the default service account with full API access to maintain least privilege principle and prevent potential privilege escalation.",
-	"custom": {
-		"controls": {"CIS-Google-Cloud-Platform-Foundation-Benchmark_v3.0.0": ["CIS-Google-Cloud-Platform-Foundation-Benchmark_v3.0.0_4.2"]},
-		"severity": "High",
-	},
+	"custom": {"controls":{"CIS-Google-Cloud-Platform-Foundation-Benchmark_v3.0.0":["CIS-Google-Cloud-Platform-Foundation-Benchmark_v3.0.0_4.2"]},"severity":"High","author":"Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

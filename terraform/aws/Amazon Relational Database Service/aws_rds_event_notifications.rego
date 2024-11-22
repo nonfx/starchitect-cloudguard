@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "RDS.19",
 	"title": "Existing RDS event notification subscriptions should be configured for critical cluster events",
 	"description": "This control checks whether RDS event subscriptions are configured to monitor critical cluster events.",
-	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_RDS.19"]}, "severity": "Low", "author": "Starchitect Agent"},
+	"custom": {"controls":{"AWS-Foundational-Security-Best-Practices_v1.0.0":["AWS-Foundational-Security-Best-Practices_v1.0.0_RDS.19"]},"severity":"Low","author":"Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

@@ -6,10 +6,7 @@ __rego__metadoc__ := {
 	"id": "DMS.8",
 	"title": "DMS replication tasks for the source database should have logging enabled",
 	"description": "This control checks whether AWS Database Migration Service (DMS) replication tasks have logging enabled with appropriate severity levels for source database operations.",
-	"custom": {
-		"severity": "Medium",
-		"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_DMS.8"]},
-	},
+	"custom": {"severity":"Medium","controls":{"AWS-Foundational-Security-Best-Practices_v1.0.0":["AWS-Foundational-Security-Best-Practices_v1.0.0_DMS.8"]},"author":"Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

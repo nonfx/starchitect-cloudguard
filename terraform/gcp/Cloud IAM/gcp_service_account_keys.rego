@@ -6,10 +6,7 @@ __rego__metadoc__ := {
 	"id": "1.4",
 	"title": "Ensure That There Are Only GCP-Managed Service Account Keys",
 	"description": "Service accounts should only use GCP-managed keys and avoid user-managed service account keys to reduce security risks.",
-	"custom": {
-		"controls": {"CIS-Google-Cloud-Platform-Foundation-Benchmark_v3.0.0": ["CIS-Google-Cloud-Platform-Foundation-Benchmark_v3.0.0_1.4"]},
-		"severity": "High",
-	},
+	"custom": {"controls":{"CIS-Google-Cloud-Platform-Foundation-Benchmark_v3.0.0":["CIS-Google-Cloud-Platform-Foundation-Benchmark_v3.0.0_1.4"]},"severity":"High","author":"Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

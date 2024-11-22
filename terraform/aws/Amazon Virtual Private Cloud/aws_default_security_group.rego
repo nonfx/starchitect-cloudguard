@@ -8,11 +8,7 @@ __rego__metadoc__ := {
 	"id": "5.4",
 	"title": "Ensure the default security group of every VPC restricts all traffic",
 	"description": "A VPC comes with a default security group whose initial settings deny all inbound traffic, allow all outbound traffic, and allow all traffic between instances assigned to the security group. If you don't specify a security group when you launch an instance, the instance is automatically assigned to this default security group. Security groups provide stateful filtering of ingress/egress network traffic to AWS resources. It is recommended that the default security group restrict all traffic.",
-	"custom": {
-		"controls": {"CIS-AWS-Foundations-Benchmark_v3.0.0": ["CIS-AWS-Foundations-Benchmark_v3.0.0_5.4"]},
-		"severity": "Low",
-		"author": "Starchitect Agent",
-	},
+	"custom": {"controls":{"CIS-AWS-Foundations-Benchmark_v3.0.0":["CIS-AWS-Foundations-Benchmark_v3.0.0_5.4"]},"severity":"Low","author":"Starchitect Agent"},
 }
 
 policy[j] {

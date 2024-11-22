@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "6.2.4",
 	"title": "Ensure 'Log_statement' Database Flag for Cloud SQL PostgreSQL Instance Is Set Appropriately",
 	"description": "Configure PostgreSQL log_statement flag to 'ddl' for appropriate SQL statement logging in Cloud SQL instances for security auditing.",
-	"custom": {"controls": {"CIS-Google-Cloud-Platform-Foundation-Benchmark_v3.0.0": ["CIS-Google-Cloud-Platform-Foundation-Benchmark_v3.0.0_6.2.4"]}, "severity": "Medium", "author": "Starchitect Agent"},
+	"custom": {"controls":{"CIS-Google-Cloud-Platform-Foundation-Benchmark_v3.0.0":["CIS-Google-Cloud-Platform-Foundation-Benchmark_v3.0.0_6.2.4"]},"severity":"Medium","author":"Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

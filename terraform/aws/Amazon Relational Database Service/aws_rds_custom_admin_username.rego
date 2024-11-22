@@ -7,7 +7,7 @@ __rego__metadoc__ := {
 	"id": "RDS.24",
 	"title": "RDS Database clusters should use a custom administrator username",
 	"description": "RDS database clusters must use custom administrator usernames instead of default values to enhance security.",
-	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_RDS.24"]}, "severity": "Medium", "author": "Starchitect Agent"},
+	"custom": {"controls":{"AWS-Foundational-Security-Best-Practices_v1.0.0":["AWS-Foundational-Security-Best-Practices_v1.0.0_RDS.24"]},"severity":"Medium","author":"Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

@@ -6,10 +6,7 @@ __rego__metadoc__ := {
 	"id": "4.4",
 	"title": "Ensure Oslogin Is Enabled for a Project",
 	"description": "Enable OS login in GCP projects to bind SSH certificates with IAM users for centralized SSH key management. This helps in automated SSH key pair management and efficient handling of user access revocation.",
-	"custom": {
-		"controls": {"CIS-Google-Cloud-Platform-Foundation-Benchmark_v3.0.0": ["CIS-Google-Cloud-Platform-Foundation-Benchmark_v3.0.0_4.4"]},
-		"severity": "Medium",
-	},
+	"custom": {"controls":{"CIS-Google-Cloud-Platform-Foundation-Benchmark_v3.0.0":["CIS-Google-Cloud-Platform-Foundation-Benchmark_v3.0.0_4.4"]},"severity":"Medium","author":"Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

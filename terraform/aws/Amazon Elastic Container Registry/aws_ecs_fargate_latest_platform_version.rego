@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "ECS.10",
 	"title": "ECS Fargate services should run on the latest Fargate platform version",
 	"description": "ECS Fargate services must run on the latest platform version (Linux 1.4.0 or Windows 1.0.0) to ensure security updates.",
-	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_ECS.10"]}, "severity": "Medium", "author": "Starchitect Agent"},
+	"custom": {"controls":{"AWS-Foundational-Security-Best-Practices_v1.0.0":["AWS-Foundational-Security-Best-Practices_v1.0.0_ECS.10"]},"severity":"Medium","author":"Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

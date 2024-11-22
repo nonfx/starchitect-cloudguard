@@ -7,7 +7,7 @@ __rego__metadoc__ := {
 	"id": "4.11",
 	"title": "Ensure that the runtime environment versions used for your Lambda functions do not have end of support dates",
 	"description": "Always using a recent version of the execution environment configured for your Amazon Lambda functions adheres to best practices for the newest software features, the latest security patches and bug fixes, and performance and reliability",
-	"custom": {"controls": {"CIS-AWS-Compute-Services-Benchmark_v1.0.0": ["CIS-AWS-Compute-Services-Benchmark_v1.0.0_4.11"]}, "author": "Starchitect Agent"},
+	"custom": {"controls":{"CIS-AWS-Compute-Services-Benchmark_v1.0.0":["CIS-AWS-Compute-Services-Benchmark_v1.0.0_4.11"]},"author":"Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

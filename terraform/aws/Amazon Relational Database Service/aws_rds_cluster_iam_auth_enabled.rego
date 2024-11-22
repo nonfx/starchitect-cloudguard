@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "RDS.12",
 	"title": "IAM authentication should be configured for RDS clusters",
 	"description": "IAM authentication should be enabled for RDS clusters to allow password-free, token-based authentication with SSL encryption.",
-	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_RDS.12"]}, "severity": "Medium", "author": "Starchitect Agent"},
+	"custom": {"controls":{"AWS-Foundational-Security-Best-Practices_v1.0.0":["AWS-Foundational-Security-Best-Practices_v1.0.0_RDS.12"]},"severity":"Medium","author":"Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

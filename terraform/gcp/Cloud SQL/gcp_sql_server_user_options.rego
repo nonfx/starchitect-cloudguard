@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "6.3.4",
 	"title": "Ensure 'user options' database flag for Cloud SQL SQL Server instance is not configured",
 	"description": "It is recommended that user options database flag for Cloud SQL SQL Server instance should not be configured to maintain secure default query processing settings.",
-	"custom": {"controls": {"CIS-Google-Cloud-Platform-Foundation-Benchmark_v3.0.0": ["CIS-Google-Cloud-Platform-Foundation-Benchmark_v3.0.0_6.3.4"]}, "severity": "Medium", "author": "Starchitect Agent"},
+	"custom": {"controls":{"CIS-Google-Cloud-Platform-Foundation-Benchmark_v3.0.0":["CIS-Google-Cloud-Platform-Foundation-Benchmark_v3.0.0_6.3.4"]},"severity":"Medium","author":"Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

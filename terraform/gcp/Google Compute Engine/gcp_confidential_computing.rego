@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "4.11",
 	"title": "Ensure That Compute Instances Have Confidential Computing Enabled",
 	"description": "Compute instances must have Confidential Computing enabled to encrypt data during processing using AMD EPYC CPUs' SEV feature.",
-	"custom": {"controls": {"CIS-Google-Cloud-Platform-Foundation-Benchmark_v3.0.0": ["CIS-Google-Cloud-Platform-Foundation-Benchmark_v3.0.0_4.11"]}, "severity": "High", "author": "Starchitect Agent"},
+	"custom": {"controls":{"CIS-Google-Cloud-Platform-Foundation-Benchmark_v3.0.0":["CIS-Google-Cloud-Platform-Foundation-Benchmark_v3.0.0_4.11"]},"severity":"High","author":"Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

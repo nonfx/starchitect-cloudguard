@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "ElastiCache.2",
 	"title": "ElastiCache Redis clusters should have auto minor version upgrades enabled",
 	"description": "ElastiCache Redis clusters must enable automatic minor version upgrades for enhanced security and bug fixes.",
-	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_ElastiCache.2"]}, "severity": "High"},
+	"custom": {"controls":{"AWS-Foundational-Security-Best-Practices_v1.0.0":["AWS-Foundational-Security-Best-Practices_v1.0.0_ElastiCache.2"]},"severity":"High","author":"Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

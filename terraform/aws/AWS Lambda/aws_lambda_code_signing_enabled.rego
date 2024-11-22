@@ -6,11 +6,7 @@ __rego__metadoc__ := {
 	"id": "AWS_Lambda_4.8",
 	"title": "Ensure that Code Signing is enabled for Lambda functions",
 	"description": "Ensure that all your Amazon Lambda functions are configured to use the Code Signing feature in order to restrict the deployment of unverified code.",
-	"custom": {
-		"controls": {"CIS-AWS-Compute-Services-Benchmark_v1.0.0": ["CIS-AWS-Compute-Services-Benchmark_v1.0.0_4.8"]},
-		"severity": "Low",
-		"author": "Starchitect Agent",
-	},
+	"custom": {"controls":{"CIS-AWS-Compute-Services-Benchmark_v1.0.0":["CIS-AWS-Compute-Services-Benchmark_v1.0.0_4.8"]},"severity":"Low","author":"Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

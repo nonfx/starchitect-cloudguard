@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "DocumentDB.1",
 	"title": "Amazon DocumentDB clusters should be encrypted at rest",
 	"description": "Amazon DocumentDB clusters must implement encryption at rest using AES-256 for enhanced data security and compliance.",
-	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_DocumentDB.1"]}, "severity": "Medium"},
+	"custom": {"controls":{"AWS-Foundational-Security-Best-Practices_v1.0.0":["AWS-Foundational-Security-Best-Practices_v1.0.0_DocumentDB.1"]},"severity":"Medium","author":"Starchitect Agent"},
 }
 
 # Define resource type for multiple resources

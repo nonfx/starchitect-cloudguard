@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "ECS.2",
 	"title": "ECS services should not have public IP addresses assigned to them automatically",
 	"description": "This control checks if ECS services are configured to automatically assign public IP addresses. Services with automatic public IP assignment are accessible from the internet, which may pose security risks.",
-	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_ECS.2"]}, "severity": "High", "author": "Starchitect Agent"},
+	"custom": {"controls":{"AWS-Foundational-Security-Best-Practices_v1.0.0":["AWS-Foundational-Security-Best-Practices_v1.0.0_ECS.2"]},"severity":"High","author":"Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

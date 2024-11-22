@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "FSx.2",
 	"title": "FSx for Lustre file systems should be configured to copy tags to backups",
 	"description": "FSx for Lustre file systems must be configured to automatically copy resource tags to their backup snapshots for proper resource tracking.",
-	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_FSx.2"]}, "severity": "Low"},
+	"custom": {"controls":{"AWS-Foundational-Security-Best-Practices_v1.0.0":["AWS-Foundational-Security-Best-Practices_v1.0.0_FSx.2"]},"severity":"Low","author":"Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

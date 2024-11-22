@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "5.3.a",
 	"title": "Ensure Encryption at Rest and in Transit is configured - at rest",
 	"description": "Enabling encryption at rest and in transit for Amazon ElastiCache helps protect your data when it is stored and transmitted",
-	"custom": {"controls": {"CIS-AWS-Database-Services-Benchmark_v1.0.0": ["CIS-AWS-Database-Services-Benchmark_v1.0.0_5.3"]}, "author": "Starchitect Agent"},
+	"custom": {"controls":{"CIS-AWS-Database-Services-Benchmark_v1.0.0":["CIS-AWS-Database-Services-Benchmark_v1.0.0_5.3"]},"author":"Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

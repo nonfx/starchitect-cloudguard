@@ -6,11 +6,7 @@ __rego__metadoc__ := {
 	"id": "1.17",
 	"title": "Ensure a support role has been created to manage incidents with AWS Support",
 	"description": "AWS provides a support center that can be used for incident notification and response, as well as technical support and customer services. Create an IAM Role to allow authorized users to manage incidents with AWS Support.",
-	"custom": {
-		"controls": {"CIS-AWS-Foundations-Benchmark_v3.0.0": ["CIS-AWS-Foundations-Benchmark_v3.0.0_1.17"]},
-		"severity": "Medium",
-		"author": "Starchitect Agent",
-	},
+	"custom": {"controls":{"CIS-AWS-Foundations-Benchmark_v3.0.0":["CIS-AWS-Foundations-Benchmark_v3.0.0_1.17"]},"severity":"Medium","author":"Starchitect Agent"},
 }
 
 # Policy evaluation

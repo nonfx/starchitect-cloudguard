@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "Opensearch.8",
 	"title": "Connections to OpenSearch domains should be encrypted using the latest TLS security policy",
 	"description": "OpenSearch domains should be configured to use the latest TLS security policy for encrypted connections to ensure data protection in transit.",
-	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_Opensearch.8"]}, "severity": "Medium", "author": "Starchitect Agent"},
+	"custom": {"controls":{"AWS-Foundational-Security-Best-Practices_v1.0.0":["AWS-Foundational-Security-Best-Practices_v1.0.0_Opensearch.8"]},"severity":"Medium","author":"Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

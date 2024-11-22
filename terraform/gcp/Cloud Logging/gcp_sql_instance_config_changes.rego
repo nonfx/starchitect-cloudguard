@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "2.11",
 	"title": "Ensure Log Metric Filter and Alerts Exist for SQL Instance Configuration Changes",
 	"description": "Monitor SQL instance configuration changes through metric filters and alerts to detect and respond to security-impacting modifications.",
-	"custom": {"controls": {"CIS-Google-Cloud-Platform-Foundation-Benchmark_v3.0.0": ["CIS-Google-Cloud-Platform-Foundation-Benchmark_v3.0.0_2.11"]}, "severity": "Medium", "author": "Starchitect Agent"},
+	"custom": {"controls":{"CIS-Google-Cloud-Platform-Foundation-Benchmark_v3.0.0":["CIS-Google-Cloud-Platform-Foundation-Benchmark_v3.0.0_2.11"]},"severity":"Medium","author":"Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

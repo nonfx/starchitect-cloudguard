@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "EC2.15",
 	"title": "Amazon EC2 subnets should not automatically assign public IP addresses",
 	"description": "This control checks if EC2 subnets are configured to automatically assign public IP addresses. The control fails if the subnet's MapPublicIpOnLaunch attribute is set to true.",
-	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_EC2.15"]}, "severity": "Medium"},
+	"custom": {"controls":{"AWS-Foundational-Security-Best-Practices_v1.0.0":["AWS-Foundational-Security-Best-Practices_v1.0.0_EC2.15"]},"severity":"Medium","author":"Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

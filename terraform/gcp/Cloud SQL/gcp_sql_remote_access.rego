@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "6.3.5",
 	"title": "Ensure 'remote access' database flag for Cloud SQL SQL Server instance is set to 'off'",
 	"description": "It is recommended to set remote access database flag for Cloud SQL SQL Server instance to off.",
-	"custom": {"controls": {"CIS-Google-Cloud-Platform-Foundation-Benchmark_v3.0.0": ["CIS-Google-Cloud-Platform-Foundation-Benchmark_v3.0.0_6.3.5"]}, "severity": "Medium", "author": "Starchitect Agent"},
+	"custom": {"controls":{"CIS-Google-Cloud-Platform-Foundation-Benchmark_v3.0.0":["CIS-Google-Cloud-Platform-Foundation-Benchmark_v3.0.0_6.3.5"]},"severity":"Medium","author":"Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

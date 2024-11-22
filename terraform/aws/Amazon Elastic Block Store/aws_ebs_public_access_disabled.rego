@@ -6,11 +6,7 @@ __rego__metadoc__ := {
 	"id": "2.2.2",
 	"title": "Ensure Public Access to EBS Snapshots is Disabled",
 	"description": "To protect your data, ensure that public access to EBS snapshots is properly managed.",
-	"custom": {
-		"controls": {"CIS-AWS-Compute-Services-Benchmark_v1.0.0": ["CIS-AWS-Compute-Services-Benchmark_v1.0.0_2.2.2"]},
-		"severity": "High",
-		"author": "Starchitect Agent",
-	},
+	"custom": {"controls":{"CIS-AWS-Compute-Services-Benchmark_v1.0.0":["CIS-AWS-Compute-Services-Benchmark_v1.0.0_2.2.2"]},"severity":"High","author":"Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

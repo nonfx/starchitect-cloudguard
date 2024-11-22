@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "5.2",
 	"title": "Ensure uniform bucket-level access is enabled for Cloud Storage buckets",
 	"description": "Uniform bucket-level access ensures consistent use of IAM permissions and simplifies access management.",
-	"custom": {"severity": "Medium", "controls": {"CIS-Google-Cloud-Platform-Foundation-Benchmark_v3.0.0": ["CIS-Google-Cloud-Platform-Foundation-Benchmark_v3.0.0_5.2"]}, "author": "Starchitect Agent"},
+	"custom": {"severity":"Medium","controls":{"CIS-Google-Cloud-Platform-Foundation-Benchmark_v3.0.0":["CIS-Google-Cloud-Platform-Foundation-Benchmark_v3.0.0_5.2"]},"author":"Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

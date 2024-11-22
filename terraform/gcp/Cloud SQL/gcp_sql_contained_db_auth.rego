@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "6.3.7",
 	"title": "Ensure that the 'contained database authentication' database flag for Cloud SQL on the SQL Server instance is not set to 'on'",
 	"description": "It is recommended not to set contained database authentication database flag for Cloud SQL on the SQL Server instance to on.",
-	"custom": {"controls": {"CIS-Google-Cloud-Platform-Foundation-Benchmark_v3.0.0": ["CIS-Google-Cloud-Platform-Foundation-Benchmark_v3.0.0_6.3.7"]}, "severity": "Medium", "author": "Starchitect Agent"},
+	"custom": {"controls":{"CIS-Google-Cloud-Platform-Foundation-Benchmark_v3.0.0":["CIS-Google-Cloud-Platform-Foundation-Benchmark_v3.0.0_6.3.7"]},"severity":"Medium","author":"Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

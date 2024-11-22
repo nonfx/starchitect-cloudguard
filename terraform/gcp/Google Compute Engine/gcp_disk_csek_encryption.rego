@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "4.7",
 	"title": "Ensure VM Disks for Critical VMs Are Encrypted With Customer-Supplied Encryption Key (CSEK)",
 	"description": "Customer-Supplied Encryption Keys (CSEK) are required for critical VM disks to ensure enhanced data protection and control over encryption keys.",
-	"custom": {"controls": {"CIS-Google-Cloud-Platform-Foundation-Benchmark_v3.0.0": ["CIS-Google-Cloud-Platform-Foundation-Benchmark_v3.0.0_4.7"]}, "severity": "High", "author": "Starchitect Agent"},
+	"custom": {"controls":{"CIS-Google-Cloud-Platform-Foundation-Benchmark_v3.0.0":["CIS-Google-Cloud-Platform-Foundation-Benchmark_v3.0.0_4.7"]},"severity":"High","author":"Starchitect Agent"},
 }
 
 # Define resource type as MULTIPLE since we're checking multiple disk resources

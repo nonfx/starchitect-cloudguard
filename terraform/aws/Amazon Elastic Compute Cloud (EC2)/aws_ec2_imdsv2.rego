@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "5.6",
 	"title": "Ensure that EC2 Metadata Service only allows IMDSv2",
 	"description": "When enabling the Metadata Service on AWS EC2 instances, users have the option of using either Instance Metadata Service Version 1 (IMDSv1; a request/response method) or Instance Metadata Service Version 2 (IMDSv2; a session-oriented method).",
-	"custom": {"controls": {"CIS-AWS-Foundations-Benchmark_v3.0.0": ["CIS-AWS-Foundations-Benchmark_v3.0.0_5.6"]}, "author": "Starchitect Agent"},
+	"custom": {"controls":{"CIS-AWS-Foundations-Benchmark_v3.0.0":["CIS-AWS-Foundations-Benchmark_v3.0.0_5.6"]},"author":"Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

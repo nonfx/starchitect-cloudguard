@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "EventBridge.3",
 	"title": "EventBridge custom event buses should have a resource-based policy attached",
 	"description": "EventBridge custom event buses must have resource-based policies attached to control access and limit permissions effectively.",
-	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_EventBridge.3"]}, "severity": "Low", "author": "Starchitect Agent"},
+	"custom": {"controls":{"AWS-Foundational-Security-Best-Practices_v1.0.0":["AWS-Foundational-Security-Best-Practices_v1.0.0_EventBridge.3"]},"severity":"Low","author":"Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

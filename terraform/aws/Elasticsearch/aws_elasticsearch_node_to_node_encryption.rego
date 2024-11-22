@@ -6,10 +6,7 @@ __rego__metadoc__ := {
 	"id": "ES.3",
 	"title": "Elasticsearch domains should encrypt data sent between nodes",
 	"description": "Elasticsearch domains must enable node-to-node encryption to secure intra-cluster communications and prevent potential eavesdropping attacks.",
-	"custom": {
-		"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_ES.3"]},
-		"severity": "Medium",
-	},
+	"custom": {"controls":{"AWS-Foundational-Security-Best-Practices_v1.0.0":["AWS-Foundational-Security-Best-Practices_v1.0.0_ES.3"]},"severity":"Medium","author":"Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

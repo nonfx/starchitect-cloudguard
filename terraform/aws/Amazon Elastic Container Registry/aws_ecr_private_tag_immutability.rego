@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "ECR.2",
 	"title": "ECR private repositories should have tag immutability configured",
 	"description": "This control checks if private ECR repositories have tag immutability enabled. Immutable tags prevent overwriting of container images, ensuring consistent deployments and reducing security risks.",
-	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_ECR.2"]}, "severity": "Medium"},
+	"custom": {"controls":{"AWS-Foundational-Security-Best-Practices_v1.0.0":["AWS-Foundational-Security-Best-Practices_v1.0.0_ECR.2"]},"severity":"Medium","author":"Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

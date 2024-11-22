@@ -6,11 +6,7 @@ __rego__metadoc__ := {
 	"id": "1.15",
 	"title": "Ensure IAM Users Receive Permissions Only Through Groups",
 	"description": "IAM users should be granted permissions only through groups. Directly attached policies or inline policies should be avoided.",
-	"custom": {
-		"controls": {"CIS-AWS-Foundations-Benchmark_v3.0.0": ["CIS-AWS-Foundations-Benchmark_v3.0.0_1.15"]},
-		"severity": "Medium",
-		"author": "Starchitect Agent",
-	},
+	"custom": {"controls":{"CIS-AWS-Foundations-Benchmark_v3.0.0":["CIS-AWS-Foundations-Benchmark_v3.0.0_1.15"]},"severity":"Medium","author":"Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

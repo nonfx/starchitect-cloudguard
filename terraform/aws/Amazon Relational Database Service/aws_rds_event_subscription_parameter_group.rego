@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "RDS.21",
 	"title": "An RDS event notifications subscription should be configured for critical database parameter group events",
 	"description": "This control checks whether an RDS event subscription exists that monitors parameter group configuration changes. Event notifications using Amazon SNS help in rapid response to changes.",
-	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_RDS.21"]}, "severity": "Low", "author": "Starchitect Agent"},
+	"custom": {"controls":{"AWS-Foundational-Security-Best-Practices_v1.0.0":["AWS-Foundational-Security-Best-Practices_v1.0.0_RDS.21"]},"severity":"Low","author":"Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

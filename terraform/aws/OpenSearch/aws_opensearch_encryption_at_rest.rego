@@ -8,7 +8,7 @@ __rego__metadoc__ := {
 	"id": "OpenSearch.1",
 	"title": "OpenSearch domains should have encryption at rest enabled",
 	"description": "OpenSearch domains must enable encryption at rest using AWS KMS with AES-256 for secure data protection.",
-	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_OpenSearch.1"]}, "severity": "Medium", "author": "Starchitect Agent"},
+	"custom": {"controls":{"AWS-Foundational-Security-Best-Practices_v1.0.0":["AWS-Foundational-Security-Best-Practices_v1.0.0_OpenSearch.1"]},"severity":"Medium","author":"Starchitect Agent"},
 }
 
 # Specify that this rule applies to multiple resource types

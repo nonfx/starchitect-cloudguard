@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "GuardDuty.1",
 	"title": "GuardDuty should be enabled",
 	"description": "GuardDuty must be enabled across all AWS regions to detect unauthorized activity and monitor CloudTrail events for global services.",
-	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_GuardDuty.1"]}, "severity": "High"},
+	"custom": {"controls":{"AWS-Foundational-Security-Best-Practices_v1.0.0":["AWS-Foundational-Security-Best-Practices_v1.0.0_GuardDuty.1"]},"severity":"High","author":"Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

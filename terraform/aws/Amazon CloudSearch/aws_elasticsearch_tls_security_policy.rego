@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "ES.8",
 	"title": "Elasticsearch domains should be encrypted using the latest TLS security policy",
 	"description": "Elasticsearch domains must use the latest TLS security policy (Policy-Min-TLS-1-2-PFS-2023-10) for encrypted connections to ensure data security.",
-	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_ES.8"]}, "severity": "Medium"},
+	"custom": {"controls":{"AWS-Foundational-Security-Best-Practices_v1.0.0":["AWS-Foundational-Security-Best-Practices_v1.0.0_ES.8"]},"severity":"Medium","author":"Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

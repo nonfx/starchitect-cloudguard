@@ -6,11 +6,7 @@ __rego__metadoc__ := {
 	"id": "2.1.2",
 	"title": "Ensure Images (AMI's) are encrypted",
 	"description": "Amazon Machine Images should utilize EBS Encrypted snapshots.",
-	"custom": {
-		"controls": {"CIS-AWS-Compute-Services-Benchmark_v1.0.0": ["CIS-AWS-Compute-Services-Benchmark_v1.0.0_2.1.2"]},
-		"severity": "High",
-		"author": "Starchitect Agent",
-	},
+	"custom": {"controls":{"CIS-AWS-Compute-Services-Benchmark_v1.0.0":["CIS-AWS-Compute-Services-Benchmark_v1.0.0_2.1.2"]},"severity":"High","author":"Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

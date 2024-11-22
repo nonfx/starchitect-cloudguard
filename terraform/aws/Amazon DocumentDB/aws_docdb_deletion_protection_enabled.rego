@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "DocumentDB.5",
 	"title": "Amazon DocumentDB clusters should have deletion protection enabled",
 	"description": "Amazon DocumentDB clusters must enable deletion protection to prevent accidental or unauthorized database deletion.",
-	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_DocumentDB.5"]}, "severity": "Medium"},
+	"custom": {"controls":{"AWS-Foundational-Security-Best-Practices_v1.0.0":["AWS-Foundational-Security-Best-Practices_v1.0.0_DocumentDB.5"]},"severity":"Medium","author":"Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

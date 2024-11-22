@@ -6,10 +6,7 @@ __rego__metadoc__ := {
 	"id": "OpenSearch.6",
 	"title": "OpenSearch domains should have at least three data nodes",
 	"description": "OpenSearch domains must have at least three data nodes and zone awareness enabled for high availability and fault tolerance.",
-	"custom": {
-		"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_OpenSearch.6"]},
-		"severity": "Medium",
-	},
+	"custom": {"controls":{"AWS-Foundational-Security-Best-Practices_v1.0.0":["AWS-Foundational-Security-Best-Practices_v1.0.0_OpenSearch.6"]},"severity":"Medium","author":"Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

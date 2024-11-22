@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "ECR.3",
 	"title": "ECR repositories should have at least one lifecycle policy configured",
 	"description": "This control checks if Amazon ECR repositories have at least one lifecycle policy configured. Lifecycle policies help manage container images by automatically cleaning up unused images based on age or count criteria.",
-	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_ECR.3"]}, "severity": "Medium"},
+	"custom": {"controls":{"AWS-Foundational-Security-Best-Practices_v1.0.0":["AWS-Foundational-Security-Best-Practices_v1.0.0_ECR.3"]},"severity":"Medium","author":"Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

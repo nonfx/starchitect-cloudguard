@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "RDS.15",
 	"title": "RDS DB clusters should be configured for multiple Availability Zones",
 	"description": "This control checks whether RDS DB clusters are configured with multiple Availability Zones for high availability and automated failover capabilities.",
-	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_RDS.15"]}, "severity": "Medium", "author": "Starchitect Agent"},
+	"custom": {"controls":{"AWS-Foundational-Security-Best-Practices_v1.0.0":["AWS-Foundational-Security-Best-Practices_v1.0.0_RDS.15"]},"severity":"Medium","author":"Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

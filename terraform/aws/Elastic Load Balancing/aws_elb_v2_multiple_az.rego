@@ -6,10 +6,7 @@ __rego__metadoc__ := {
 	"id": "ELB.13",
 	"title": "Application, Network and Gateway Load Balancers should span multiple Availability Zones",
 	"description": "Application, Network, and Gateway Load Balancers must be configured with multiple Availability Zones for high availability and fault tolerance.",
-	"custom": {
-		"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_ELB.13"]},
-		"severity": "Medium",
-	},
+	"custom": {"controls":{"AWS-Foundational-Security-Best-Practices_v1.0.0":["AWS-Foundational-Security-Best-Practices_v1.0.0_ELB.13"]},"severity":"Medium","author":"Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

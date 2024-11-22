@@ -6,10 +6,7 @@ __rego__metadoc__ := {
 	"id": "Redshift.1",
 	"title": "Amazon Redshift clusters should prohibit public access",
 	"description": "Amazon Redshift clusters must be configured to prohibit public access for enhanced security and compliance with standards.",
-	"custom": {
-		"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_Redshift.1"]},
-		"severity": "Critical",
-	},
+	"custom": {"controls":{"AWS-Foundational-Security-Best-Practices_v1.0.0":["AWS-Foundational-Security-Best-Practices_v1.0.0_Redshift.1"]},"severity":"Critical","author":"Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

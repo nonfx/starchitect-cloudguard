@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "2.5",
 	"title": "Ensure That the Log Metric Filter and Alerts Exist for Audit Configuration Changes",
 	"description": "Monitor and alert on GCP audit configuration changes using log metrics and alert policies for security compliance.",
-	"custom": {"controls": {"CIS-Google-Cloud-Platform-Foundation-Benchmark_v3.0.0": ["CIS-Google-Cloud-Platform-Foundation-Benchmark_v3.0.0_2.5"]}, "severity": "High", "author": "Starchitect Agent"},
+	"custom": {"controls":{"CIS-Google-Cloud-Platform-Foundation-Benchmark_v3.0.0":["CIS-Google-Cloud-Platform-Foundation-Benchmark_v3.0.0_2.5"]},"severity":"High","author":"Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

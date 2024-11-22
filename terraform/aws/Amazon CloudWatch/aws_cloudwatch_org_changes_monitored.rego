@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "4.15",
 	"title": "Ensure AWS Organizations changes are monitored",
 	"description": "Real-time monitoring of API calls can be achieved by directing CloudTrail Logs to CloudWatch Logs and establishing corresponding metric filters and alarms. It is recommended that a metric filter and alarm be established for AWS Organizations changes made in the master AWS Account.",
-	"custom": {"controls": {"CIS-AWS-Foundations-Benchmark_v3.0.0": ["CIS-AWS-Foundations-Benchmark_v3.0.0_4.15"]}, "author": "Starchitect Agent"},
+	"custom": {"controls":{"CIS-AWS-Foundations-Benchmark_v3.0.0":["CIS-AWS-Foundations-Benchmark_v3.0.0_4.15"]},"author":"Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

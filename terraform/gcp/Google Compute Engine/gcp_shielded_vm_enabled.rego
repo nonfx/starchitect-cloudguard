@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "4.8",
 	"title": "Ensure Compute Instances Are Launched With Shielded VM Enabled",
 	"description": "To defend against advanced threats and ensure that the boot loader and firmware on your VMs are signed and untampered, Compute instances must have Shielded VM enabled.",
-	"custom": {"controls": {"CIS-Google-Cloud-Platform-Foundation-Benchmark_v3.0.0": ["CIS-Google-Cloud-Platform-Foundation-Benchmark_v3.0.0_4.8"]}, "severity": "High", "author": "Starchitect Agent"},
+	"custom": {"controls":{"CIS-Google-Cloud-Platform-Foundation-Benchmark_v3.0.0":["CIS-Google-Cloud-Platform-Foundation-Benchmark_v3.0.0_4.8"]},"severity":"High","author":"Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

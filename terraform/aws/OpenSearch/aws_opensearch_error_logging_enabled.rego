@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "Opensearch.4",
 	"title": "OpenSearch domain error logging to CloudWatch Logs should be enabled",
 	"description": "OpenSearch domains must enable error logging to CloudWatch Logs for security monitoring and compliance tracking.",
-	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_Opensearch.4"]}, "severity": "Medium", "author": "Starchitect Agent"},
+	"custom": {"controls":{"AWS-Foundational-Security-Best-Practices_v1.0.0":["AWS-Foundational-Security-Best-Practices_v1.0.0_Opensearch.4"]},"severity":"Medium","author":"Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

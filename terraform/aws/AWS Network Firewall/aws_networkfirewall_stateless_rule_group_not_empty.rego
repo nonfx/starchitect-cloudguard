@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "NetworkFirewall.6",
 	"title": "Stateless Network Firewall rule group should not be empty",
 	"description": "AWS Network Firewall stateless rule groups must contain rules to effectively process and filter VPC traffic.",
-	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_NetworkFirewall.6"]}, "severity": "Medium", "author": "Starchitect Agent"},
+	"custom": {"controls":{"AWS-Foundational-Security-Best-Practices_v1.0.0":["AWS-Foundational-Security-Best-Practices_v1.0.0_NetworkFirewall.6"]},"severity":"Medium","author":"Starchitect Agent"},
 }
 
 # Define resource type for multiple resources

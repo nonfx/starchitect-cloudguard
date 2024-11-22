@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "4.6",
 	"title": "Ensure That IP Forwarding Is Not Enabled on Instances",
 	"description": "Compute Engine instance cannot forward a packet unless the source IP address of the packet matches the IP address of the instance. IP forwarding should be disabled to prevent unauthorized packet routing and data loss.",
-	"custom": {"controls": {"CIS-Google-Cloud-Platform-Foundation-Benchmark_v3.0.0": ["CIS-Google-Cloud-Platform-Foundation-Benchmark_v3.0.0_4.6"]}, "severity": "High", "author": "Starchitect Agent"},
+	"custom": {"controls":{"CIS-Google-Cloud-Platform-Foundation-Benchmark_v3.0.0":["CIS-Google-Cloud-Platform-Foundation-Benchmark_v3.0.0_4.6"]},"severity":"High","author":"Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

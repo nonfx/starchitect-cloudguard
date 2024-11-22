@@ -6,10 +6,7 @@ __rego__metadoc__ := {
 	"id": "OpenSearch.5",
 	"title": "OpenSearch domains should have audit logging enabled",
 	"description": "OpenSearch domains must enable audit logging to track user activity and maintain security compliance through CloudWatch Logs.",
-	"custom": {
-		"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_OpenSearch.5"]},
-		"severity": "Medium",
-	},
+	"custom": {"controls":{"AWS-Foundational-Security-Best-Practices_v1.0.0":["AWS-Foundational-Security-Best-Practices_v1.0.0_OpenSearch.5"]},"severity":"Medium","author":"Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

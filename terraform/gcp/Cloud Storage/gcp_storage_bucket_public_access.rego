@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "5.1",
 	"title": "Ensure That Cloud Storage Bucket Is Not Anonymously or Publicly Accessible",
 	"description": "Cloud Storage buckets should not allow anonymous or public access to prevent unauthorized data exposure. IAM policies should be properly configured to restrict access.",
-	"custom": {"controls": {"CIS-Google-Cloud-Platform-Foundation-Benchmark_v3.0.0": ["CIS-Google-Cloud-Platform-Foundation-Benchmark_v3.0.0_5.1"]}, "severity": "Critical", "author": "Starchitect Agent"},
+	"custom": {"controls":{"CIS-Google-Cloud-Platform-Foundation-Benchmark_v3.0.0":["CIS-Google-Cloud-Platform-Foundation-Benchmark_v3.0.0_5.1"]},"severity":"Critical","author":"Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

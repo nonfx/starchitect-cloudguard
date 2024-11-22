@@ -7,11 +7,7 @@ __rego__metadoc__ := {
 	"id": "1.16",
 	"title": "Ensure IAM policies that allow full *:* administrative privileges are not attached",
 	"description": "IAM policies are the means by which privileges are granted to users, groups, or roles. It is recommended and considered a standard security advice to grant least privilege -that is, granting only the permissions required to perform a task. Determine what users need to do and then craft policies for them that let the users perform only those tasks, instead of allowing full administrative privileges.",
-	"custom": {
-		"controls": {"CIS-AWS-Foundations-Benchmark_v3.0.0": ["CIS-AWS-Foundations-Benchmark_v3.0.0_1.16"]},
-		"severity": "High",
-		"author": "Starchitect Agent",
-	},
+	"custom": {"controls":{"CIS-AWS-Foundations-Benchmark_v3.0.0":["CIS-AWS-Foundations-Benchmark_v3.0.0_1.16"]},"severity":"High","author":"Starchitect Agent"},
 }
 
 # All policy objects that have an ID and a `policy` field containing a JSON

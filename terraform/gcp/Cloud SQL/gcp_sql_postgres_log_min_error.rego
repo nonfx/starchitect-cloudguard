@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "6.2.6",
 	"title": "Ensure PostgreSQL log_min_error_statement flag is set to ERROR or stricter",
 	"description": "This rule ensures that PostgreSQL instances have log_min_error_statement set to ERROR or stricter levels (FATAL, PANIC) for proper error message classification and logging.",
-	"custom": {"controls": {"CIS-Google-Cloud-Platform-Foundation-Benchmark_v3.0.0": ["CIS-Google-Cloud-Platform-Foundation-Benchmark_v3.0.0_6.2.6"]}, "severity": "Medium", "author": "Starchitect Agent"},
+	"custom": {"controls":{"CIS-Google-Cloud-Platform-Foundation-Benchmark_v3.0.0":["CIS-Google-Cloud-Platform-Foundation-Benchmark_v3.0.0_6.2.6"]},"severity":"Medium","author":"Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

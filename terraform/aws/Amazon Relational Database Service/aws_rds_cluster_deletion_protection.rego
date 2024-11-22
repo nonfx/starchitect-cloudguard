@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "RDS.7",
 	"title": "RDS clusters should have deletion protection enabled",
 	"description": "This control checks if RDS DB clusters have deletion protection enabled to prevent accidental or unauthorized database deletion.",
-	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_RDS.7"]}, "severity": "Low", "author": "Starchitect Agent"},
+	"custom": {"controls":{"AWS-Foundational-Security-Best-Practices_v1.0.0":["AWS-Foundational-Security-Best-Practices_v1.0.0_RDS.7"]},"severity":"Low","author":"Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

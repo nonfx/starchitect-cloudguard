@@ -6,10 +6,7 @@ __rego__metadoc__ := {
 	"id": "ELB.2",
 	"title": "Classic Load Balancers with SSL/HTTPS listeners should use ACM certificates",
 	"description": "Classic Load Balancers must use AWS Certificate Manager certificates for SSL/HTTPS listeners to ensure secure data transmission.",
-	"custom": {
-		"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_ELB.2"]},
-		"severity": "Medium",
-	},
+	"custom": {"controls":{"AWS-Foundational-Security-Best-Practices_v1.0.0":["AWS-Foundational-Security-Best-Practices_v1.0.0_ELB.2"]},"severity":"Medium","author":"Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

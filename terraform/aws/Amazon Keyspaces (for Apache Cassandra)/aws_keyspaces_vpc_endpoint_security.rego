@@ -6,11 +6,7 @@ __rego__metadoc__ := {
 	"id": "8.1",
 	"title": "Ensure Keyspace Security is Configured with VPC Endpoints",
 	"description": "Amazon Keyspaces should be accessed via VPC endpoints to ensure traffic does not leave the Amazon network, enhancing security and reducing latency. This setup uses Interface VPC Endpoints powered by AWS PrivateLink, which allows direct connection from a VPC to Amazon Keyspaces without exposure to the public internet.",
-	"custom": {
-		"controls": {"CIS-AWS-Database-Services-Benchmark_v1.0.0": ["CIS-AWS-Database-Services-Benchmark_v1.0.0_8.1"]},
-		"severity": "High",
-		"author": "Starchitect Agent",
-	},
+	"custom": {"controls":{"CIS-AWS-Database-Services-Benchmark_v1.0.0":["CIS-AWS-Database-Services-Benchmark_v1.0.0_8.1"]},"severity":"High","author":"Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "9.2",
 	"title": "Ensure Data at Rest is Encrypted",
 	"description": "This helps ensure that the data is kept secure and protected when at rest. The user must choose from two key options which then determine when the data is encrypted at rest.",
-	"custom": {"controls": {"CIS-AWS-Database-Services-Benchmark_v1.0.0": ["CIS-AWS-Database-Services-Benchmark_v1.0.0_9.2"]}, "author": "Starchitect Agent"},
+	"custom": {"controls":{"CIS-AWS-Database-Services-Benchmark_v1.0.0":["CIS-AWS-Database-Services-Benchmark_v1.0.0_9.2"]},"author":"Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

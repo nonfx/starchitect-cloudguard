@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "NetworkFirewall.3",
 	"title": "Network Firewall policies should have at least one rule group associated",
 	"description": "Network Firewall policies must have at least one rule group associated to ensure proper traffic filtering and security.",
-	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_NetworkFirewall.3"]}, "severity": "Medium", "author": "Starchitect Agent"},
+	"custom": {"controls":{"AWS-Foundational-Security-Best-Practices_v1.0.0":["AWS-Foundational-Security-Best-Practices_v1.0.0_NetworkFirewall.3"]},"severity":"Medium","author":"Starchitect Agent"},
 }
 
 # Define resource type for multiple resources

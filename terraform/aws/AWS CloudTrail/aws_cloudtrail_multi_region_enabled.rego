@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "CloudTrail.1",
 	"title": "CloudTrail should be enabled and configured with at least one multi-Region trail",
 	"description": "CloudTrail must be enabled with multi-Region trail configuration capturing read/write management events for comprehensive AWS activity monitoring.",
-	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_CloudTrail.1"]}, "severity": "High", "author": "Starchitect Agent"},
+	"custom": {"controls":{"AWS-Foundational-Security-Best-Practices_v1.0.0":["AWS-Foundational-Security-Best-Practices_v1.0.0_CloudTrail.1"]},"severity":"High","author":"Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

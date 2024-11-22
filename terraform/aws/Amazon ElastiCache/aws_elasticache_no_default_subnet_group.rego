@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "ElastiCache.7",
 	"title": "ElastiCache clusters should not use the default subnet group",
 	"description": "ElastiCache clusters must use custom subnet groups instead of default ones to ensure better network security and control.",
-	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_ElastiCache.7"]}, "severity": "High"},
+	"custom": {"controls":{"AWS-Foundational-Security-Best-Practices_v1.0.0":["AWS-Foundational-Security-Best-Practices_v1.0.0_ElastiCache.7"]},"severity":"High","author":"Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

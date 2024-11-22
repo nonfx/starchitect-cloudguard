@@ -7,7 +7,7 @@ __rego__metadoc__ := {
 	"id": "IAM.21",
 	"title": "IAM customer managed policies should not allow wildcard actions for services",
 	"description": "This control checks if IAM customer managed policies have wildcard actions for services. Using wildcard actions in IAM policies may grant users more privileges than needed.",
-	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_IAM.21"]}, "severity": "High"},
+	"custom": {"controls":{"AWS-Foundational-Security-Best-Practices_v1.0.0":["AWS-Foundational-Security-Best-Practices_v1.0.0_IAM.21"]},"severity":"High","author":"Starchitect Agent"},
 }
 
 # Define resource type

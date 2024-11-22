@@ -6,10 +6,7 @@ __rego__metadoc__ := {
 	"id": "S3.6",
 	"title": "S3 general purpose bucket policies should restrict access to other AWS accounts",
 	"description": "S3 bucket policies must restrict access to other AWS accounts by preventing specific actions and implementing proper access controls.",
-	"custom": {
-		"severity": "High",
-		"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_S3.6"]},
-	},
+	"custom": {"severity":"High","controls":{"AWS-Foundational-Security-Best-Practices_v1.0.0":["AWS-Foundational-Security-Best-Practices_v1.0.0_S3.6"]},"author":"Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

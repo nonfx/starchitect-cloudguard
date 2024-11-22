@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "EFS.3",
 	"title": "EFS access points should enforce a root directory",
 	"description": "EFS access points must enforce a root directory to restrict data access by ensuring users can only access specified subdirectory files.",
-	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_EFS.3"]}, "severity": "Medium"},
+	"custom": {"controls":{"AWS-Foundational-Security-Best-Practices_v1.0.0":["AWS-Foundational-Security-Best-Practices_v1.0.0_EFS.3"]},"severity":"Medium","author":"Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

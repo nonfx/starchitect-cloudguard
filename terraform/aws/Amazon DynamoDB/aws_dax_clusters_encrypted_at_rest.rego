@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "DynamoDB.3",
 	"title": "DynamoDB Accelerator (DAX) clusters should be encrypted at rest",
 	"description": "DynamoDB Accelerator (DAX) clusters must implement encryption at rest to protect data through additional access controls and API permissions.",
-	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_DynamoDB.3"]}, "severity": "Medium"},
+	"custom": {"controls":{"AWS-Foundational-Security-Best-Practices_v1.0.0":["AWS-Foundational-Security-Best-Practices_v1.0.0_DynamoDB.3"]},"severity":"Medium","author":"Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

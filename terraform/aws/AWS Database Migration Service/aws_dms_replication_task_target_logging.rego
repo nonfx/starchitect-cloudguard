@@ -6,10 +6,7 @@ __rego__metadoc__ := {
 	"id": "DMS.7",
 	"title": "DMS replication tasks for the target database should have logging enabled",
 	"description": "DMS replication tasks must have logging enabled with minimum severity level of LOGGER_SEVERITY_DEFAULT for target database operations.",
-	"custom": {
-		"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_DMS.7"]},
-		"severity": "Medium",
-	},
+	"custom": {"controls":{"AWS-Foundational-Security-Best-Practices_v1.0.0":["AWS-Foundational-Security-Best-Practices_v1.0.0_DMS.7"]},"severity":"Medium","author":"Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

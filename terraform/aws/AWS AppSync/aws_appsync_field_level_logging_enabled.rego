@@ -6,11 +6,7 @@ __rego__metadoc__ := {
 	"id": "AppSync.2",
 	"title": "AWS AppSync should have field-level logging enabled",
 	"description": "This control checks whether an AWS AppSync API has field-level logging turned on. The control fails if the field resolver log level is set to None. Security Hub produces a passed finding if the field resolver log level is either ERROR or ALL. Logging and metrics help identify, troubleshoot, and optimize GraphQL queries.",
-	"custom": {
-		"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_AppSync.2"]},
-		"severity": "Medium",
-		"author": "Starchitect Agent",
-	},
+	"custom": {"controls":{"AWS-Foundational-Security-Best-Practices_v1.0.0":["AWS-Foundational-Security-Best-Practices_v1.0.0_AppSync.2"]},"severity":"Medium","author":"Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

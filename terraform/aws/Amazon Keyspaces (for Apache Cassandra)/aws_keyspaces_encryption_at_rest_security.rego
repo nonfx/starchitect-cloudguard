@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "8.1.a",
 	"title": "Ensure Keyspace Security is Configured - encryption at rest",
 	"description": "In order to access Amazon Keyspaces the user is required to set specific networking parameters and security measurements without these extra steps they will not be able to access it. Users are required to create or select a virtual private cloud (VPC) and define their inbound and outbound rules accordingly.",
-	"custom": {"controls": {"CIS-AWS-Database-Services-Benchmark_v1.0.0": ["CIS-AWS-Database-Services-Benchmark_v1.0.0_8.1.a"]}, "author": "Starchitect Agent"},
+	"custom": {"controls":{"CIS-AWS-Database-Services-Benchmark_v1.0.0":["CIS-AWS-Database-Services-Benchmark_v1.0.0_8.1.a"]},"author":"Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

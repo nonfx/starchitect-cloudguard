@@ -6,10 +6,7 @@ __rego__metadoc__ := {
 	"id": "ES.4",
 	"title": "Elasticsearch domain error logging to CloudWatch Logs should be enabled",
 	"description": "This rule ensures that Elasticsearch domains have error logging enabled and configured to send logs to CloudWatch Logs for security auditing and issue diagnosis.",
-	"custom": {
-		"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_ES.4"]},
-		"severity": "Medium",
-	},
+	"custom": {"controls":{"AWS-Foundational-Security-Best-Practices_v1.0.0":["AWS-Foundational-Security-Best-Practices_v1.0.0_ES.4"]},"severity":"Medium","author":"Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

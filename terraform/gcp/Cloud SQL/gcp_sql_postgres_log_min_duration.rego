@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "6.2.7",
 	"title": "Ensure PostgreSQL log_min_duration_statement flag is set to -1",
 	"description": "The log_min_duration_statement flag for Cloud SQL PostgreSQL instances should be set to -1 to disable logging of SQL statement execution times for security purposes.",
-	"custom": {"controls": {"CIS-Google-Cloud-Platform-Foundation-Benchmark_v3.0.0": ["CIS-Google-Cloud-Platform-Foundation-Benchmark_v3.0.0_6.2.7"]}, "severity": "Medium", "author": "Starchitect Agent"},
+	"custom": {"controls":{"CIS-Google-Cloud-Platform-Foundation-Benchmark_v3.0.0":["CIS-Google-Cloud-Platform-Foundation-Benchmark_v3.0.0_6.2.7"]},"severity":"Medium","author":"Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

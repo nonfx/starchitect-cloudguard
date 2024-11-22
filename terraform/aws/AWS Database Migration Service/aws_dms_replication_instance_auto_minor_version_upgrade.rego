@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "DMS.6",
 	"title": "DMS replication instances should have automatic minor version upgrade enabled",
 	"description": "DMS replication instances must have automatic minor version upgrade enabled for security patches and improvements.",
-	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_DMS.6"]}, "severity": "Medium", "author": "Starchitect Agent"},
+	"custom": {"controls":{"AWS-Foundational-Security-Best-Practices_v1.0.0":["AWS-Foundational-Security-Best-Practices_v1.0.0_DMS.6"]},"severity":"Medium","author":"Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

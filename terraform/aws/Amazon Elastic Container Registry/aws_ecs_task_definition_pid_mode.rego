@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "ECS.3",
 	"title": "ECS task definitions should not share the host's process namespace",
 	"description": "This control checks if ECS task definitions share the host's process namespace with containers. Sharing the host's process namespace reduces process isolation and could allow unauthorized access to host system processes.",
-	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_ECS.3"]}, "severity": "High"},
+	"custom": {"controls":{"AWS-Foundational-Security-Best-Practices_v1.0.0":["AWS-Foundational-Security-Best-Practices_v1.0.0_ECS.3"]},"severity":"High","author":"Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

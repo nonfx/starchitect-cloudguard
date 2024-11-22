@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "Lambda.1",
 	"title": "Lambda function policies should prohibit public access",
 	"description": "This control checks if Lambda function's resource-based policy prohibits public access and implements proper AWS:SourceAccount conditions for S3 invocations.",
-	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_Lambda.1"]}, "severity": "Critical"},
+	"custom": {"controls":{"AWS-Foundational-Security-Best-Practices_v1.0.0":["AWS-Foundational-Security-Best-Practices_v1.0.0_Lambda.1"]},"severity":"Critical","author":"Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

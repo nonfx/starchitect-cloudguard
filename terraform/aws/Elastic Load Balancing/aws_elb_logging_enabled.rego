@@ -6,10 +6,7 @@ __rego__metadoc__ := {
 	"id": "ELB.5",
 	"title": "Load Balancer Logging Must Be Enabled",
 	"description": "Ensures that all Application and Classic Load Balancers have logging enabled",
-	"custom": {
-		"severity": "Medium",
-		"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_ELB.5"]},
-	},
+	"custom": {"severity":"Medium","controls":{"AWS-Foundational-Security-Best-Practices_v1.0.0":["AWS-Foundational-Security-Best-Practices_v1.0.0_ELB.5"]},"author":"Starchitect Agent"},
 }
 
 # Define resource types to evaluate

@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "3.1",
 	"title": "Ensure That the Default Network Does Not Exist in a Project",
 	"description": "To prevent use of default network a project should not have a default network. Default networks have preconfigured firewall rules and automatic subnet creation which may not align with security requirements.",
-	"custom": {"controls": {"CIS-Google-Cloud-Platform-Foundation-Benchmark_v3.0.0": ["CIS-Google-Cloud-Platform-Foundation-Benchmark_v3.0.0_3.1"]}, "severity": "High", "author": "Starchitect Agent"},
+	"custom": {"controls":{"CIS-Google-Cloud-Platform-Foundation-Benchmark_v3.0.0":["CIS-Google-Cloud-Platform-Foundation-Benchmark_v3.0.0_3.1"]},"severity":"High","author":"Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

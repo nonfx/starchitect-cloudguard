@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "Opensearch.7",
 	"title": "OpenSearch domains should have fine-grained access control enabled",
 	"description": "OpenSearch domains must enable fine-grained access control for enhanced security and access management capabilities.",
-	"custom": {"severity": "High", "controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_Opensearch.7"]}, "author": "Starchitect Agent"},
+	"custom": {"severity":"High","controls":{"AWS-Foundational-Security-Best-Practices_v1.0.0":["AWS-Foundational-Security-Best-Practices_v1.0.0_Opensearch.7"]},"author":"Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "6.2",
 	"title": "Ensure Persistent logs is setup and configured to S3",
 	"description": "Elastic Beanstalk can be configured to automatically stream logs to the CloudWatch service. With CloudWatch Logs, you can monitor and archive your Elastic Beanstalk application, system, and custom log files from Amazon EC2 instances of your environments.",
-	"custom": {"controls": {"CIS-AWS-Compute-Services-Benchmark_v1.0.0": ["CIS-AWS-Compute-Services-Benchmark_v1.0.0_6.2"]}, "author": "Starchitect Agent"},
+	"custom": {"controls":{"CIS-AWS-Compute-Services-Benchmark_v1.0.0":["CIS-AWS-Compute-Services-Benchmark_v1.0.0_6.2"]},"author":"Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

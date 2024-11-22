@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "NetworkFirewall.2",
 	"title": "Network Firewall logging should be enabled",
 	"description": "AWS Network Firewall logging must be enabled to track detailed network traffic information and stateful rule actions.",
-	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_NetworkFirewall.2"]}, "severity": "Medium", "author": "Starchitect Agent"},
+	"custom": {"controls":{"AWS-Foundational-Security-Best-Practices_v1.0.0":["AWS-Foundational-Security-Best-Practices_v1.0.0_NetworkFirewall.2"]},"severity":"Medium","author":"Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

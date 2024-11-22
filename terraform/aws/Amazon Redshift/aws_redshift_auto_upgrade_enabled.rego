@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "Redshift.6",
 	"title": "Amazon Redshift should have automatic upgrades to major versions enabled",
 	"description": "Amazon Redshift clusters must enable automatic major version upgrades for security patches and bug fixes during maintenance windows.",
-	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_Redshift.6"]}, "severity": "Medium", "author": "Starchitect Agent"},
+	"custom": {"controls":{"AWS-Foundational-Security-Best-Practices_v1.0.0":["AWS-Foundational-Security-Best-Practices_v1.0.0_Redshift.6"]},"severity":"Medium","author":"Starchitect Agent"},
 }
 
 # Define resource type for Redshift clusters

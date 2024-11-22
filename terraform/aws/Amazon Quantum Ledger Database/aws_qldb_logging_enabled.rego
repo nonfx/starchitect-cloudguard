@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "11.6.b",
 	"title": "Ensure Monitoring and Logging is Enabled - Logging",
 	"description": "Enable QLDB's built-in logging to capture important system events and database activity. Monitor the logs for any suspicious activities or errors. Leverage Amazon CloudWatch to collect and analyze logs, set up alarms, and receive notifications for potential security incidents.",
-	"custom": {"controls": {"CIS-AWS-Database-Services-Benchmark_v1.0.0": ["CIS-AWS-Database-Services-Benchmark_v1.0.0_11.6"]}, "author": "Starchitect Agent"},
+	"custom": {"controls":{"CIS-AWS-Database-Services-Benchmark_v1.0.0":["CIS-AWS-Database-Services-Benchmark_v1.0.0_11.6"]},"author":"Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

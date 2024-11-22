@@ -6,10 +6,7 @@ __rego__metadoc__ := {
 	"id": "2.1",
 	"title": "Ensure Cloud Audit Logging is configured properly",
 	"description": "It is recommended that Cloud Audit Logging is configured to track all admin activities and read write access to user data.",
-	"custom": {
-		"controls": {"CIS-Google-Cloud-Platform-Foundation-Benchmark_v3.0.0": ["CIS-Google-Cloud-Platform-Foundation-Benchmark_v3.0.0_2.1"]},
-		"severity": "High",
-	},
+	"custom": {"controls":{"CIS-Google-Cloud-Platform-Foundation-Benchmark_v3.0.0":["CIS-Google-Cloud-Platform-Foundation-Benchmark_v3.0.0_2.1"]},"severity":"High","author":"Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

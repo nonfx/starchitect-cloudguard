@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "ECS.9",
 	"title": "ECS task definitions should have a logging configuration",
 	"description": "ECS task definitions must include logging configuration to maintain visibility and debugging capabilities for container applications.",
-	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_ECS.9"]}, "severity": "High", "author": "Starchitect Agent"},
+	"custom": {"controls":{"AWS-Foundational-Security-Best-Practices_v1.0.0":["AWS-Foundational-Security-Best-Practices_v1.0.0_ECS.9"]},"severity":"High","author":"Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

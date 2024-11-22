@@ -7,7 +7,7 @@ __rego__metadoc__ := {
 	"id": "SecretsManager.1",
 	"title": "Secrets Manager secrets should have automatic rotation enabled",
 	"description": "This control checks whether AWS Secrets Manager secrets are configured with automatic rotation. Automatic rotation helps improve security by regularly replacing long-term secrets with new ones.",
-	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_SecretsManager.1"]}, "severity": "Medium", "author": "Starchitect Agent"},
+	"custom": {"controls":{"AWS-Foundational-Security-Best-Practices_v1.0.0":["AWS-Foundational-Security-Best-Practices_v1.0.0_SecretsManager.1"]},"severity":"Medium","author":"Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

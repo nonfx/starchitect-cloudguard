@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "WAF.7",
 	"title": "AWS WAF Classic global rule groups should have at least one rule",
 	"description": "This control checks whether an AWS WAF global rule group has at least one rule. The control fails if no rules are present within a rule group. A WAF global rule group can contain multiple rules. The rule's conditions allow for traffic inspection and take a defined action (allow, block, or count). Without any rules, the traffic passes without inspection. A WAF global rule group with no rules, but with a name or tag suggesting allow, block, or count, could lead to the wrong assumption that one of those actions is occurring.",
-	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_WAF.7"]}, "author": "Starchitect Agent"},
+	"custom": {"controls":{"AWS-Foundational-Security-Best-Practices_v1.0.0":["AWS-Foundational-Security-Best-Practices_v1.0.0_WAF.7"]},"author":"Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

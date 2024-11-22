@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "RDS.4",
 	"title": "RDS cluster snapshots and database snapshots should be encrypted at rest",
 	"description": "This control checks if RDS DB snapshots and cluster snapshots are encrypted at rest. The control fails if snapshots are not encrypted.",
-	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_RDS.4"]}, "severity": "High", "author": "Starchitect Agent"},
+	"custom": {"controls":{"AWS-Foundational-Security-Best-Practices_v1.0.0":["AWS-Foundational-Security-Best-Practices_v1.0.0_RDS.4"]},"severity":"High","author":"Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

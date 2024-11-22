@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "RDS.1",
 	"title": "RDS snapshot should be private",
 	"description": "RDS snapshots must be private and not publicly accessible to prevent unauthorized data exposure and maintain security compliance.",
-	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_RDS.1"]}, "severity": "Critical", "author": "Starchitect Agent"},
+	"custom": {"controls":{"AWS-Foundational-Security-Best-Practices_v1.0.0":["AWS-Foundational-Security-Best-Practices_v1.0.0_RDS.1"]},"severity":"Critical","author":"Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

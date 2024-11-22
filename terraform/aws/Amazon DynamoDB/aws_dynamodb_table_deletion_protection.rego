@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "DynamoDB.6",
 	"title": "DynamoDB tables should have deletion protection enabled",
 	"description": "This control checks if DynamoDB tables have deletion protection enabled to prevent accidental deletion and maintain business continuity.",
-	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_DynamoDB.6"]}, "severity": "Medium"},
+	"custom": {"controls":{"AWS-Foundational-Security-Best-Practices_v1.0.0":["AWS-Foundational-Security-Best-Practices_v1.0.0_DynamoDB.6"]},"severity":"Medium","author":"Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

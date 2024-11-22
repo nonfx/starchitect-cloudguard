@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "S3.13",
 	"title": "S3 general purpose buckets should have Lifecycle configurations",
 	"description": "This control checks whether S3 buckets have Lifecycle configurations enabled to manage object transitions and deletions effectively.",
-	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_S3.13"]}, "severity": "Low", "author": "Starchitect Agent"},
+	"custom": {"controls":{"AWS-Foundational-Security-Best-Practices_v1.0.0":["AWS-Foundational-Security-Best-Practices_v1.0.0_S3.13"]},"severity":"Low","author":"Starchitect Agent"},
 }
 
 resource_type = "MULTIPLE"

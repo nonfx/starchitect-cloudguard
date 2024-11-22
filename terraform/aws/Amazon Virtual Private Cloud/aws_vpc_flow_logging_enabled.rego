@@ -4,7 +4,7 @@ __rego__metadoc__ := {
 	"id": "3.7",
 	"title": "Ensure VPC flow logging is enabled in all VPCs",
 	"description": "VPC Flow Logs is a feature that enables you to capture information about the IP traffic going to and from network interfaces in your VPC. After you've created a flow log, you can view and retrieve its data in Amazon CloudWatch Logs. It is recommended that VPC Flow Logs be enabled for packet `Rejects` for VPCs.",
-	"custom": {"controls": {"CIS-AWS-Foundations-Benchmark_v3.0.0": ["CIS-AWS-Foundations-Benchmark_v3.0.0_3.7"]}, "severity": "Low", "author": "Starchitect Agent"},
+	"custom": {"controls":{"CIS-AWS-Foundations-Benchmark_v3.0.0":["CIS-AWS-Foundations-Benchmark_v3.0.0_3.7"]},"severity":"Low","author":"Starchitect Agent"},
 }
 
 import data.fugue

@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "DocumentDB.3",
 	"title": "Amazon DocumentDB manual cluster snapshots should not be public",
 	"description": "This control checks if DocumentDB manual cluster snapshots are public. Public snapshots can expose sensitive data to unauthorized users and should be restricted.",
-	"custom": {"severity": "Critical", "controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_DocumentDB.3"]}, "author": "Starchitect Agent"},
+	"custom": {"severity":"Critical","controls":{"AWS-Foundational-Security-Best-Practices_v1.0.0":["AWS-Foundational-Security-Best-Practices_v1.0.0_DocumentDB.3"]},"author":"Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

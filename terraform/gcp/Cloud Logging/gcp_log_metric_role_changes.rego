@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "2.6",
 	"title": "Ensure That the Log Metric Filter and Alerts Exist for Custom Role Changes",
 	"description": "Monitor IAM role changes through metric filters and alerts to detect unauthorized or suspicious role modifications.",
-	"custom": {"controls": {"CIS-Google-Cloud-Platform-Foundation-Benchmark_v3.0.0": ["CIS-Google-Cloud-Platform-Foundation-Benchmark_v3.0.0_2.6"]}, "severity": "High", "author": "Starchitect Agent"},
+	"custom": {"controls":{"CIS-Google-Cloud-Platform-Foundation-Benchmark_v3.0.0":["CIS-Google-Cloud-Platform-Foundation-Benchmark_v3.0.0_2.6"]},"severity":"High","author":"Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

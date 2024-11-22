@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "Opensearch.3",
 	"title": "OpenSearch domains should encrypt data sent between nodes",
 	"description": "OpenSearch domains must implement node-to-node encryption to secure intra-cluster communications and protect data in transit.",
-	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_Opensearch.3"]}, "severity": "Medium", "author": "Starchitect Agent"},
+	"custom": {"controls":{"AWS-Foundational-Security-Best-Practices_v1.0.0":["AWS-Foundational-Security-Best-Practices_v1.0.0_Opensearch.3"]},"severity":"Medium","author":"Starchitect Agent"},
 }
 
 # Resource type declaration

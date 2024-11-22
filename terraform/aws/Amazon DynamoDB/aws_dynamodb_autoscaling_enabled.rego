@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "DynamoDB.1",
 	"title": "DynamoDB tables should automatically scale capacity with demand",
 	"description": "DynamoDB tables must implement automatic capacity scaling through on-demand mode or provisioned mode with auto-scaling to prevent throttling and maintain availability.",
-	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_DynamoDB.1"]}, "severity": "Medium"},
+	"custom": {"controls":{"AWS-Foundational-Security-Best-Practices_v1.0.0":["AWS-Foundational-Security-Best-Practices_v1.0.0_DynamoDB.1"]},"severity":"Medium","author":"Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

@@ -6,10 +6,7 @@ __rego__metadoc__ := {
 	"id": "S3.5",
 	"title": "S3 buckets should require SSL/TLS for all requests",
 	"description": "This control checks if S3 buckets require SSL/TLS encryption for all requests by verifying bucket policies include aws:SecureTransport condition.",
-	"custom": {
-		"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_S3.5"]},
-		"severity": "Medium",
-	},
+	"custom": {"controls":{"AWS-Foundational-Security-Best-Practices_v1.0.0":["AWS-Foundational-Security-Best-Practices_v1.0.0_S3.5"]},"severity":"Medium","author":"Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

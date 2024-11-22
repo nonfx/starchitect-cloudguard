@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "2.7",
 	"title": "Ensure That the Log Metric Filter and Alerts Exist for VPC Network Firewall Rule Changes",
 	"description": "Monitor and alert on VPC Network Firewall rule changes through log metric filters for enhanced security visibility.",
-	"custom": {"controls": {"CIS-Google-Cloud-Platform-Foundation-Benchmark_v3.0.0": ["CIS-Google-Cloud-Platform-Foundation-Benchmark_v3.0.0_2.7"]}, "severity": "Medium", "author": "Starchitect Agent"},
+	"custom": {"controls":{"CIS-Google-Cloud-Platform-Foundation-Benchmark_v3.0.0":["CIS-Google-Cloud-Platform-Foundation-Benchmark_v3.0.0_2.7"]},"severity":"Medium","author":"Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

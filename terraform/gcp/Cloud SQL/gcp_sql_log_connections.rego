@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "6.2.2",
 	"title": "Ensure That the 'Log_connections' Database Flag for Cloud SQL PostgreSQL Instance Is Set to 'On'",
 	"description": "Enabling the log_connections setting causes each attempted connection to the server to be logged, along with successful completion of client authentication.",
-	"custom": {"controls": {"CIS-Google-Cloud-Platform-Foundation-Benchmark_v3.0.0": ["CIS-Google-Cloud-Platform-Foundation-Benchmark_v3.0.0_6.2.2"]}, "severity": "Medium", "author": "Starchitect Agent"},
+	"custom": {"controls":{"CIS-Google-Cloud-Platform-Foundation-Benchmark_v3.0.0":["CIS-Google-Cloud-Platform-Foundation-Benchmark_v3.0.0_6.2.2"]},"severity":"Medium","author":"Starchitect Agent"},
 }
 
 # Define resource type

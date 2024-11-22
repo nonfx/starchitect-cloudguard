@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "6.3.2",
 	"title": "Ensure that the 'cross db ownership chaining' database flag for Cloud SQL SQL Server instance is set to 'off' (Automated)",
 	"description": "It is recommended to set cross db ownership chaining database flag for Cloud SQL SQL Server instance to off. This flag is deprecated for all SQL Server versions in CGP. Going forward, you can't set its value to on. However, if you have this flag enabled, we strongly recommend that you either remove the flag from your database or set it to off. For cross-database access, use the Microsoft tutorial for signing stored procedures with a certificate..",
-	"custom": {"severity": "High", "controls": {"CIS-Google-Cloud-Platform-Foundation-Benchmark_v3.0.0": ["CIS-Google-Cloud-Platform-Foundation-Benchmark_v3.0.0_6.3.2"]}, "author": "Starchitect Agent"},
+	"custom": {"severity":"High","controls":{"CIS-Google-Cloud-Platform-Foundation-Benchmark_v3.0.0":["CIS-Google-Cloud-Platform-Foundation-Benchmark_v3.0.0_6.3.2"]},"author":"Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

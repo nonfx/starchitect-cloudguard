@@ -6,10 +6,7 @@ __rego__metadoc__ := {
 	"id": "1.5",
 	"title": "Service accounts should not have admin privileges",
 	"description": "Service accounts should not be granted administrative privileges to maintain security and prevent unauthorized access to Google Cloud resources.",
-	"custom": {
-		"controls": {"CIS-Google-Cloud-Platform-Foundation-Benchmark_v3.0.0": ["CIS-Google-Cloud-Platform-Foundation-Benchmark_v3.0.0_1.5"]},
-		"severity": "Critical",
-	},
+	"custom": {"controls":{"CIS-Google-Cloud-Platform-Foundation-Benchmark_v3.0.0":["CIS-Google-Cloud-Platform-Foundation-Benchmark_v3.0.0_1.5"]},"severity":"Critical","author":"Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

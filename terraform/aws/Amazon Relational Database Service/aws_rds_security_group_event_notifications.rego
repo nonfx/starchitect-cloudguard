@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "RDS.22",
 	"title": "An RDS event notifications subscription should be configured for critical database security group events",
 	"description": "This control checks whether an RDS event subscription exists for security group events to monitor critical database security group changes.",
-	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_RDS.22"]}, "severity": "Low", "author": "Starchitect Agent"},
+	"custom": {"controls":{"AWS-Foundational-Security-Best-Practices_v1.0.0":["AWS-Foundational-Security-Best-Practices_v1.0.0_RDS.22"]},"severity":"Low","author":"Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

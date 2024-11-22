@@ -6,11 +6,7 @@ __rego__metadoc__ := {
 	"id": "2.7",
 	"title": "Ensure Default EC2 Security groups are not being used",
 	"description": "When an EC2 instance is launched a specified custom security group should be assigned to the instance",
-	"custom": {
-		"controls": {"CIS-AWS-Compute-Services-Benchmark_v1.0.0": ["CIS-AWS-Compute-Services-Benchmark_v1.0.0_2.7"]},
-		"severity": "Medium",
-		"author": "Starchitect Agent",
-	},
+	"custom": {"controls":{"CIS-AWS-Compute-Services-Benchmark_v1.0.0":["CIS-AWS-Compute-Services-Benchmark_v1.0.0_2.7"]},"severity":"Medium","author":"Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

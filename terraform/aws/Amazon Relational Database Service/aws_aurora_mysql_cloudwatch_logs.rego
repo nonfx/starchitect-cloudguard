@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "RDS.34",
 	"title": "Aurora MySQL DB clusters should publish audit logs to CloudWatch Logs",
 	"description": "Ensures that Aurora MySQL DB clusters are configured to publish audit logs to CloudWatch Logs for monitoring and compliance purposes.",
-	"custom": {"severity": "Medium", "controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_RDS.34"]}, "author": "Starchitect Agent"},
+	"custom": {"severity":"Medium","controls":{"AWS-Foundational-Security-Best-Practices_v1.0.0":["AWS-Foundational-Security-Best-Practices_v1.0.0_RDS.34"]},"author":"Starchitect Agent"},
 }
 
 # Define the resource type we're evaluating

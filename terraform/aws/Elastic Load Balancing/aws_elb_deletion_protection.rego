@@ -6,10 +6,7 @@ __rego__metadoc__ := {
 	"id": "ELB.6",
 	"title": "Application, Gateway, and Network Load Balancers should have deletion protection enabled",
 	"description": "This control checks if deletion protection is enabled for Application, Gateway, and Network Load Balancers to prevent accidental deletion and ensure high availability.",
-	"custom": {
-		"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_ELB.6"]},
-		"severity": "Medium",
-	},
+	"custom": {"controls":{"AWS-Foundational-Security-Best-Practices_v1.0.0":["AWS-Foundational-Security-Best-Practices_v1.0.0_ELB.6"]},"severity":"Medium","author":"Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

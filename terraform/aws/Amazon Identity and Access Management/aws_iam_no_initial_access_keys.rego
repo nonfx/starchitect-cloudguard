@@ -4,7 +4,7 @@ __rego__metadoc__ := {
 	"id": "1.11",
 	"title": "Do not setup access keys during initial user setup for all IAM users that have a console password",
 	"description": "AWS console defaults to no check boxes selected when creating a new IAM user. When creating the IAM User credentials you have to determine what type of access they require.",
-	"custom": {"controls": {"CIS-AWS-Foundations-Benchmark_v3.0.0": ["CIS-AWS-Foundations-Benchmark_v3.0.0_1.11"]}, "severity": "Low", "author": "Starchitect Agent"},
+	"custom": {"controls":{"CIS-AWS-Foundations-Benchmark_v3.0.0":["CIS-AWS-Foundations-Benchmark_v3.0.0_1.11"]},"severity":"Low","author":"Starchitect Agent"},
 }
 
 import data.fugue

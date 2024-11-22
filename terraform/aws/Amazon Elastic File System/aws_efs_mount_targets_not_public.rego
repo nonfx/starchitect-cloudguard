@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "EFS.6",
 	"title": "EFS mount targets should not be associated with a public subnet",
 	"description": "This control checks if EFS mount targets are associated with private subnets to prevent unauthorized access from the internet.",
-	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_EFS.6"]}, "severity": "Medium", "author": "Starchitect Agent"},
+	"custom": {"controls":{"AWS-Foundational-Security-Best-Practices_v1.0.0":["AWS-Foundational-Security-Best-Practices_v1.0.0_EFS.6"]},"severity":"Medium","author":"Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

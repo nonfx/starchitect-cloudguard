@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "6.2.3",
 	"title": "Ensure log_disconnections database flag is set to 'on'",
 	"description": "Cloud SQL PostgreSQL instances should have log_disconnections flag enabled to track session endings and durations.",
-	"custom": {"controls": {"CIS-Google-Cloud-Platform-Foundation-Benchmark_v3.0.0": ["CIS-Google-Cloud-Platform-Foundation-Benchmark_v3.0.0_6.2.3"]}, "severity": "Medium", "author": "Starchitect Agent"},
+	"custom": {"controls":{"CIS-Google-Cloud-Platform-Foundation-Benchmark_v3.0.0":["CIS-Google-Cloud-Platform-Foundation-Benchmark_v3.0.0_6.2.3"]},"severity":"Medium","author":"Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

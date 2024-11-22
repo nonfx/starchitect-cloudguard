@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "3.7",
 	"title": "Ensure That RDP Access Is Restricted From the Internet",
 	"description": "GCP Firewall Rules should restrict RDP access from the internet (0.0.0.0/0) to maintain security of VPC networks and instances.",
-	"custom": {"controls": {"CIS-Google-Cloud-Platform-Foundation-Benchmark_v3.0.0": ["CIS-Google-Cloud-Platform-Foundation-Benchmark_v3.0.0_3.7"]}, "severity": "High", "author": "Starchitect Agent"},
+	"custom": {"controls":{"CIS-Google-Cloud-Platform-Foundation-Benchmark_v3.0.0":["CIS-Google-Cloud-Platform-Foundation-Benchmark_v3.0.0_3.7"]},"severity":"High","author":"Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

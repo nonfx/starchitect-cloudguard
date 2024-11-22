@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "RDS.14",
 	"title": "Amazon Aurora clusters should have backtracking enabled",
 	"description": "This control checks whether Amazon Aurora clusters have backtracking enabled for point-in-time recovery capabilities.",
-	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_RDS.14"]}, "severity": "Medium", "author": "Starchitect Agent"},
+	"custom": {"controls":{"AWS-Foundational-Security-Best-Practices_v1.0.0":["AWS-Foundational-Security-Best-Practices_v1.0.0_RDS.14"]},"severity":"Medium","author":"Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

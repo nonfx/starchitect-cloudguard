@@ -6,10 +6,7 @@ __rego__metadoc__ := {
 	"id": "ELB.9",
 	"title": "Classic Load Balancers should have cross-zone load balancing enabled",
 	"description": "This control checks if Classic Load Balancers have cross-zone load balancing enabled to distribute traffic evenly across all enabled Availability Zones.",
-	"custom": {
-		"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_ELB.9"]},
-		"severity": "Medium",
-	},
+	"custom": {"controls":{"AWS-Foundational-Security-Best-Practices_v1.0.0":["AWS-Foundational-Security-Best-Practices_v1.0.0_ELB.9"]},"severity":"Medium","author":"Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

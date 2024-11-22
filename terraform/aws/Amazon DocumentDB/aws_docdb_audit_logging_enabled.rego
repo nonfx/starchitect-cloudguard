@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "DocumentDB.4",
 	"title": "Amazon DocumentDB clusters should publish audit logs to CloudWatch Logs",
 	"description": "Amazon DocumentDB clusters must enable audit logging to CloudWatch Logs for security monitoring and compliance tracking.",
-	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_DocumentDB.4"]}, "severity": "Medium"},
+	"custom": {"controls":{"AWS-Foundational-Security-Best-Practices_v1.0.0":["AWS-Foundational-Security-Best-Practices_v1.0.0_DocumentDB.4"]},"severity":"Medium","author":"Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

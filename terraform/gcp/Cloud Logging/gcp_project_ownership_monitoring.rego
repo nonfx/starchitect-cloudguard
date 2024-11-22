@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "2.4",
 	"title": "Ensure Log Metric Filter and Alerts Exist for Project Ownership Changes",
 	"description": "Monitor and alert on project ownership assignments/changes to prevent unauthorized access and maintain security compliance.",
-	"custom": {"controls": {"CIS-Google-Cloud-Platform-Foundation-Benchmark_v3.0.0": ["CIS-Google-Cloud-Platform-Foundation-Benchmark_v3.0.0_2.4"]}, "severity": "High", "author": "Starchitect Agent"},
+	"custom": {"controls":{"CIS-Google-Cloud-Platform-Foundation-Benchmark_v3.0.0":["CIS-Google-Cloud-Platform-Foundation-Benchmark_v3.0.0_2.4"]},"severity":"High","author":"Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

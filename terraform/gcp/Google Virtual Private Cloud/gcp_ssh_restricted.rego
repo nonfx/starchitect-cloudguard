@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "3.6",
 	"title": "Ensure That SSH Access Is Restricted From the Internet",
 	"description": "GCP Firewall Rules should restrict SSH access from the internet (0.0.0.0/0) to maintain security of VPC networks and instances.",
-	"custom": {"controls": {"CIS-Google-Cloud-Platform-Foundation-Benchmark_v3.0.0": ["CIS-Google-Cloud-Platform-Foundation-Benchmark_v3.0.0_3.6"]}, "severity": "High", "author": "Starchitect Agent"},
+	"custom": {"controls":{"CIS-Google-Cloud-Platform-Foundation-Benchmark_v3.0.0":["CIS-Google-Cloud-Platform-Foundation-Benchmark_v3.0.0_3.6"]},"severity":"High","author":"Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

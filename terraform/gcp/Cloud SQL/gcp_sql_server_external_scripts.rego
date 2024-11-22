@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "6.3.1",
 	"title": "Ensure 'external scripts enabled' database flag for Cloud SQL SQL Server instance is set to 'off'",
 	"description": "It is recommended to set external scripts enabled database flag for Cloud SQL SQL Server instance to off",
-	"custom": {"controls": {"CIS-Google-Cloud-Platform-Foundation-Benchmark_v3.0.0": ["CIS-Google-Cloud-Platform-Foundation-Benchmark_v3.0.0_6.3.1"]}, "severity": "Medium", "author": "Starchitect Agent"},
+	"custom": {"controls":{"CIS-Google-Cloud-Platform-Foundation-Benchmark_v3.0.0":["CIS-Google-Cloud-Platform-Foundation-Benchmark_v3.0.0_6.3.1"]},"severity":"Medium","author":"Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

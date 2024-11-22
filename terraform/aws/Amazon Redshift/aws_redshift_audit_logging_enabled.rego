@@ -6,10 +6,7 @@ __rego__metadoc__ := {
 	"id": "Redshift.4",
 	"title": "Amazon Redshift clusters should have audit logging enabled",
 	"description": "Amazon Redshift clusters must enable audit logging for security monitoring and compliance tracking. Audit logging provides information about connections and user activities in your database for security analysis and troubleshooting.",
-	"custom": {
-		"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_Redshift.4"]},
-		"severity": "Medium",
-	},
+	"custom": {"controls":{"AWS-Foundational-Security-Best-Practices_v1.0.0":["AWS-Foundational-Security-Best-Practices_v1.0.0_Redshift.4"]},"severity":"Medium","author":"Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

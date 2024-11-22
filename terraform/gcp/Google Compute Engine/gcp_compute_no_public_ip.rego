@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "4.9",
 	"title": "Ensure That Compute Instances Do Not Have Public IP Addresses",
 	"description": "Compute instances should not be configured to have external IP addresses to reduce attack surface.",
-	"custom": {"controls": {"CIS-Google-Cloud-Platform-Foundation-Benchmark_v3.0.0": ["CIS-Google-Cloud-Platform-Foundation-Benchmark_v3.0.0_4.9"]}, "severity": "High", "author": "Starchitect Agent"},
+	"custom": {"controls":{"CIS-Google-Cloud-Platform-Foundation-Benchmark_v3.0.0":["CIS-Google-Cloud-Platform-Foundation-Benchmark_v3.0.0_4.9"]},"severity":"High","author":"Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

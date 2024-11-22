@@ -6,10 +6,7 @@ __rego__metadoc__ := {
 	"id": "4.1",
 	"title": "Ensure That Instances Are Not Configured To Use the Default Service Account",
 	"description": "Prevent default Compute Engine service account usage on instances to minimize security risks and privilege escalation.",
-	"custom": {
-		"controls": {"CIS-Google-Cloud-Platform-Foundation-Benchmark_v3.0.0": ["CIS-Google-Cloud-Platform-Foundation-Benchmark_v3.0.0_4.1"]},
-		"severity": "High",
-	},
+	"custom": {"controls":{"CIS-Google-Cloud-Platform-Foundation-Benchmark_v3.0.0":["CIS-Google-Cloud-Platform-Foundation-Benchmark_v3.0.0_4.1"]},"severity":"High","author":"Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

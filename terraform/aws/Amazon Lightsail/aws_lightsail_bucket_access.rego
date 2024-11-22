@@ -7,11 +7,7 @@ __rego__metadoc__ := {
 	"id": "3.7",
 	"title": "Ensure you are using an IAM policy to manage access to buckets in Lightsail",
 	"description": "The following policy grants a user access to manage a specific bucket in the Amazon Lightsail object storage service",
-	"custom": {
-		"controls": {"CIS-AWS-Compute-Services-Benchmark_v1.0.0": ["CIS-AWS-Compute-Services-Benchmark_v1.0.0_3.7"]},
-		"severity": "Medium",
-		"author": "Starchitect Agent",
-	},
+	"custom": {"controls":{"CIS-AWS-Compute-Services-Benchmark_v1.0.0":["CIS-AWS-Compute-Services-Benchmark_v1.0.0_3.7"]},"severity":"Medium","author":"Starchitect Agent"},
 }
 
 # All IAM policy objects that have an ID and a `policy` field containing a JSON string.

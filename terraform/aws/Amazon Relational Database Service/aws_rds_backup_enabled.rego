@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "3.10",
 	"title": "Ensure to Enable Backup and Recovery",
 	"description": "This rule checks if RDS instances have automated backups enabled with a retention period greater than 0 days.",
-	"custom": {"controls": {"CIS-AWS-Database-Services-Benchmark_v1.0.0": ["CIS-AWS-Database-Services-Benchmark_v1.0.0_3.10"]}, "severity": "Medium", "author": "Starchitect Agent"},
+	"custom": {"controls":{"CIS-AWS-Database-Services-Benchmark_v1.0.0":["CIS-AWS-Database-Services-Benchmark_v1.0.0_3.10"]},"severity":"Medium","author":"Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

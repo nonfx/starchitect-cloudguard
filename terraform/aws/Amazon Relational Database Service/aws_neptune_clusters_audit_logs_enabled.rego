@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "Neptune.2",
 	"title": "Neptune DB clusters should publish audit logs to CloudWatch Logs",
 	"description": "This control checks if Neptune DB clusters publish audit logs to CloudWatch Logs for monitoring and compliance tracking of database operations.",
-	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_Neptune.2"]}, "severity": "Medium"},
+	"custom": {"controls":{"AWS-Foundational-Security-Best-Practices_v1.0.0":["AWS-Foundational-Security-Best-Practices_v1.0.0_Neptune.2"]},"severity":"Medium","author":"Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

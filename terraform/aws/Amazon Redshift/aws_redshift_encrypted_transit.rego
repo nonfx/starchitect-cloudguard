@@ -6,10 +6,7 @@ __rego__metadoc__ := {
 	"id": "Redshift.2",
 	"title": "Redshift clusters must have encrypted transit enabled",
 	"description": "This rule ensures that Amazon Redshift clusters require SSL/TLS for encrypted connections.",
-	"custom": {
-		"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_Redshift.2"]},
-		"severity": "HIGH",
-	},
+	"custom": {"controls":{"AWS-Foundational-Security-Best-Practices_v1.0.0":["AWS-Foundational-Security-Best-Practices_v1.0.0_Redshift.2"]},"severity":"HIGH","author":"Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

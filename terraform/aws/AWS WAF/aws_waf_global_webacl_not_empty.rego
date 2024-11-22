@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "WAF.8",
 	"title": "AWS WAF Classic global web ACLs should have at least one rule or rule group",
 	"description": "This control checks whether an AWS WAF global web ACL contains at least one WAF rule or WAF rule group. The control fails if a web ACL does not contain any WAF rules or rule groups. A WAF global web ACL can contain a collection of rules and rule groups that inspect and control web requests. If a web ACL is empty, the web traffic can pass without being detected or acted upon by WAF depending on the default action.",
-	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_WAF.8"]}, "author": "Starchitect Agent"},
+	"custom": {"controls":{"AWS-Foundational-Security-Best-Practices_v1.0.0":["AWS-Foundational-Security-Best-Practices_v1.0.0_WAF.8"]},"author":"Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

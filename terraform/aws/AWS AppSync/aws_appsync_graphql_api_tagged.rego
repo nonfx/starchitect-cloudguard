@@ -6,11 +6,7 @@ __rego__metadoc__ := {
 	"id": "AppSync.4",
 	"title": "AWS AppSync GraphQL APIs should be tagged",
 	"description": "This control checks whether an AWS AppSync GraphQL API has tags with specific keys defined in the parameter requiredTagKeys. The control fails if the GraphQL API doesn’t have any tag keys or if it doesn’t have all the keys specified in the parameter requiredTagKeys. System tags, which begin with aws:, are ignored.",
-	"custom": {
-		"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_AppSync.4"]},
-		"severity": "Medium",
-		"author": "Starchitect Agent",
-	},
+	"custom": {"controls":{"AWS-Foundational-Security-Best-Practices_v1.0.0":["AWS-Foundational-Security-Best-Practices_v1.0.0_AppSync.4"]},"severity":"Medium","author":"Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

@@ -7,7 +7,7 @@ __rego__metadoc__ := {
 	"id": "6.6",
 	"title": "Ensure Monitoring and Alerting is Enabled",
 	"description": "Implementing monitoring and alerting on Amazon MemoryDB allows you to proactively detect and respond to any performance issues, security events, or operational anomalies",
-	"custom": {"controls": {"CIS-AWS-Database-Services-Benchmark_v1.0.0": ["CIS-AWS-Database-Services-Benchmark_v1.0.0_6.6"]}, "author": "Starchitect Agent"},
+	"custom": {"controls":{"CIS-AWS-Database-Services-Benchmark_v1.0.0":["CIS-AWS-Database-Services-Benchmark_v1.0.0_6.6"]},"author":"Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

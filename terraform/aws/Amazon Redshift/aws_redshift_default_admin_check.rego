@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "Redshift.8",
 	"title": "Amazon Redshift clusters should not use the default Admin username",
 	"description": "Amazon Redshift clusters must use a custom admin username instead of the default 'awsuser' for enhanced security.",
-	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_Redshift.8"]}, "severity": "Medium", "author": "Starchitect Agent"},
+	"custom": {"controls":{"AWS-Foundational-Security-Best-Practices_v1.0.0":["AWS-Foundational-Security-Best-Practices_v1.0.0_Redshift.8"]},"severity":"Medium","author":"Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"

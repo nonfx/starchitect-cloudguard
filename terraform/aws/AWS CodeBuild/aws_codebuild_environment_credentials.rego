@@ -6,7 +6,7 @@ __rego__metadoc__ := {
 	"id": "CodeBuild.2",
 	"title": "CodeBuild project environment variables should not contain clear text credentials",
 	"description": "CodeBuild projects must not store AWS credentials as environment variables to prevent unauthorized access and data exposure.",
-	"custom": {"controls": {"AWS-Foundational-Security-Best-Practices_v1.0.0": ["AWS-Foundational-Security-Best-Practices_v1.0.0_CodeBuild.2"]}, "severity": "Critical", "author": "Starchitect Agent"},
+	"custom": {"controls":{"AWS-Foundational-Security-Best-Practices_v1.0.0":["AWS-Foundational-Security-Best-Practices_v1.0.0_CodeBuild.2"]},"severity":"Critical","author":"Starchitect Agent"},
 }
 
 resource_type := "MULTIPLE"
