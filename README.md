@@ -10,9 +10,9 @@
 
 ---
 
-Starchitect-CloudGuard is an open-source repository dedicated to writing tests for cloud infrastructure across various formats, including Terraform, Pulumi, Bicep, and CloudFormation. These tests are crafted by cutting-edge AI-powered test-writing agents that operate with a well-defined understanding of cloud security. Each test undergoes meticulous human review by the experienced team at [The Non functionional Co](https://nonfx.com), ensuring high-quality and reliable compliance validation.
+Starchitect-CloudGuard is an open-source repository that writes tests for cloud infrastructure across various formats, including Terraform, Pulumi, Bicep, and CloudFormation. Cutting-edge AI-powered test-writing agents craft these tests with a well-defined understanding of cloud security. Each test undergoes meticulous human review by the experienced team at [The Non-Functionional Co.](https://nonfx.com), ensuring high-quality and reliable compliance validation.
 
-This framework is designed to be flexible and extensible, allowing users to write and manage tests in their preferred formats. While Terraform is the primary focus, support for additional use cases and formats is always growing. If you have specific requirements, feel free to open a GitHub issue, and our team will be happy to assist.
+This framework is designed to be flexible and extensible, allowing users to write and manage tests in their preferred formats. While Terraform is the primary focus, support for additional use cases and formats is constantly growing. If you have specific requirements, open a GitHub issue; our team will be happy to assist.
 
 ## Security Benchmark Coverage
 
@@ -24,7 +24,7 @@ This framework is designed to be flexible and extensible, allowing users to writ
 | AWS Foundational Security Best Practices | ✅ |
 | CIS Google Cloud Platform Security Foundations | ✅|
 
-> All tests are implemented using [fuge Regula](https://github.com/fugue/regula) for Terraform configurations
+> All tests are implemented using [Fugue Regula](https://github.com/fugue/regula) for Terraform configurations
 
 > CloudFormation, Pulumi, and Bicep tests are coming soon.
 
