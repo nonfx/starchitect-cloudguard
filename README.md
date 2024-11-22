@@ -1,5 +1,5 @@
 [![Starchitect](./assets/starchitect.png)](https://starchitect.ai)
-[Join our community!](https://discord.gg/nPFTpQTF)
+[Join our community!](https://discord.gg/r48ZahhA)
 # Starchitect-CloudGuard
 
 
