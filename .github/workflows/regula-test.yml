@@ -1,0 +1,42 @@
+name: Regula Tests
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - 'terraform/aws/**/*.rego'
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'terraform/aws/**/*.rego'
+
+jobs:
+  regula-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Regula
+        run: |
+          wget https://github.com/fugue/regula/releases/download/v3.2.1/regula_3.2.1_Linux_x86_64.tar.gz
+          tar xzf regula_3.2.1_Linux_x86_64.tar.gz
+          sudo mv regula /usr/local/bin/
+
+      - name: Run Regula Tests
+        run: |
+          # Run OPA tests for all rules
+          cd terraform/aws
+          for dir in */; do
+            if [ -d "$dir" ]; then
+              echo "Testing rules in directory: $dir"
+              regula test "$dir" || exit 1
+            fi
+          done
+
+      - name: Update README badge
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: |
+          echo "::set-output name=status::$([ $? -eq 0 ] && echo 'passing' || echo 'failing')"
