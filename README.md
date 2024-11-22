@@ -3,8 +3,7 @@
 # Starchitect-CloudGuard
 
 
-<!-- [![Regula Tests](https://github.com/cldcvr/terrarium/actions/workflows/regula-test.yml/badge.svg)](https://github.com/nonfx/starchitect-tests/actions/workflows/regula-test.yml)  -->
-
+[![Regula Tests](https://github.com/nonfx/starchitect-cloudguard/actions/workflows/regula-test.yml/badge.svg)](https://github.com/nonfx/starchitect-cloudguard/actions/workflows/regula-test.yml) 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE) 
 [![Discord](https://img.shields.io/discord/1306489507499216897)](https://discord.gg/r48ZahhA)
 
