@@ -1,4 +1,4 @@
-package rules.aws_rds_in_vpc
+package rules.aws_aurora_in_vpc
 
 import data.fugue
 

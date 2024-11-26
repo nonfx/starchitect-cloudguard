@@ -1,4 +1,4 @@
-package rules.dms_replication_task_logging
+package rules.dms_replication_task_logging_target
 
 import data.fugue
 
