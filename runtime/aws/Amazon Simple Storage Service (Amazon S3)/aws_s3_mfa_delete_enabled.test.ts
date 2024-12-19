@@ -1,7 +1,7 @@
 import { S3Client, GetBucketVersioningCommand, ListBucketsCommand } from "@aws-sdk/client-s3";
 import { mockClient } from "aws-sdk-client-mock";
 import { ComplianceStatus } from "@codegen/utils/stringUtils";
-import checkS3MfaDelete from "./check-s3-mfa-delete";
+import checkS3MfaDelete from "./aws_s3_mfa_delete_enabled";
 
 const mockS3Client = mockClient(S3Client);
 
