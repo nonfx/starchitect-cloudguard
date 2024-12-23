@@ -1,0 +1,15 @@
+{
+  "name": "@nonfx/starchitect-cloudguard",
+  "module": "index.ts",
+  "type": "module",
+  "scripts": {
+    "prettify": "prettier --config .prettierrc.cjs --cache --cache-location .cache/prettier --write ."
+  },
+  "devDependencies": {},
+  "dependencies": {
+    "prettier": "^3.4.2"
+  },
+  "workspaces": [
+    "cli/"
+  ]
+}

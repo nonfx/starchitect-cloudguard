@@ -1,0 +1,59 @@
+{
+	"$schema": "https://json.schemastore.org/tsconfig",
+	"compilerOptions": {
+		// Module Configuration
+		// Controls how modules are resolved and handled
+		"module": "ESNext", // Use ESNext module system
+		"moduleResolution": "bundler", // Use bundler-style module resolution
+		"moduleDetection": "force", // Force modules for all files
+		"resolveJsonModule": true, // Allow importing .json files
+		"allowImportingTsExtensions": true, // Allow imports with .ts extensions
+		"verbatimModuleSyntax": true, // Use exact import/export syntax
+
+		// JavaScript Support
+		// Settings for JavaScript interoperability
+		"allowJs": true, // Allow JavaScript files to be compiled
+		"allowSyntheticDefaultImports": true, // Allow default imports from modules with no default export
+		"esModuleInterop": true, // Enable interoperability between CommonJS and ES Modules
+		"experimentalDecorators": true, // Enable experimental support for decorators
+		"importHelpers": true, // Import helper functions from tslib
+
+		// Strict Type Checking
+		// Enhanced type checking rules for greater safety
+		"strict": true, // Enable all strict type-checking options
+		"noImplicitAny": true, // Raise error on expressions and declarations with implied 'any' type
+		"noImplicitThis": true, // Raise error on 'this' expressions with implied 'any' type
+		"strictPropertyInitialization": true, // Ensure non-undefined class properties are initialized
+		"noUncheckedIndexedAccess": true, // Include undefined in index signature results
+
+		// Additional Checks
+		// Extra rules for code quality
+		"noFallthroughCasesInSwitch": true, // Report errors for fallthrough cases in switch statements
+		"isolatedModules": true, // Ensure each file can be safely transpiled without relying on other imports
+
+		// Disabled Strict Checks
+		// Stricter rules that are currently disabled
+		"noUnusedLocals": false, // Report errors on unused locals
+		"noUnusedParameters": false, // Report errors on unused parameters
+		"noPropertyAccessFromIndexSignature": false, // Require dot notation for accessing properties
+
+		// Output Configuration
+		// Settings for compilation output
+		"noEmit": true, // Do not emit output files
+		"sourceMap": true, // Generate source maps for debugging
+		"skipLibCheck": true, // Skip type checking of declaration files
+
+		// Environment Configuration
+		// Settings for runtime environment
+		"jsx": "preserve", // Preserve JSX for downstream transformers
+		"target": "ESNext", // Target latest ECMAScript features
+		"lib": [
+			// Libraries to include in the compilation
+			"esnext",
+			"dom",
+			"dom.iterable",
+			"scripthost"
+		],
+		"types": ["node"] // Type definitions to include
+	}
+}
