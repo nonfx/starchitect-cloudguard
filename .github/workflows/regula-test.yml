@@ -6,12 +6,12 @@ on:
     branches:
       - main
     paths:
-      - 'terraform/aws/**/*.rego'
+      - "terraform/aws/**/*.rego"
   pull_request:
     branches:
       - main
     paths:
-      - 'terraform/aws/**/*.rego'
+      - "terraform/aws/**/*.rego"
 
 jobs:
   regula-test:

@@ -1,23 +1,24 @@
-import { EC2Client, DescribeVpcsCommand, DescribeFlowLogsCommand } from '@aws-sdk/client-ec2';
+import { EC2Client, DescribeVpcsCommand, DescribeFlowLogsCommand } from "@aws-sdk/client-ec2";
 
 import {
 	printSummary,
 	generateSummary,
 	type ComplianceReport,
 	ComplianceStatus
-} from '@codegen/utils/stringUtils';
+} from "@codegen/utils/stringUtils";
 
-async function checkVpcFlowLogsCompliance(region: string = 'us-east-1'): Promise<ComplianceReport> {
+async function checkVpcFlowLogsCompliance(region: string = "us-east-1"): Promise<ComplianceReport> {
 	const client = new EC2Client({ region });
 	const results: ComplianceReport = {
 		checks: [],
 		metadoc: {
-			title: 'Ensure VPC flow logging is enabled in all VPCs',
-			description: 'VPC Flow Logs is a feature that enables you to capture information about the IP traffic going to and from network interfaces in your VPC. After you\'ve created a flow log, you can view and retrieve its data in Amazon CloudWatch Logs. It is recommended that VPC Flow Logs be enabled for packet `Rejects` for VPCs.',
+			title: "Ensure VPC flow logging is enabled in all VPCs",
+			description:
+				"VPC Flow Logs is a feature that enables you to capture information about the IP traffic going to and from network interfaces in your VPC. After you've created a flow log, you can view and retrieve its data in Amazon CloudWatch Logs. It is recommended that VPC Flow Logs be enabled for packet `Rejects` for VPCs.",
 			controls: [
 				{
-					id: 'CIS-AWS-Foundations-Benchmark_v3.0.0_3.7',
-					document: 'CIS-AWS-Foundations-Benchmark_v3.0.0'
+					id: "CIS-AWS-Foundations-Benchmark_v3.0.0_3.7",
+					document: "CIS-AWS-Foundations-Benchmark_v3.0.0"
 				}
 			]
 		}
@@ -30,9 +31,9 @@ async function checkVpcFlowLogsCompliance(region: string = 'us-east-1'): Promise
 		if (!vpcsResponse.Vpcs || vpcsResponse.Vpcs.length === 0) {
 			results.checks = [
 				{
-					resourceName: 'No VPCs',
+					resourceName: "No VPCs",
 					status: ComplianceStatus.NOTAPPLICABLE,
-					message: 'No VPCs found in the region'
+					message: "No VPCs found in the region"
 				}
 			];
 			return results;
@@ -46,9 +47,9 @@ async function checkVpcFlowLogsCompliance(region: string = 'us-east-1'): Promise
 		for (const vpc of vpcsResponse.Vpcs) {
 			if (!vpc.VpcId) {
 				results.checks.push({
-					resourceName: 'Unknown VPC',
+					resourceName: "Unknown VPC",
 					status: ComplianceStatus.ERROR,
-					message: 'VPC found without VPC ID'
+					message: "VPC found without VPC ID"
 				});
 				continue;
 			}
@@ -60,28 +61,28 @@ async function checkVpcFlowLogsCompliance(region: string = 'us-east-1'): Promise
 				results.checks.push({
 					resourceName: vpc.VpcId,
 					status: ComplianceStatus.FAIL,
-					message: 'VPC does not have any flow logs enabled'
+					message: "VPC does not have any flow logs enabled"
 				});
 				continue;
 			}
 
 			// Check if there's at least one active flow log
-			const hasActiveFlowLog = vpcFlowLogs.some(log => log.FlowLogStatus === 'ACTIVE');
+			const hasActiveFlowLog = vpcFlowLogs.some(log => log.FlowLogStatus === "ACTIVE");
 
 			// Check if there's a flow log capturing all traffic
-			const hasAllTrafficLog = vpcFlowLogs.some(log => log.TrafficType === 'ALL');
+			const hasAllTrafficLog = vpcFlowLogs.some(log => log.TrafficType === "ALL");
 
 			if (!hasActiveFlowLog) {
 				results.checks.push({
 					resourceName: vpc.VpcId,
 					status: ComplianceStatus.FAIL,
-					message: 'VPC does not have any active flow logs'
+					message: "VPC does not have any active flow logs"
 				});
 			} else if (!hasAllTrafficLog) {
 				results.checks.push({
 					resourceName: vpc.VpcId,
 					status: ComplianceStatus.FAIL,
-					message: 'VPC flow logs do not capture all traffic types'
+					message: "VPC flow logs do not capture all traffic types"
 				});
 			} else {
 				results.checks.push({
@@ -94,7 +95,7 @@ async function checkVpcFlowLogsCompliance(region: string = 'us-east-1'): Promise
 	} catch (error) {
 		results.checks = [
 			{
-				resourceName: 'VPC Flow Logs Check',
+				resourceName: "VPC Flow Logs Check",
 				status: ComplianceStatus.ERROR,
 				message: `Error checking VPC flow logs: ${error instanceof Error ? error.message : String(error)}`
 			}
@@ -105,7 +106,7 @@ async function checkVpcFlowLogsCompliance(region: string = 'us-east-1'): Promise
 }
 
 if (require.main === module) {
-	const region = process.env.AWS_REGION ?? 'ap-southeast-1';
+	const region = process.env.AWS_REGION ?? "ap-southeast-1";
 	const results = await checkVpcFlowLogsCompliance(region);
 	printSummary(generateSummary(results));
 }

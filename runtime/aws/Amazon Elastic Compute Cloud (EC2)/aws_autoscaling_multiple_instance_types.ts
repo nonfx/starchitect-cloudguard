@@ -34,8 +34,10 @@ async function checkAutoScalingMultipleInstanceTypes(
 	const results: ComplianceReport = {
 		checks: [],
 		metadoc: {
-			title: "Auto Scaling groups should use multiple instance types in multiple Availability Zones",
-			description: "This control checks whether Auto Scaling groups are configured to use multiple instance types across multiple Availability Zones for enhanced availability and resilience.",
+			title:
+				"Auto Scaling groups should use multiple instance types in multiple Availability Zones",
+			description:
+				"This control checks whether Auto Scaling groups are configured to use multiple instance types across multiple Availability Zones for enhanced availability and resilience.",
 			controls: [
 				{
 					id: "AWS-Foundational-Security-Best-Practices_v1.0.0_AutoScaling.6",

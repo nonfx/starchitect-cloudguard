@@ -1,10 +1,10 @@
 [![Starchitect](./assets/starchitect.png)](https://starchitect.ai)
 [Join our community!](https://discord.gg/r48ZahhA)
+
 # Starchitect-CloudGuard
 
-
-[![Regula Tests](https://github.com/nonfx/starchitect-cloudguard/actions/workflows/regula-test.yml/badge.svg)](https://github.com/nonfx/starchitect-cloudguard/actions/workflows/regula-test.yml) 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE) 
+[![Regula Tests](https://github.com/nonfx/starchitect-cloudguard/actions/workflows/regula-test.yml/badge.svg)](https://github.com/nonfx/starchitect-cloudguard/actions/workflows/regula-test.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
 [![Discord](https://img.shields.io/discord/1306489507499216897)](https://discord.gg/r48ZahhA)
 
 ---
@@ -15,18 +15,17 @@ This framework is designed to be flexible and extensible, allowing users to writ
 
 ## Security Benchmark Coverage
 
-| Benchmark | Status |
-|-----------|--------|
-| CIS Amazon Web Services Foundations | ✅ |
-| CIS Google Cloud Computing Platform Foundation | ✅ |
-| CIS Amazon Web Services Three-tier Web Architecture | ✅ |
-| AWS Foundational Security Best Practices | ✅ |
-| CIS Google Cloud Platform Security Foundations | ✅|
+| Benchmark                                           | Status |
+| --------------------------------------------------- | ------ |
+| CIS Amazon Web Services Foundations                 | ✅     |
+| CIS Google Cloud Computing Platform Foundation      | ✅     |
+| CIS Amazon Web Services Three-tier Web Architecture | ✅     |
+| AWS Foundational Security Best Practices            | ✅     |
+| CIS Google Cloud Platform Security Foundations      | ✅     |
 
 > All tests are implemented using [Fugue Regula](https://github.com/fugue/regula) for Terraform configurations
 
 > CloudFormation, Pulumi, and Bicep tests are coming soon.
-
 
 ## Contributing
 

@@ -1,23 +1,26 @@
-import { CloudTrailClient, DescribeTrailsCommand } from '@aws-sdk/client-cloudtrail';
+import { CloudTrailClient, DescribeTrailsCommand } from "@aws-sdk/client-cloudtrail";
 
 import {
 	printSummary,
 	generateSummary,
 	type ComplianceReport,
 	ComplianceStatus
-} from '@codegen/utils/stringUtils';
+} from "@codegen/utils/stringUtils";
 
-async function checkCloudTrailKmsEncryption(region: string = 'us-east-1'): Promise<ComplianceReport> {
+async function checkCloudTrailKmsEncryption(
+	region: string = "us-east-1"
+): Promise<ComplianceReport> {
 	const client = new CloudTrailClient({ region });
 	const results: ComplianceReport = {
 		checks: [],
 		metadoc: {
-			title: 'Ensure CloudTrail logs are encrypted at rest using KMS CMKs',
-			description: 'AWS CloudTrail is a web service that records AWS API calls for an account and makes those logs available to users and resources in accordance with IAM policies. AWS Key Management Service (KMS) is a managed service that helps create and control the encryption keys used to encrypt account data, and uses Hardware Security Modules (HSMs) to protect the security of encryption keys. CloudTrail logs can be configured to leverage server side encryption (SSE) and KMS customer created master keys (CMK) to further protect CloudTrail logs. It is recommended that CloudTrail be configured to use SSE-KMS.',
+			title: "Ensure CloudTrail logs are encrypted at rest using KMS CMKs",
+			description:
+				"AWS CloudTrail is a web service that records AWS API calls for an account and makes those logs available to users and resources in accordance with IAM policies. AWS Key Management Service (KMS) is a managed service that helps create and control the encryption keys used to encrypt account data, and uses Hardware Security Modules (HSMs) to protect the security of encryption keys. CloudTrail logs can be configured to leverage server side encryption (SSE) and KMS customer created master keys (CMK) to further protect CloudTrail logs. It is recommended that CloudTrail be configured to use SSE-KMS.",
 			controls: [
 				{
-					id: 'CIS-AWS-Foundations-Benchmark_v3.0.0_3.5',
-					document: 'CIS-AWS-Foundations-Benchmark_v3.0.0'
+					id: "CIS-AWS-Foundations-Benchmark_v3.0.0_3.5",
+					document: "CIS-AWS-Foundations-Benchmark_v3.0.0"
 				}
 			]
 		}
@@ -30,9 +33,9 @@ async function checkCloudTrailKmsEncryption(region: string = 'us-east-1'): Promi
 		if (!response.trailList || response.trailList.length === 0) {
 			results.checks = [
 				{
-					resourceName: 'No CloudTrails',
+					resourceName: "No CloudTrails",
 					status: ComplianceStatus.NOTAPPLICABLE,
-					message: 'No CloudTrail trails found in the region'
+					message: "No CloudTrail trails found in the region"
 				}
 			];
 			return results;
@@ -42,9 +45,9 @@ async function checkCloudTrailKmsEncryption(region: string = 'us-east-1'): Promi
 		for (const trail of response.trailList) {
 			if (!trail.Name) {
 				results.checks.push({
-					resourceName: 'Unknown Trail',
+					resourceName: "Unknown Trail",
 					status: ComplianceStatus.ERROR,
-					message: 'Trail found without name'
+					message: "Trail found without name"
 				});
 				continue;
 			}
@@ -55,15 +58,13 @@ async function checkCloudTrailKmsEncryption(region: string = 'us-east-1'): Promi
 				resourceName: trail.Name,
 				resourceArn: trail.TrailARN,
 				status: hasKmsKey ? ComplianceStatus.PASS : ComplianceStatus.FAIL,
-				message: hasKmsKey
-					? undefined
-					: 'CloudTrail is not configured to use SSE-KMS encryption'
+				message: hasKmsKey ? undefined : "CloudTrail is not configured to use SSE-KMS encryption"
 			});
 		}
 	} catch (error) {
 		results.checks = [
 			{
-				resourceName: 'CloudTrail Check',
+				resourceName: "CloudTrail Check",
 				status: ComplianceStatus.ERROR,
 				message: `Error checking CloudTrail trails: ${error instanceof Error ? error.message : String(error)}`
 			}
@@ -75,7 +76,7 @@ async function checkCloudTrailKmsEncryption(region: string = 'us-east-1'): Promi
 }
 
 if (require.main === module) {
-	const region = process.env.AWS_REGION ?? 'ap-southeast-1';
+	const region = process.env.AWS_REGION ?? "ap-southeast-1";
 	const results = await checkCloudTrailKmsEncryption(region);
 	printSummary(generateSummary(results));
 }

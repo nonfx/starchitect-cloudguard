@@ -1,11 +1,11 @@
-import { S3Client, GetBucketPolicyCommand, ListBucketsCommand } from '@aws-sdk/client-s3';
+import { S3Client, GetBucketPolicyCommand, ListBucketsCommand } from "@aws-sdk/client-s3";
 
 import {
 	printSummary,
 	generateSummary,
 	type ComplianceReport,
 	ComplianceStatus
-} from '@codegen/utils/stringUtils';
+} from "@codegen/utils/stringUtils";
 
 interface PolicyStatement {
 	Effect: string;
@@ -32,28 +32,28 @@ function hasSecureTransportDeny(policyDocument: PolicyDocument): boolean {
 
 	return statements.some(statement => {
 		const actions = asArray(statement.Action);
-		const validActions = new Set(['s3:GetObject', 's3:*', '*']);
+		const validActions = new Set(["s3:GetObject", "s3:*", "*"]);
 
 		return (
-			statement.Effect === 'Deny' &&
+			statement.Effect === "Deny" &&
 			actions.some(action => validActions.has(action)) &&
-			statement.Condition?.Bool?.['aws:SecureTransport'] === 'false'
+			statement.Condition?.Bool?.["aws:SecureTransport"] === "false"
 		);
 	});
 }
 
-async function checkS3DenyHttpAccess(region: string = 'us-east-1'): Promise<ComplianceReport> {
+async function checkS3DenyHttpAccess(region: string = "us-east-1"): Promise<ComplianceReport> {
 	const client = new S3Client({ region });
 	const results: ComplianceReport = {
 		checks: [],
 		metadoc: {
-			title: 'Ensure S3 Bucket Policy is set to deny HTTP requests',
+			title: "Ensure S3 Bucket Policy is set to deny HTTP requests",
 			description:
-				'At the Amazon S3 bucket level, you can configure permissions through a bucket policy making the objects accessible only through HTTPS.',
+				"At the Amazon S3 bucket level, you can configure permissions through a bucket policy making the objects accessible only through HTTPS.",
 			controls: [
 				{
-					id: 'CIS-AWS-Foundations-Benchmark_v3.0.0_2.1.1',
-					document: 'CIS-AWS-Foundations-Benchmark_v3.0.0'
+					id: "CIS-AWS-Foundations-Benchmark_v3.0.0_2.1.1",
+					document: "CIS-AWS-Foundations-Benchmark_v3.0.0"
 				}
 			]
 		}
@@ -66,9 +66,9 @@ async function checkS3DenyHttpAccess(region: string = 'us-east-1'): Promise<Comp
 		if (!listBucketsResponse.Buckets || listBucketsResponse.Buckets.length === 0) {
 			results.checks = [
 				{
-					resourceName: 'No S3 Buckets',
+					resourceName: "No S3 Buckets",
 					status: ComplianceStatus.NOTAPPLICABLE,
-					message: 'No S3 buckets found in the account'
+					message: "No S3 buckets found in the account"
 				}
 			];
 			return results;
@@ -87,7 +87,7 @@ async function checkS3DenyHttpAccess(region: string = 'us-east-1'): Promise<Comp
 					results.checks.push({
 						resourceName: bucket.Name,
 						status: ComplianceStatus.FAIL,
-						message: 'Bucket has no policy configured'
+						message: "Bucket has no policy configured"
 					});
 					continue;
 				}
@@ -98,16 +98,14 @@ async function checkS3DenyHttpAccess(region: string = 'us-east-1'): Promise<Comp
 				results.checks.push({
 					resourceName: bucket.Name,
 					status: hasHttpDeny ? ComplianceStatus.PASS : ComplianceStatus.FAIL,
-					message: hasHttpDeny
-						? undefined
-						: 'Bucket policy does not deny HTTP requests'
+					message: hasHttpDeny ? undefined : "Bucket policy does not deny HTTP requests"
 				});
 			} catch (error: any) {
-				if (error.name === 'NoSuchBucketPolicy') {
+				if (error.name === "NoSuchBucketPolicy") {
 					results.checks.push({
 						resourceName: bucket.Name,
 						status: ComplianceStatus.FAIL,
-						message: 'Bucket has no policy configured'
+						message: "Bucket has no policy configured"
 					});
 				} else {
 					results.checks.push({
@@ -121,7 +119,7 @@ async function checkS3DenyHttpAccess(region: string = 'us-east-1'): Promise<Comp
 	} catch (error) {
 		results.checks = [
 			{
-				resourceName: 'S3 Check',
+				resourceName: "S3 Check",
 				status: ComplianceStatus.ERROR,
 				message: `Error checking S3 buckets: ${error instanceof Error ? error.message : String(error)}`
 			}
@@ -133,7 +131,7 @@ async function checkS3DenyHttpAccess(region: string = 'us-east-1'): Promise<Comp
 }
 
 if (require.main === module) {
-	const region = process.env.AWS_REGION ?? 'ap-southeast-1';
+	const region = process.env.AWS_REGION ?? "ap-southeast-1";
 	const results = await checkS3DenyHttpAccess(region);
 	printSummary(generateSummary(results));
 }
