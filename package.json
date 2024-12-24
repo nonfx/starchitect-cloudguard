@@ -5,9 +5,11 @@
         "@aws-sdk/client-accessanalyzer": "^3.712.0",
         "@aws-sdk/client-auto-scaling": "^3.714.0",
         "@aws-sdk/client-cloudtrail": "^3.714.0",
+        "@aws-sdk/client-config-service": "^3.716.0",
         "@aws-sdk/client-dynamodb": "^3.713.0",
         "@aws-sdk/client-ec2": "^3.712.0",
         "@aws-sdk/client-ecr": "^3.712.0",
+        "@aws-sdk/client-ecs": "^3.716.0",
         "@aws-sdk/client-iam": "^3.712.0",
         "@aws-sdk/client-s3": "^3.715.0",
         "aws-sdk-client-mock": "^4.1.0"
