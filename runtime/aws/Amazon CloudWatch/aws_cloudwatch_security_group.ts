@@ -1,11 +1,12 @@
 import {
+  CloudWatchClient,
+  DescribeAlarmsCommand,
+} from "@aws-sdk/client-cloudwatch";
+import {
   CloudWatchLogsClient,
+  DescribeLogGroupsCommand,
   DescribeMetricFiltersCommand,
 } from "@aws-sdk/client-cloudwatch-logs";
-import {
-  CloudTrailClient,
-  DescribeTrailsCommand,
-} from "@aws-sdk/client-cloudtrail";
 
 import {
   printSummary,
@@ -14,11 +15,15 @@ import {
   ComplianceStatus,
 } from "@codegen/utils/stringUtils";
 
+const REQUIRED_PATTERN =
+  "{ ($.eventName = AuthorizeSecurityGroupIngress) || ($.eventName = AuthorizeSecurityGroupEgress) || ($.eventName = RevokeSecurityGroupIngress) || ($.eventName = RevokeSecurityGroupEgress) || ($.eventName = CreateSecurityGroup) || ($.eventName = DeleteSecurityGroup) }";
+
 async function checkSecurityGroupMonitoring(
   region: string = "us-east-1"
 ): Promise<ComplianceReport> {
-  const cloudWatchLogsClient = new CloudWatchLogsClient({ region });
-  const cloudTrailClient = new CloudTrailClient({ region });
+  const cwClient = new CloudWatchClient({ region });
+  const cwLogsClient = new CloudWatchLogsClient({ region });
+
   const results: ComplianceReport = {
     checks: [],
     metadoc: {
@@ -35,79 +40,78 @@ async function checkSecurityGroupMonitoring(
   };
 
   try {
-    // Check CloudTrail configuration
-    const trailsResponse = await cloudTrailClient.send(
-      new DescribeTrailsCommand({})
-    );
-    const trails = trailsResponse.trailList || [];
+    const logGroups = await cwLogsClient.send(new DescribeLogGroupsCommand({}));
 
-    if (trails.length === 0) {
+    if (!logGroups.logGroups || logGroups.logGroups.length === 0) {
       results.checks.push({
-        resourceName: "CloudTrail",
+        resourceName: "CloudWatch Logs",
         status: ComplianceStatus.FAIL,
-        message: "No CloudTrail trails configured",
+        message: "No CloudWatch Log Groups found",
       });
       return results;
     }
 
-    let hasValidTrail = false;
-    let cloudWatchLogGroup = "";
+    for (const logGroup of logGroups.logGroups) {
+      if (!logGroup.logGroupName) continue;
 
-    // Check each trail for proper configuration
-    for (const trail of trails) {
-      if (
-        trail.IsMultiRegionTrail &&
-        trail.CloudWatchLogsLogGroupArn &&
-        trail.CloudWatchLogsRoleArn
-      ) {
-        hasValidTrail = true;
-        cloudWatchLogGroup =
-          trail.CloudWatchLogsLogGroupArn.split(":log-group:")[1].split(":")[0];
-        break;
+      const metricFilters = await cwLogsClient.send(
+        new DescribeMetricFiltersCommand({
+          logGroupName: logGroup.logGroupName,
+        })
+      );
+
+      const matchingFilter = metricFilters.metricFilters?.find(
+        (filter) => filter.filterPattern === REQUIRED_PATTERN
+      );
+
+      if (!matchingFilter) {
+        results.checks.push({
+          resourceName: logGroup.logGroupName,
+          resourceArn: logGroup.arn,
+          status: ComplianceStatus.FAIL,
+          message:
+            "Log group does not have required security group changes metric filter",
+        });
+        continue;
+      }
+
+      if (matchingFilter.metricTransformations?.[0]?.metricName) {
+        const alarms = await cwClient.send(
+          new DescribeAlarmsCommand({
+            AlarmNames: [],
+            MetricName: matchingFilter.metricTransformations[0].metricName,
+          })
+        );
+
+        if (!alarms.MetricAlarms || alarms.MetricAlarms.length === 0) {
+          results.checks.push({
+            resourceName: logGroup.logGroupName,
+            resourceArn: logGroup.arn,
+            status: ComplianceStatus.FAIL,
+            message:
+              "No alarm configured for security group changes metric filter",
+          });
+        } else {
+          results.checks.push({
+            resourceName: logGroup.logGroupName,
+            resourceArn: logGroup.arn,
+            status: ComplianceStatus.PASS,
+            message: undefined,
+          });
+        }
       }
     }
 
-    if (!hasValidTrail) {
+    if (results.checks.length === 0) {
       results.checks.push({
-        resourceName: "CloudTrail",
+        resourceName: "CloudWatch Configuration",
         status: ComplianceStatus.FAIL,
-        message:
-          "No properly configured CloudTrail found with CloudWatch Logs integration",
+        message: "No monitoring configuration found for security group changes",
       });
-      return results;
     }
-
-    // Check for security group metric filter
-    const metricFiltersResponse = await cloudWatchLogsClient.send(
-      new DescribeMetricFiltersCommand({
-        logGroupName: cloudWatchLogGroup,
-      })
-    );
-
-    const securityGroupPattern =
-      "{ ($.eventName = AuthorizeSecurityGroupIngress) || ($.eventName = AuthorizeSecurityGroupEgress) || ($.eventName = RevokeSecurityGroupIngress) || ($.eventName = RevokeSecurityGroupEgress) || ($.eventName = CreateSecurityGroup) || ($.eventName = DeleteSecurityGroup) }";
-
-    const hasSecurityGroupFilter = metricFiltersResponse.metricFilters?.some(
-      (filter) => filter.filterPattern === securityGroupPattern
-    );
-
-    if (!hasSecurityGroupFilter) {
-      results.checks.push({
-        resourceName: cloudWatchLogGroup,
-        status: ComplianceStatus.FAIL,
-        message: "No metric filter found for security group changes",
-      });
-      return results;
-    }
-
-    results.checks.push({
-      resourceName: cloudWatchLogGroup,
-      status: ComplianceStatus.PASS,
-      message: "Security group changes are being monitored",
-    });
   } catch (error) {
     results.checks.push({
-      resourceName: "Monitoring Check",
+      resourceName: "CloudWatch",
       status: ComplianceStatus.ERROR,
       message: `Error checking security group monitoring: ${
         error instanceof Error ? error.message : String(error)
