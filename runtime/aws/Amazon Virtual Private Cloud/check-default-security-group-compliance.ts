@@ -1,16 +1,11 @@
 import {
-	EC2Client,
-	DescribeVpcsCommand,
 	DescribeSecurityGroupsCommand,
+	DescribeVpcsCommand,
+	EC2Client,
 	type SecurityGroup
 } from "@aws-sdk/client-ec2";
-
-import {
-	printSummary,
-	generateSummary,
-	type ComplianceReport,
-	ComplianceStatus
-} from "@codegen/utils/stringUtils";
+import { generateSummary, printSummary } from "~codegen/utils/stringUtils";
+import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "~runtime/types";
 
 function isSecurityGroupCompliant(sg: SecurityGroup): boolean {
 	// Check ingress rules - should either be empty or have single self-referencing rule
@@ -33,18 +28,7 @@ async function checkDefaultSecurityGroupCompliance(
 ): Promise<ComplianceReport> {
 	const client = new EC2Client({ region });
 	const results: ComplianceReport = {
-		checks: [],
-		metadoc: {
-			title: "Ensure the default security group of every VPC restricts all traffic",
-			description:
-				"A VPC comes with a default security group whose initial settings deny all inbound traffic, allow all outbound traffic, and allow all traffic between instances assigned to the security group. If you don't specify a security group when you launch an instance, the instance is automatically assigned to this default security group. Security groups provide stateful filtering of ingress/egress network traffic to AWS resources. It is recommended that the default security group restrict all traffic.",
-			controls: [
-				{
-					id: "CIS-AWS-Foundations-Benchmark_v3.0.0_5.4",
-					document: "CIS-AWS-Foundations-Benchmark_v3.0.0"
-				}
-			]
-		}
+		checks: []
 	};
 
 	try {
@@ -124,11 +108,23 @@ async function checkDefaultSecurityGroupCompliance(
 }
 
 if (require.main === module) {
-	const region = process.env.AWS_REGION ?? "ap-southeast-1";
+	const region = process.env.AWS_REGION;
 	void (async () => {
 		const results = await checkDefaultSecurityGroupCompliance(region);
 		printSummary(generateSummary(results));
 	})();
 }
 
-export default checkDefaultSecurityGroupCompliance;
+export default {
+	title: "Ensure the default security group of every VPC restricts all traffic",
+	description:
+		"A VPC comes with a default security group whose initial settings deny all inbound traffic, allow all outbound traffic, and allow all traffic between instances assigned to the security group. If you don't specify a security group when you launch an instance, the instance is automatically assigned to this default security group. Security groups provide stateful filtering of ingress/egress network traffic to AWS resources. It is recommended that the default security group restrict all traffic.",
+	controls: [
+		{
+			id: "CIS-AWS-Foundations-Benchmark_v3.0.0_5.4",
+			document: "CIS-AWS-Foundations-Benchmark_v3.0.0"
+		}
+	],
+	severity: "MEDIUM",
+	execute: checkDefaultSecurityGroupCompliance
+} satisfies RuntimeTest;

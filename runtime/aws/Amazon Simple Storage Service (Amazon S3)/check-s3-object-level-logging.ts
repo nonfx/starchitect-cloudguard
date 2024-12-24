@@ -1,17 +1,12 @@
 import {
 	CloudTrailClient,
+	GetEventSelectorsCommand,
 	GetTrailCommand,
-	ListTrailsCommand,
-	GetEventSelectorsCommand
+	ListTrailsCommand
 } from "@aws-sdk/client-cloudtrail";
-import { S3Client, ListBucketsCommand } from "@aws-sdk/client-s3";
-
-import {
-	printSummary,
-	generateSummary,
-	type ComplianceReport,
-	ComplianceStatus
-} from "@codegen/utils/stringUtils";
+import { ListBucketsCommand, S3Client } from "@aws-sdk/client-s3";
+import { generateSummary, printSummary } from "~codegen/utils/stringUtils";
+import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "~runtime/types";
 
 interface Trail {
 	Name?: string;
@@ -22,18 +17,7 @@ async function checkS3ObjectLevelLogging(region: string = "us-east-1"): Promise<
 	const cloudTrailClient = new CloudTrailClient({ region });
 	const s3Client = new S3Client({ region });
 	const results: ComplianceReport = {
-		checks: [],
-		metadoc: {
-			title: "Ensure that Object-level logging for write events is enabled for S3 bucket",
-			description:
-				"S3 object-level API operations such as GetObject, DeleteObject, and PutObject are called data events. By default, CloudTrail trails don't log data events and so it is recommended to enable Object-level logging for S3 buckets.",
-			controls: [
-				{
-					id: "CIS-AWS-Foundations-Benchmark_v3.0.0_3.8",
-					document: "CIS-AWS-Foundations-Benchmark_v3.0.0"
-				}
-			]
-		}
+		checks: []
 	};
 
 	try {
@@ -184,9 +168,21 @@ async function isTrailMonitoringBucket(
 }
 
 if (require.main === module) {
-	const region = process.env.AWS_REGION ?? "ap-southeast-1";
+	const region = process.env.AWS_REGION;
 	const results = await checkS3ObjectLevelLogging(region);
 	printSummary(generateSummary(results));
 }
 
-export default checkS3ObjectLevelLogging;
+export default {
+	title: "Ensure that Object-level logging for write events is enabled for S3 bucket",
+	description:
+		"S3 object-level API operations such as GetObject, DeleteObject, and PutObject are called data events. By default, CloudTrail trails don't log data events and so it is recommended to enable Object-level logging for S3 buckets.",
+	controls: [
+		{
+			id: "CIS-AWS-Foundations-Benchmark_v3.0.0_3.8",
+			document: "CIS-AWS-Foundations-Benchmark_v3.0.0"
+		}
+	],
+	severity: "MEDIUM",
+	execute: checkS3ObjectLevelLogging
+} satisfies RuntimeTest;

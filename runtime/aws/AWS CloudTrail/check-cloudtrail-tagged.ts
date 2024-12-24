@@ -1,32 +1,16 @@
 import {
 	CloudTrailClient,
-	ListTrailsCommand,
 	GetTrailCommand,
-	ListTagsCommand
+	ListTagsCommand,
+	ListTrailsCommand
 } from "@aws-sdk/client-cloudtrail";
-
-import {
-	printSummary,
-	generateSummary,
-	type ComplianceReport,
-	ComplianceStatus
-} from "@codegen/utils/stringUtils";
+import { generateSummary, printSummary } from "~codegen/utils/stringUtils";
+import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "~runtime/types";
 
 async function checkCloudTrailTagged(region: string = "us-east-1"): Promise<ComplianceReport> {
 	const client = new CloudTrailClient({ region });
 	const results: ComplianceReport = {
-		checks: [],
-		metadoc: {
-			title: "CloudTrail trails should be tagged",
-			description:
-				"This control checks whether an AWS CloudTrail trail has tags with the specific keys defined in the parameter requiredTagKeys. The control fails if the trail doesn't have any tag keys or if it doesn't have all the keys specified in the parameter requiredTagKeys. If the parameter requiredTagKeys isn't provided, the control only checks for the existence of a tag key and fails if the trail isn't tagged with any key. System tags, which are automatically applied and begin with aws:, are ignored.",
-			controls: [
-				{
-					id: "AWS-Foundational-Security-Best-Practices_v1.0.0_CloudTrail.9",
-					document: "AWS-Foundational-Security-Best-Practices_v1.0.0"
-				}
-			]
-		}
+		checks: []
 	};
 
 	try {
@@ -112,9 +96,21 @@ async function checkCloudTrailTagged(region: string = "us-east-1"): Promise<Comp
 }
 
 if (require.main === module) {
-	const region = process.env.AWS_REGION ?? "ap-southeast-1";
+	const region = process.env.AWS_REGION;
 	const results = await checkCloudTrailTagged(region);
 	printSummary(generateSummary(results));
 }
 
-export default checkCloudTrailTagged;
+export default {
+	title: "CloudTrail trails should be tagged",
+	description:
+		"This control checks whether an AWS CloudTrail trail has tags with the specific keys defined in the parameter requiredTagKeys. The control fails if the trail doesn't have any tag keys or if it doesn't have all the keys specified in the parameter requiredTagKeys. If the parameter requiredTagKeys isn't provided, the control only checks for the existence of a tag key and fails if the trail isn't tagged with any key. System tags, which are automatically applied and begin with aws:, are ignored.",
+	controls: [
+		{
+			id: "AWS-Foundational-Security-Best-Practices_v1.0.0_CloudTrail.9",
+			document: "AWS-Foundational-Security-Best-Practices_v1.0.0"
+		}
+	],
+	severity: "MEDIUM",
+	execute: checkCloudTrailTagged
+} satisfies RuntimeTest;

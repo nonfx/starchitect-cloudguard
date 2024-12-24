@@ -1,27 +1,11 @@
 import { S3Client, ListBucketsCommand, GetBucketLoggingCommand } from "@aws-sdk/client-s3";
-
-import {
-	printSummary,
-	generateSummary,
-	type ComplianceReport,
-	ComplianceStatus
-} from "@codegen/utils/stringUtils";
+import { printSummary, generateSummary } from "~codegen/utils/stringUtils";
+import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "~runtime/types";
 
 async function checkS3BucketLogging(region: string = "us-east-1"): Promise<ComplianceReport> {
 	const client = new S3Client({ region });
 	const results: ComplianceReport = {
-		checks: [],
-		metadoc: {
-			title: "S3 general purpose buckets should have server access logging enabled",
-			description:
-				"This control checks whether server access logging is enabled for S3 buckets. Server access logging provides detailed records of requests made to buckets and assists in security audits.",
-			controls: [
-				{
-					id: "AWS-Foundational-Security-Best-Practices_v1.0.0_S3.9",
-					document: "AWS-Foundational-Security-Best-Practices_v1.0.0"
-				}
-			]
-		}
+		checks: []
 	};
 
 	try {
@@ -88,9 +72,21 @@ async function checkS3BucketLogging(region: string = "us-east-1"): Promise<Compl
 }
 
 if (require.main === module) {
-	const region = process.env.AWS_REGION ?? "ap-southeast-1";
+	const region = process.env.AWS_REGION;
 	const results = await checkS3BucketLogging(region);
 	printSummary(generateSummary(results));
 }
 
-export default checkS3BucketLogging;
+export default {
+	title: "S3 general purpose buckets should have server access logging enabled",
+	description:
+		"This control checks whether server access logging is enabled for S3 buckets. Server access logging provides detailed records of requests made to buckets and assists in security audits.",
+	controls: [
+		{
+			id: "AWS-Foundational-Security-Best-Practices_v1.0.0_S3.9",
+			document: "AWS-Foundational-Security-Best-Practices_v1.0.0"
+		}
+	],
+	severity: "MEDIUM",
+	execute: checkS3BucketLogging
+} satisfies RuntimeTest;

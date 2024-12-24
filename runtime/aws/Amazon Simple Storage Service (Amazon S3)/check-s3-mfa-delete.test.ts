@@ -1,6 +1,6 @@
 import { S3Client, GetBucketVersioningCommand, ListBucketsCommand } from "@aws-sdk/client-s3";
 import { mockClient } from "aws-sdk-client-mock";
-import { ComplianceStatus } from "@codegen/utils/stringUtils";
+import { ComplianceStatus } from "~runtime/types";
 import checkS3MfaDelete from "./check-s3-mfa-delete";
 
 const mockS3Client = mockClient(S3Client);
@@ -20,7 +20,7 @@ describe("checkS3MfaDelete", () => {
 			mockS3Client.on(ListBucketsCommand).resolves({ Buckets: mockBuckets });
 			mockS3Client.on(GetBucketVersioningCommand).resolves({ MFADelete: "Enabled" });
 
-			const result = await checkS3MfaDelete();
+			const result = await checkS3MfaDelete.execute();
 			expect(result.checks).toHaveLength(2);
 			result.checks.forEach(check => {
 				expect(check.status).toBe(ComplianceStatus.PASS);
@@ -31,7 +31,7 @@ describe("checkS3MfaDelete", () => {
 		it("should return NOTAPPLICABLE when no buckets exist", async () => {
 			mockS3Client.on(ListBucketsCommand).resolves({ Buckets: [] });
 
-			const result = await checkS3MfaDelete();
+			const result = await checkS3MfaDelete.execute();
 			expect(result.checks).toHaveLength(1);
 			expect(result.checks[0].status).toBe(ComplianceStatus.NOTAPPLICABLE);
 			expect(result.checks[0].message).toBe("No S3 buckets found in the account");
@@ -42,7 +42,7 @@ describe("checkS3MfaDelete", () => {
 				Buckets: [{ CreationDate: new Date() }]
 			});
 
-			const result = await checkS3MfaDelete();
+			const result = await checkS3MfaDelete.execute();
 			expect(result.checks).toHaveLength(0);
 		});
 	});
@@ -52,7 +52,7 @@ describe("checkS3MfaDelete", () => {
 			mockS3Client.on(ListBucketsCommand).resolves({ Buckets: mockBuckets });
 			mockS3Client.on(GetBucketVersioningCommand).resolves({ MFADelete: "Disabled" });
 
-			const result = await checkS3MfaDelete();
+			const result = await checkS3MfaDelete.execute();
 			expect(result.checks).toHaveLength(2);
 			result.checks.forEach(check => {
 				expect(check.status).toBe(ComplianceStatus.FAIL);
@@ -64,7 +64,7 @@ describe("checkS3MfaDelete", () => {
 			mockS3Client.on(ListBucketsCommand).resolves({ Buckets: mockBuckets });
 			mockS3Client.on(GetBucketVersioningCommand).resolves({});
 
-			const result = await checkS3MfaDelete();
+			const result = await checkS3MfaDelete.execute();
 			expect(result.checks).toHaveLength(2);
 			result.checks.forEach(check => {
 				expect(check.status).toBe(ComplianceStatus.FAIL);
@@ -79,7 +79,7 @@ describe("checkS3MfaDelete", () => {
 				.on(GetBucketVersioningCommand, { Bucket: "test-bucket-2" })
 				.resolves({ MFADelete: "Disabled" });
 
-			const result = await checkS3MfaDelete();
+			const result = await checkS3MfaDelete.execute();
 			expect(result.checks).toHaveLength(2);
 			expect(result.checks[0].status).toBe(ComplianceStatus.PASS);
 			expect(result.checks[1].status).toBe(ComplianceStatus.FAIL);
@@ -90,7 +90,7 @@ describe("checkS3MfaDelete", () => {
 		it("should return ERROR when ListBuckets fails", async () => {
 			mockS3Client.on(ListBucketsCommand).rejects(new Error("Failed to list buckets"));
 
-			const result = await checkS3MfaDelete();
+			const result = await checkS3MfaDelete.execute();
 			expect(result.checks).toHaveLength(1);
 			expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
 			expect(result.checks[0].message).toContain("Failed to list buckets");
@@ -100,7 +100,7 @@ describe("checkS3MfaDelete", () => {
 			mockS3Client.on(ListBucketsCommand).resolves({ Buckets: mockBuckets });
 			mockS3Client.on(GetBucketVersioningCommand).rejects(new Error("Access denied"));
 
-			const result = await checkS3MfaDelete();
+			const result = await checkS3MfaDelete.execute();
 			expect(result.checks).toHaveLength(2);
 			result.checks.forEach(check => {
 				expect(check.status).toBe(ComplianceStatus.ERROR);
@@ -111,7 +111,7 @@ describe("checkS3MfaDelete", () => {
 		it("should handle undefined Buckets response", async () => {
 			mockS3Client.on(ListBucketsCommand).resolves({});
 
-			const result = await checkS3MfaDelete();
+			const result = await checkS3MfaDelete.execute();
 			expect(result.checks).toHaveLength(1);
 			expect(result.checks[0].status).toBe(ComplianceStatus.NOTAPPLICABLE);
 		});
@@ -121,10 +121,9 @@ describe("checkS3MfaDelete", () => {
 		it("should include correct metadata in the report", async () => {
 			mockS3Client.on(ListBucketsCommand).resolves({ Buckets: [] });
 
-			const result = await checkS3MfaDelete();
-			expect(result.metadoc).toBeDefined();
-			expect(result.metadoc.title).toBe("Ensure MFA Delete is enabled on S3 buckets");
-			expect(result.metadoc.controls[0].id).toBe("CIS-AWS-Foundations-Benchmark_v3.0.0_2.1.2");
+			// const result = await checkS3MfaDelete.
+			expect(checkS3MfaDelete.title).toBe("Ensure MFA Delete is enabled on S3 buckets");
+			expect(checkS3MfaDelete.controls[0].id).toBe("CIS-AWS-Foundations-Benchmark_v3.0.0_2.1.2");
 		});
 	});
 });

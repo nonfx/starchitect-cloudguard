@@ -57,7 +57,8 @@
 		],
 		"types": ["node", "bun"], // Type definitions to include
 		"paths": {
-			"@codegen/*": ["./codegen/*"]
+			"~codegen/*": ["./codegen/*"],
+			"~runtime/*": ["./runtime/*"]
 		}
 	},
 

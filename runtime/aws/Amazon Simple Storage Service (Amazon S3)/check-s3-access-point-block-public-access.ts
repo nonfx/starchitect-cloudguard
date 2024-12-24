@@ -1,33 +1,18 @@
 import {
-	S3Control,
+	GetAccessPointCommand,
 	ListAccessPointsCommand,
-	GetAccessPointCommand
+	S3Control
 } from "@aws-sdk/client-s3-control";
-import { STSClient, GetCallerIdentityCommand } from "@aws-sdk/client-sts";
-import {
-	printSummary,
-	generateSummary,
-	ComplianceStatus,
-	type ComplianceReport
-} from "@codegen/utils/stringUtils";
+import { GetCallerIdentityCommand, STSClient } from "@aws-sdk/client-sts";
+import { generateSummary, printSummary } from "~codegen/utils/stringUtils";
+import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "~runtime/types";
 
 async function checkS3AccessPointBlockPublicAccess(
 	region: string = "us-east-1"
 ): Promise<ComplianceReport> {
 	const stsClient = new STSClient({ region });
 	const results: ComplianceReport = {
-		checks: [],
-		metadoc: {
-			title: "S3 access points should have block public access settings enabled",
-			description:
-				"S3 access points must have block public access settings enabled to prevent unauthorized access and maintain security. All block public access settings should be enabled by default for new access points and cannot be changed after creation.",
-			controls: [
-				{
-					id: "AWS-Foundational-Security-Best-Practices_v1.0.0_S3.19",
-					document: "AWS-Foundational-Security-Best-Practices_v1.0.0"
-				}
-			]
-		}
+		checks: []
 	};
 
 	try {
@@ -127,9 +112,21 @@ async function checkS3AccessPointBlockPublicAccess(
 }
 
 if (require.main === module) {
-	const region = process.env.AWS_REGION ?? "ap-southeast-1";
+	const region = process.env.AWS_REGION;
 	const results = await checkS3AccessPointBlockPublicAccess(region);
 	printSummary(generateSummary(results));
 }
 
-export default checkS3AccessPointBlockPublicAccess;
+export default {
+	title: "S3 access points should have block public access settings enabled",
+	description:
+		"S3 access points must have block public access settings enabled to prevent unauthorized access and maintain security. All block public access settings should be enabled by default for new access points and cannot be changed after creation.",
+	controls: [
+		{
+			id: "AWS-Foundational-Security-Best-Practices_v1.0.0_S3.19",
+			document: "AWS-Foundational-Security-Best-Practices_v1.0.0"
+		}
+	],
+	severity: "MEDIUM",
+	execute: checkS3AccessPointBlockPublicAccess
+} satisfies RuntimeTest;

@@ -20,6 +20,7 @@ export class AWSProvider extends CloudProvider {
 
 			// @todo - Provide a more helpful message on how to ensure AWS credentials are set up
 			// Either using env variables, or profiles or aws sso CLI
+			// Use inquirer to give the users an option to choose then restart the CLI
 			if (!identity.UserId) {
 				throw new Error("AWS credentials not found or invalid");
 			}

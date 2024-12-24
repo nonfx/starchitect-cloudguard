@@ -1,7 +1,7 @@
 import { S3Client, GetBucketPolicyCommand, ListBucketsCommand } from "@aws-sdk/client-s3";
 import { STSClient, GetCallerIdentityCommand } from "@aws-sdk/client-sts";
 import { mockClient } from "aws-sdk-client-mock";
-import { ComplianceStatus } from "@codegen/utils/stringUtils";
+import { ComplianceStatus } from "~runtime/types";
 import checkS3BucketExternalAccess from "./check-s3-bucket-external-access";
 
 const mockS3Client = mockClient(S3Client);
@@ -32,7 +32,7 @@ describe("checkS3BucketExternalAccess", () => {
 				.on(GetBucketPolicyCommand)
 				.rejects({ name: "NoSuchBucketPolicy" });
 
-			const result = await checkS3BucketExternalAccess();
+			const result = await checkS3BucketExternalAccess.execute();
 			expect(result.checks[0].status).toBe(ComplianceStatus.PASS);
 			expect(result.checks[0].message).toBe("Bucket has no policy attached");
 		});
@@ -58,7 +58,7 @@ describe("checkS3BucketExternalAccess", () => {
 				.on(GetBucketPolicyCommand)
 				.resolves({ Policy: JSON.stringify(safePolicy) });
 
-			const result = await checkS3BucketExternalAccess();
+			const result = await checkS3BucketExternalAccess.execute();
 			expect(result.checks[0].status).toBe(ComplianceStatus.PASS);
 		});
 
@@ -88,7 +88,7 @@ describe("checkS3BucketExternalAccess", () => {
 				.on(GetBucketPolicyCommand)
 				.resolves({ Policy: JSON.stringify(safePolicy) });
 
-			const result = await checkS3BucketExternalAccess();
+			const result = await checkS3BucketExternalAccess.execute();
 			expect(result.checks[0].status).toBe(ComplianceStatus.PASS);
 		});
 	});
@@ -120,7 +120,7 @@ describe("checkS3BucketExternalAccess", () => {
 				.on(GetBucketPolicyCommand)
 				.resolves({ Policy: JSON.stringify(riskyPolicy) });
 
-			const result = await checkS3BucketExternalAccess();
+			const result = await checkS3BucketExternalAccess.execute();
 			expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
 			expect(result.checks[0].message).toBe(
 				"Bucket policy allows blacklisted actions without proper account restrictions"
@@ -161,7 +161,7 @@ describe("checkS3BucketExternalAccess", () => {
 				.on(GetBucketPolicyCommand)
 				.resolves({ Policy: JSON.stringify(mixedPolicy) });
 
-			const result = await checkS3BucketExternalAccess();
+			const result = await checkS3BucketExternalAccess.execute();
 			expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
 		});
 	});
@@ -170,7 +170,7 @@ describe("checkS3BucketExternalAccess", () => {
 		it("should return NOTAPPLICABLE when no buckets exist", async () => {
 			mockS3Client.on(ListBucketsCommand).resolves({ Buckets: [] });
 
-			const result = await checkS3BucketExternalAccess();
+			const result = await checkS3BucketExternalAccess.execute();
 			expect(result.checks[0].status).toBe(ComplianceStatus.NOTAPPLICABLE);
 			expect(result.checks[0].message).toBe("No S3 buckets found in the account");
 		});
@@ -178,7 +178,7 @@ describe("checkS3BucketExternalAccess", () => {
 		it("should return ERROR when STS call fails", async () => {
 			mockSTSClient.on(GetCallerIdentityCommand).rejects(new Error("STS Error"));
 
-			const result = await checkS3BucketExternalAccess();
+			const result = await checkS3BucketExternalAccess.execute();
 			expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
 			expect(result.checks[0].message).toContain("Error checking S3 buckets");
 		});
@@ -190,7 +190,7 @@ describe("checkS3BucketExternalAccess", () => {
 				.on(GetBucketPolicyCommand)
 				.rejects(new Error("Access Denied"));
 
-			const result = await checkS3BucketExternalAccess();
+			const result = await checkS3BucketExternalAccess.execute();
 			expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
 			expect(result.checks[0].message).toContain("Error checking bucket policy");
 		});

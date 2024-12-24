@@ -3,29 +3,13 @@ import {
 	DescribeTrailsCommand,
 	GetTrailStatusCommand
 } from "@aws-sdk/client-cloudtrail";
-
-import {
-	printSummary,
-	generateSummary,
-	type ComplianceReport,
-	ComplianceStatus
-} from "@codegen/utils/stringUtils";
+import { generateSummary, printSummary } from "~codegen/utils/stringUtils";
+import { type ComplianceReport, ComplianceStatus, type RuntimeTest } from "~runtime/types";
 
 async function checkCloudTrailEnabled(region: string = "us-east-1"): Promise<ComplianceReport> {
 	const client = new CloudTrailClient({ region });
 	const results: ComplianceReport = {
-		checks: [],
-		metadoc: {
-			title: "At least one CloudTrail trail should be enabled",
-			description:
-				"This control checks whether an AWS CloudTrail trail is enabled in your AWS account. The control fails if your account doesn't have at least one CloudTrail trail enabled.However, some AWS services do not enable logging of all APIs and events. You should implement any additional audit trails other than CloudTrail and review the documentation for each service in CloudTrail Supported Services and Integrations",
-			controls: [
-				{
-					id: "AWS-Foundational-Security-Best-Practices_v1.0.0_CloudTrail.3",
-					document: "AWS-Foundational-Security-Best-Practices_v1.0.0"
-				}
-			]
-		}
+		checks: []
 	};
 
 	try {
@@ -96,9 +80,21 @@ async function checkCloudTrailEnabled(region: string = "us-east-1"): Promise<Com
 }
 
 if (require.main === module) {
-	const region = process.env.AWS_REGION ?? "ap-southeast-1";
+	const region = process.env.AWS_REGION;
 	const results = await checkCloudTrailEnabled(region);
 	printSummary(generateSummary(results));
 }
 
-export default checkCloudTrailEnabled;
+export default {
+	title: "At least one CloudTrail trail should be enabled",
+	description:
+		"This control checks whether an AWS CloudTrail trail is enabled in your AWS account. The control fails if your account doesn't have at least one CloudTrail trail enabled.However, some AWS services do not enable logging of all APIs and events. You should implement any additional audit trails other than CloudTrail and review the documentation for each service in CloudTrail Supported Services and Integrations",
+	controls: [
+		{
+			id: "AWS-Foundational-Security-Best-Practices_v1.0.0_CloudTrail.3",
+			document: "AWS-Foundational-Security-Best-Practices_v1.0.0"
+		}
+	],
+	severity: "MEDIUM",
+	execute: checkCloudTrailEnabled
+} satisfies RuntimeTest;

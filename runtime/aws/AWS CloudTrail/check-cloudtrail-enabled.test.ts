@@ -4,7 +4,7 @@ import {
 	GetTrailStatusCommand
 } from "@aws-sdk/client-cloudtrail";
 import { mockClient } from "aws-sdk-client-mock";
-import { ComplianceStatus } from "@codegen/utils/stringUtils";
+import { ComplianceStatus } from "~runtime/types";
 import checkCloudTrailEnabled from "./check-cloudtrail-enabled";
 
 const mockCloudTrailClient = mockClient(CloudTrailClient);
@@ -44,7 +44,7 @@ describe("checkCloudTrailEnabled", () => {
 					IsLogging: true
 				});
 
-			const result = await checkCloudTrailEnabled();
+			const result = await checkCloudTrailEnabled.execute();
 			expect(result.checks[0].status).toBe(ComplianceStatus.PASS);
 			expect(result.checks[0].resourceName).toBe("enabled-multi-region-trail");
 			expect(result.checks[0].resourceArn).toBe(mockEnabledMultiRegionTrail.TrailARN);
@@ -70,7 +70,7 @@ describe("checkCloudTrailEnabled", () => {
 					}
 				});
 
-			const result = await checkCloudTrailEnabled();
+			const result = await checkCloudTrailEnabled.execute();
 			expect(result.checks.some(check => check.status === ComplianceStatus.PASS)).toBeTruthy();
 		});
 	});
@@ -81,7 +81,7 @@ describe("checkCloudTrailEnabled", () => {
 				trailList: []
 			});
 
-			const result = await checkCloudTrailEnabled();
+			const result = await checkCloudTrailEnabled.execute();
 			expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
 			expect(result.checks[0].message).toBe("No CloudTrail trails found in the account");
 		});
@@ -97,7 +97,7 @@ describe("checkCloudTrailEnabled", () => {
 					IsLogging: false
 				});
 
-			const result = await checkCloudTrailEnabled();
+			const result = await checkCloudTrailEnabled.execute();
 			expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
 			expect(result.checks[0].message).toBe("Trail logging is not enabled");
 		});
@@ -113,7 +113,7 @@ describe("checkCloudTrailEnabled", () => {
 					IsLogging: true
 				});
 
-			const result = await checkCloudTrailEnabled();
+			const result = await checkCloudTrailEnabled.execute();
 			expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
 			expect(result.checks[0].message).toBe("Trail is not multi-region");
 		});
@@ -123,7 +123,7 @@ describe("checkCloudTrailEnabled", () => {
 				trailList: [{ IsMultiRegionTrail: true }]
 			});
 
-			const result = await checkCloudTrailEnabled();
+			const result = await checkCloudTrailEnabled.execute();
 			expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
 			expect(result.checks[0].message).toBe("Trail found without name or ARN");
 		});
@@ -133,7 +133,7 @@ describe("checkCloudTrailEnabled", () => {
 		it("should return ERROR when DescribeTrails API call fails", async () => {
 			mockCloudTrailClient.on(DescribeTrailsCommand).rejects(new Error("API Error"));
 
-			const result = await checkCloudTrailEnabled();
+			const result = await checkCloudTrailEnabled.execute();
 			expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
 			expect(result.checks[0].message).toBe("Error checking CloudTrail trails: API Error");
 		});
@@ -147,7 +147,7 @@ describe("checkCloudTrailEnabled", () => {
 				.on(GetTrailStatusCommand)
 				.rejects(new Error("Status API Error"));
 
-			const result = await checkCloudTrailEnabled();
+			const result = await checkCloudTrailEnabled.execute();
 			expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
 			expect(result.checks[0].message).toBe("Error checking CloudTrail trails: Status API Error");
 		});
@@ -155,7 +155,7 @@ describe("checkCloudTrailEnabled", () => {
 		it("should handle undefined trailList", async () => {
 			mockCloudTrailClient.on(DescribeTrailsCommand).resolves({});
 
-			const result = await checkCloudTrailEnabled();
+			const result = await checkCloudTrailEnabled.execute();
 			expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
 			expect(result.checks[0].message).toBe("No CloudTrail trails found in the account");
 		});

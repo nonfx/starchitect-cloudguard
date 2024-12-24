@@ -1,27 +1,11 @@
 import { S3Client, GetBucketVersioningCommand, ListBucketsCommand } from "@aws-sdk/client-s3";
-
-import {
-	printSummary,
-	generateSummary,
-	type ComplianceReport,
-	ComplianceStatus
-} from "@codegen/utils/stringUtils";
+import { printSummary, generateSummary } from "~codegen/utils/stringUtils";
+import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "~runtime/types";
 
 async function checkS3MfaDelete(region: string = "us-east-1"): Promise<ComplianceReport> {
 	const client = new S3Client({ region });
 	const results: ComplianceReport = {
-		checks: [],
-		metadoc: {
-			title: "Ensure MFA Delete is enabled on S3 buckets",
-			description:
-				"Once MFA Delete is enabled on your sensitive and classified S3 bucket it requires the user to have two forms of authentication.",
-			controls: [
-				{
-					id: "CIS-AWS-Foundations-Benchmark_v3.0.0_2.1.2",
-					document: "CIS-AWS-Foundations-Benchmark_v3.0.0"
-				}
-			]
-		}
+		checks: []
 	};
 
 	try {
@@ -80,9 +64,21 @@ async function checkS3MfaDelete(region: string = "us-east-1"): Promise<Complianc
 }
 
 if (require.main === module) {
-	const region = process.env.AWS_REGION ?? "ap-southeast-1";
+	const region = process.env.AWS_REGION;
 	const results = await checkS3MfaDelete(region);
 	printSummary(generateSummary(results));
 }
 
-export default checkS3MfaDelete;
+export default {
+	title: "Ensure MFA Delete is enabled on S3 buckets",
+	description:
+		"Once MFA Delete is enabled on your sensitive and classified S3 bucket it requires the user to have two forms of authentication.",
+	controls: [
+		{
+			id: "CIS-AWS-Foundations-Benchmark_v3.0.0_2.1.2",
+			document: "CIS-AWS-Foundations-Benchmark_v3.0.0"
+		}
+	],
+	severity: "MEDIUM",
+	execute: checkS3MfaDelete
+} satisfies RuntimeTest;

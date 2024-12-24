@@ -1,6 +1,6 @@
 import { EC2Client, DescribeSecurityGroupsCommand } from "@aws-sdk/client-ec2";
 import { mockClient } from "aws-sdk-client-mock";
-import { ComplianceStatus } from "@codegen/utils/stringUtils";
+import { ComplianceStatus } from "~runtime/types";
 import checkSecurityGroupAdminPorts from "./check-security-group-admin-ports";
 
 const mockEC2Client = mockClient(EC2Client);
@@ -56,7 +56,7 @@ describe("checkSecurityGroupAdminPorts", () => {
 				SecurityGroups: [mockCompliantSG]
 			});
 
-			const result = await checkSecurityGroupAdminPorts("us-east-1");
+			const result = await checkSecurityGroupAdminPorts.execute("us-east-1");
 			expect(result.checks[0].status).toBe(ComplianceStatus.PASS);
 			expect(result.checks[0].resourceName).toBe("sg-compliant");
 		});
@@ -66,7 +66,7 @@ describe("checkSecurityGroupAdminPorts", () => {
 				SecurityGroups: []
 			});
 
-			const result = await checkSecurityGroupAdminPorts("us-east-1");
+			const result = await checkSecurityGroupAdminPorts.execute("us-east-1");
 			expect(result.checks[0].status).toBe(ComplianceStatus.NOTAPPLICABLE);
 			expect(result.checks[0].message).toBe("No security groups found in the region");
 		});
@@ -78,7 +78,7 @@ describe("checkSecurityGroupAdminPorts", () => {
 				SecurityGroups: [mockNonCompliantSG]
 			});
 
-			const result = await checkSecurityGroupAdminPorts("us-east-1");
+			const result = await checkSecurityGroupAdminPorts.execute("us-east-1");
 			expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
 			expect(result.checks[0].message).toContain("22");
 		});
@@ -88,7 +88,7 @@ describe("checkSecurityGroupAdminPorts", () => {
 				SecurityGroups: [mockMixedSG]
 			});
 
-			const result = await checkSecurityGroupAdminPorts("us-east-1");
+			const result = await checkSecurityGroupAdminPorts.execute("us-east-1");
 			expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
 			expect(result.checks[0].message).toContain("3389");
 		});
@@ -109,7 +109,7 @@ describe("checkSecurityGroupAdminPorts", () => {
 				SecurityGroups: [multiViolationSG]
 			});
 
-			const result = await checkSecurityGroupAdminPorts("us-east-1");
+			const result = await checkSecurityGroupAdminPorts.execute("us-east-1");
 			expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
 			expect(result.checks[0].message).toContain("22, 3389");
 		});
@@ -119,7 +119,7 @@ describe("checkSecurityGroupAdminPorts", () => {
 		it("should return ERROR when API call fails", async () => {
 			mockEC2Client.on(DescribeSecurityGroupsCommand).rejects(new Error("API Error"));
 
-			const result = await checkSecurityGroupAdminPorts("us-east-1");
+			const result = await checkSecurityGroupAdminPorts.execute("us-east-1");
 			expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
 			expect(result.checks[0].message).toContain("Error checking security groups");
 		});
@@ -130,7 +130,7 @@ describe("checkSecurityGroupAdminPorts", () => {
 				SecurityGroups: [invalidSG]
 			});
 
-			const result = await checkSecurityGroupAdminPorts("us-east-1");
+			const result = await checkSecurityGroupAdminPorts.execute("us-east-1");
 			expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
 			expect(result.checks[0].message).toBe("Security group found without ID");
 		});

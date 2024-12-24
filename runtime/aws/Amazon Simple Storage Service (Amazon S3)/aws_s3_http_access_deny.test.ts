@@ -1,7 +1,7 @@
 import { S3Client, GetBucketPolicyCommand, ListBucketsCommand } from "@aws-sdk/client-s3";
 import { mockClient } from "aws-sdk-client-mock";
-import { ComplianceStatus } from "@codegen/utils/stringUtils";
 import checkS3DenyHttpAccess from "./aws_s3_http_access_deny";
+import { ComplianceStatus } from "~runtime/types";
 
 const mockS3Client = mockClient(S3Client);
 
@@ -49,7 +49,7 @@ describe("checkS3DenyHttpAccess", () => {
 				Policy: JSON.stringify(validDenyHttpPolicy)
 			});
 
-			const result = await checkS3DenyHttpAccess();
+			const result = await checkS3DenyHttpAccess.execute();
 			expect(result.checks[0].status).toBe(ComplianceStatus.PASS);
 			expect(result.checks[0].resourceName).toBe("test-bucket-1");
 		});
@@ -73,7 +73,7 @@ describe("checkS3DenyHttpAccess", () => {
 				Policy: JSON.stringify(multiStatementPolicy)
 			});
 
-			const result = await checkS3DenyHttpAccess();
+			const result = await checkS3DenyHttpAccess.execute();
 			expect(result.checks[0].status).toBe(ComplianceStatus.PASS);
 		});
 	});
@@ -85,7 +85,7 @@ describe("checkS3DenyHttpAccess", () => {
 				Policy: JSON.stringify(invalidPolicy)
 			});
 
-			const result = await checkS3DenyHttpAccess();
+			const result = await checkS3DenyHttpAccess.execute();
 			expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
 			expect(result.checks[0].message).toBe("Bucket policy does not deny HTTP requests");
 		});
@@ -96,7 +96,7 @@ describe("checkS3DenyHttpAccess", () => {
 				name: "NoSuchBucketPolicy"
 			});
 
-			const result = await checkS3DenyHttpAccess();
+			const result = await checkS3DenyHttpAccess.execute();
 			expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
 			expect(result.checks[0].message).toBe("Bucket has no policy configured");
 		});
@@ -109,7 +109,7 @@ describe("checkS3DenyHttpAccess", () => {
 				.on(GetBucketPolicyCommand, { Bucket: "test-bucket-2" })
 				.resolves({ Policy: JSON.stringify(invalidPolicy) });
 
-			const result = await checkS3DenyHttpAccess();
+			const result = await checkS3DenyHttpAccess.execute();
 			expect(result.checks).toHaveLength(2);
 			expect(result.checks[0].status).toBe(ComplianceStatus.PASS);
 			expect(result.checks[1].status).toBe(ComplianceStatus.FAIL);
@@ -120,7 +120,7 @@ describe("checkS3DenyHttpAccess", () => {
 		it("should return NOTAPPLICABLE when no buckets exist", async () => {
 			mockS3Client.on(ListBucketsCommand).resolves({ Buckets: [] });
 
-			const result = await checkS3DenyHttpAccess();
+			const result = await checkS3DenyHttpAccess.execute();
 			expect(result.checks[0].status).toBe(ComplianceStatus.NOTAPPLICABLE);
 			expect(result.checks[0].message).toBe("No S3 buckets found in the account");
 		});
@@ -128,7 +128,7 @@ describe("checkS3DenyHttpAccess", () => {
 		it("should return ERROR when ListBuckets fails", async () => {
 			mockS3Client.on(ListBucketsCommand).rejects(new Error("API Error"));
 
-			const result = await checkS3DenyHttpAccess();
+			const result = await checkS3DenyHttpAccess.execute();
 			expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
 			expect(result.checks[0].message).toContain("Error checking S3 buckets");
 		});
@@ -137,7 +137,7 @@ describe("checkS3DenyHttpAccess", () => {
 			mockS3Client.on(ListBucketsCommand).resolves({ Buckets: [mockBuckets[0]] });
 			mockS3Client.on(GetBucketPolicyCommand).rejects(new Error("Access Denied"));
 
-			const result = await checkS3DenyHttpAccess();
+			const result = await checkS3DenyHttpAccess.execute();
 			expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
 			expect(result.checks[0].message).toContain("Error checking bucket policy");
 		});

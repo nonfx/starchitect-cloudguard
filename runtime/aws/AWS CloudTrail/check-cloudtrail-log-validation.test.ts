@@ -1,6 +1,6 @@
 import { CloudTrailClient, DescribeTrailsCommand } from "@aws-sdk/client-cloudtrail";
 import { mockClient } from "aws-sdk-client-mock";
-import { ComplianceStatus } from "@codegen/utils/stringUtils";
+import { ComplianceStatus } from "~runtime/types";
 import checkCloudTrailLogValidation from "./check-cloudtrail-log-validation";
 
 const mockCloudTrailClient = mockClient(CloudTrailClient);
@@ -28,7 +28,7 @@ describe("checkCloudTrailLogValidation", () => {
 				trailList: [mockTrailWithValidation]
 			});
 
-			const result = await checkCloudTrailLogValidation("us-east-1");
+			const result = await checkCloudTrailLogValidation.execute("us-east-1");
 			expect(result.checks[0].status).toBe(ComplianceStatus.PASS);
 			expect(result.checks[0].resourceName).toBe("test-trail-1");
 			expect(result.checks[0].resourceArn).toBe(mockTrailWithValidation.TrailARN);
@@ -39,7 +39,7 @@ describe("checkCloudTrailLogValidation", () => {
 				trailList: [mockTrailWithValidation, mockTrailWithValidation]
 			});
 
-			const result = await checkCloudTrailLogValidation("us-east-1");
+			const result = await checkCloudTrailLogValidation.execute("us-east-1");
 			expect(result.checks).toHaveLength(2);
 			expect(result.checks.every(check => check.status === ComplianceStatus.PASS)).toBe(true);
 		});
@@ -51,7 +51,7 @@ describe("checkCloudTrailLogValidation", () => {
 				trailList: [mockTrailWithoutValidation]
 			});
 
-			const result = await checkCloudTrailLogValidation("us-east-1");
+			const result = await checkCloudTrailLogValidation.execute("us-east-1");
 			expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
 			expect(result.checks[0].message).toBe("CloudTrail log file validation is not enabled");
 		});
@@ -61,7 +61,7 @@ describe("checkCloudTrailLogValidation", () => {
 				trailList: [mockTrailWithValidation, mockTrailWithoutValidation]
 			});
 
-			const result = await checkCloudTrailLogValidation("us-east-1");
+			const result = await checkCloudTrailLogValidation.execute("us-east-1");
 			expect(result.checks).toHaveLength(2);
 			expect(result.checks[0].status).toBe(ComplianceStatus.PASS);
 			expect(result.checks[1].status).toBe(ComplianceStatus.FAIL);
@@ -72,7 +72,7 @@ describe("checkCloudTrailLogValidation", () => {
 				trailList: [{ LogFileValidationEnabled: true }]
 			});
 
-			const result = await checkCloudTrailLogValidation("us-east-1");
+			const result = await checkCloudTrailLogValidation.execute("us-east-1");
 			expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
 			expect(result.checks[0].message).toBe("Trail found without name or ARN");
 		});
@@ -84,7 +84,7 @@ describe("checkCloudTrailLogValidation", () => {
 				trailList: []
 			});
 
-			const result = await checkCloudTrailLogValidation("us-east-1");
+			const result = await checkCloudTrailLogValidation.execute("us-east-1");
 			expect(result.checks[0].status).toBe(ComplianceStatus.NOTAPPLICABLE);
 			expect(result.checks[0].message).toBe("No CloudTrail trails found in the region");
 		});
@@ -92,7 +92,7 @@ describe("checkCloudTrailLogValidation", () => {
 		it("should return ERROR when API call fails", async () => {
 			mockCloudTrailClient.on(DescribeTrailsCommand).rejects(new Error("API Error"));
 
-			const result = await checkCloudTrailLogValidation("us-east-1");
+			const result = await checkCloudTrailLogValidation.execute("us-east-1");
 			expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
 			expect(result.checks[0].message).toBe("Error checking CloudTrail trails: API Error");
 		});
@@ -100,7 +100,7 @@ describe("checkCloudTrailLogValidation", () => {
 		it("should handle undefined trailList", async () => {
 			mockCloudTrailClient.on(DescribeTrailsCommand).resolves({});
 
-			const result = await checkCloudTrailLogValidation("us-east-1");
+			const result = await checkCloudTrailLogValidation.execute("us-east-1");
 			expect(result.checks[0].status).toBe(ComplianceStatus.NOTAPPLICABLE);
 		});
 	});

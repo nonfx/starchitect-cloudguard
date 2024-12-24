@@ -1,6 +1,6 @@
 import { CloudTrailClient, DescribeTrailsCommand } from "@aws-sdk/client-cloudtrail";
 import { mockClient } from "aws-sdk-client-mock";
-import { ComplianceStatus } from "@codegen/utils/stringUtils";
+import { ComplianceStatus } from "~runtime/types";
 import checkCloudTrailKmsEncryption from "./check-cloudtrail-kms-encryption";
 
 const mockCloudTrailClient = mockClient(CloudTrailClient);
@@ -27,7 +27,7 @@ describe("checkCloudTrailKmsEncryption", () => {
 				trailList: [mockTrailWithKMS]
 			});
 
-			const result = await checkCloudTrailKmsEncryption("us-east-1");
+			const result = await checkCloudTrailKmsEncryption.execute("us-east-1");
 			expect(result.checks[0].status).toBe(ComplianceStatus.PASS);
 			expect(result.checks[0].resourceName).toBe("trail-with-kms");
 			expect(result.checks[0].resourceArn).toBe(mockTrailWithKMS.TrailARN);
@@ -38,7 +38,7 @@ describe("checkCloudTrailKmsEncryption", () => {
 				trailList: [mockTrailWithKMS, { ...mockTrailWithKMS, Name: "trail-2", TrailARN: "arn:2" }]
 			});
 
-			const result = await checkCloudTrailKmsEncryption("us-east-1");
+			const result = await checkCloudTrailKmsEncryption.execute("us-east-1");
 			expect(result.checks).toHaveLength(2);
 			expect(result.checks.every(check => check.status === ComplianceStatus.PASS)).toBe(true);
 		});
@@ -50,7 +50,7 @@ describe("checkCloudTrailKmsEncryption", () => {
 				trailList: [mockTrailWithoutKMS]
 			});
 
-			const result = await checkCloudTrailKmsEncryption("us-east-1");
+			const result = await checkCloudTrailKmsEncryption.execute("us-east-1");
 			expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
 			expect(result.checks[0].message).toBe(
 				"CloudTrail is not configured to use SSE-KMS encryption"
@@ -62,7 +62,7 @@ describe("checkCloudTrailKmsEncryption", () => {
 				trailList: [mockTrailWithKMS, mockTrailWithoutKMS]
 			});
 
-			const result = await checkCloudTrailKmsEncryption("us-east-1");
+			const result = await checkCloudTrailKmsEncryption.execute("us-east-1");
 			expect(result.checks).toHaveLength(2);
 			expect(result.checks[0].status).toBe(ComplianceStatus.PASS);
 			expect(result.checks[1].status).toBe(ComplianceStatus.FAIL);
@@ -73,7 +73,7 @@ describe("checkCloudTrailKmsEncryption", () => {
 				trailList: [{ TrailARN: "arn:unnamed" }]
 			});
 
-			const result = await checkCloudTrailKmsEncryption("us-east-1");
+			const result = await checkCloudTrailKmsEncryption.execute("us-east-1");
 			expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
 			expect(result.checks[0].message).toBe("Trail found without name");
 		});
@@ -85,7 +85,7 @@ describe("checkCloudTrailKmsEncryption", () => {
 				trailList: []
 			});
 
-			const result = await checkCloudTrailKmsEncryption("us-east-1");
+			const result = await checkCloudTrailKmsEncryption.execute("us-east-1");
 			expect(result.checks[0].status).toBe(ComplianceStatus.NOTAPPLICABLE);
 			expect(result.checks[0].message).toBe("No CloudTrail trails found in the region");
 		});
@@ -93,7 +93,7 @@ describe("checkCloudTrailKmsEncryption", () => {
 		it("should return ERROR when API call fails", async () => {
 			mockCloudTrailClient.on(DescribeTrailsCommand).rejects(new Error("API Error"));
 
-			const result = await checkCloudTrailKmsEncryption("us-east-1");
+			const result = await checkCloudTrailKmsEncryption.execute("us-east-1");
 			expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
 			expect(result.checks[0].message).toContain("Error checking CloudTrail trails");
 		});
@@ -101,7 +101,7 @@ describe("checkCloudTrailKmsEncryption", () => {
 		it("should handle undefined trailList", async () => {
 			mockCloudTrailClient.on(DescribeTrailsCommand).resolves({});
 
-			const result = await checkCloudTrailKmsEncryption("us-east-1");
+			const result = await checkCloudTrailKmsEncryption.execute("us-east-1");
 			expect(result.checks[0].status).toBe(ComplianceStatus.NOTAPPLICABLE);
 		});
 	});

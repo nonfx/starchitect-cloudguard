@@ -1,7 +1,7 @@
 import { S3Client, GetBucketLoggingCommand } from "@aws-sdk/client-s3";
 import { CloudTrailClient, ListTrailsCommand, GetTrailCommand } from "@aws-sdk/client-cloudtrail";
 import { mockClient } from "aws-sdk-client-mock";
-import { ComplianceStatus } from "@codegen/utils/stringUtils";
+import { ComplianceStatus } from "~runtime/types";
 import checkCloudTrailS3AccessLogging from "./check-cloudtrail-s3-access-logging";
 
 const mockS3Client = mockClient(S3Client);
@@ -34,7 +34,7 @@ describe("checkCloudTrailS3AccessLogging", () => {
 				}
 			});
 
-			const result = await checkCloudTrailS3AccessLogging("us-east-1");
+			const result = await checkCloudTrailS3AccessLogging.execute("us-east-1");
 			expect(result.checks[0].status).toBe(ComplianceStatus.PASS);
 			expect(result.checks[0].resourceName).toBe(mockTrail.S3BucketName);
 		});
@@ -53,7 +53,7 @@ describe("checkCloudTrailS3AccessLogging", () => {
 				LoggingEnabled: { TargetBucket: "logging-bucket" }
 			});
 
-			const result = await checkCloudTrailS3AccessLogging("us-east-1");
+			const result = await checkCloudTrailS3AccessLogging.execute("us-east-1");
 			expect(result.checks).toHaveLength(2);
 			expect(result.checks.every(check => check.status === ComplianceStatus.PASS)).toBe(true);
 		});
@@ -69,7 +69,7 @@ describe("checkCloudTrailS3AccessLogging", () => {
 			});
 			mockS3Client.on(GetBucketLoggingCommand).resolves({});
 
-			const result = await checkCloudTrailS3AccessLogging("us-east-1");
+			const result = await checkCloudTrailS3AccessLogging.execute("us-east-1");
 			expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
 			expect(result.checks[0].message).toBe(
 				"CloudTrail S3 bucket does not have access logging enabled"
@@ -84,7 +84,7 @@ describe("checkCloudTrailS3AccessLogging", () => {
 				Trail: { Name: mockTrail.Name }
 			});
 
-			const result = await checkCloudTrailS3AccessLogging("us-east-1");
+			const result = await checkCloudTrailS3AccessLogging.execute("us-east-1");
 			expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
 			expect(result.checks[0].message).toBe("Trail has no S3 bucket configured");
 		});
@@ -94,7 +94,7 @@ describe("checkCloudTrailS3AccessLogging", () => {
 		it("should return NOTAPPLICABLE when no trails exist", async () => {
 			mockCloudTrailClient.on(ListTrailsCommand).resolves({ Trails: [] });
 
-			const result = await checkCloudTrailS3AccessLogging("us-east-1");
+			const result = await checkCloudTrailS3AccessLogging.execute("us-east-1");
 			expect(result.checks[0].status).toBe(ComplianceStatus.NOTAPPLICABLE);
 			expect(result.checks[0].message).toBe("No CloudTrail trails found in the region");
 		});
@@ -102,7 +102,7 @@ describe("checkCloudTrailS3AccessLogging", () => {
 		it("should handle ListTrails API errors", async () => {
 			mockCloudTrailClient.on(ListTrailsCommand).rejects(new Error("API Error"));
 
-			const result = await checkCloudTrailS3AccessLogging("us-east-1");
+			const result = await checkCloudTrailS3AccessLogging.execute("us-east-1");
 			expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
 			expect(result.checks[0].message).toContain("Error checking CloudTrail trails");
 		});
@@ -116,7 +116,7 @@ describe("checkCloudTrailS3AccessLogging", () => {
 			});
 			mockS3Client.on(GetBucketLoggingCommand).rejects(new Error("Access Denied"));
 
-			const result = await checkCloudTrailS3AccessLogging("us-east-1");
+			const result = await checkCloudTrailS3AccessLogging.execute("us-east-1");
 			expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
 			expect(result.checks[0].message).toContain("Error checking bucket logging");
 		});

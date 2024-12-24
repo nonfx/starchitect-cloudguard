@@ -1,27 +1,11 @@
-import { EC2Client, DescribeVpcsCommand, DescribeFlowLogsCommand } from "@aws-sdk/client-ec2";
-
-import {
-	printSummary,
-	generateSummary,
-	type ComplianceReport,
-	ComplianceStatus
-} from "@codegen/utils/stringUtils";
+import { DescribeFlowLogsCommand, DescribeVpcsCommand, EC2Client } from "@aws-sdk/client-ec2";
+import { generateSummary, printSummary } from "~codegen/utils/stringUtils";
+import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "~runtime/types";
 
 async function checkVpcFlowLogsCompliance(region: string = "us-east-1"): Promise<ComplianceReport> {
 	const client = new EC2Client({ region });
 	const results: ComplianceReport = {
-		checks: [],
-		metadoc: {
-			title: "Ensure VPC flow logging is enabled in all VPCs",
-			description:
-				"VPC Flow Logs is a feature that enables you to capture information about the IP traffic going to and from network interfaces in your VPC. After you've created a flow log, you can view and retrieve its data in Amazon CloudWatch Logs. It is recommended that VPC Flow Logs be enabled for packet `Rejects` for VPCs.",
-			controls: [
-				{
-					id: "CIS-AWS-Foundations-Benchmark_v3.0.0_3.7",
-					document: "CIS-AWS-Foundations-Benchmark_v3.0.0"
-				}
-			]
-		}
+		checks: []
 	};
 
 	try {
@@ -106,9 +90,21 @@ async function checkVpcFlowLogsCompliance(region: string = "us-east-1"): Promise
 }
 
 if (require.main === module) {
-	const region = process.env.AWS_REGION ?? "ap-southeast-1";
+	const region = process.env.AWS_REGION;
 	const results = await checkVpcFlowLogsCompliance(region);
 	printSummary(generateSummary(results));
 }
 
-export default checkVpcFlowLogsCompliance;
+export default {
+	title: "Ensure VPC flow logging is enabled in all VPCs",
+	description:
+		"VPC Flow Logs is a feature that enables you to capture information about the IP traffic going to and from network interfaces in your VPC. After you've created a flow log, you can view and retrieve its data in Amazon CloudWatch Logs. It is recommended that VPC Flow Logs be enabled for packet `Rejects` for VPCs.",
+	controls: [
+		{
+			id: "CIS-AWS-Foundations-Benchmark_v3.0.0_3.7",
+			document: "CIS-AWS-Foundations-Benchmark_v3.0.0"
+		}
+	],
+	severity: "MEDIUM",
+	execute: checkVpcFlowLogsCompliance
+} satisfies RuntimeTest;

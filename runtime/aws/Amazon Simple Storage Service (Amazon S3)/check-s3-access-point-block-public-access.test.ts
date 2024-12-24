@@ -5,7 +5,7 @@ import {
 } from "@aws-sdk/client-s3-control";
 import { STSClient, GetCallerIdentityCommand } from "@aws-sdk/client-sts";
 import { mockClient } from "aws-sdk-client-mock";
-import { ComplianceStatus } from "@codegen/utils/stringUtils";
+import { ComplianceStatus } from "~runtime/types";
 import checkS3AccessPointBlockPublicAccess from "./check-s3-access-point-block-public-access";
 
 const mockS3ControlClient = mockClient(S3Control);
@@ -46,7 +46,7 @@ describe("checkS3AccessPointBlockPublicAccess", () => {
 					}
 				});
 
-			const result = await checkS3AccessPointBlockPublicAccess();
+			const result = await checkS3AccessPointBlockPublicAccess.execute();
 			expect(result.checks[0].status).toBe(ComplianceStatus.PASS);
 			expect(result.checks[0].resourceName).toBe("test-access-point-1");
 		});
@@ -65,7 +65,7 @@ describe("checkS3AccessPointBlockPublicAccess", () => {
 					}
 				});
 
-			const result = await checkS3AccessPointBlockPublicAccess();
+			const result = await checkS3AccessPointBlockPublicAccess.execute();
 			expect(result.checks).toHaveLength(2);
 			expect(result.checks.every(check => check.status === ComplianceStatus.PASS)).toBe(true);
 		});
@@ -79,7 +79,7 @@ describe("checkS3AccessPointBlockPublicAccess", () => {
 				.on(GetAccessPointCommand)
 				.resolves({});
 
-			const result = await checkS3AccessPointBlockPublicAccess();
+			const result = await checkS3AccessPointBlockPublicAccess.execute();
 			expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
 			expect(result.checks[0].message).toBe(
 				"No public access block configuration found for access point"
@@ -100,7 +100,7 @@ describe("checkS3AccessPointBlockPublicAccess", () => {
 					}
 				});
 
-			const result = await checkS3AccessPointBlockPublicAccess();
+			const result = await checkS3AccessPointBlockPublicAccess.execute();
 			expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
 			expect(result.checks[0].message).toBe(
 				"Access point does not have all public access block settings enabled"
@@ -131,7 +131,7 @@ describe("checkS3AccessPointBlockPublicAccess", () => {
 					});
 				});
 
-			const result = await checkS3AccessPointBlockPublicAccess();
+			const result = await checkS3AccessPointBlockPublicAccess.execute();
 			expect(result.checks[0].status).toBe(ComplianceStatus.PASS);
 			expect(result.checks[1].status).toBe(ComplianceStatus.FAIL);
 		});
@@ -141,7 +141,7 @@ describe("checkS3AccessPointBlockPublicAccess", () => {
 		it("should return NOTAPPLICABLE when no access points exist", async () => {
 			mockS3ControlClient.on(ListAccessPointsCommand).resolves({ AccessPointList: [] });
 
-			const result = await checkS3AccessPointBlockPublicAccess();
+			const result = await checkS3AccessPointBlockPublicAccess.execute();
 			expect(result.checks[0].status).toBe(ComplianceStatus.NOTAPPLICABLE);
 			expect(result.checks[0].message).toBe("No S3 access points found in the account");
 		});
@@ -149,7 +149,7 @@ describe("checkS3AccessPointBlockPublicAccess", () => {
 		it("should return ERROR when ListAccessPoints fails", async () => {
 			mockS3ControlClient.on(ListAccessPointsCommand).rejects(new Error("API Error"));
 
-			const result = await checkS3AccessPointBlockPublicAccess();
+			const result = await checkS3AccessPointBlockPublicAccess.execute();
 			expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
 			expect(result.checks[0].message).toContain("Error checking S3 access points");
 		});
@@ -161,7 +161,7 @@ describe("checkS3AccessPointBlockPublicAccess", () => {
 				.on(GetAccessPointCommand)
 				.rejects(new Error("Access Denied"));
 
-			const result = await checkS3AccessPointBlockPublicAccess();
+			const result = await checkS3AccessPointBlockPublicAccess.execute();
 			expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
 			expect(result.checks[0].message).toContain("Error checking access point");
 		});
@@ -171,7 +171,7 @@ describe("checkS3AccessPointBlockPublicAccess", () => {
 				AccessPointList: [{ AccessPointArn: "arn:aws:s3:..." }]
 			});
 
-			const result = await checkS3AccessPointBlockPublicAccess();
+			const result = await checkS3AccessPointBlockPublicAccess.execute();
 			expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
 			expect(result.checks[0].message).toBe("Access point found without name");
 		});
@@ -179,7 +179,7 @@ describe("checkS3AccessPointBlockPublicAccess", () => {
 		it("should return ERROR when STS GetCallerIdentity fails", async () => {
 			mockSTSClient.on(GetCallerIdentityCommand).rejects(new Error("STS Error"));
 
-			const result = await checkS3AccessPointBlockPublicAccess();
+			const result = await checkS3AccessPointBlockPublicAccess.execute();
 			expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
 			expect(result.checks[0].message).toContain("Error checking S3 access points");
 		});

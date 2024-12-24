@@ -1,11 +1,7 @@
-import { S3Client, GetBucketPolicyCommand, ListBucketsCommand } from "@aws-sdk/client-s3";
-import { STSClient, GetCallerIdentityCommand } from "@aws-sdk/client-sts";
-import {
-	printSummary,
-	generateSummary,
-	type ComplianceReport,
-	ComplianceStatus
-} from "@codegen/utils/stringUtils";
+import { GetBucketPolicyCommand, ListBucketsCommand, S3Client } from "@aws-sdk/client-s3";
+import { GetCallerIdentityCommand, STSClient } from "@aws-sdk/client-sts";
+import { generateSummary, printSummary } from "~codegen/utils/stringUtils";
+import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "~runtime/types";
 
 interface PolicyStatement {
 	Effect: string;
@@ -60,18 +56,7 @@ async function checkS3BucketExternalAccess(
 	const stsClient = new STSClient({ region });
 
 	const results: ComplianceReport = {
-		checks: [],
-		metadoc: {
-			title: "S3 general purpose bucket policies should restrict access to other AWS accounts",
-			description:
-				"S3 bucket policies must restrict access to other AWS accounts by preventing specific actions and implementing proper access controls.",
-			controls: [
-				{
-					id: "AWS-Foundational-Security-Best-Practices_v1.0.0_S3.6",
-					document: "AWS-Foundational-Security-Best-Practices_v1.0.0"
-				}
-			]
-		}
+		checks: []
 	};
 
 	try {
@@ -192,9 +177,21 @@ async function checkS3BucketExternalAccess(
 }
 
 if (require.main === module) {
-	const region = process.env.AWS_REGION ?? "ap-southeast-1";
+	const region = process.env.AWS_REGION;
 	const results = await checkS3BucketExternalAccess(region);
 	printSummary(generateSummary(results));
 }
 
-export default checkS3BucketExternalAccess;
+export default {
+	title: "S3 general purpose bucket policies should restrict access to other AWS accounts",
+	description:
+		"S3 bucket policies must restrict access to other AWS accounts by preventing specific actions and implementing proper access controls.",
+	controls: [
+		{
+			id: "AWS-Foundational-Security-Best-Practices_v1.0.0_S3.6",
+			document: "AWS-Foundational-Security-Best-Practices_v1.0.0"
+		}
+	],
+	severity: "MEDIUM",
+	execute: checkS3BucketExternalAccess
+} satisfies RuntimeTest;

@@ -4,7 +4,7 @@ import {
 	DescribeVpcPeeringConnectionsCommand
 } from "@aws-sdk/client-ec2";
 import { mockClient } from "aws-sdk-client-mock";
-import { ComplianceStatus } from "@codegen/utils/stringUtils";
+import { ComplianceStatus } from "~runtime/types";
 import checkVpcPeeringRoutingCompliance from "./check-vpc-peering-routing-compliance";
 
 const mockEC2Client = mockClient(EC2Client);
@@ -48,7 +48,7 @@ describe("checkVpcPeeringRoutingCompliance", () => {
 				.on(DescribeRouteTablesCommand)
 				.resolves({ RouteTables: [mockCompliantRouteTable] });
 
-			const result = await checkVpcPeeringRoutingCompliance("us-east-1");
+			const result = await checkVpcPeeringRoutingCompliance.execute("us-east-1");
 			expect(result.checks[0].status).toBe(ComplianceStatus.PASS);
 			expect(result.checks[0].resourceName).toBe("rtb-compliant");
 		});
@@ -58,7 +58,7 @@ describe("checkVpcPeeringRoutingCompliance", () => {
 				.on(DescribeVpcPeeringConnectionsCommand)
 				.resolves({ VpcPeeringConnections: [] });
 
-			const result = await checkVpcPeeringRoutingCompliance("us-east-1");
+			const result = await checkVpcPeeringRoutingCompliance.execute("us-east-1");
 			expect(result.checks[0].status).toBe(ComplianceStatus.NOTAPPLICABLE);
 			expect(result.checks[0].message).toBe("No VPC peering connections found");
 		});
@@ -73,7 +73,7 @@ describe("checkVpcPeeringRoutingCompliance", () => {
 				.on(DescribeRouteTablesCommand)
 				.resolves({ RouteTables: [mockNonCompliantRouteTable] });
 
-			const result = await checkVpcPeeringRoutingCompliance("us-east-1");
+			const result = await checkVpcPeeringRoutingCompliance.execute("us-east-1");
 			expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
 			expect(result.checks[0].message).toBe(
 				"Route table contains non-least access or overlapping routes for VPC peering"
@@ -88,7 +88,7 @@ describe("checkVpcPeeringRoutingCompliance", () => {
 				.on(DescribeRouteTablesCommand)
 				.resolves({ RouteTables: [mockCompliantRouteTable, mockNonCompliantRouteTable] });
 
-			const result = await checkVpcPeeringRoutingCompliance("us-east-1");
+			const result = await checkVpcPeeringRoutingCompliance.execute("us-east-1");
 			expect(result.checks).toHaveLength(2);
 			expect(result.checks[0].status).toBe(ComplianceStatus.PASS);
 			expect(result.checks[1].status).toBe(ComplianceStatus.FAIL);
@@ -99,7 +99,7 @@ describe("checkVpcPeeringRoutingCompliance", () => {
 		it("should return ERROR when API calls fail", async () => {
 			mockEC2Client.on(DescribeVpcPeeringConnectionsCommand).rejects(new Error("API Error"));
 
-			const result = await checkVpcPeeringRoutingCompliance("us-east-1");
+			const result = await checkVpcPeeringRoutingCompliance.execute("us-east-1");
 			expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
 			expect(result.checks[0].message).toContain("Error checking VPC peering routes");
 		});
@@ -110,7 +110,7 @@ describe("checkVpcPeeringRoutingCompliance", () => {
 				.resolves({ VpcPeeringConnections: [mockPeeringConnection] });
 			mockEC2Client.on(DescribeRouteTablesCommand).resolves({ RouteTables: [] });
 
-			const result = await checkVpcPeeringRoutingCompliance("us-east-1");
+			const result = await checkVpcPeeringRoutingCompliance.execute("us-east-1");
 			expect(result.checks[0].status).toBe(ComplianceStatus.NOTAPPLICABLE);
 			expect(result.checks[0].message).toBe("No route tables found");
 		});

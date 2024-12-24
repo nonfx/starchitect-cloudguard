@@ -5,7 +5,7 @@ import {
 	GetTrailStatusCommand
 } from "@aws-sdk/client-cloudtrail";
 import { mockClient } from "aws-sdk-client-mock";
-import { ComplianceStatus } from "@codegen/utils/stringUtils";
+import { ComplianceStatus } from "~runtime/types";
 import checkCloudTrailMultiRegionEnabled from "./check-cloudtrail-multiregion";
 
 const mockCloudTrailClient = mockClient(CloudTrailClient);
@@ -41,7 +41,7 @@ describe("checkCloudTrailMultiRegionEnabled", () => {
 				.on(GetTrailStatusCommand)
 				.resolves({ IsLogging: true });
 
-			const result = await checkCloudTrailMultiRegionEnabled("us-east-1");
+			const result = await checkCloudTrailMultiRegionEnabled.execute("us-east-1");
 			expect(result.checks[0].status).toBe(ComplianceStatus.PASS);
 			expect(result.checks[0].resourceName).toBe(mockCompliantTrail.Name);
 		});
@@ -68,7 +68,7 @@ describe("checkCloudTrailMultiRegionEnabled", () => {
 					});
 				});
 
-			const result = await checkCloudTrailMultiRegionEnabled("us-east-1");
+			const result = await checkCloudTrailMultiRegionEnabled.execute("us-east-1");
 			expect(result.checks).toHaveLength(2);
 			expect(result.checks.some(check => check.status === ComplianceStatus.PASS)).toBe(true);
 		});
@@ -78,7 +78,7 @@ describe("checkCloudTrailMultiRegionEnabled", () => {
 		it("should return FAIL when no trails exist", async () => {
 			mockCloudTrailClient.on(ListTrailsCommand).resolves({ Trails: [] });
 
-			const result = await checkCloudTrailMultiRegionEnabled("us-east-1");
+			const result = await checkCloudTrailMultiRegionEnabled.execute("us-east-1");
 			expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
 			expect(result.checks[0].message).toBe("No CloudTrail trails are configured");
 		});
@@ -94,7 +94,7 @@ describe("checkCloudTrailMultiRegionEnabled", () => {
 				.on(GetTrailStatusCommand)
 				.resolves({ IsLogging: true });
 
-			const result = await checkCloudTrailMultiRegionEnabled("us-east-1");
+			const result = await checkCloudTrailMultiRegionEnabled.execute("us-east-1");
 			expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
 			expect(result.checks[0].message).toContain("not multi-region");
 		});
@@ -127,7 +127,7 @@ describe("checkCloudTrailMultiRegionEnabled", () => {
 					});
 				});
 
-			const result = await checkCloudTrailMultiRegionEnabled("us-east-1");
+			const result = await checkCloudTrailMultiRegionEnabled.execute("us-east-1");
 			expect(result.checks).toHaveLength(3); // Including summary check
 			expect(result.checks[2].status).toBe(ComplianceStatus.FAIL);
 			expect(result.checks[2].message).toContain("No compliant multi-region trail");
@@ -138,7 +138,7 @@ describe("checkCloudTrailMultiRegionEnabled", () => {
 		it("should handle ListTrails API errors", async () => {
 			mockCloudTrailClient.on(ListTrailsCommand).rejects(new Error("API Error"));
 
-			const result = await checkCloudTrailMultiRegionEnabled("us-east-1");
+			const result = await checkCloudTrailMultiRegionEnabled.execute("us-east-1");
 			expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
 			expect(result.checks[0].message).toContain("Error checking CloudTrail configuration");
 		});
@@ -152,7 +152,7 @@ describe("checkCloudTrailMultiRegionEnabled", () => {
 				.on(GetTrailCommand)
 				.rejects(new Error("Access Denied"));
 
-			const result = await checkCloudTrailMultiRegionEnabled("us-east-1");
+			const result = await checkCloudTrailMultiRegionEnabled.execute("us-east-1");
 			expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
 			expect(result.checks[0].message).toContain("Error checking trail configuration");
 		});
@@ -168,7 +168,7 @@ describe("checkCloudTrailMultiRegionEnabled", () => {
 				.on(GetTrailStatusCommand)
 				.rejects(new Error("Status API Error"));
 
-			const result = await checkCloudTrailMultiRegionEnabled("us-east-1");
+			const result = await checkCloudTrailMultiRegionEnabled.execute("us-east-1");
 			expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
 			expect(result.checks[0].message).toContain("Error checking trail configuration");
 		});
@@ -178,7 +178,7 @@ describe("checkCloudTrailMultiRegionEnabled", () => {
 				Trails: [{}]
 			});
 
-			const result = await checkCloudTrailMultiRegionEnabled("us-east-1");
+			const result = await checkCloudTrailMultiRegionEnabled.execute("us-east-1");
 			expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
 			expect(result.checks[0].message).toBe("Trail found without name or ARN");
 		});

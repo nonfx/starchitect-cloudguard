@@ -4,7 +4,7 @@ import {
 	GetBucketLifecycleConfigurationCommand
 } from "@aws-sdk/client-s3";
 import { mockClient } from "aws-sdk-client-mock";
-import { ComplianceStatus } from "@codegen/utils/stringUtils";
+import { ComplianceStatus } from "~runtime/types";
 import checkS3BucketLifecycleConfiguration from "./check-s3-bucket-lifecycle-configuration";
 
 const mockS3Client = mockClient(S3Client);
@@ -26,7 +26,7 @@ describe("checkS3BucketLifecycleConfiguration", () => {
 				Rules: [{ Status: "Enabled", ID: "Rule1" }]
 			});
 
-			const result = await checkS3BucketLifecycleConfiguration();
+			const result = await checkS3BucketLifecycleConfiguration.execute();
 			expect(result.checks).toHaveLength(2);
 			expect(result.checks[0].status).toBe(ComplianceStatus.PASS);
 			expect(result.checks[1].status).toBe(ComplianceStatus.PASS);
@@ -42,7 +42,7 @@ describe("checkS3BucketLifecycleConfiguration", () => {
 				]
 			});
 
-			const result = await checkS3BucketLifecycleConfiguration();
+			const result = await checkS3BucketLifecycleConfiguration.execute();
 			expect(result.checks[0].status).toBe(ComplianceStatus.PASS);
 		});
 	});
@@ -54,7 +54,7 @@ describe("checkS3BucketLifecycleConfiguration", () => {
 				Rules: [{ Status: "Disabled", ID: "Rule1" }]
 			});
 
-			const result = await checkS3BucketLifecycleConfiguration();
+			const result = await checkS3BucketLifecycleConfiguration.execute();
 			expect(result.checks).toHaveLength(2);
 			expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
 			expect(result.checks[0].message).toBe("Bucket does not have any enabled lifecycle rules");
@@ -66,7 +66,7 @@ describe("checkS3BucketLifecycleConfiguration", () => {
 				name: "NoSuchLifecycleConfiguration"
 			});
 
-			const result = await checkS3BucketLifecycleConfiguration();
+			const result = await checkS3BucketLifecycleConfiguration.execute();
 			expect(result.checks).toHaveLength(2);
 			expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
 			expect(result.checks[0].message).toBe("No lifecycle configuration found for the bucket");
@@ -80,7 +80,7 @@ describe("checkS3BucketLifecycleConfiguration", () => {
 				.on(GetBucketLifecycleConfigurationCommand, { Bucket: "test-bucket-2" })
 				.rejects({ name: "NoSuchLifecycleConfiguration" });
 
-			const result = await checkS3BucketLifecycleConfiguration();
+			const result = await checkS3BucketLifecycleConfiguration.execute();
 			expect(result.checks).toHaveLength(2);
 			expect(result.checks[0].status).toBe(ComplianceStatus.PASS);
 			expect(result.checks[1].status).toBe(ComplianceStatus.FAIL);
@@ -91,7 +91,7 @@ describe("checkS3BucketLifecycleConfiguration", () => {
 		it("should return NOTAPPLICABLE when no buckets exist", async () => {
 			mockS3Client.on(ListBucketsCommand).resolves({ Buckets: [] });
 
-			const result = await checkS3BucketLifecycleConfiguration();
+			const result = await checkS3BucketLifecycleConfiguration.execute();
 			expect(result.checks).toHaveLength(1);
 			expect(result.checks[0].status).toBe(ComplianceStatus.NOTAPPLICABLE);
 			expect(result.checks[0].message).toBe("No S3 buckets found in the account");
@@ -100,7 +100,7 @@ describe("checkS3BucketLifecycleConfiguration", () => {
 		it("should return ERROR when ListBuckets fails", async () => {
 			mockS3Client.on(ListBucketsCommand).rejects(new Error("Failed to list buckets"));
 
-			const result = await checkS3BucketLifecycleConfiguration();
+			const result = await checkS3BucketLifecycleConfiguration.execute();
 			expect(result.checks).toHaveLength(1);
 			expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
 			expect(result.checks[0].message).toContain("Failed to list buckets");
@@ -111,7 +111,7 @@ describe("checkS3BucketLifecycleConfiguration", () => {
 				Buckets: [{ CreationDate: new Date() }]
 			});
 
-			const result = await checkS3BucketLifecycleConfiguration();
+			const result = await checkS3BucketLifecycleConfiguration.execute();
 			expect(result.checks).toHaveLength(1);
 			expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
 			expect(result.checks[0].message).toBe("Bucket found without name");
@@ -121,7 +121,7 @@ describe("checkS3BucketLifecycleConfiguration", () => {
 			mockS3Client.on(ListBucketsCommand).resolves({ Buckets: mockBuckets });
 			mockS3Client.on(GetBucketLifecycleConfigurationCommand).rejects(new Error("Access denied"));
 
-			const result = await checkS3BucketLifecycleConfiguration();
+			const result = await checkS3BucketLifecycleConfiguration.execute();
 			expect(result.checks).toHaveLength(2);
 			expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
 			expect(result.checks[0].message).toContain("Error checking lifecycle configuration");

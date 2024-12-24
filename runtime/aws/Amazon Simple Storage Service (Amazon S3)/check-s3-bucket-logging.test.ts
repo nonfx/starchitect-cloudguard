@@ -1,6 +1,6 @@
 import { S3Client, ListBucketsCommand, GetBucketLoggingCommand } from "@aws-sdk/client-s3";
 import { mockClient } from "aws-sdk-client-mock";
-import { ComplianceStatus } from "@codegen/utils/stringUtils";
+import { ComplianceStatus } from "~runtime/types";
 import checkS3BucketLogging from "./check-s3-bucket-logging";
 
 const mockS3Client = mockClient(S3Client);
@@ -25,7 +25,7 @@ describe("checkS3BucketLogging", () => {
 				}
 			});
 
-			const result = await checkS3BucketLogging();
+			const result = await checkS3BucketLogging.execute();
 			expect(result.checks).toHaveLength(2);
 			expect(result.checks[0].status).toBe(ComplianceStatus.PASS);
 			expect(result.checks[1].status).toBe(ComplianceStatus.PASS);
@@ -35,7 +35,7 @@ describe("checkS3BucketLogging", () => {
 		it("should return NOTAPPLICABLE when no buckets exist", async () => {
 			mockS3Client.on(ListBucketsCommand).resolves({ Buckets: [] });
 
-			const result = await checkS3BucketLogging();
+			const result = await checkS3BucketLogging.execute();
 			expect(result.checks).toHaveLength(1);
 			expect(result.checks[0].status).toBe(ComplianceStatus.NOTAPPLICABLE);
 			expect(result.checks[0].message).toBe("No S3 buckets found in the account");
@@ -47,7 +47,7 @@ describe("checkS3BucketLogging", () => {
 			mockS3Client.on(ListBucketsCommand).resolves({ Buckets: mockBuckets });
 			mockS3Client.on(GetBucketLoggingCommand).resolves({});
 
-			const result = await checkS3BucketLogging();
+			const result = await checkS3BucketLogging.execute();
 			expect(result.checks).toHaveLength(2);
 			expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
 			expect(result.checks[1].status).toBe(ComplianceStatus.FAIL);
@@ -62,7 +62,7 @@ describe("checkS3BucketLogging", () => {
 				.on(GetBucketLoggingCommand, { Bucket: "test-bucket-2" })
 				.resolves({});
 
-			const result = await checkS3BucketLogging();
+			const result = await checkS3BucketLogging.execute();
 			expect(result.checks).toHaveLength(2);
 			expect(result.checks[0].status).toBe(ComplianceStatus.PASS);
 			expect(result.checks[1].status).toBe(ComplianceStatus.FAIL);
@@ -73,7 +73,7 @@ describe("checkS3BucketLogging", () => {
 				Buckets: [{ CreationDate: new Date() }]
 			});
 
-			const result = await checkS3BucketLogging();
+			const result = await checkS3BucketLogging.execute();
 			expect(result.checks).toHaveLength(1);
 			expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
 			expect(result.checks[0].message).toBe("Bucket found without name");
@@ -84,7 +84,7 @@ describe("checkS3BucketLogging", () => {
 		it("should return ERROR when ListBuckets fails", async () => {
 			mockS3Client.on(ListBucketsCommand).rejects(new Error("Failed to list buckets"));
 
-			const result = await checkS3BucketLogging();
+			const result = await checkS3BucketLogging.execute();
 			expect(result.checks).toHaveLength(1);
 			expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
 			expect(result.checks[0].message).toContain("Failed to list buckets");
@@ -94,7 +94,7 @@ describe("checkS3BucketLogging", () => {
 			mockS3Client.on(ListBucketsCommand).resolves({ Buckets: mockBuckets });
 			mockS3Client.on(GetBucketLoggingCommand).rejects(new Error("Access denied"));
 
-			const result = await checkS3BucketLogging();
+			const result = await checkS3BucketLogging.execute();
 			expect(result.checks).toHaveLength(2);
 			expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
 			expect(result.checks[0].message).toContain("Error checking bucket logging");

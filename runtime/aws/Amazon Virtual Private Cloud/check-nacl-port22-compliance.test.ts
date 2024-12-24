@@ -1,6 +1,6 @@
 import { EC2Client, DescribeNetworkAclsCommand } from "@aws-sdk/client-ec2";
 import { mockClient } from "aws-sdk-client-mock";
-import { ComplianceStatus } from "@codegen/utils/stringUtils";
+import { ComplianceStatus } from "~runtime/types";
 import checkNaclPort22Compliance from "./check-nacl-port22-compliance";
 
 const mockEC2Client = mockClient(EC2Client);
@@ -65,7 +65,7 @@ describe("checkNaclPort22Compliance", () => {
 				NetworkAcls: [mockCompliantNacl]
 			});
 
-			const result = await checkNaclPort22Compliance("us-east-1");
+			const result = await checkNaclPort22Compliance.execute("us-east-1");
 			expect(result.checks[0].status).toBe(ComplianceStatus.PASS);
 			expect(result.checks[0].resourceName).toBe("acl-compliant");
 		});
@@ -75,7 +75,7 @@ describe("checkNaclPort22Compliance", () => {
 				NetworkAcls: []
 			});
 
-			const result = await checkNaclPort22Compliance("us-east-1");
+			const result = await checkNaclPort22Compliance.execute("us-east-1");
 			expect(result.checks[0].status).toBe(ComplianceStatus.NOTAPPLICABLE);
 			expect(result.checks[0].message).toBe("No Network ACLs found in the region");
 		});
@@ -87,7 +87,7 @@ describe("checkNaclPort22Compliance", () => {
 				NetworkAcls: [mockNonCompliantNacl]
 			});
 
-			const result = await checkNaclPort22Compliance("us-east-1");
+			const result = await checkNaclPort22Compliance.execute("us-east-1");
 			expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
 			expect(result.checks[0].message).toBe(
 				"NACL allows unrestricted inbound access to port 22 from 0.0.0.0/0"
@@ -99,7 +99,7 @@ describe("checkNaclPort22Compliance", () => {
 				NetworkAcls: [mockAllPortsNacl]
 			});
 
-			const result = await checkNaclPort22Compliance("us-east-1");
+			const result = await checkNaclPort22Compliance.execute("us-east-1");
 			expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
 		});
 
@@ -108,7 +108,7 @@ describe("checkNaclPort22Compliance", () => {
 				NetworkAcls: [mockCompliantNacl, mockNonCompliantNacl, mockAllPortsNacl]
 			});
 
-			const result = await checkNaclPort22Compliance("us-east-1");
+			const result = await checkNaclPort22Compliance.execute("us-east-1");
 			expect(result.checks).toHaveLength(3);
 			expect(result.checks[0].status).toBe(ComplianceStatus.PASS);
 			expect(result.checks[1].status).toBe(ComplianceStatus.FAIL);
@@ -120,7 +120,7 @@ describe("checkNaclPort22Compliance", () => {
 		it("should return ERROR when API call fails", async () => {
 			mockEC2Client.on(DescribeNetworkAclsCommand).rejects(new Error("API Error"));
 
-			const result = await checkNaclPort22Compliance("us-east-1");
+			const result = await checkNaclPort22Compliance.execute("us-east-1");
 			expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
 			expect(result.checks[0].message).toContain("Error checking NACLs: API Error");
 		});
@@ -130,7 +130,7 @@ describe("checkNaclPort22Compliance", () => {
 				NetworkAcls: [{ Entries: [] }]
 			});
 
-			const result = await checkNaclPort22Compliance("us-east-1");
+			const result = await checkNaclPort22Compliance.execute("us-east-1");
 			expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
 			expect(result.checks[0].message).toBe("NACL found without ID");
 		});

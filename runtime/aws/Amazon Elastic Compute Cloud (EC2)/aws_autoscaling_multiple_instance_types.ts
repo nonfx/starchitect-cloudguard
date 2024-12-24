@@ -4,7 +4,7 @@ import {
 	type AutoScalingGroup
 } from "@aws-sdk/client-auto-scaling";
 
-import { printSummary, generateSummary } from "@codegen/utils/stringUtils";
+import { printSummary, generateSummary } from "~codegen/utils/stringUtils";
 import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "../../types";
 
 function isValidMixedInstancesPolicy(asg: AutoScalingGroup): boolean {
@@ -97,8 +97,7 @@ async function checkAutoScalingMultipleInstanceTypes(
 }
 
 if (require.main === module) {
-	const region = process.env.AWS_REGION ?? "ap-southeast-1";
-	const results = await checkAutoScalingMultipleInstanceTypes(region);
+	const results = await checkAutoScalingMultipleInstanceTypes(process.env.AWS_REGION);
 	printSummary(generateSummary(results));
 }
 

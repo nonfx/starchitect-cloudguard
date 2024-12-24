@@ -1,6 +1,6 @@
 import { EC2Client, DescribeVpcsCommand, DescribeSecurityGroupsCommand } from "@aws-sdk/client-ec2";
 import { mockClient } from "aws-sdk-client-mock";
-import { ComplianceStatus } from "@codegen/utils/stringUtils";
+import { ComplianceStatus } from "~runtime/types";
 import checkDefaultSecurityGroupCompliance from "./check-default-security-group-compliance";
 
 const mockEC2Client = mockClient(EC2Client);
@@ -51,7 +51,7 @@ describe("checkDefaultSecurityGroupCompliance", () => {
 				.on(DescribeSecurityGroupsCommand)
 				.resolves({ SecurityGroups: [mockCompliantSecurityGroup] });
 
-			const result = await checkDefaultSecurityGroupCompliance("us-east-1");
+			const result = await checkDefaultSecurityGroupCompliance.execute("us-east-1");
 			expect(result.checks[0].status).toBe(ComplianceStatus.PASS);
 			expect(result.checks[0].resourceName).toBe("vpc-12345");
 		});
@@ -71,7 +71,7 @@ describe("checkDefaultSecurityGroupCompliance", () => {
 				.on(DescribeSecurityGroupsCommand)
 				.resolves({ SecurityGroups: [selfReferencingSG] });
 
-			const result = await checkDefaultSecurityGroupCompliance("us-east-1");
+			const result = await checkDefaultSecurityGroupCompliance.execute("us-east-1");
 			expect(result.checks[0].status).toBe(ComplianceStatus.PASS);
 		});
 	});
@@ -83,7 +83,7 @@ describe("checkDefaultSecurityGroupCompliance", () => {
 				.on(DescribeSecurityGroupsCommand)
 				.resolves({ SecurityGroups: [mockNonCompliantSecurityGroup] });
 
-			const result = await checkDefaultSecurityGroupCompliance("us-east-1");
+			const result = await checkDefaultSecurityGroupCompliance.execute("us-east-1");
 			expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
 			expect(result.checks[0].message).toBe("Default security group has unauthorized rules");
 		});
@@ -103,7 +103,7 @@ describe("checkDefaultSecurityGroupCompliance", () => {
 				})
 				.resolves({ SecurityGroups: [mockNonCompliantSecurityGroup] });
 
-			const result = await checkDefaultSecurityGroupCompliance("us-east-1");
+			const result = await checkDefaultSecurityGroupCompliance.execute("us-east-1");
 			expect(result.checks).toHaveLength(2);
 			expect(result.checks[0].status).toBe(ComplianceStatus.PASS);
 			expect(result.checks[1].status).toBe(ComplianceStatus.FAIL);
@@ -114,7 +114,7 @@ describe("checkDefaultSecurityGroupCompliance", () => {
 		it("should return NOTAPPLICABLE when no VPCs exist", async () => {
 			mockEC2Client.on(DescribeVpcsCommand).resolves({ Vpcs: [] });
 
-			const result = await checkDefaultSecurityGroupCompliance("us-east-1");
+			const result = await checkDefaultSecurityGroupCompliance.execute("us-east-1");
 			expect(result.checks[0].status).toBe(ComplianceStatus.NOTAPPLICABLE);
 			expect(result.checks[0].message).toBe("No VPCs found in the region");
 		});
@@ -122,7 +122,7 @@ describe("checkDefaultSecurityGroupCompliance", () => {
 		it("should return ERROR when VPC API call fails", async () => {
 			mockEC2Client.on(DescribeVpcsCommand).rejects(new Error("API Error"));
 
-			const result = await checkDefaultSecurityGroupCompliance("us-east-1");
+			const result = await checkDefaultSecurityGroupCompliance.execute("us-east-1");
 			expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
 			expect(result.checks[0].message).toContain("Error checking VPCs");
 		});
@@ -131,7 +131,7 @@ describe("checkDefaultSecurityGroupCompliance", () => {
 			mockEC2Client.on(DescribeVpcsCommand).resolves({ Vpcs: [{ VpcId: "vpc-12345" }] });
 			mockEC2Client.on(DescribeSecurityGroupsCommand).resolves({ SecurityGroups: [] });
 
-			const result = await checkDefaultSecurityGroupCompliance("us-east-1");
+			const result = await checkDefaultSecurityGroupCompliance.execute("us-east-1");
 			expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
 			expect(result.checks[0].message).toBe("Default security group not found");
 		});

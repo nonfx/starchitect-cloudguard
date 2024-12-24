@@ -1,12 +1,7 @@
-import { S3Client, GetBucketLoggingCommand } from "@aws-sdk/client-s3";
-import { CloudTrailClient, ListTrailsCommand, GetTrailCommand } from "@aws-sdk/client-cloudtrail";
-
-import {
-	printSummary,
-	generateSummary,
-	type ComplianceReport,
-	ComplianceStatus
-} from "@codegen/utils/stringUtils";
+import { CloudTrailClient, GetTrailCommand, ListTrailsCommand } from "@aws-sdk/client-cloudtrail";
+import { GetBucketLoggingCommand, S3Client } from "@aws-sdk/client-s3";
+import { generateSummary, printSummary } from "~codegen/utils/stringUtils";
+import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "~runtime/types";
 
 async function checkCloudTrailS3AccessLogging(
 	region: string = "us-east-1"
@@ -14,22 +9,7 @@ async function checkCloudTrailS3AccessLogging(
 	const s3Client = new S3Client({ region });
 	const cloudTrailClient = new CloudTrailClient({ region });
 	const results: ComplianceReport = {
-		checks: [],
-		metadoc: {
-			title: "Ensure S3 bucket access logging is enabled on the CloudTrail S3 bucket",
-			description:
-				"S3 Bucket Access Logging generates a log that contains access records for each request made to your S3 bucket. An access log record contains details about the request, such as the request type, the resources specified in the request worked, and the time and date the request was processed. It is recommended that bucket access logging be enabled on the CloudTrail S3 bucket.",
-			controls: [
-				{
-					id: "CIS-AWS-Foundations-Benchmark_v3.0.0_3.4",
-					document: "CIS-AWS-Foundations-Benchmark_v3.0.0"
-				},
-				{
-					id: "AWS-Foundational-Security-Best-Practices_v1.0.0_CloudTrail.7",
-					document: "AWS-Foundational-Security-Best-Practices_v1.0.0"
-				}
-			]
-		}
+		checks: []
 	};
 
 	try {
@@ -112,9 +92,25 @@ async function checkCloudTrailS3AccessLogging(
 }
 
 if (require.main === module) {
-	const region = process.env.AWS_REGION ?? "ap-southeast-1";
+	const region = process.env.AWS_REGION;
 	const results = await checkCloudTrailS3AccessLogging(region);
 	printSummary(generateSummary(results));
 }
 
-export default checkCloudTrailS3AccessLogging;
+export default {
+	title: "Ensure S3 bucket access logging is enabled on the CloudTrail S3 bucket",
+	description:
+		"S3 Bucket Access Logging generates a log that contains access records for each request made to your S3 bucket. An access log record contains details about the request, such as the request type, the resources specified in the request worked, and the time and date the request was processed. It is recommended that bucket access logging be enabled on the CloudTrail S3 bucket.",
+	controls: [
+		{
+			id: "CIS-AWS-Foundations-Benchmark_v3.0.0_3.4",
+			document: "CIS-AWS-Foundations-Benchmark_v3.0.0"
+		},
+		{
+			id: "AWS-Foundational-Security-Best-Practices_v1.0.0_CloudTrail.7",
+			document: "AWS-Foundational-Security-Best-Practices_v1.0.0"
+		}
+	],
+	severity: "MEDIUM",
+	execute: checkCloudTrailS3AccessLogging
+} satisfies RuntimeTest;

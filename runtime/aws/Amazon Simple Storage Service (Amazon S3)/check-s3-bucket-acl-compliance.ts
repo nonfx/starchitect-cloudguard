@@ -1,31 +1,15 @@
 import {
-	S3Client,
+	GetBucketOwnershipControlsCommand,
 	ListBucketsCommand,
-	GetBucketOwnershipControlsCommand
+	S3Client
 } from "@aws-sdk/client-s3";
-
-import {
-	printSummary,
-	generateSummary,
-	type ComplianceReport,
-	ComplianceStatus
-} from "@codegen/utils/stringUtils";
+import { generateSummary, printSummary } from "~codegen/utils/stringUtils";
+import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "~runtime/types";
 
 async function checkS3BucketAclCompliance(region: string = "us-east-1"): Promise<ComplianceReport> {
 	const client = new S3Client({ region });
 	const results: ComplianceReport = {
-		checks: [],
-		metadoc: {
-			title: "ACLs should not be used to manage user access to S3 general purpose buckets",
-			description:
-				"This control checks if S3 buckets use ACLs for managing user access. ACLs are legacy access control mechanisms and bucket policies or IAM policies should be used instead.",
-			controls: [
-				{
-					id: "AWS-Foundational-Security-Best-Practices_v1.0.0_S3.12",
-					document: "AWS-Foundational-Security-Best-Practices_v1.0.0"
-				}
-			]
-		}
+		checks: []
 	};
 
 	try {
@@ -105,9 +89,21 @@ async function checkS3BucketAclCompliance(region: string = "us-east-1"): Promise
 }
 
 if (require.main === module) {
-	const region = process.env.AWS_REGION ?? "ap-southeast-1";
+	const region = process.env.AWS_REGION;
 	const results = await checkS3BucketAclCompliance(region);
 	printSummary(generateSummary(results));
 }
 
-export default checkS3BucketAclCompliance;
+export default {
+	title: "ACLs should not be used to manage user access to S3 general purpose buckets",
+	description:
+		"This control checks if S3 buckets use ACLs for managing user access. ACLs are legacy access control mechanisms and bucket policies or IAM policies should be used instead.",
+	controls: [
+		{
+			id: "AWS-Foundational-Security-Best-Practices_v1.0.0_S3.12",
+			document: "AWS-Foundational-Security-Best-Practices_v1.0.0"
+		}
+	],
+	severity: "MEDIUM",
+	execute: checkS3BucketAclCompliance
+} satisfies RuntimeTest;

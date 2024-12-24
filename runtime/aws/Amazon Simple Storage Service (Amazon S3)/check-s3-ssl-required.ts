@@ -1,10 +1,6 @@
-import { S3Client, ListBucketsCommand, GetBucketPolicyCommand } from "@aws-sdk/client-s3";
-import {
-	printSummary,
-	generateSummary,
-	type ComplianceReport,
-	ComplianceStatus
-} from "@codegen/utils/stringUtils";
+import { GetBucketPolicyCommand, ListBucketsCommand, S3Client } from "@aws-sdk/client-s3";
+import { generateSummary, printSummary } from "~codegen/utils/stringUtils";
+import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "~runtime/types";
 
 interface PolicyStatement {
 	Effect: string;
@@ -39,18 +35,7 @@ function hasSSLRequirement(policyDocument: PolicyDocument): boolean {
 async function checkS3SSLRequired(region: string = "us-east-1"): Promise<ComplianceReport> {
 	const client = new S3Client({ region });
 	const results: ComplianceReport = {
-		checks: [],
-		metadoc: {
-			title: "S3 buckets should require SSL/TLS for all requests",
-			description:
-				"This control checks if S3 buckets require SSL/TLS encryption for all requests by verifying bucket policies include aws:SecureTransport condition.",
-			controls: [
-				{
-					id: "AWS-Foundational-Security-Best-Practices_v1.0.0_S3.5",
-					document: "AWS-Foundational-Security-Best-Practices_v1.0.0"
-				}
-			]
-		}
+		checks: []
 	};
 
 	try {
@@ -124,9 +109,21 @@ async function checkS3SSLRequired(region: string = "us-east-1"): Promise<Complia
 }
 
 if (require.main === module) {
-	const region = process.env.AWS_REGION ?? "ap-southeast-1";
+	const region = process.env.AWS_REGION;
 	const results = await checkS3SSLRequired(region);
 	printSummary(generateSummary(results));
 }
 
-export default checkS3SSLRequired;
+export default {
+	title: "S3 buckets should require SSL/TLS for all requests",
+	description:
+		"This control checks if S3 buckets require SSL/TLS encryption for all requests by verifying bucket policies include aws:SecureTransport condition.",
+	controls: [
+		{
+			id: "AWS-Foundational-Security-Best-Practices_v1.0.0_S3.5",
+			document: "AWS-Foundational-Security-Best-Practices_v1.0.0"
+		}
+	],
+	severity: "MEDIUM",
+	execute: checkS3SSLRequired
+} satisfies RuntimeTest;
