@@ -1,16 +1,18 @@
-import type { TestResult } from "../../types";
+import { ComplianceStatus, type TestResult } from "../../types";
 
 export interface Reporter {
 	report(results: TestResult[]): void | Promise<void>;
 }
 
 export class ConsoleReporter implements Reporter {
+	//@todo - make report format consistent and support different report types (json, html, etc)
+	//@todo - Formst reports using https://www.npmjs.com/package/tty-table
 	report(results: TestResult[]): void {
 		const summary = {
 			total: results.length,
-			passed: results.filter(r => r.status === "passed").length,
-			failed: results.filter(r => r.status === "failed").length,
-			skipped: results.filter(r => r.status === "skipped").length
+			passed: results.filter(r => r.status === ComplianceStatus.PASS).length,
+			failed: results.filter(r => r.status === ComplianceStatus.FAIL).length,
+			skipped: results.filter(r => r.status === ComplianceStatus.NOTAPPLICABLE).length
 		};
 
 		console.log("\nTest Results Summary:");
@@ -23,12 +25,9 @@ export class ConsoleReporter implements Reporter {
 		console.log("----------------");
 
 		results.forEach(result => {
-			console.log(`\n${result.name}: ${result.status.toUpperCase()}`);
+			console.log(`\n${result.test.title}: ${result.status.toUpperCase()}`);
 			if (result.message) {
 				console.log(`Message: ${result.message}`);
-			}
-			if (result.details) {
-				console.log("Details:", result.details);
 			}
 		});
 	}

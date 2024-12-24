@@ -14,7 +14,7 @@ export type RuntimeTestMeta = {
 };
 
 export type RuntimeTest = RuntimeTestMeta & {
-	execute: () => Promise<ComplianceReport>;
+	execute: (...args: any[]) => Promise<ComplianceReport>;
 };
 
 export interface ResourceComplianceCheck {

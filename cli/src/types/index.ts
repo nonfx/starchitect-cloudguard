@@ -1,10 +1,10 @@
-import type { ComplianceReport, RuntimeTest } from "../../../runtime/types";
+import type { ComplianceReport, ComplianceStatus, RuntimeTest } from "../../../runtime/types";
 
 export * from "../../../runtime/types";
 
 export interface TestResult {
 	// name: string;
-	// status: "passed" | "failed" | "skipped";
+	status: ComplianceStatus;
 	message?: string;
 	// details?: unknown;
 	timestamp: number;

@@ -1,25 +1,14 @@
-import type { RuntimeTest, RuntimeTestMeta, TestResult } from "../../types";
-import { CloudProvider } from "../cloud/base";
+import {
+	ComplianceStatus,
+	type RuntimeTest,
+	type RuntimeTestMeta,
+	type TestResult
+} from "../../types";
+import type { CloudProvider } from "../cloud/base";
 import { logger } from "../logger";
 
 export class TestRunner {
-	constructor(private provider: CloudProvider) {}
-
-	async runTests(tests: RuntimeTest[], parallel = true): Promise<TestResult[]> {
-		logger.info(`Running ${tests.length} tests${parallel ? " in parallel" : " sequentially"}`);
-
-		if (parallel) {
-			return Promise.all(tests.map(test => this.runSingleTest(test)));
-		}
-
-		const results: TestResult[] = [];
-		for (const test of tests) {
-			results.push(await this.runSingleTest(test));
-		}
-		return results;
-	}
-
-	async runSingleTest(test: RuntimeTest): Promise<TestResult> {
+	async runSingleTest(test: RuntimeTest, provider: CloudProvider): Promise<TestResult> {
 		const startTime = Date.now();
 
 		const testMeta = { ...test } as unknown as RuntimeTestMeta;
@@ -29,10 +18,37 @@ export class TestRunner {
 
 		try {
 			logger.debug(`Starting test: ${test.title}`);
-			const result = await test.execute();
+			const args = await provider.getTestArguments();
+			const result = await test.execute(...args);
 			logger.debug(`Completed test: ${test.title}`);
 
+			let status = ComplianceStatus.PASS;
+
+			// Remove duplicate messages
+			const messages = Array.from(
+				new Set(result.checks.filter(check => Boolean(check.message)).map(check => check.message))
+			);
+
+			const message = messages.length > 0 ? messages.join(",") : "All checks passed";
+
+			const hasErrors = result.checks.some(check => check.status === ComplianceStatus.ERROR);
+			const hasFailures = result.checks.some(check => check.status === ComplianceStatus.FAIL);
+			const allNotApplicable = result.checks.every(
+				check => check.status === ComplianceStatus.NOTAPPLICABLE
+			);
+
+			// Errors take priority over failures
+			if (hasErrors) {
+				status = ComplianceStatus.ERROR;
+			} else if (hasFailures) {
+				status = ComplianceStatus.FAIL;
+			} else if (allNotApplicable) {
+				status = ComplianceStatus.NOTAPPLICABLE;
+			}
+
 			return {
+				status,
+				message,
 				timestamp: Date.now(),
 				test: testMeta,
 				duration: Date.now() - startTime,
@@ -44,6 +60,7 @@ export class TestRunner {
 			//@todo - Use https://www.npmjs.com/package/terminal-link for linking to the right issue
 			//@todo - Ideally prefill the error message in the issue body
 			return {
+				status: ComplianceStatus.ERROR,
 				message:
 					error instanceof Error
 						? error.message

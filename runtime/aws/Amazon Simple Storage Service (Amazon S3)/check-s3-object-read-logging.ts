@@ -55,7 +55,9 @@ async function checkS3ObjectReadLogging(region: string = "us-east-1"): Promise<C
 						trailConfigs.push(trailConfig.Trail);
 					}
 				} catch (error) {
-					console.error(`Error getting trail config for ${trail.Name}:`, error);
+					if (process.env.LOG_LEVEL === "debug") {
+						console.error(`Error getting trail config for ${trail.Name}:`, error);
+					}
 				}
 			}
 		}
@@ -165,7 +167,9 @@ async function isS3ObjectLoggingEnabled(
 
 		return hasTraditionalLogging || hasAdvancedLogging;
 	} catch (error) {
-		console.error(`Error getting event selectors for trail ${trail.Name}:`, error);
+		if (process.env.LOG_LEVEL === "debug") {
+			console.error(`Error getting event selectors for trail ${trail.Name}:`, error);
+		}
 		return false;
 	}
 }

@@ -5,6 +5,7 @@ import { AWSProvider } from "../../lib/cloud/aws";
 import { logger } from "../../lib/logger";
 import { ConsoleReporter, JSONReporter } from "../../lib/reporters";
 import { TestRunner } from "../../lib/test-runner";
+import { ComplianceStatus } from "~runtime/types";
 
 export default class RuntimeTestRunner extends Command {
 	static description = "Run security tests against cloud runtime environments";
@@ -28,6 +29,10 @@ export default class RuntimeTestRunner extends Command {
 		parallel: Flags.boolean({
 			description: "Run tests in parallel",
 			default: true
+		}),
+		concurrency: Flags.integer({
+			description: "Number of tests to run concurrently",
+			default: 5
 		}),
 		format: Flags.string({
 			description: "Output format",
@@ -53,7 +58,14 @@ export default class RuntimeTestRunner extends Command {
 
 		const progressBar = new cliProgress.SingleBar({}, cliProgress.Presets.shades_classic);
 
+		if (flags.cloud !== "aws") {
+			// @todo - Offer a link to issues so that the user can request support for other cloud providers
+			logger.error("Only AWS is supported at the moment");
+			return;
+		}
+
 		try {
+			// @todo - Each provider should ask it's own questions
 			const provider = new AWSProvider();
 
 			try {
@@ -64,28 +76,35 @@ export default class RuntimeTestRunner extends Command {
 			}
 
 			// const tests = iamTests;
-			// const runner = new TestRunner(provider);
+			const runner = new TestRunner();
 
-			// progressBar.start(tests.length, 0);
-			// let completed = 0;
+			const tests = await provider.getTests();
 
-			// const results = await Promise.all(
-			// 	tests.map(async test => {
-			// 		const result = await runner.runSingleTest(test);
-			// 		progressBar.update(++completed);
-			// 		return result;
-			// 	})
-			// );
+			progressBar.start(tests.length, 0);
+			let completed = 0;
 
-			// progressBar.stop();
+			const results = await Promise.all(
+				tests.map(async test => {
+					//@todo - use PQueue to limit the number of concurrent tests
+					//@todo - Read the number of concurrent tests from the user provided config
+					// @todo - use parallel test run ability with callbacks
+					const result = await runner.runSingleTest(test, provider);
+					progressBar.update(++completed);
+					return result;
+				})
+			);
 
-			// const reporter = flags.format === "json" ? new JSONReporter() : new ConsoleReporter();
+			progressBar.stop();
 
-			// reporter.report(results);
+			const reporter = flags.format === "json" ? new JSONReporter() : new ConsoleReporter();
 
-			// if (results.some(r => r.status === "failed")) {
-			// 	this.exit(1);
-			// }
+			reporter.report(results);
+
+			if (
+				results.some(r => r.status === ComplianceStatus.FAIL || r.status === ComplianceStatus.ERROR)
+			) {
+				this.exit(1);
+			}
 		} catch (error) {
 			progressBar.stop();
 			logger.error("Test execution failed:", error);

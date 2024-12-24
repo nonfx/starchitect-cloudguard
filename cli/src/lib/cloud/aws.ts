@@ -1,18 +1,10 @@
-import { GetAccountAuthorizationDetailsCommand, IAMClient } from "@aws-sdk/client-iam";
 import { GetCallerIdentityCommand, STSClient } from "@aws-sdk/client-sts";
-import type { TestResult } from "../../types";
+import type { RuntimeTest } from "~runtime/types";
+import allTests from "../../../../runtime/aws";
+import { logger } from "../logger";
 import { CloudProvider } from "./base";
 
-import { logger } from "../logger";
-
 export class AWSProvider extends CloudProvider {
-	private iamClient: IAMClient;
-
-	constructor() {
-		super();
-		this.iamClient = new IAMClient({});
-	}
-
 	async detectCredentials(): Promise<boolean> {
 		try {
 			const sts = new STSClient();
@@ -28,7 +20,6 @@ export class AWSProvider extends CloudProvider {
 		} catch (error) {
 			logger.debug(error);
 			throw new Error("AWS credentials not found or invalid");
-			return false;
 		}
 	}
 
@@ -36,9 +27,13 @@ export class AWSProvider extends CloudProvider {
 		return this.detectCredentials();
 	}
 
-	async listAvailableServices(): Promise<string[]> {
-		return ["iam", "ec2", "cloudwatch"];
+	async getTests(): Promise<RuntimeTest[]> {
+		return allTests;
 	}
 
-	async runTest(testName: string): Promise<TestResult> {}
+	//@todo - Get the list of regions from the AWS SDK
+	//@todo - Use inquirer to prompt the user to select a region and use that value
+	async getTestArguments() {
+		return ["ap-southeast-1"];
+	}
 }
