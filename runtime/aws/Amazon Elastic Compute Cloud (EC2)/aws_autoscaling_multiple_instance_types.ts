@@ -1,15 +1,11 @@
 import {
 	AutoScalingClient,
 	DescribeAutoScalingGroupsCommand,
-	AutoScalingGroup
+	type AutoScalingGroup
 } from "@aws-sdk/client-auto-scaling";
 
-import {
-	printSummary,
-	generateSummary,
-	type ComplianceReport,
-	ComplianceStatus
-} from "@codegen/utils/stringUtils";
+import { printSummary, generateSummary } from "@codegen/utils/stringUtils";
+import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "../../types";
 
 function isValidMixedInstancesPolicy(asg: AutoScalingGroup): boolean {
 	if (!asg.MixedInstancesPolicy?.LaunchTemplate?.Overrides) {
@@ -32,19 +28,7 @@ async function checkAutoScalingMultipleInstanceTypes(
 ): Promise<ComplianceReport> {
 	const client = new AutoScalingClient({ region });
 	const results: ComplianceReport = {
-		checks: [],
-		metadoc: {
-			title:
-				"Auto Scaling groups should use multiple instance types in multiple Availability Zones",
-			description:
-				"This control checks whether Auto Scaling groups are configured to use multiple instance types across multiple Availability Zones for enhanced availability and resilience.",
-			controls: [
-				{
-					id: "AWS-Foundational-Security-Best-Practices_v1.0.0_AutoScaling.6",
-					document: "AWS-Foundational-Security-Best-Practices_v1.0.0"
-				}
-			]
-		}
+		checks: []
 	};
 
 	try {
@@ -118,4 +102,16 @@ if (require.main === module) {
 	printSummary(generateSummary(results));
 }
 
-export default checkAutoScalingMultipleInstanceTypes;
+export default {
+	title: "Auto Scaling groups should use multiple instance types in multiple Availability Zones",
+	description:
+		"This control checks whether Auto Scaling groups are configured to use multiple instance types across multiple Availability Zones for enhanced availability and resilience.",
+	controls: [
+		{
+			id: "AWS-Foundational-Security-Best-Practices_v1.0.0_AutoScaling.6",
+			document: "AWS-Foundational-Security-Best-Practices_v1.0.0"
+		}
+	],
+	severity: "MEDIUM",
+	execute: checkAutoScalingMultipleInstanceTypes
+} satisfies RuntimeTest;

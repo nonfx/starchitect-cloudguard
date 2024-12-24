@@ -1,27 +1,3 @@
-// {
-//   "compilerOptions": {
-//     "target": "es2018",
-//     "module": "commonjs",
-//     "lib": ["es2018", "dom", "es2015", "es2015.promise"],
-//     "strict": true,
-//     "esModuleInterop": true,
-//     "skipLibCheck": true,
-//     "forceConsistentCasingInFileNames": true,
-//     "baseUrl": ".",
-//     "paths": {
-//       "@codegen/*": ["codegen/*"]
-//     },
-//     "outDir": "dist",
-//     "rootDir": ".",
-//     "resolveJsonModule": true,
-//     "types": ["jest", "node"]
-//   },
-//   "include": [
-//     "runtime/**/*.ts",
-//     "runtime/**/*.tsx",
-//     "codegen/**/*.ts",
-//     "codegen/**/*.tsx"
-
 {
 	"$schema": "https://json.schemastore.org/tsconfig",
 	"compilerOptions": {
@@ -79,7 +55,7 @@
 			"dom.iterable",
 			"scripthost"
 		],
-		"types": ["node"], // Type definitions to include
+		"types": ["node", "bun"], // Type definitions to include
 		"paths": {
 			"@codegen/*": ["./codegen/*"]
 		}

@@ -1,11 +1,11 @@
-import { TestResult, Test } from "../../types/index.js";
-import { CloudProvider } from "../cloud/base.js";
-import { logger } from "../logger.js";
+import type { RuntimeTest, RuntimeTestMeta, TestResult } from "../../types";
+import { CloudProvider } from "../cloud/base";
+import { logger } from "../logger";
 
 export class TestRunner {
 	constructor(private provider: CloudProvider) {}
 
-	async runTests(tests: Test[], parallel = true): Promise<TestResult[]> {
+	async runTests(tests: RuntimeTest[], parallel = true): Promise<TestResult[]> {
 		logger.info(`Running ${tests.length} tests${parallel ? " in parallel" : " sequentially"}`);
 
 		if (parallel) {
@@ -19,26 +19,41 @@ export class TestRunner {
 		return results;
 	}
 
-	async runSingleTest(test: Test): Promise<TestResult> {
+	async runSingleTest(test: RuntimeTest): Promise<TestResult> {
 		const startTime = Date.now();
 
+		const testMeta = { ...test } as unknown as RuntimeTestMeta;
+
+		//@ts-expect-error We know this property is not missing because it comes from the test object
+		delete testMeta.execute;
+
 		try {
-			logger.debug(`Starting test: ${test.name}`);
+			logger.debug(`Starting test: ${test.title}`);
 			const result = await test.execute();
-			logger.debug(`Completed test: ${test.name}`);
+			logger.debug(`Completed test: ${test.title}`);
 
 			return {
-				...result,
-				duration: Date.now() - startTime
+				timestamp: Date.now(),
+				test: testMeta,
+				duration: Date.now() - startTime,
+				checks: result
 			};
 		} catch (error) {
-			logger.error(`Test failed: ${test.name}`);
+			logger.error(`Test failed: ${test.title}`);
+
+			//@todo - Use https://www.npmjs.com/package/terminal-link for linking to the right issue
+			//@todo - Ideally prefill the error message in the issue body
 			return {
-				name: test.name,
-				status: "failed",
-				message: error instanceof Error ? error.message : "Unknown error",
-				timestamp: new Date().toISOString(),
-				duration: Date.now() - startTime
+				message:
+					error instanceof Error
+						? error.message
+						: "Test failed to run. Please log an issue at https://github.com/nonfx/starchitect-cloudguard/issues/new",
+				timestamp: Date.now(),
+				test: testMeta,
+				duration: Date.now() - startTime,
+				checks: {
+					checks: []
+				}
 			};
 		}
 	}

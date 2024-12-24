@@ -8,6 +8,8 @@
   },
   "bugs": "https://github.com/nonfx/starchitect-cloudguard/issues",
   "dependencies": {
+    "@aws-sdk/client-sts": "^3.716.0",
+    "@aws-sdk/credential-providers": "^3.716.0",
     "@oclif/core": "^4",
     "@oclif/plugin-help": "^6",
     "@oclif/plugin-plugins": "^5",
@@ -46,7 +48,7 @@
   "oclif": {
     "bin": "mynewcli",
     "dirname": "mynewcli",
-    "commands": "./dist/commands",
+    "commands": "./src/commands",
     "plugins": [
       "@oclif/plugin-help",
       "@oclif/plugin-plugins"
@@ -55,6 +57,7 @@
   "repository": "nonfx/starchitect-cloudguard",
   "scripts": {
     "build": "shx rm -rf dist && tsc -b",
+    "dev": "./bin/dev.js",
     "lint": "eslint . --ext .ts",
     "postpack": "shx rm -f oclif.manifest.json",
     "posttest": "npm run lint",

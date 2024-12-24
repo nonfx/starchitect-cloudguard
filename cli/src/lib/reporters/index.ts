@@ -1,4 +1,4 @@
-import { TestResult } from "../../types";
+import type { TestResult } from "../../types";
 
 export interface Reporter {
 	report(results: TestResult[]): void | Promise<void>;

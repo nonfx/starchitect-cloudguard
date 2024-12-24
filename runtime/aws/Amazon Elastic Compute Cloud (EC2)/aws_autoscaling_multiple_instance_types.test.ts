@@ -1,7 +1,7 @@
 import { AutoScalingClient, DescribeAutoScalingGroupsCommand } from "@aws-sdk/client-auto-scaling";
 import { mockClient } from "aws-sdk-client-mock";
-import { ComplianceStatus } from "@codegen/utils/stringUtils";
 import checkAutoScalingMultipleInstanceTypes from "./aws_autoscaling_multiple_instance_types";
+import { ComplianceStatus } from "../../types";
 
 const mockAutoScalingClient = mockClient(AutoScalingClient);
 
@@ -39,7 +39,7 @@ describe("checkAutoScalingMultipleInstanceTypes", () => {
 				AutoScalingGroups: [mockCompliantASG]
 			});
 
-			const result = await checkAutoScalingMultipleInstanceTypes("us-east-1");
+			const result = await checkAutoScalingMultipleInstanceTypes.execute("us-east-1");
 			expect(result.checks[0].status).toBe(ComplianceStatus.PASS);
 			expect(result.checks[0].resourceName).toBe("compliant-asg");
 			expect(result.checks[0].resourceArn).toBe(mockCompliantASG.AutoScalingGroupARN);
@@ -50,7 +50,7 @@ describe("checkAutoScalingMultipleInstanceTypes", () => {
 				AutoScalingGroups: []
 			});
 
-			const result = await checkAutoScalingMultipleInstanceTypes("us-east-1");
+			const result = await checkAutoScalingMultipleInstanceTypes.execute("us-east-1");
 			expect(result.checks[0].status).toBe(ComplianceStatus.NOTAPPLICABLE);
 			expect(result.checks[0].message).toBe("No Auto Scaling groups found in the region");
 		});
@@ -62,7 +62,7 @@ describe("checkAutoScalingMultipleInstanceTypes", () => {
 				AutoScalingGroups: [mockNonCompliantASG]
 			});
 
-			const result = await checkAutoScalingMultipleInstanceTypes("us-east-1");
+			const result = await checkAutoScalingMultipleInstanceTypes.execute("us-east-1");
 			expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
 			expect(result.checks[0].message).toContain("does not use multiple instance types");
 		});
@@ -77,7 +77,7 @@ describe("checkAutoScalingMultipleInstanceTypes", () => {
 				]
 			});
 
-			const result = await checkAutoScalingMultipleInstanceTypes("us-east-1");
+			const result = await checkAutoScalingMultipleInstanceTypes.execute("us-east-1");
 			expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
 			expect(result.checks[0].message).toContain("does not use multiple Availability Zones");
 		});
@@ -92,7 +92,7 @@ describe("checkAutoScalingMultipleInstanceTypes", () => {
 				]
 			});
 
-			const result = await checkAutoScalingMultipleInstanceTypes("us-east-1");
+			const result = await checkAutoScalingMultipleInstanceTypes.execute("us-east-1");
 			expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
 		});
 	});
@@ -101,7 +101,7 @@ describe("checkAutoScalingMultipleInstanceTypes", () => {
 		it("should return ERROR when API call fails", async () => {
 			mockAutoScalingClient.on(DescribeAutoScalingGroupsCommand).rejects(new Error("API Error"));
 
-			const result = await checkAutoScalingMultipleInstanceTypes("us-east-1");
+			const result = await checkAutoScalingMultipleInstanceTypes.execute("us-east-1");
 			expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
 			expect(result.checks[0].message).toContain("Error checking Auto Scaling groups");
 		});
@@ -115,7 +115,7 @@ describe("checkAutoScalingMultipleInstanceTypes", () => {
 				]
 			});
 
-			const result = await checkAutoScalingMultipleInstanceTypes("us-east-1");
+			const result = await checkAutoScalingMultipleInstanceTypes.execute("us-east-1");
 			expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
 			expect(result.checks[0].message).toBe("Auto Scaling group found without name or ARN");
 		});
@@ -127,7 +127,7 @@ describe("checkAutoScalingMultipleInstanceTypes", () => {
 				AutoScalingGroups: [mockCompliantASG, mockNonCompliantASG]
 			});
 
-			const result = await checkAutoScalingMultipleInstanceTypes("us-east-1");
+			const result = await checkAutoScalingMultipleInstanceTypes.execute("us-east-1");
 			expect(result.checks).toHaveLength(2);
 			expect(result.checks[0].status).toBe(ComplianceStatus.PASS);
 			expect(result.checks[1].status).toBe(ComplianceStatus.FAIL);

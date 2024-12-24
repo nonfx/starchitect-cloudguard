@@ -1,13 +1,12 @@
 import { Command, Flags } from "@oclif/core";
-import inquirer from "inquirer";
 import * as cliProgress from "cli-progress";
-import { TestResult } from "../../types/index.js";
-import { AWSProvider } from "../../lib/cloud/aws.js";
-import { TestRunner } from "../../lib/test-runner/index.js";
-import { ConsoleReporter, JSONReporter } from "../../lib/reporters/index.js";
-import { logger } from "../../lib/logger.js";
+import inquirer from "inquirer";
+import { AWSProvider } from "../../lib/cloud/aws";
+import { logger } from "../../lib/logger";
+import { ConsoleReporter, JSONReporter } from "../../lib/reporters";
+import { TestRunner } from "../../lib/test-runner";
 
-export default class RuntimeTest extends Command {
+export default class RuntimeTestRunner extends Command {
 	static description = "Run security tests against cloud runtime environments";
 
 	static flags = {
@@ -38,7 +37,7 @@ export default class RuntimeTest extends Command {
 	};
 
 	async run(): Promise<void> {
-		const { flags } = await this.parse(RuntimeTest);
+		const { flags } = await this.parse(RuntimeTestRunner);
 
 		if (!flags.cloud && !process.env.CI) {
 			const response = await inquirer.prompt([
@@ -57,33 +56,36 @@ export default class RuntimeTest extends Command {
 		try {
 			const provider = new AWSProvider();
 
-			if (!(await provider.validateCredentials())) {
-				throw new Error("Invalid or missing credentials");
+			try {
+				await provider.validateCredentials();
+			} catch (error) {
+				logger.error(error);
+				return;
 			}
 
-			const tests = iamTests;
-			const runner = new TestRunner(provider);
+			// const tests = iamTests;
+			// const runner = new TestRunner(provider);
 
-			progressBar.start(tests.length, 0);
-			let completed = 0;
+			// progressBar.start(tests.length, 0);
+			// let completed = 0;
 
-			const results = await Promise.all(
-				tests.map(async test => {
-					const result = await runner.runSingleTest(test);
-					progressBar.update(++completed);
-					return result;
-				})
-			);
+			// const results = await Promise.all(
+			// 	tests.map(async test => {
+			// 		const result = await runner.runSingleTest(test);
+			// 		progressBar.update(++completed);
+			// 		return result;
+			// 	})
+			// );
 
-			progressBar.stop();
+			// progressBar.stop();
 
-			const reporter = flags.format === "json" ? new JSONReporter() : new ConsoleReporter();
+			// const reporter = flags.format === "json" ? new JSONReporter() : new ConsoleReporter();
 
-			reporter.report(results);
+			// reporter.report(results);
 
-			if (results.some(r => r.status === "failed")) {
-				this.exit(1);
-			}
+			// if (results.some(r => r.status === "failed")) {
+			// 	this.exit(1);
+			// }
 		} catch (error) {
 			progressBar.stop();
 			logger.error("Test execution failed:", error);

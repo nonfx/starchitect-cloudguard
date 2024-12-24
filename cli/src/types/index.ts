@@ -1,10 +1,16 @@
+import type { ComplianceReport, RuntimeTest } from "../../../runtime/types";
+
+export * from "../../../runtime/types";
+
 export interface TestResult {
-	name: string;
-	status: "passed" | "failed" | "skipped";
+	// name: string;
+	// status: "passed" | "failed" | "skipped";
 	message?: string;
-	details?: unknown;
-	timestamp: string;
+	// details?: unknown;
+	timestamp: number;
 	duration: number;
+	test: Omit<RuntimeTest, "execute">;
+	checks: ComplianceReport;
 }
 
 export interface CloudGuardConfig {
@@ -18,12 +24,4 @@ export interface CloudGuardConfig {
 		azure?: Record<string, unknown>;
 		gcp?: Record<string, unknown>;
 	};
-}
-
-export interface Test {
-	name: string;
-	description: string;
-	severity: "HIGH" | "MEDIUM" | "LOW";
-	category: string;
-	execute: () => Promise<TestResult>;
 }

@@ -1,11 +1,9 @@
-import { CloudProvider } from "./base.js";
-import { TestResult } from "../../types/index.js";
-import {
-	IAMClient,
-	GetAccountAuthorizationDetailsCommand,
-	ListUsersCommand
-} from "@aws-sdk/client-iam";
-import { logger } from "../logger.js";
+import { GetAccountAuthorizationDetailsCommand, IAMClient } from "@aws-sdk/client-iam";
+import { GetCallerIdentityCommand, STSClient } from "@aws-sdk/client-sts";
+import type { TestResult } from "../../types";
+import { CloudProvider } from "./base";
+
+import { logger } from "../logger";
 
 export class AWSProvider extends CloudProvider {
 	private iamClient: IAMClient;
@@ -17,11 +15,18 @@ export class AWSProvider extends CloudProvider {
 
 	async detectCredentials(): Promise<boolean> {
 		try {
-			await this.iamClient.send(new ListUsersCommand({}));
+			const sts = new STSClient();
+			const identity = await sts.send(new GetCallerIdentityCommand({}));
+
+			// @todo - Provide a more helpful message on how to ensure AWS credentials are set up
+			// Either using env variables, or profiles or aws sso CLI
+			if (!identity.UserId) {
+				throw new Error("AWS credentials not found or invalid");
+			}
 			return true;
 		} catch (error) {
-			console.error(error);
-			logger.debug("AWS credentials not found or invalid");
+			logger.debug(error);
+			throw new Error("AWS credentials not found or invalid");
 			return false;
 		}
 	}
@@ -34,53 +39,5 @@ export class AWSProvider extends CloudProvider {
 		return ["iam", "ec2", "cloudwatch"];
 	}
 
-	async runTest(testName: string): Promise<TestResult> {
-		const startTime = Date.now();
-
-		try {
-			switch (testName) {
-				case "iam-root-access-keys":
-					return await this.testRootAccessKeys();
-				default:
-					throw new Error(`Unknown test: ${testName}`);
-			}
-		} catch (error) {
-			return {
-				name: testName,
-				status: "failed",
-				message: error instanceof Error ? error.message : "Unknown error",
-				timestamp: new Date().toISOString(),
-				duration: Date.now() - startTime
-			};
-		}
-	}
-
-	private async testRootAccessKeys(): Promise<TestResult> {
-		const startTime = Date.now();
-
-		try {
-			const command = new GetAccountAuthorizationDetailsCommand({});
-			const response = await this.iamClient.send(command);
-
-			console.warn(response.UserDetailList);
-
-			const rootUserAccessKeys =
-				//@ts-expect-error sdsdassdasd
-				response.UserDetailList?.find(user => user.Arn?.includes(":root"))?.AccessKeys?.length ?? 0;
-
-			return {
-				name: "iam-root-access-keys",
-				status: rootUserAccessKeys === 0 ? "passed" : "failed",
-				message:
-					rootUserAccessKeys === 0
-						? "No root access keys found"
-						: "Root account has access keys configured",
-				details: { rootUserAccessKeys },
-				timestamp: new Date().toISOString(),
-				duration: Date.now() - startTime
-			};
-		} catch (error) {
-			throw error;
-		}
-	}
+	async runTest(testName: string): Promise<TestResult> {}
 }
