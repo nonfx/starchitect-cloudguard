@@ -5,7 +5,7 @@ import {
 	ListTagsCommand
 } from "@aws-sdk/client-cloudtrail";
 import { mockClient } from "aws-sdk-client-mock";
-import { ComplianceStatus } from "@codegen/utils/stringUtils";
+import { ComplianceStatus } from "~runtime/types";
 import checkCloudTrailTagged from "./check-cloudtrail-tagged";
 
 const mockCloudTrailClient = mockClient(CloudTrailClient);
@@ -46,7 +46,7 @@ describe("checkCloudTrailTagged", () => {
 				]
 			});
 
-			const result = await checkCloudTrailTagged("us-east-1");
+			const result = await checkCloudTrailTagged.execute("us-east-1");
 			expect(result.checks[0].status).toBe(ComplianceStatus.PASS);
 			expect(result.checks[0].resourceName).toBe("test-trail-1");
 		});
@@ -70,7 +70,7 @@ describe("checkCloudTrailTagged", () => {
 				]
 			});
 
-			const result = await checkCloudTrailTagged("us-east-1");
+			const result = await checkCloudTrailTagged.execute("us-east-1");
 			expect(result.checks[0].status).toBe(ComplianceStatus.PASS);
 		});
 	});
@@ -92,7 +92,7 @@ describe("checkCloudTrailTagged", () => {
 				]
 			});
 
-			const result = await checkCloudTrailTagged("us-east-1");
+			const result = await checkCloudTrailTagged.execute("us-east-1");
 			expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
 			expect(result.checks[0].message).toBe("CloudTrail trail does not have any non-system tags");
 		});
@@ -113,7 +113,7 @@ describe("checkCloudTrailTagged", () => {
 				]
 			});
 
-			const result = await checkCloudTrailTagged("us-east-1");
+			const result = await checkCloudTrailTagged.execute("us-east-1");
 			expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
 		});
 	});
@@ -122,7 +122,7 @@ describe("checkCloudTrailTagged", () => {
 		it("should return NOTAPPLICABLE when no trails exist", async () => {
 			mockCloudTrailClient.on(ListTrailsCommand).resolves({ Trails: [] });
 
-			const result = await checkCloudTrailTagged("us-east-1");
+			const result = await checkCloudTrailTagged.execute("us-east-1");
 			expect(result.checks[0].status).toBe(ComplianceStatus.NOTAPPLICABLE);
 			expect(result.checks[0].message).toBe("No CloudTrail trails found in the region");
 		});
@@ -130,7 +130,7 @@ describe("checkCloudTrailTagged", () => {
 		it("should return ERROR when ListTrails fails", async () => {
 			mockCloudTrailClient.on(ListTrailsCommand).rejects(new Error("API Error"));
 
-			const result = await checkCloudTrailTagged("us-east-1");
+			const result = await checkCloudTrailTagged.execute("us-east-1");
 			expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
 			expect(result.checks[0].message).toContain("Error checking CloudTrail trails");
 		});
@@ -140,7 +140,7 @@ describe("checkCloudTrailTagged", () => {
 				Trails: [{ Name: "invalid-trail" }]
 			});
 
-			const result = await checkCloudTrailTagged("us-east-1");
+			const result = await checkCloudTrailTagged.execute("us-east-1");
 			expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
 			expect(result.checks[0].message).toBe("Trail found without ARN");
 		});
@@ -149,7 +149,7 @@ describe("checkCloudTrailTagged", () => {
 			mockCloudTrailClient.on(ListTrailsCommand).resolves({ Trails: [mockTrails[0]] });
 			mockCloudTrailClient.on(GetTrailCommand).rejects(new Error("Access Denied"));
 
-			const result = await checkCloudTrailTagged("us-east-1");
+			const result = await checkCloudTrailTagged.execute("us-east-1");
 			expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
 			expect(result.checks[0].message).toContain("Error checking trail tags");
 		});
@@ -163,7 +163,7 @@ describe("checkCloudTrailTagged", () => {
 			});
 			mockCloudTrailClient.on(ListTagsCommand).rejects(new Error("Tags API Error"));
 
-			const result = await checkCloudTrailTagged("us-east-1");
+			const result = await checkCloudTrailTagged.execute("us-east-1");
 			expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
 			expect(result.checks[0].message).toContain("Error checking trail tags");
 		});

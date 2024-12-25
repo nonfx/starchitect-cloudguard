@@ -1,11 +1,6 @@
-import { EC2Client, DescribeNetworkAclsCommand } from "@aws-sdk/client-ec2";
-
-import {
-	printSummary,
-	generateSummary,
-	type ComplianceReport,
-	ComplianceStatus
-} from "@codegen/utils/stringUtils";
+import { DescribeNetworkAclsCommand, EC2Client } from "@aws-sdk/client-ec2";
+import { generateSummary, printSummary } from "~codegen/utils/stringUtils";
+import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "~runtime/types";
 
 interface NaclEntry {
 	RuleNumber: number;
@@ -46,19 +41,7 @@ function hasUnsafePort22Access(entries: NaclEntry[]): boolean {
 async function checkNaclPort22Compliance(region: string = "us-east-1"): Promise<ComplianceReport> {
 	const client = new EC2Client({ region });
 	const results: ComplianceReport = {
-		checks: [],
-		metadoc: {
-			title:
-				"Ensure no Network ACLs allow ingress from 0.0.0.0/0 to remote server administration port 22",
-			description:
-				"The Network Access Control List (NACL) function provide stateless filtering of ingress and egress network traffic to AWS resources. It is recommended that no NACL allows unrestricted ingress access to remote server administration port 22",
-			controls: [
-				{
-					id: "CIS-AWS-Foundations-Benchmark_v3.0.0_5.1",
-					document: "CIS-AWS-Foundations-Benchmark_v3.0.0"
-				}
-			]
-		}
+		checks: []
 	};
 
 	try {
@@ -117,9 +100,22 @@ async function checkNaclPort22Compliance(region: string = "us-east-1"): Promise<
 }
 
 if (require.main === module) {
-	const region = process.env.AWS_REGION ?? "ap-southeast-1";
+	const region = process.env.AWS_REGION;
 	const results = await checkNaclPort22Compliance(region);
 	printSummary(generateSummary(results));
 }
 
-export default checkNaclPort22Compliance;
+export default {
+	title:
+		"Ensure no Network ACLs allow ingress from 0.0.0.0/0 to remote server administration port 22",
+	description:
+		"The Network Access Control List (NACL) function provide stateless filtering of ingress and egress network traffic to AWS resources. It is recommended that no NACL allows unrestricted ingress access to remote server administration port 22",
+	controls: [
+		{
+			id: "CIS-AWS-Foundations-Benchmark_v3.0.0_5.1",
+			document: "CIS-AWS-Foundations-Benchmark_v3.0.0"
+		}
+	],
+	severity: "MEDIUM",
+	execute: checkNaclPort22Compliance
+} satisfies RuntimeTest;

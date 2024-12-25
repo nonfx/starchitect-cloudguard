@@ -1,11 +1,6 @@
-import { EC2Client, DescribeSecurityGroupsCommand } from "@aws-sdk/client-ec2";
-
-import {
-	printSummary,
-	generateSummary,
-	type ComplianceReport,
-	ComplianceStatus
-} from "@codegen/utils/stringUtils";
+import { DescribeSecurityGroupsCommand, EC2Client } from "@aws-sdk/client-ec2";
+import { generateSummary, printSummary } from "~codegen/utils/stringUtils";
+import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "~runtime/types";
 
 const ADMIN_PORTS = [22, 3389];
 
@@ -14,23 +9,7 @@ async function checkSecurityGroupAdminPorts(
 ): Promise<ComplianceReport> {
 	const client = new EC2Client({ region });
 	const results: ComplianceReport = {
-		checks: [],
-		metadoc: {
-			title:
-				"Ensure no security groups allow ingress from 0.0.0.0/0 to remote server administration ports such as 22 and 3389 (Remote Desktop Protocol)",
-			description:
-				"Security groups provide stateful filtering of ingress and egress network traffic to AWS resources. It is recommended that no security group allows unrestricted ingress access to remote server administration ports such as 22 & 3389",
-			controls: [
-				{
-					id: "CIS-AWS-Foundations-Benchmark_v3.0.0_5.2",
-					document: "CIS-AWS-Foundations-Benchmark_v3.0.0"
-				},
-				{
-					id: "CIS-AWS-Foundations-Benchmark_v3.0.0_5.3",
-					document: "CIS-AWS-Foundations-Benchmark_v3.0.0"
-				}
-			]
-		}
+		checks: []
 	};
 
 	try {
@@ -109,9 +88,26 @@ async function checkSecurityGroupAdminPorts(
 }
 
 if (require.main === module) {
-	const region = process.env.AWS_REGION ?? "ap-southeast-1";
+	const region = process.env.AWS_REGION;
 	const results = await checkSecurityGroupAdminPorts(region);
 	printSummary(generateSummary(results));
 }
 
-export default checkSecurityGroupAdminPorts;
+export default {
+	title:
+		"Ensure no security groups allow ingress from 0.0.0.0/0 to remote server administration ports such as 22 and 3389 (Remote Desktop Protocol)",
+	description:
+		"Security groups provide stateful filtering of ingress and egress network traffic to AWS resources. It is recommended that no security group allows unrestricted ingress access to remote server administration ports such as 22 & 3389",
+	controls: [
+		{
+			id: "CIS-AWS-Foundations-Benchmark_v3.0.0_5.2",
+			document: "CIS-AWS-Foundations-Benchmark_v3.0.0"
+		},
+		{
+			id: "CIS-AWS-Foundations-Benchmark_v3.0.0_5.3",
+			document: "CIS-AWS-Foundations-Benchmark_v3.0.0"
+		}
+	],
+	severity: "MEDIUM",
+	execute: checkSecurityGroupAdminPorts
+} satisfies RuntimeTest;

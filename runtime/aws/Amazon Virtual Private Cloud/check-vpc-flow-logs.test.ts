@@ -1,6 +1,6 @@
 import { EC2Client, DescribeVpcsCommand, DescribeFlowLogsCommand } from "@aws-sdk/client-ec2";
 import { mockClient } from "aws-sdk-client-mock";
-import { ComplianceStatus } from "@codegen/utils/stringUtils";
+import { ComplianceStatus } from "~runtime/types";
 import checkVpcFlowLogsCompliance from "./check-vpc-flow-logs";
 
 const mockEC2Client = mockClient(EC2Client);
@@ -28,7 +28,7 @@ describe("checkVpcFlowLogsCompliance", () => {
 			mockEC2Client.on(DescribeVpcsCommand).resolves({ Vpcs: [mockVpc] });
 			mockEC2Client.on(DescribeFlowLogsCommand).resolves({ FlowLogs: [mockFlowLog] });
 
-			const result = await checkVpcFlowLogsCompliance("us-east-1");
+			const result = await checkVpcFlowLogsCompliance.execute("us-east-1");
 			expect(result.checks[0].status).toBe(ComplianceStatus.PASS);
 			expect(result.checks[0].resourceName).toBe("vpc-12345678");
 		});
@@ -36,7 +36,7 @@ describe("checkVpcFlowLogsCompliance", () => {
 		it("should return NOTAPPLICABLE when no VPCs exist", async () => {
 			mockEC2Client.on(DescribeVpcsCommand).resolves({ Vpcs: [] });
 
-			const result = await checkVpcFlowLogsCompliance("us-east-1");
+			const result = await checkVpcFlowLogsCompliance.execute("us-east-1");
 			expect(result.checks[0].status).toBe(ComplianceStatus.NOTAPPLICABLE);
 			expect(result.checks[0].message).toBe("No VPCs found in the region");
 		});
@@ -47,7 +47,7 @@ describe("checkVpcFlowLogsCompliance", () => {
 			mockEC2Client.on(DescribeVpcsCommand).resolves({ Vpcs: [mockVpc] });
 			mockEC2Client.on(DescribeFlowLogsCommand).resolves({ FlowLogs: [] });
 
-			const result = await checkVpcFlowLogsCompliance("us-east-1");
+			const result = await checkVpcFlowLogsCompliance.execute("us-east-1");
 			expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
 			expect(result.checks[0].message).toBe("VPC does not have any flow logs enabled");
 		});
@@ -63,7 +63,7 @@ describe("checkVpcFlowLogsCompliance", () => {
 				]
 			});
 
-			const result = await checkVpcFlowLogsCompliance("us-east-1");
+			const result = await checkVpcFlowLogsCompliance.execute("us-east-1");
 			expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
 			expect(result.checks[0].message).toBe("VPC does not have any active flow logs");
 		});
@@ -79,7 +79,7 @@ describe("checkVpcFlowLogsCompliance", () => {
 				]
 			});
 
-			const result = await checkVpcFlowLogsCompliance("us-east-1");
+			const result = await checkVpcFlowLogsCompliance.execute("us-east-1");
 			expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
 			expect(result.checks[0].message).toBe("VPC flow logs do not capture all traffic types");
 		});
@@ -89,7 +89,7 @@ describe("checkVpcFlowLogsCompliance", () => {
 		it("should return ERROR when DescribeVpcs fails", async () => {
 			mockEC2Client.on(DescribeVpcsCommand).rejects(new Error("API Error"));
 
-			const result = await checkVpcFlowLogsCompliance("us-east-1");
+			const result = await checkVpcFlowLogsCompliance.execute("us-east-1");
 			expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
 			expect(result.checks[0].message).toContain("Error checking VPC flow logs: API Error");
 		});
@@ -101,7 +101,7 @@ describe("checkVpcFlowLogsCompliance", () => {
 				.on(DescribeFlowLogsCommand)
 				.resolves({ FlowLogs: [] });
 
-			const result = await checkVpcFlowLogsCompliance("us-east-1");
+			const result = await checkVpcFlowLogsCompliance.execute("us-east-1");
 			expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
 			expect(result.checks[0].message).toBe("VPC found without VPC ID");
 		});
@@ -122,7 +122,7 @@ describe("checkVpcFlowLogsCompliance", () => {
 				]
 			});
 
-			const result = await checkVpcFlowLogsCompliance("us-east-1");
+			const result = await checkVpcFlowLogsCompliance.execute("us-east-1");
 			expect(result.checks).toHaveLength(2);
 			expect(result.checks[0].status).toBe(ComplianceStatus.PASS);
 			expect(result.checks[1].status).toBe(ComplianceStatus.FAIL);

@@ -1,29 +1,17 @@
-import { S3Client, ListBucketsCommand, GetBucketLifecycleConfigurationCommand } from '@aws-sdk/client-s3';
-
 import {
-	printSummary,
-	generateSummary,
-	type ComplianceReport,
-	ComplianceStatus
-} from '@codegen/utils/stringUtils';
+	GetBucketLifecycleConfigurationCommand,
+	ListBucketsCommand,
+	S3Client
+} from "@aws-sdk/client-s3";
+import { generateSummary, printSummary } from "~codegen/utils/stringUtils";
+import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "~runtime/types";
 
 async function checkS3BucketLifecycleConfiguration(
-	region: string = 'us-east-1'
+	region: string = "us-east-1"
 ): Promise<ComplianceReport> {
 	const client = new S3Client({ region });
 	const results: ComplianceReport = {
-		checks: [],
-		metadoc: {
-			title: 'S3 general purpose buckets should have Lifecycle configurations',
-			description:
-				'This control checks whether S3 buckets have Lifecycle configurations enabled to manage object transitions and deletions effectively.',
-			controls: [
-				{
-					id: 'AWS-Foundational-Security-Best-Practices_v1.0.0_S3.13',
-					document: 'AWS-Foundational-Security-Best-Practices_v1.0.0'
-				}
-			]
-		}
+		checks: []
 	};
 
 	try {
@@ -33,9 +21,9 @@ async function checkS3BucketLifecycleConfiguration(
 		if (!listBucketsResponse.Buckets || listBucketsResponse.Buckets.length === 0) {
 			results.checks = [
 				{
-					resourceName: 'No S3 Buckets',
+					resourceName: "No S3 Buckets",
 					status: ComplianceStatus.NOTAPPLICABLE,
-					message: 'No S3 buckets found in the account'
+					message: "No S3 buckets found in the account"
 				}
 			];
 			return results;
@@ -45,9 +33,9 @@ async function checkS3BucketLifecycleConfiguration(
 		for (const bucket of listBucketsResponse.Buckets) {
 			if (!bucket.Name) {
 				results.checks.push({
-					resourceName: 'Unknown Bucket',
+					resourceName: "Unknown Bucket",
 					status: ComplianceStatus.ERROR,
-					message: 'Bucket found without name'
+					message: "Bucket found without name"
 				});
 				continue;
 			}
@@ -61,25 +49,21 @@ async function checkS3BucketLifecycleConfiguration(
 				const lifecycleResponse = await client.send(lifecycleCommand);
 
 				// Check if there are any enabled lifecycle rules
-				const hasEnabledRules = lifecycleResponse.Rules?.some(
-					rule => rule.Status === 'Enabled'
-				);
+				const hasEnabledRules = lifecycleResponse.Rules?.some(rule => rule.Status === "Enabled");
 
 				results.checks.push({
 					resourceName: bucket.Name,
 					resourceArn: `arn:aws:s3:::${bucket.Name}`,
 					status: hasEnabledRules ? ComplianceStatus.PASS : ComplianceStatus.FAIL,
-					message: hasEnabledRules
-						? undefined
-						: 'Bucket does not have any enabled lifecycle rules'
+					message: hasEnabledRules ? undefined : "Bucket does not have any enabled lifecycle rules"
 				});
 			} catch (error: any) {
-				if (error.name === 'NoSuchLifecycleConfiguration') {
+				if (error.name === "NoSuchLifecycleConfiguration") {
 					results.checks.push({
 						resourceName: bucket.Name,
 						resourceArn: `arn:aws:s3:::${bucket.Name}`,
 						status: ComplianceStatus.FAIL,
-						message: 'No lifecycle configuration found for the bucket'
+						message: "No lifecycle configuration found for the bucket"
 					});
 				} else {
 					results.checks.push({
@@ -94,7 +78,7 @@ async function checkS3BucketLifecycleConfiguration(
 	} catch (error) {
 		results.checks = [
 			{
-				resourceName: 'S3 Check',
+				resourceName: "S3 Check",
 				status: ComplianceStatus.ERROR,
 				message: `Error checking S3 buckets: ${error instanceof Error ? error.message : String(error)}`
 			}
@@ -106,9 +90,21 @@ async function checkS3BucketLifecycleConfiguration(
 }
 
 if (require.main === module) {
-	const region = process.env.AWS_REGION ?? 'ap-southeast-1';
+	const region = process.env.AWS_REGION;
 	const results = await checkS3BucketLifecycleConfiguration(region);
 	printSummary(generateSummary(results));
 }
 
-export default checkS3BucketLifecycleConfiguration;
+export default {
+	title: "S3 general purpose buckets should have Lifecycle configurations",
+	description:
+		"This control checks whether S3 buckets have Lifecycle configurations enabled to manage object transitions and deletions effectively.",
+	controls: [
+		{
+			id: "AWS-Foundational-Security-Best-Practices_v1.0.0_S3.13",
+			document: "AWS-Foundational-Security-Best-Practices_v1.0.0"
+		}
+	],
+	severity: "MEDIUM",
+	execute: checkS3BucketLifecycleConfiguration
+} satisfies RuntimeTest;

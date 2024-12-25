@@ -1,16 +1,11 @@
 import {
-	Macie2Client,
+	DescribeBucketsCommand,
 	GetAutomatedDiscoveryConfigurationCommand,
-	DescribeBucketsCommand
+	Macie2Client
 } from "@aws-sdk/client-macie2";
-import { S3Client, ListBucketsCommand } from "@aws-sdk/client-s3";
-
-import {
-	printSummary,
-	generateSummary,
-	type ComplianceReport,
-	ComplianceStatus
-} from "@codegen/utils/stringUtils";
+import { ListBucketsCommand, S3Client } from "@aws-sdk/client-s3";
+import { generateSummary, printSummary } from "~codegen/utils/stringUtils";
+import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "~runtime/types";
 
 async function checkS3DataDiscoveryCompliance(
 	region: string = "us-east-1"
@@ -19,19 +14,7 @@ async function checkS3DataDiscoveryCompliance(
 	const s3Client = new S3Client({ region });
 
 	const results: ComplianceReport = {
-		checks: [],
-		metadoc: {
-			title:
-				"Ensure all data in Amazon S3 has been discovered, classified, and secured when required",
-			description:
-				"Amazon S3 buckets can contain sensitive data, that for security purposes should be discovered, monitored, classified and protected. Macie along with other 3rd party tools can automatically provide an inventory of Amazon S3 buckets.",
-			controls: [
-				{
-					id: "CIS-AWS-Foundations-Benchmark_v3.0.0_2.1.3",
-					document: "CIS-AWS-Foundations-Benchmark_v3.0.0"
-				}
-			]
-		}
+		checks: []
 	};
 
 	try {
@@ -114,9 +97,21 @@ async function checkS3DataDiscoveryCompliance(
 }
 
 if (require.main === module) {
-	const region = process.env.AWS_REGION ?? "ap-southeast-1";
+	const region = process.env.AWS_REGION;
 	const results = await checkS3DataDiscoveryCompliance(region);
 	printSummary(generateSummary(results));
 }
 
-export default checkS3DataDiscoveryCompliance;
+export default {
+	title: "Ensure all data in Amazon S3 has been discovered, classified, and secured when required",
+	description:
+		"Amazon S3 buckets can contain sensitive data, that for security purposes should be discovered, monitored, classified and protected. Macie along with other 3rd party tools can automatically provide an inventory of Amazon S3 buckets.",
+	controls: [
+		{
+			id: "CIS-AWS-Foundations-Benchmark_v3.0.0_2.1.3",
+			document: "CIS-AWS-Foundations-Benchmark_v3.0.0"
+		}
+	],
+	severity: "MEDIUM",
+	execute: checkS3DataDiscoveryCompliance
+} satisfies RuntimeTest;

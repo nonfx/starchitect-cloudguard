@@ -6,7 +6,7 @@ import {
 } from "@aws-sdk/client-cloudtrail";
 import { S3Client, ListBucketsCommand } from "@aws-sdk/client-s3";
 import { mockClient } from "aws-sdk-client-mock";
-import { ComplianceStatus } from "@codegen/utils/stringUtils";
+import { ComplianceStatus } from "~runtime/types";
 import checkS3ObjectLevelLogging from "./check-s3-object-level-logging";
 
 const mockCloudTrailClient = mockClient(CloudTrailClient);
@@ -58,7 +58,7 @@ describe("checkS3ObjectLevelLogging", () => {
 					]
 				});
 
-			const result = await checkS3ObjectLevelLogging();
+			const result = await checkS3ObjectLevelLogging.execute();
 			expect(result.checks[0].status).toBe(ComplianceStatus.PASS);
 			expect(result.checks[0].resourceName).toBe("test-bucket-1");
 		});
@@ -87,7 +87,7 @@ describe("checkS3ObjectLevelLogging", () => {
 					]
 				});
 
-			const result = await checkS3ObjectLevelLogging();
+			const result = await checkS3ObjectLevelLogging.execute();
 			expect(result.checks).toHaveLength(2);
 			expect(result.checks.every(check => check.status === ComplianceStatus.PASS)).toBe(true);
 		});
@@ -118,7 +118,7 @@ describe("checkS3ObjectLevelLogging", () => {
 					]
 				});
 
-			const result = await checkS3ObjectLevelLogging();
+			const result = await checkS3ObjectLevelLogging.execute();
 			expect(result.checks[0].status).toBe(ComplianceStatus.PASS);
 		});
 	});
@@ -128,7 +128,7 @@ describe("checkS3ObjectLevelLogging", () => {
 			mockS3Client.on(ListBucketsCommand).resolves({ Buckets: mockBuckets });
 			mockCloudTrailClient.on(ListTrailsCommand).resolves({ Trails: [] });
 
-			const result = await checkS3ObjectLevelLogging();
+			const result = await checkS3ObjectLevelLogging.execute();
 			expect(result.checks).toHaveLength(2);
 			expect(result.checks.every(check => check.status === ComplianceStatus.FAIL)).toBe(true);
 			expect(result.checks[0].message).toContain("does not have object-level logging enabled");
@@ -158,7 +158,7 @@ describe("checkS3ObjectLevelLogging", () => {
 					]
 				});
 
-			const result = await checkS3ObjectLevelLogging();
+			const result = await checkS3ObjectLevelLogging.execute();
 			expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
 		});
 
@@ -184,7 +184,7 @@ describe("checkS3ObjectLevelLogging", () => {
 					]
 				});
 
-			const result = await checkS3ObjectLevelLogging();
+			const result = await checkS3ObjectLevelLogging.execute();
 			expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
 		});
 	});
@@ -193,7 +193,7 @@ describe("checkS3ObjectLevelLogging", () => {
 		it("should return NOTAPPLICABLE when no buckets exist", async () => {
 			mockS3Client.on(ListBucketsCommand).resolves({ Buckets: [] });
 
-			const result = await checkS3ObjectLevelLogging();
+			const result = await checkS3ObjectLevelLogging.execute();
 			expect(result.checks[0].status).toBe(ComplianceStatus.NOTAPPLICABLE);
 			expect(result.checks[0].message).toBe("No S3 buckets found");
 		});
@@ -226,7 +226,7 @@ describe("checkS3ObjectLevelLogging", () => {
 					]
 				});
 
-			const result = await checkS3ObjectLevelLogging();
+			const result = await checkS3ObjectLevelLogging.execute();
 			expect(result.checks).toHaveLength(2);
 		});
 	});
@@ -235,7 +235,7 @@ describe("checkS3ObjectLevelLogging", () => {
 		it("should return ERROR when S3 listing fails", async () => {
 			mockS3Client.on(ListBucketsCommand).rejects(new Error("S3 API Error"));
 
-			const result = await checkS3ObjectLevelLogging();
+			const result = await checkS3ObjectLevelLogging.execute();
 			expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
 			expect(result.checks[0].message).toContain("S3 API Error");
 		});
@@ -244,7 +244,7 @@ describe("checkS3ObjectLevelLogging", () => {
 			mockS3Client.on(ListBucketsCommand).resolves({ Buckets: mockBuckets });
 			mockCloudTrailClient.on(ListTrailsCommand).rejects(new Error("CloudTrail API Error"));
 
-			const result = await checkS3ObjectLevelLogging();
+			const result = await checkS3ObjectLevelLogging.execute();
 			expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
 			expect(result.checks[0].message).toContain("CloudTrail API Error");
 		});
@@ -261,7 +261,7 @@ describe("checkS3ObjectLevelLogging", () => {
 				.on(GetEventSelectorsCommand)
 				.rejects(new Error("GetEventSelectors Error"));
 
-			const result = await checkS3ObjectLevelLogging();
+			const result = await checkS3ObjectLevelLogging.execute();
 			expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
 		});
 	});

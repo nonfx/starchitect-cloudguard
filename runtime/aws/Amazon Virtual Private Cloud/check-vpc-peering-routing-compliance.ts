@@ -1,15 +1,10 @@
 import {
-	EC2Client,
 	DescribeRouteTablesCommand,
-	DescribeVpcPeeringConnectionsCommand
+	DescribeVpcPeeringConnectionsCommand,
+	EC2Client
 } from "@aws-sdk/client-ec2";
-
-import {
-	printSummary,
-	generateSummary,
-	type ComplianceReport,
-	ComplianceStatus
-} from "@codegen/utils/stringUtils";
+import { generateSummary, printSummary } from "~codegen/utils/stringUtils";
+import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "~runtime/types";
 
 function isLeastAccessRoute(cidrBlock: string | undefined): boolean {
 	if (!cidrBlock) return false;
@@ -75,18 +70,7 @@ async function checkVpcPeeringRoutingCompliance(
 ): Promise<ComplianceReport> {
 	const client = new EC2Client({ region });
 	const results: ComplianceReport = {
-		checks: [],
-		metadoc: {
-			title: 'Ensure routing tables for VPC peering are "least access"',
-			description:
-				"Once a VPC peering connection is established, routing tables must be updated to establish any connections between the peered VPCs. These routes can be as specific as desired - even peering a VPC to only a single host on the other side of the connection.",
-			controls: [
-				{
-					id: "CIS-AWS-Foundations-Benchmark_v3.0.0_5.5",
-					document: "CIS-AWS-Foundations-Benchmark_v3.0.0"
-				}
-			]
-		}
+		checks: []
 	};
 
 	try {
@@ -170,9 +154,21 @@ async function checkVpcPeeringRoutingCompliance(
 }
 
 if (require.main === module) {
-	const region = process.env.AWS_REGION ?? "ap-southeast-1";
+	const region = process.env.AWS_REGION;
 	const results = await checkVpcPeeringRoutingCompliance(region);
 	printSummary(generateSummary(results));
 }
 
-export default checkVpcPeeringRoutingCompliance;
+export default {
+	title: 'Ensure routing tables for VPC peering are "least access"',
+	description:
+		"Once a VPC peering connection is established, routing tables must be updated to establish any connections between the peered VPCs. These routes can be as specific as desired - even peering a VPC to only a single host on the other side of the connection.",
+	controls: [
+		{
+			id: "CIS-AWS-Foundations-Benchmark_v3.0.0_5.5",
+			document: "CIS-AWS-Foundations-Benchmark_v3.0.0"
+		}
+	],
+	severity: "MEDIUM",
+	execute: checkVpcPeeringRoutingCompliance
+} satisfies RuntimeTest;

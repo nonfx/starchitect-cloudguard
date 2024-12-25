@@ -1,9 +1,8 @@
-export enum ComplianceStatus {
-	PASS = "PASS",
-	FAIL = "FAIL",
-	ERROR = "ERROR",
-	NOTAPPLICABLE = "NOTAPPLICABLE"
-}
+import {
+	type ComplianceReport,
+	type ComplianceReportWithStats,
+	ComplianceStatus
+} from "../../runtime/types";
 
 export function normalizeArn(arn: string): string {
 	const normalized = arn.trim();
@@ -80,39 +79,4 @@ export function printSummary(summary: ComplianceReportWithStats) {
 		.forEach(r => console.log(`  - ${r.resourceName}`));
 
 	console.log(`Summary: ${pass} passing, ${fail} failing, ${error} errored, ${na} not applicable`);
-}
-
-export interface ResourceComplianceCheck {
-	resourceName: string;
-	resourceArn?: string;
-	status: ComplianceStatus;
-	message?: string;
-}
-export interface ComplianceReport {
-	checks: ResourceComplianceCheck[];
-	metadoc: ComplianceMetadata;
-}
-
-export interface ComplianceMetadata {
-	title: string;
-	description: string;
-	controls: ComplianceControl[];
-}
-
-export interface ComplianceControl {
-	id: string;
-	document: string;
-}
-
-export interface ComplianceReportWithStats {
-	checks: ResourceComplianceCheck[];
-	metadoc: ComplianceMetadata;
-	summary: ComplianceStatistics;
-}
-
-export interface ComplianceStatistics {
-	pass: number;
-	fail: number;
-	error: number;
-	na: number;
 }

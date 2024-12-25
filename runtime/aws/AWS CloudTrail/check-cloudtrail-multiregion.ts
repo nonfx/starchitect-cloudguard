@@ -5,30 +5,15 @@ import {
 	ListTrailsCommand
 } from "@aws-sdk/client-cloudtrail";
 
-import {
-	printSummary,
-	generateSummary,
-	type ComplianceReport,
-	ComplianceStatus
-} from "@codegen/utils/stringUtils";
+import { generateSummary, printSummary } from "~codegen/utils/stringUtils";
+import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "~runtime/types";
 
 async function checkCloudTrailMultiRegionEnabled(
 	region: string = "us-east-1"
 ): Promise<ComplianceReport> {
 	const client = new CloudTrailClient({ region });
 	const results: ComplianceReport = {
-		checks: [],
-		metadoc: {
-			title: "CloudTrail should be enabled and configured with at least one multi-Region trail",
-			description:
-				"CloudTrail must be enabled with multi-Region trail configuration capturing read/write management events for comprehensive AWS activity monitoring.",
-			controls: [
-				{
-					id: "AWS-Foundational-Security-Best-Practices_v1.0.0_CloudTrail.1",
-					document: "AWS-Foundational-Security-Best-Practices_v1.0.0"
-				}
-			]
-		}
+		checks: []
 	};
 
 	try {
@@ -125,9 +110,21 @@ async function checkCloudTrailMultiRegionEnabled(
 }
 
 if (require.main === module) {
-	const region = process.env.AWS_REGION ?? "ap-southeast-1";
+	const region = process.env.AWS_REGION;
 	const results = await checkCloudTrailMultiRegionEnabled(region);
 	printSummary(generateSummary(results));
 }
 
-export default checkCloudTrailMultiRegionEnabled;
+export default {
+	title: "CloudTrail should be enabled and configured with at least one multi-Region trail",
+	description:
+		"CloudTrail must be enabled with multi-Region trail configuration capturing read/write management events for comprehensive AWS activity monitoring.",
+	controls: [
+		{
+			id: "AWS-Foundational-Security-Best-Practices_v1.0.0_CloudTrail.1",
+			document: "AWS-Foundational-Security-Best-Practices_v1.0.0"
+		}
+	],
+	severity: "MEDIUM",
+	execute: checkCloudTrailMultiRegionEnabled
+} satisfies RuntimeTest;

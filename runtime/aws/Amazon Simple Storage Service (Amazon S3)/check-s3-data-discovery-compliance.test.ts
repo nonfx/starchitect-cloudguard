@@ -5,7 +5,7 @@ import {
 } from "@aws-sdk/client-macie2";
 import { S3Client, ListBucketsCommand } from "@aws-sdk/client-s3";
 import { mockClient } from "aws-sdk-client-mock";
-import { ComplianceStatus } from "@codegen/utils/stringUtils";
+import { ComplianceStatus } from "~runtime/types";
 import checkS3DataDiscoveryCompliance from "./check-s3-data-discovery-compliance";
 
 const mockMacieClient = mockClient(Macie2Client);
@@ -38,7 +38,7 @@ describe("checkS3DataDiscoveryCompliance", () => {
 				Buckets: MOCK_BUCKETS
 			});
 
-			const result = await checkS3DataDiscoveryCompliance();
+			const result = await checkS3DataDiscoveryCompliance.execute();
 			expect(result.checks[0].status).toBe(ComplianceStatus.PASS);
 			expect(result.checks[1].status).toBe(ComplianceStatus.PASS);
 			expect(result.checks[2].status).toBe(ComplianceStatus.PASS);
@@ -55,7 +55,7 @@ describe("checkS3DataDiscoveryCompliance", () => {
 				Buckets: MOCK_BUCKETS
 			});
 
-			const result = await checkS3DataDiscoveryCompliance();
+			const result = await checkS3DataDiscoveryCompliance.execute();
 			expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
 			expect(result.checks[0].message).toBe("Automated sensitive data discovery is not enabled");
 		});
@@ -75,7 +75,7 @@ describe("checkS3DataDiscoveryCompliance", () => {
 				Buckets: MOCK_BUCKETS
 			});
 
-			const result = await checkS3DataDiscoveryCompliance();
+			const result = await checkS3DataDiscoveryCompliance.execute();
 			expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
 			expect(result.checks[0].message).toBe(
 				"Bucket is not configured for automated sensitive data discovery"
@@ -91,7 +91,7 @@ describe("checkS3DataDiscoveryCompliance", () => {
 				Buckets: []
 			});
 
-			const result = await checkS3DataDiscoveryCompliance();
+			const result = await checkS3DataDiscoveryCompliance.execute();
 			expect(result.checks[0].status).toBe(ComplianceStatus.NOTAPPLICABLE);
 			expect(result.checks[0].message).toBe("No S3 buckets found in the account");
 		});
@@ -105,7 +105,7 @@ describe("checkS3DataDiscoveryCompliance", () => {
 				Buckets: MOCK_BUCKETS
 			});
 
-			const result = await checkS3DataDiscoveryCompliance();
+			const result = await checkS3DataDiscoveryCompliance.execute();
 			expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
 			expect(result.checks[0].message).toBe("Error checking S3 data discovery: API Error");
 		});
@@ -117,7 +117,7 @@ describe("checkS3DataDiscoveryCompliance", () => {
 
 			mockS3Client.on(ListBucketsCommand).rejects(new Error("S3 API Error"));
 
-			const result = await checkS3DataDiscoveryCompliance();
+			const result = await checkS3DataDiscoveryCompliance.execute();
 			expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
 			expect(result.checks[0].message).toBe("Error checking S3 data discovery: S3 API Error");
 		});

@@ -6,7 +6,7 @@ import {
 } from "@aws-sdk/client-cloudtrail";
 import { S3Client, ListBucketsCommand } from "@aws-sdk/client-s3";
 import { mockClient } from "aws-sdk-client-mock";
-import { ComplianceStatus } from "@codegen/utils/stringUtils";
+import { ComplianceStatus } from "~runtime/types";
 import checkS3ObjectReadLogging from "./check-s3-object-read-logging";
 
 const mockCloudTrailClient = mockClient(CloudTrailClient);
@@ -51,7 +51,7 @@ describe("checkS3ObjectReadLogging", () => {
 					]
 				});
 
-			const result = await checkS3ObjectReadLogging();
+			const result = await checkS3ObjectReadLogging.execute();
 			expect(result.checks).toHaveLength(2);
 			expect(result.checks[0].status).toBe(ComplianceStatus.PASS);
 			expect(result.checks[1].status).toBe(ComplianceStatus.PASS);
@@ -79,7 +79,7 @@ describe("checkS3ObjectReadLogging", () => {
 					]
 				});
 
-			const result = await checkS3ObjectReadLogging();
+			const result = await checkS3ObjectReadLogging.execute();
 			expect(result.checks).toHaveLength(1);
 			expect(result.checks[0].status).toBe(ComplianceStatus.PASS);
 		});
@@ -108,7 +108,7 @@ describe("checkS3ObjectReadLogging", () => {
 					]
 				});
 
-			const result = await checkS3ObjectReadLogging();
+			const result = await checkS3ObjectReadLogging.execute();
 			expect(result.checks).toHaveLength(1);
 			expect(result.checks[0].status).toBe(ComplianceStatus.PASS);
 		});
@@ -119,7 +119,7 @@ describe("checkS3ObjectReadLogging", () => {
 			mockS3Client.on(ListBucketsCommand).resolves({ Buckets: mockBuckets });
 			mockCloudTrailClient.on(ListTrailsCommand).resolves({ Trails: [] });
 
-			const result = await checkS3ObjectReadLogging();
+			const result = await checkS3ObjectReadLogging.execute();
 			expect(result.checks).toHaveLength(2);
 			expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
 			expect(result.checks[0].message).toContain("No CloudTrail trails configured");
@@ -147,7 +147,7 @@ describe("checkS3ObjectReadLogging", () => {
 					]
 				});
 
-			const result = await checkS3ObjectReadLogging();
+			const result = await checkS3ObjectReadLogging.execute();
 			expect(result.checks).toHaveLength(2);
 			expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
 			expect(result.checks[0].message).toContain(
@@ -175,7 +175,7 @@ describe("checkS3ObjectReadLogging", () => {
 					]
 				});
 
-			const result = await checkS3ObjectReadLogging();
+			const result = await checkS3ObjectReadLogging.execute();
 			expect(result.checks).toHaveLength(1);
 			expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
 		});
@@ -185,7 +185,7 @@ describe("checkS3ObjectReadLogging", () => {
 		it("should return NOTAPPLICABLE when no S3 buckets exist", async () => {
 			mockS3Client.on(ListBucketsCommand).resolves({ Buckets: [] });
 
-			const result = await checkS3ObjectReadLogging();
+			const result = await checkS3ObjectReadLogging.execute();
 			expect(result.checks).toHaveLength(1);
 			expect(result.checks[0].status).toBe(ComplianceStatus.NOTAPPLICABLE);
 		});
@@ -193,7 +193,7 @@ describe("checkS3ObjectReadLogging", () => {
 		it("should return ERROR when API calls fail", async () => {
 			mockS3Client.on(ListBucketsCommand).rejects(new Error("API Error"));
 
-			const result = await checkS3ObjectReadLogging();
+			const result = await checkS3ObjectReadLogging.execute();
 			expect(result.checks).toHaveLength(1);
 			expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
 			expect(result.checks[0].message).toContain("Error checking S3 and CloudTrail configuration");
@@ -209,7 +209,7 @@ describe("checkS3ObjectReadLogging", () => {
 				.on(GetEventSelectorsCommand)
 				.resolves({});
 
-			const result = await checkS3ObjectReadLogging();
+			const result = await checkS3ObjectReadLogging.execute();
 			expect(result.checks).toHaveLength(2);
 			expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
 		});
@@ -224,7 +224,7 @@ describe("checkS3ObjectReadLogging", () => {
 				.on(GetEventSelectorsCommand)
 				.rejects(new Error("GetEventSelectors Error"));
 
-			const result = await checkS3ObjectReadLogging();
+			const result = await checkS3ObjectReadLogging.execute();
 			expect(result.checks).toHaveLength(2);
 			expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
 		});
