@@ -1,4 +1,5 @@
 import { GetCallerIdentityCommand, STSClient } from "@aws-sdk/client-sts";
+import { EC2Client, DescribeRegionsCommand } from "@aws-sdk/client-ec2";
 import type { RuntimeTest } from "~runtime/types";
 import allTests from "../../../../runtime/aws";
 import { logger } from "../logger";
@@ -31,9 +32,20 @@ export class AWSProvider extends CloudProvider {
 		return allTests as RuntimeTest[];
 	}
 
-	//@todo - Get the list of regions from the AWS SDK
-	//@todo - Use inquirer to prompt the user to select a region and use that value
+	async getRegions(): Promise<string[]> {
+		try {
+			const ec2Client = new EC2Client();
+			const command = new DescribeRegionsCommand({});
+			const response = await ec2Client.send(command);
+			return response.Regions?.map(region => region.RegionName || "") || [];
+		} catch (error) {
+			logger.debug(error);
+			throw new Error("Failed to fetch AWS regions");
+		}
+	}
+
 	async getTestArguments() {
-		return ["ap-southeast-1"];
+		const regions = await this.getRegions();
+		return [regions[0]]; // Default to first region
 	}
 }

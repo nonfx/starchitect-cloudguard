@@ -5,4 +5,5 @@ export abstract class CloudProvider {
 	abstract validateCredentials(): Promise<boolean>;
 	abstract getTests(): Promise<RuntimeTest[]>;
 	abstract getTestArguments(): Promise<unknown[]>;
+	abstract getRegions(): Promise<string[]>;
 }

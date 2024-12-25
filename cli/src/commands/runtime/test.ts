@@ -4,20 +4,21 @@ import inquirer from "inquirer";
 import PQueue from "p-queue";
 import { ComplianceStatus } from "~runtime/types";
 import { AWSProvider } from "../../lib/cloud/aws";
+import { CloudProvider } from "../../lib/cloud/base";
 import { ConsoleReporter, JSONReporter } from "../../lib/reporters";
 import { TestRunner } from "../../lib/test-runner";
 import type { TestResult } from "../../types";
 
+const SUPPORTED_CLOUDS = ["aws", "azure", "gcp"];
+
 export default class RuntimeTestRunner extends Command {
 	public static enableJsonFlag = true;
-
 	static description = "Run security tests against cloud runtime environments";
 
 	static flags = {
 		cloud: Flags.string({
 			char: "c",
-			description: "Cloud provider to test",
-			options: ["aws", "azure", "gcp"]
+			description: "Cloud provider to test"
 		}),
 		service: Flags.string({
 			char: "s",
@@ -27,6 +28,7 @@ export default class RuntimeTestRunner extends Command {
 			description: "Cloud provider profile to use"
 		}),
 		region: Flags.string({
+			char: "r",
 			description: "Region to test"
 		}),
 		parallel: Flags.boolean({
@@ -47,22 +49,25 @@ export default class RuntimeTestRunner extends Command {
 	async run(): Promise<void> {
 		const { flags } = await this.parse(RuntimeTestRunner);
 
-		if (!flags.cloud && !process.env.CI) {
-			const response = await inquirer.prompt([
-				{
-					type: "list",
-					name: "cloud",
-					message: "Select cloud provider:",
-					choices: ["AWS", "Azure", "GCP"]
-				}
-			]);
-			flags.cloud = response.cloud.toLowerCase();
+		// Get cloud provider selection
+		flags.cloud = await this.promptForSelection(
+			flags.cloud,
+			"Select cloud provider:",
+			SUPPORTED_CLOUDS
+		);
+
+		let provider: CloudProvider;
+		switch (flags.cloud) {
+			case "aws":
+				provider = new AWSProvider();
+				break;
+			default:
+				this.error("Only AWS is supported at the moment", { exit: 1 });
 		}
 
-		if (flags.cloud !== "aws") {
-			// @todo - Offer a link to issues so that the user can request support for other cloud providers
-			this.error("Only AWS is supported at the moment", { exit: 1 });
-		}
+		// Get region selection
+		const regions = await provider.getRegions();
+		flags.region = await this.promptForSelection(flags.region, "Select region:", regions);
 
 		const progressBar = new cliProgress.SingleBar(
 			{
@@ -75,8 +80,7 @@ export default class RuntimeTestRunner extends Command {
 		);
 
 		try {
-			// @todo - Each provider should ask it's own questions
-			const provider = new AWSProvider();
+			// Validate credentials for selected provider
 
 			try {
 				await provider.validateCredentials();
@@ -120,5 +124,26 @@ export default class RuntimeTestRunner extends Command {
 				{ exit: 1 }
 			);
 		}
+	}
+
+	private async promptForSelection(
+		currentValue: string | undefined,
+		message: string,
+		choices: readonly string[] | string[]
+	): Promise<string> {
+		if (currentValue || process.env.CI) {
+			return currentValue?.toLowerCase() ?? "";
+		}
+
+		const response = await inquirer.prompt([
+			{
+				type: "list",
+				name: "value",
+				message,
+				choices
+			}
+		]);
+
+		return response.value.toLowerCase();
 	}
 }
