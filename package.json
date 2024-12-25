@@ -3,7 +3,8 @@
   "module": "index.ts",
   "type": "module",
   "scripts": {
-    "prettify": "prettier --config .prettierrc.cjs --cache --cache-location .cache/prettier --write ."
+    "prettify": "prettier --config .prettierrc.cjs --cache --cache-location .cache/prettier --write .",
+    "generate-runtime-index": "bun ./.scripts/generate-runtime-index.ts"
   },
   "dependencies": {
     "@aws-sdk/client-accessanalyzer": "^3.712.0",
