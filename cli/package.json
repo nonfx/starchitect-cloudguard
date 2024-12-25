@@ -1,6 +1,6 @@
 {
   "name": "starchitect-cloudguard",
-  "description": "Testing 123",
+  "description": "Starchitect Cloudguard is a CLI to run tests against your Cloud accounts or your IAC files.",
   "version": "0.0.0",
   "author": "The Non-Functional Company",
   "bin": {
@@ -13,6 +13,7 @@
     "@oclif/core": "^4",
     "@oclif/plugin-help": "^6",
     "@oclif/plugin-plugins": "^5",
+    "p-queue": "^8.0.1",
     "pino-pretty": "^13.0.0"
   },
   "devDependencies": {
@@ -46,9 +47,10 @@
   "main": "dist/index.js",
   "type": "module",
   "oclif": {
-    "bin": "mynewcli",
-    "dirname": "mynewcli",
+    "bin": "starchitect-cloudguard",
+    "dirname": "starchitect-cloudguard",
     "commands": "./src/commands",
+    "topicSeparator": " ",
     "plugins": [
       "@oclif/plugin-help",
       "@oclif/plugin-plugins"

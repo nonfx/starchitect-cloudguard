@@ -1,11 +1,12 @@
 import { Command, Flags } from "@oclif/core";
 import * as cliProgress from "cli-progress";
 import inquirer from "inquirer";
+import PQueue from "p-queue";
+import { ComplianceStatus } from "~runtime/types";
 import { AWSProvider } from "../../lib/cloud/aws";
-import { logger } from "../../lib/logger";
 import { ConsoleReporter, JSONReporter } from "../../lib/reporters";
 import { TestRunner } from "../../lib/test-runner";
-import { ComplianceStatus } from "~runtime/types";
+import type { TestResult } from "../../types";
 
 export default class RuntimeTestRunner extends Command {
 	static description = "Run security tests against cloud runtime environments";
@@ -56,13 +57,20 @@ export default class RuntimeTestRunner extends Command {
 			flags.cloud = response.cloud.toLowerCase();
 		}
 
-		const progressBar = new cliProgress.SingleBar({}, cliProgress.Presets.shades_classic);
-
 		if (flags.cloud !== "aws") {
 			// @todo - Offer a link to issues so that the user can request support for other cloud providers
-			logger.error("Only AWS is supported at the moment");
-			return;
+			this.error("Only AWS is supported at the moment", { exit: 1 });
 		}
+
+		const progressBar = new cliProgress.SingleBar(
+			{
+				format: "Running tests [{bar}] {percentage}% | ETA: {eta}s | {value}/{total}",
+				autopadding: true,
+				forceRedraw: true,
+				clearOnComplete: true
+			},
+			cliProgress.Presets.shades_grey
+		);
 
 		try {
 			// @todo - Each provider should ask it's own questions
@@ -71,33 +79,30 @@ export default class RuntimeTestRunner extends Command {
 			try {
 				await provider.validateCredentials();
 			} catch (error) {
-				logger.error(error);
-				return;
+				this.error(error as Error, { exit: 1 });
 			}
 
-			// const tests = iamTests;
 			const runner = new TestRunner();
 
 			const tests = await provider.getTests();
 
 			progressBar.start(tests.length, 0);
+
+			const queue = new PQueue({ concurrency: flags.concurrency });
+			const results: TestResult[] = [];
 			let completed = 0;
 
-			const results = await Promise.all(
-				tests.map(async test => {
-					//@todo - use PQueue to limit the number of concurrent tests
-					//@todo - Read the number of concurrent tests from the user provided config
-					// @todo - use parallel test run ability with callbacks
+			await queue.addAll(
+				tests.map(test => async () => {
 					const result = await runner.runSingleTest(test, provider);
 					progressBar.update(++completed);
-					return result;
+					results.push(result);
 				})
 			);
 
 			progressBar.stop();
 
 			const reporter = flags.format === "json" ? new JSONReporter() : new ConsoleReporter();
-
 			reporter.report(results);
 
 			if (
@@ -107,8 +112,11 @@ export default class RuntimeTestRunner extends Command {
 			}
 		} catch (error) {
 			progressBar.stop();
-			logger.error("Test execution failed:", error);
-			this.error(error instanceof Error ? error.message : "An unknown error occurred");
+			console.error(error);
+			this.error(
+				"Test execution failed. Please log an issue at https://github.com/nonfx/starchitect-cloudguard/issues/new",
+				{ exit: 1 }
+			);
 		}
 	}
 }

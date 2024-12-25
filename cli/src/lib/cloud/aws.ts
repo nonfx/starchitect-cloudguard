@@ -27,8 +27,8 @@ export class AWSProvider extends CloudProvider {
 		return this.detectCredentials();
 	}
 
-	async getTests(): Promise<RuntimeTest[]> {
-		return allTests;
+	async getTests() {
+		return allTests as RuntimeTest[];
 	}
 
 	//@todo - Get the list of regions from the AWS SDK
