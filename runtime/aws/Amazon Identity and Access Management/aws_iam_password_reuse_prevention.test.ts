@@ -1,6 +1,6 @@
 import { IAMClient, GetAccountPasswordPolicyCommand } from '@aws-sdk/client-iam';
 import { mockClient } from 'aws-sdk-client-mock';
-import { ComplianceStatus } from '@codegen/utils/stringUtils';
+import { ComplianceStatus } from "~runtime/types";
 import checkPasswordReusePreventionCompliance from './aws_iam_password_reuse_prevention';
 
 const mockIAMClient = mockClient(IAMClient);
@@ -18,7 +18,7 @@ describe('checkPasswordReusePreventionCompliance', () => {
                 }
             });
 
-            const result = await checkPasswordReusePreventionCompliance('us-east-1');
+            const result = await checkPasswordReusePreventionCompliance.execute('us-east-1');
             expect(result.checks[0].status).toBe(ComplianceStatus.PASS);
             expect(result.checks[0].resourceName).toBe('Password Policy');
             expect(result.checks[0].message).toBeUndefined();
@@ -31,7 +31,7 @@ describe('checkPasswordReusePreventionCompliance', () => {
                 }
             });
 
-            const result = await checkPasswordReusePreventionCompliance('us-east-1');
+            const result = await checkPasswordReusePreventionCompliance.execute('us-east-1');
             expect(result.checks[0].status).toBe(ComplianceStatus.PASS);
         });
     });
@@ -44,7 +44,7 @@ describe('checkPasswordReusePreventionCompliance', () => {
                 }
             });
 
-            const result = await checkPasswordReusePreventionCompliance('us-east-1');
+            const result = await checkPasswordReusePreventionCompliance.execute('us-east-1');
             expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
             expect(result.checks[0].message).toContain('should be at least 24');
         });
@@ -54,14 +54,14 @@ describe('checkPasswordReusePreventionCompliance', () => {
                 PasswordPolicy: {}
             });
 
-            const result = await checkPasswordReusePreventionCompliance('us-east-1');
+            const result = await checkPasswordReusePreventionCompliance.execute('us-east-1');
             expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
         });
 
         it('should return FAIL when no password policy exists', async () => {
             mockIAMClient.on(GetAccountPasswordPolicyCommand).resolves({});
 
-            const result = await checkPasswordReusePreventionCompliance('us-east-1');
+            const result = await checkPasswordReusePreventionCompliance.execute('us-east-1');
             expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
             expect(result.checks[0].message).toBe('No password policy is configured');
         });
@@ -71,7 +71,7 @@ describe('checkPasswordReusePreventionCompliance', () => {
                 name: 'NoSuchEntityException'
             });
 
-            const result = await checkPasswordReusePreventionCompliance('us-east-1');
+            const result = await checkPasswordReusePreventionCompliance.execute('us-east-1');
             expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
             expect(result.checks[0].message).toBe('No password policy is configured');
         });
@@ -81,7 +81,7 @@ describe('checkPasswordReusePreventionCompliance', () => {
         it('should return ERROR when API call fails', async () => {
             mockIAMClient.on(GetAccountPasswordPolicyCommand).rejects(new Error('API Error'));
 
-            const result = await checkPasswordReusePreventionCompliance('us-east-1');
+            const result = await checkPasswordReusePreventionCompliance.execute('us-east-1');
             expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
             expect(result.checks[0].message).toBe('Error checking password policy: API Error');
         });
@@ -92,7 +92,7 @@ describe('checkPasswordReusePreventionCompliance', () => {
                 message: 'User is not authorized'
             });
 
-            const result = await checkPasswordReusePreventionCompliance('us-east-1');
+            const result = await checkPasswordReusePreventionCompliance.execute('us-east-1');
             expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
             expect(result.checks[0].message).toContain('User is not authorized');
         });

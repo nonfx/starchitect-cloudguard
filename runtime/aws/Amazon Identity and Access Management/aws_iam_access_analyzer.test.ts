@@ -1,6 +1,6 @@
 import { AccessAnalyzerClient, ListAnalyzersCommand } from '@aws-sdk/client-accessanalyzer';
 import { mockClient } from 'aws-sdk-client-mock';
-import { ComplianceStatus } from '@codegen/utils/stringUtils';
+import { ComplianceStatus } from "~runtime/types";
 import checkAccessAnalyzerEnabled from './aws_iam_access_analyzer';
 
 const mockAccessAnalyzerClient = mockClient(AccessAnalyzerClient);
@@ -23,7 +23,7 @@ describe('checkAccessAnalyzerEnabled', () => {
                 analyzers: [mockActiveAnalyzer]
             });
 
-            const result = await checkAccessAnalyzerEnabled('us-east-1');
+            const result = await checkAccessAnalyzerEnabled.execute('us-east-1');
             expect(result.checks[0].status).toBe(ComplianceStatus.PASS);
             expect(result.checks[0].resourceName).toBe('test-analyzer');
             expect(result.checks[0].resourceArn).toBe(mockActiveAnalyzer.arn);
@@ -40,7 +40,7 @@ describe('checkAccessAnalyzerEnabled', () => {
                 analyzers: [mockActiveAnalyzer, secondAnalyzer]
             });
 
-            const result = await checkAccessAnalyzerEnabled('us-east-1');
+            const result = await checkAccessAnalyzerEnabled.execute('us-east-1');
             expect(result.checks).toHaveLength(2);
             expect(result.checks.every(check => check.status === ComplianceStatus.PASS)).toBe(true);
         });
@@ -52,7 +52,7 @@ describe('checkAccessAnalyzerEnabled', () => {
                 analyzers: []
             });
 
-            const result = await checkAccessAnalyzerEnabled('us-east-1');
+            const result = await checkAccessAnalyzerEnabled.execute('us-east-1');
             expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
             expect(result.checks[0].message).toBe('No active IAM Access Analyzer found in the region');
         });
@@ -63,7 +63,7 @@ describe('checkAccessAnalyzerEnabled', () => {
                 analyzers: [inactiveAnalyzer]
             });
 
-            const result = await checkAccessAnalyzerEnabled('us-east-1');
+            const result = await checkAccessAnalyzerEnabled.execute('us-east-1');
             expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
         });
 
@@ -73,7 +73,7 @@ describe('checkAccessAnalyzerEnabled', () => {
                 analyzers: [analyzerWithoutArn]
             });
 
-            const result = await checkAccessAnalyzerEnabled('us-east-1');
+            const result = await checkAccessAnalyzerEnabled.execute('us-east-1');
             expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
             expect(result.checks[0].message).toBe('Analyzer found without ARN');
         });
@@ -85,7 +85,7 @@ describe('checkAccessAnalyzerEnabled', () => {
                 new Error('API Error')
             );
 
-            const result = await checkAccessAnalyzerEnabled('us-east-1');
+            const result = await checkAccessAnalyzerEnabled.execute('us-east-1');
             expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
             expect(result.checks[0].message).toBe('Error checking Access Analyzer: API Error');
         });
@@ -93,7 +93,7 @@ describe('checkAccessAnalyzerEnabled', () => {
         it('should handle undefined analyzers response', async () => {
             mockAccessAnalyzerClient.on(ListAnalyzersCommand).resolves({});
 
-            const result = await checkAccessAnalyzerEnabled('us-east-1');
+            const result = await checkAccessAnalyzerEnabled.execute('us-east-1');
             expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
         });
     });

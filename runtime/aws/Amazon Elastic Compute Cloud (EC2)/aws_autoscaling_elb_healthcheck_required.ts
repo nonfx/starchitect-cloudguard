@@ -3,26 +3,15 @@ import { AutoScalingClient, DescribeAutoScalingGroupsCommand } from '@aws-sdk/cl
 import {
 	printSummary,
 	generateSummary,
-	type ComplianceReport,
-	ComplianceStatus
-} from '@codegen/utils/stringUtils';
+} from '~codegen/utils/stringUtils';
+import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "~runtime/types";
 
 async function checkAutoScalingELBHealthCheck(
 	region: string = 'us-east-1'
 ): Promise<ComplianceReport> {
 	const client = new AutoScalingClient({ region });
 	const results: ComplianceReport = {
-		checks: [],
-		metadoc: {
-			title: 'Auto Scaling groups associated with a load balancer should use ELB health checks',
-			description: 'This control checks whether Auto Scaling groups that are associated with a load balancer are using Elastic Load Balancing (ELB) health checks. The control fails if an Auto Scaling group with an attached load balancer is not using ELB health checks.',
-			controls: [
-				{
-					id: 'AWS-Foundational-Security-Best-Practices_v1.0.0_AutoScaling.1',
-					document: 'AWS-Foundational-Security-Best-Practices_v1.0.0'
-				}
-			]
-		}
+		checks: []
 	};
 
 	try {
@@ -103,4 +92,15 @@ if (require.main === module) {
 	printSummary(generateSummary(results));
 }
 
-export default checkAutoScalingELBHealthCheck;
+export default  {
+	title: 'Auto Scaling groups associated with a load balancer should use ELB health checks',
+	description: 'This control checks whether Auto Scaling groups that are associated with a load balancer are using Elastic Load Balancing (ELB) health checks. The control fails if an Auto Scaling group with an attached load balancer is not using ELB health checks.',
+	controls: [
+		{
+			id: 'AWS-Foundational-Security-Best-Practices_v1.0.0_AutoScaling.1',
+			document: 'AWS-Foundational-Security-Best-Practices_v1.0.0'
+		}
+	],
+	severity: 'MEDIUM',
+	execute: checkAutoScalingELBHealthCheck
+} satisfies RuntimeTest;

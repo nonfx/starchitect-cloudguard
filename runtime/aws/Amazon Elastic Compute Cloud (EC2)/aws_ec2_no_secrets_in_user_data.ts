@@ -3,9 +3,8 @@ import { EC2Client, DescribeInstancesCommand } from '@aws-sdk/client-ec2';
 import {
 	printSummary,
 	generateSummary,
-	type ComplianceReport,
-	ComplianceStatus
-} from '@codegen/utils/stringUtils';
+} from '~codegen/utils/stringUtils';
+import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "~runtime/types";
 
 function containsSensitiveData(userData: string): boolean {
 	// Common patterns for sensitive data
@@ -25,17 +24,7 @@ function containsSensitiveData(userData: string): boolean {
 async function checkEc2UserDataSecrets(region: string = 'us-east-1'): Promise<ComplianceReport> {
 	const client = new EC2Client({ region });
 	const results: ComplianceReport = {
-		checks: [],
-		metadoc: {
-			title: 'Ensure Secrets and Sensitive Data are not stored directly in EC2 User Data',
-			description: 'EC2 instance user data should not contain sensitive information such as passwords, secrets, or access keys. This control checks if EC2 instances have sensitive data stored in their user data scripts.',
-			controls: [
-				{
-					id: 'AWS-Foundational-Security-Best-Practices_v1.0.0_EC2.9',
-					document: 'AWS-Foundational-Security-Best-Practices_v1.0.0'
-				}
-			]
-		}
+		checks: []
 	};
 
 	try {
@@ -122,4 +111,15 @@ if (require.main === module) {
 	printSummary(generateSummary(results));
 }
 
-export default checkEc2UserDataSecrets;
+export default {
+	title: 'Ensure Secrets and Sensitive Data are not stored directly in EC2 User Data',
+	description: 'EC2 instance user data should not contain sensitive information such as passwords, secrets, or access keys. This control checks if EC2 instances have sensitive data stored in their user data scripts.',
+	controls: [
+		{
+			id: 'AWS-Foundational-Security-Best-Practices_v1.0.0_EC2.9',
+			document: 'AWS-Foundational-Security-Best-Practices_v1.0.0'
+		}
+	],
+	severity: 'MEDIUM',
+	execute: checkEc2UserDataSecrets
+}

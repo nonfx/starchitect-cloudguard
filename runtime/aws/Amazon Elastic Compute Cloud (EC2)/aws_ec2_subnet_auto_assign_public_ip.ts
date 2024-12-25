@@ -3,24 +3,13 @@ import { EC2Client, DescribeSubnetsCommand } from '@aws-sdk/client-ec2';
 import {
 	printSummary,
 	generateSummary,
-	type ComplianceReport,
-	ComplianceStatus
-} from '@codegen/utils/stringUtils';
+} from '~codegen/utils/stringUtils';
+import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "~runtime/types";
 
 async function checkSubnetAutoAssignPublicIp(region: string = 'us-east-1'): Promise<ComplianceReport> {
 	const client = new EC2Client({ region });
 	const results: ComplianceReport = {
-		checks: [],
-		metadoc: {
-			title: 'Amazon EC2 subnets should not automatically assign public IP addresses',
-			description: 'This control checks if EC2 subnets are configured to automatically assign public IP addresses. The control fails if the subnet\'s MapPublicIpOnLaunch attribute is set to true.',
-			controls: [
-				{
-					id: 'AWS-Foundational-Security-Best-Practices_v1.0.0_EC2.15',
-					document: 'AWS-Foundational-Security-Best-Practices_v1.0.0'
-				}
-			]
-		}
+		checks: []
 	};
 
 	try {
@@ -80,4 +69,15 @@ if (require.main === module) {
 	printSummary(generateSummary(results));
 }
 
-export default checkSubnetAutoAssignPublicIp;
+export default {
+	title: 'Amazon EC2 subnets should not automatically assign public IP addresses',
+	description: 'This control checks if EC2 subnets are configured to automatically assign public IP addresses. The control fails if the subnet\'s MapPublicIpOnLaunch attribute is set to true.',
+	controls: [
+		{
+			id: 'AWS-Foundational-Security-Best-Practices_v1.0.0_EC2.15',
+			document: 'AWS-Foundational-Security-Best-Practices_v1.0.0'
+		}
+	],
+	severity: 'MEDIUM',
+	execute: checkSubnetAutoAssignPublicIp
+} satisfies RuntimeTest;

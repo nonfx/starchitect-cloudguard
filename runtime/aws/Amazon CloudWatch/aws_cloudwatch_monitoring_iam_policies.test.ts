@@ -1,6 +1,6 @@
-import { 
-    CloudWatchClient, 
-    DescribeAlarmsCommand 
+import {
+    CloudWatchClient,
+    DescribeAlarmsCommand
 } from '@aws-sdk/client-cloudwatch';
 import {
     CloudWatchLogsClient,
@@ -8,7 +8,7 @@ import {
     DescribeLogGroupsCommand
 } from '@aws-sdk/client-cloudwatch-logs';
 import { mockClient } from "aws-sdk-client-mock";
-import { ComplianceStatus } from "@codegen/utils/stringUtils";
+import { ComplianceStatus } from "~runtime/types";
 import checkIamPolicyMonitoring from "./aws_cloudwatch_monitoring_iam_policies";
 
 const mockCloudWatchClient = mockClient(CloudWatchClient);
@@ -38,16 +38,16 @@ describe("checkIamPolicyMonitoring", () => {
             mockCloudWatchLogsClient
                 .on(DescribeLogGroupsCommand)
                 .resolves({ logGroups: [mockLogGroup] });
-            
+
             mockCloudWatchLogsClient
                 .on(DescribeMetricFiltersCommand)
                 .resolves({ metricFilters: [mockMetricFilter] });
-            
+
             mockCloudWatchClient
                 .on(DescribeAlarmsCommand)
                 .resolves({ MetricAlarms: [{ AlarmName: "IAMPolicyChangeAlarm" }] });
 
-            const result = await checkIamPolicyMonitoring("us-east-1");
+            const result = await checkIamPolicyMonitoring.execute("us-east-1");
             expect(result.checks[0].status).toBe(ComplianceStatus.PASS);
             expect(result.checks[0].resourceName).toBe(mockLogGroup.logGroupName);
         });
@@ -61,16 +61,16 @@ describe("checkIamPolicyMonitoring", () => {
             mockCloudWatchLogsClient
                 .on(DescribeLogGroupsCommand)
                 .resolves({ logGroups: multipleLogGroups });
-            
+
             mockCloudWatchLogsClient
                 .on(DescribeMetricFiltersCommand)
                 .resolves({ metricFilters: [mockMetricFilter] });
-            
+
             mockCloudWatchClient
                 .on(DescribeAlarmsCommand)
                 .resolves({ MetricAlarms: [{ AlarmName: "IAMPolicyChangeAlarm" }] });
 
-            const result = await checkIamPolicyMonitoring("us-east-1");
+            const result = await checkIamPolicyMonitoring.execute("us-east-1");
             expect(result.checks).toHaveLength(2);
             expect(result.checks.every(check => check.status === ComplianceStatus.PASS)).toBe(true);
         });
@@ -82,7 +82,7 @@ describe("checkIamPolicyMonitoring", () => {
                 .on(DescribeLogGroupsCommand)
                 .resolves({ logGroups: [] });
 
-            const result = await checkIamPolicyMonitoring("us-east-1");
+            const result = await checkIamPolicyMonitoring.execute("us-east-1");
             expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
             expect(result.checks[0].message).toBe("No CloudWatch log groups found");
         });
@@ -91,12 +91,12 @@ describe("checkIamPolicyMonitoring", () => {
             mockCloudWatchLogsClient
                 .on(DescribeLogGroupsCommand)
                 .resolves({ logGroups: [mockLogGroup] });
-            
+
             mockCloudWatchLogsClient
                 .on(DescribeMetricFiltersCommand)
                 .resolves({ metricFilters: [] });
 
-            const result = await checkIamPolicyMonitoring("us-east-1");
+            const result = await checkIamPolicyMonitoring.execute("us-east-1");
             expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
             expect(result.checks[0].message).toContain("does not have required IAM policy change metric filter");
         });
@@ -105,16 +105,16 @@ describe("checkIamPolicyMonitoring", () => {
             mockCloudWatchLogsClient
                 .on(DescribeLogGroupsCommand)
                 .resolves({ logGroups: [mockLogGroup] });
-            
+
             mockCloudWatchLogsClient
                 .on(DescribeMetricFiltersCommand)
                 .resolves({ metricFilters: [mockMetricFilter] });
-            
+
             mockCloudWatchClient
                 .on(DescribeAlarmsCommand)
                 .resolves({ MetricAlarms: [] });
 
-            const result = await checkIamPolicyMonitoring("us-east-1");
+            const result = await checkIamPolicyMonitoring.execute("us-east-1");
             expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
             expect(result.checks[0].message).toContain("No alarm configured");
         });
@@ -126,7 +126,7 @@ describe("checkIamPolicyMonitoring", () => {
                 .on(DescribeLogGroupsCommand)
                 .rejects(new Error("API Error"));
 
-            const result = await checkIamPolicyMonitoring("us-east-1");
+            const result = await checkIamPolicyMonitoring.execute("us-east-1");
             expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
             expect(result.checks[0].message).toContain("Error checking CloudWatch configuration");
         });
@@ -135,12 +135,12 @@ describe("checkIamPolicyMonitoring", () => {
             mockCloudWatchLogsClient
                 .on(DescribeLogGroupsCommand)
                 .resolves({ logGroups: [mockLogGroup] });
-            
+
             mockCloudWatchLogsClient
                 .on(DescribeMetricFiltersCommand)
                 .rejects(new Error("Metric Filter API Error"));
 
-            const result = await checkIamPolicyMonitoring("us-east-1");
+            const result = await checkIamPolicyMonitoring.execute("us-east-1");
             expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
         });
     });

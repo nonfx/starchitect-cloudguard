@@ -1,19 +1,12 @@
 import { IAMClient, ListUsersCommand, GetLoginProfileCommand, ListAccessKeysCommand } from "@aws-sdk/client-iam";
 
-import { printSummary, generateSummary, ComplianceStatus, type ComplianceReport } from "@codegen/utils/stringUtils";
+import { printSummary, generateSummary } from "~codegen/utils/stringUtils";
+import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "~runtime/types";
 
 async function checkInitialAccessKeys(region: string = "us-east-1"): Promise<ComplianceReport> {
     const client = new IAMClient({ region });
     const results: ComplianceReport = {
-        checks: [],
-        metadoc: {
-            title: "Do not setup access keys during initial user setup for all IAM users that have a console password",
-            description: "AWS console defaults to no check boxes selected when creating a new IAM user. When creating the IAM User credentials you have to determine what type of access they require.",
-            controls: [{
-                id: "CIS-AWS-Foundations-Benchmark_v3.0.0_1.11",
-                document: "CIS-AWS-Foundations-Benchmark_v3.0.0"
-            }]
-        }
+        checks: []
     };
 
     try {
@@ -62,8 +55,8 @@ async function checkInitialAccessKeys(region: string = "us-east-1"): Promise<Com
                     resourceName: user.UserName,
                     resourceArn: user.Arn,
                     status: hasAccessKeys ? ComplianceStatus.FAIL : ComplianceStatus.PASS,
-                    message: hasAccessKeys ? 
-                        "User has both console access and access keys" : 
+                    message: hasAccessKeys ?
+                        "User has both console access and access keys" :
                         undefined
                 });
 
@@ -93,4 +86,13 @@ if (require.main === module) {
     printSummary(generateSummary(results));
 }
 
-export default checkInitialAccessKeys;
+export default {
+    title: "Do not setup access keys during initial user setup for all IAM users that have a console password",
+    description: "AWS console defaults to no check boxes selected when creating a new IAM user. When creating the IAM User credentials you have to determine what type of access they require.",
+    controls: [{
+        id: "CIS-AWS-Foundations-Benchmark_v3.0.0_1.11",
+        document: "CIS-AWS-Foundations-Benchmark_v3.0.0"
+    }],
+    severity: "MEDIUM",
+    execute: checkInitialAccessKeys
+} satisfies RuntimeTest;

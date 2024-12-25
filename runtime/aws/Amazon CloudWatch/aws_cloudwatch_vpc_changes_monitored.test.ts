@@ -1,7 +1,7 @@
 import { CloudWatchClient, GetMetricDataCommand } from '@aws-sdk/client-cloudwatch';
 import { CloudWatchLogsClient, DescribeLogGroupsCommand, DescribeMetricFiltersCommand } from '@aws-sdk/client-cloudwatch-logs';
 import { mockClient } from 'aws-sdk-client-mock';
-import { ComplianceStatus } from '@codegen/utils/stringUtils';
+import { ComplianceStatus } from "~runtime/types";
 import checkVpcChangesMonitored from './aws_cloudwatch_vpc_changes_monitored';
 
 const mockCloudWatchClient = mockClient(CloudWatchClient);
@@ -40,7 +40,7 @@ describe('checkVpcChangesMonitored', () => {
                 }]
             });
 
-            const result = await checkVpcChangesMonitored('us-east-1');
+            const result = await checkVpcChangesMonitored.execute('us-east-1');
             expect(result.checks[0].status).toBe(ComplianceStatus.PASS);
             expect(result.checks[0].resourceName).toBe('test-log-group');
         });
@@ -52,7 +52,7 @@ describe('checkVpcChangesMonitored', () => {
                 logGroups: []
             });
 
-            const result = await checkVpcChangesMonitored('us-east-1');
+            const result = await checkVpcChangesMonitored.execute('us-east-1');
             expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
             expect(result.checks[0].message).toBe('No CloudWatch Log Groups found');
         });
@@ -69,7 +69,7 @@ describe('checkVpcChangesMonitored', () => {
                 metricFilters: []
             });
 
-            const result = await checkVpcChangesMonitored('us-east-1');
+            const result = await checkVpcChangesMonitored.execute('us-east-1');
             expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
             expect(result.checks[0].message).toContain('does not have required VPC changes metric filter');
         });
@@ -98,7 +98,7 @@ describe('checkVpcChangesMonitored', () => {
                 }]
             });
 
-            const result = await checkVpcChangesMonitored('us-east-1');
+            const result = await checkVpcChangesMonitored.execute('us-east-1');
             expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
             expect(result.checks[0].message).toContain('No metric data found');
         });
@@ -110,7 +110,7 @@ describe('checkVpcChangesMonitored', () => {
                 new Error('API Error')
             );
 
-            const result = await checkVpcChangesMonitored('us-east-1');
+            const result = await checkVpcChangesMonitored.execute('us-east-1');
             expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
             expect(result.checks[0].message).toContain('Error checking VPC monitoring');
         });
@@ -130,7 +130,7 @@ describe('checkVpcChangesMonitored', () => {
                 }]
             });
 
-            const result = await checkVpcChangesMonitored('us-east-1');
+            const result = await checkVpcChangesMonitored.execute('us-east-1');
             expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
             expect(result.checks[0].message).toContain('does not have a metric transformation');
         });

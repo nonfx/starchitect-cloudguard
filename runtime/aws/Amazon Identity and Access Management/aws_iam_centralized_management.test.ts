@@ -1,7 +1,7 @@
 import { IAMClient, ListUsersCommand, ListSAMLProvidersCommand } from "@aws-sdk/client-iam";
 import { OrganizationsClient, DescribeOrganizationCommand } from "@aws-sdk/client-organizations";
 import { mockClient } from "aws-sdk-client-mock";
-import { ComplianceStatus } from "@codegen/utils/stringUtils";
+import { ComplianceStatus } from "~runtime/types";
 import checkIamCentralizedManagement from "./aws_iam_centralized_management";
 
 const mockIAMClient = mockClient(IAMClient);
@@ -16,7 +16,7 @@ describe("checkIamCentralizedManagement", () => {
 	it("should return ERROR when no IAM users exist", async () => {
 		mockIAMClient.on(ListUsersCommand).resolves({ Users: [] });
 
-		const result = await checkIamCentralizedManagement();
+		const result = await checkIamCentralizedManagement.execute();
 		expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
 		expect(result.checks[0].message).toBe("No IAM users found in the account");
 	});
@@ -31,7 +31,7 @@ describe("checkIamCentralizedManagement", () => {
 			.on(DescribeOrganizationCommand)
 			.rejects({ name: "AccessDeniedException" });
 
-		const result = await checkIamCentralizedManagement();
+		const result = await checkIamCentralizedManagement.execute();
 		expect(result.checks[0].status).toBe(ComplianceStatus.PASS);
 		expect(result.checks[0].message).toContain("SAML federation");
 	});
@@ -46,7 +46,7 @@ describe("checkIamCentralizedManagement", () => {
 			.on(DescribeOrganizationCommand)
 			.resolves({ Organization: { Id: "o-123456" } });
 
-		const result = await checkIamCentralizedManagement();
+		const result = await checkIamCentralizedManagement.execute();
 		expect(result.checks[0].status).toBe(ComplianceStatus.PASS);
 		expect(result.checks[0].message).toContain("AWS Organizations");
 	});
@@ -61,7 +61,7 @@ describe("checkIamCentralizedManagement", () => {
 			.on(DescribeOrganizationCommand)
 			.rejects({ name: "AccessDeniedException" });
 
-		const result = await checkIamCentralizedManagement();
+		const result = await checkIamCentralizedManagement.execute();
 		expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
 		expect(result.checks[0].message).toContain("not managed centrally");
 	});
@@ -69,7 +69,7 @@ describe("checkIamCentralizedManagement", () => {
 	it("should return ERROR when IAM API fails", async () => {
 		mockIAMClient.on(ListUsersCommand).rejects(new Error("IAM API Error"));
 
-		const result = await checkIamCentralizedManagement();
+		const result = await checkIamCentralizedManagement.execute();
 		expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
 		expect(result.checks[0].message).toContain("IAM API Error");
 	});

@@ -3,9 +3,8 @@ import { CloudWatchLogsClient, DescribeLogGroupsCommand } from '@aws-sdk/client-
 import {
 	printSummary,
 	generateSummary,
-	type ComplianceReport,
-	ComplianceStatus
-} from '@codegen/utils/stringUtils';
+} from '~codegen/utils/stringUtils';
+import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "~runtime/types";
 
 async function checkCloudWatchLogGroupRetention(
 	region: string = 'us-east-1',
@@ -13,17 +12,7 @@ async function checkCloudWatchLogGroupRetention(
 ): Promise<ComplianceReport> {
 	const client = new CloudWatchLogsClient({ region });
 	const results: ComplianceReport = {
-		checks: [],
-		metadoc: {
-			title: 'CloudWatch log groups should be retained for a specified time period',
-			description: 'This control checks whether an Amazon CloudWatch log group has a retention period of at least the specified number of days. The control fails if the retention period is less than the specified number. Unless you provide a custom parameter value for the retention period, Security Hub uses a default value of 365 days. CloudWatch Logs centralize logs from all of your systems, applications, and AWS services in a single, highly scalable service. You can use CloudWatch Logs to monitor, store, and access your log files from Amazon Elastic Compute Cloud (EC2) instances, AWS CloudTrail, Amazon Route 53, and other sources. Retaining your logs for at least 1 year can help you comply with log retention standards.',
-			controls: [
-				{
-					id: 'AWS-Foundational-Security-Best-Practices_v1.0.0_CloudWatch.16',
-					document: 'AWS-Foundational-Security-Best-Practices_v1.0.0'
-				}
-			]
-		}
+		checks: []
 	};
 
 	try {
@@ -119,4 +108,15 @@ if (require.main === module) {
 	printSummary(generateSummary(results));
 }
 
-export default checkCloudWatchLogGroupRetention;
+export default {
+	title: 'CloudWatch log groups should be retained for a specified time period',
+	description: 'This control checks whether an Amazon CloudWatch log group has a retention period of at least the specified number of days. The control fails if the retention period is less than the specified number. Unless you provide a custom parameter value for the retention period, Security Hub uses a default value of 365 days. CloudWatch Logs centralize logs from all of your systems, applications, and AWS services in a single, highly scalable service. You can use CloudWatch Logs to monitor, store, and access your log files from Amazon Elastic Compute Cloud (EC2) instances, AWS CloudTrail, Amazon Route 53, and other sources. Retaining your logs for at least 1 year can help you comply with log retention standards.',
+	controls: [
+		{
+			id: 'AWS-Foundational-Security-Best-Practices_v1.0.0_CloudWatch.16',
+			document: 'AWS-Foundational-Security-Best-Practices_v1.0.0'
+		}
+	],
+	severity: 'MEDIUM',
+	execute: checkCloudWatchLogGroupRetention
+} satisfies RuntimeTest;

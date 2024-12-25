@@ -1,6 +1,6 @@
 import { EC2Client, DescribeLaunchTemplatesCommand, DescribeLaunchTemplateVersionsCommand } from "@aws-sdk/client-ec2";
 import { mockClient } from "aws-sdk-client-mock";
-import { ComplianceStatus } from "@codegen/utils/stringUtils";
+import { ComplianceStatus } from "~runtime/types";
 import checkEc2LaunchTemplateImdsv2Compliance from "./aws_ec2_launch_template_imdsv2";
 
 const mockEC2Client = mockClient(EC2Client);
@@ -24,7 +24,7 @@ describe("checkEc2LaunchTemplateImdsv2Compliance", () => {
             mockEC2Client
                 .on(DescribeLaunchTemplatesCommand)
                 .resolves({ LaunchTemplates: [mockLaunchTemplate] });
-            
+
             mockEC2Client
                 .on(DescribeLaunchTemplateVersionsCommand)
                 .resolves({
@@ -37,7 +37,7 @@ describe("checkEc2LaunchTemplateImdsv2Compliance", () => {
                     }]
                 });
 
-            const result = await checkEc2LaunchTemplateImdsv2Compliance("us-east-1");
+            const result = await checkEc2LaunchTemplateImdsv2Compliance.execute("us-east-1");
             expect(result.checks[0].status).toBe(ComplianceStatus.PASS);
             expect(result.checks[0].resourceName).toBe("test-template");
         });
@@ -47,7 +47,7 @@ describe("checkEc2LaunchTemplateImdsv2Compliance", () => {
                 .on(DescribeLaunchTemplatesCommand)
                 .resolves({ LaunchTemplates: [] });
 
-            const result = await checkEc2LaunchTemplateImdsv2Compliance("us-east-1");
+            const result = await checkEc2LaunchTemplateImdsv2Compliance.execute("us-east-1");
             expect(result.checks[0].status).toBe(ComplianceStatus.NOTAPPLICABLE);
             expect(result.checks[0].message).toBe("No EC2 launch templates found in the region");
         });
@@ -58,7 +58,7 @@ describe("checkEc2LaunchTemplateImdsv2Compliance", () => {
             mockEC2Client
                 .on(DescribeLaunchTemplatesCommand)
                 .resolves({ LaunchTemplates: [mockLaunchTemplate] });
-            
+
             mockEC2Client
                 .on(DescribeLaunchTemplateVersionsCommand)
                 .resolves({
@@ -71,7 +71,7 @@ describe("checkEc2LaunchTemplateImdsv2Compliance", () => {
                     }]
                 });
 
-            const result = await checkEc2LaunchTemplateImdsv2Compliance("us-east-1");
+            const result = await checkEc2LaunchTemplateImdsv2Compliance.execute("us-east-1");
             expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
             expect(result.checks[0].message).toContain("does not require IMDSv2");
         });
@@ -80,7 +80,7 @@ describe("checkEc2LaunchTemplateImdsv2Compliance", () => {
             mockEC2Client
                 .on(DescribeLaunchTemplatesCommand)
                 .resolves({ LaunchTemplates: [mockLaunchTemplate] });
-            
+
             mockEC2Client
                 .on(DescribeLaunchTemplateVersionsCommand)
                 .resolves({
@@ -89,7 +89,7 @@ describe("checkEc2LaunchTemplateImdsv2Compliance", () => {
                     }]
                 });
 
-            const result = await checkEc2LaunchTemplateImdsv2Compliance("us-east-1");
+            const result = await checkEc2LaunchTemplateImdsv2Compliance.execute("us-east-1");
             expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
         });
     });
@@ -100,7 +100,7 @@ describe("checkEc2LaunchTemplateImdsv2Compliance", () => {
                 .on(DescribeLaunchTemplatesCommand)
                 .rejects(new Error("API Error"));
 
-            const result = await checkEc2LaunchTemplateImdsv2Compliance("us-east-1");
+            const result = await checkEc2LaunchTemplateImdsv2Compliance.execute("us-east-1");
             expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
             expect(result.checks[0].message).toContain("Error checking launch templates");
         });
@@ -109,12 +109,12 @@ describe("checkEc2LaunchTemplateImdsv2Compliance", () => {
             mockEC2Client
                 .on(DescribeLaunchTemplatesCommand)
                 .resolves({ LaunchTemplates: [mockLaunchTemplate] });
-            
+
             mockEC2Client
                 .on(DescribeLaunchTemplateVersionsCommand)
                 .rejects(new Error("Version API Error"));
 
-            const result = await checkEc2LaunchTemplateImdsv2Compliance("us-east-1");
+            const result = await checkEc2LaunchTemplateImdsv2Compliance.execute("us-east-1");
             expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
             expect(result.checks[0].message).toContain("Error checking launch template version");
         });
@@ -123,14 +123,14 @@ describe("checkEc2LaunchTemplateImdsv2Compliance", () => {
             mockEC2Client
                 .on(DescribeLaunchTemplatesCommand)
                 .resolves({ LaunchTemplates: [mockLaunchTemplate] });
-            
+
             mockEC2Client
                 .on(DescribeLaunchTemplateVersionsCommand)
                 .resolves({
                     LaunchTemplateVersions: [{}]
                 });
 
-            const result = await checkEc2LaunchTemplateImdsv2Compliance("us-east-1");
+            const result = await checkEc2LaunchTemplateImdsv2Compliance.execute("us-east-1");
             expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
             expect(result.checks[0].message).toBe("Unable to retrieve launch template data");
         });
@@ -146,7 +146,7 @@ describe("checkEc2LaunchTemplateImdsv2Compliance", () => {
             mockEC2Client
                 .on(DescribeLaunchTemplatesCommand)
                 .resolves({ LaunchTemplates: templates });
-            
+
             mockEC2Client
                 .on(DescribeLaunchTemplateVersionsCommand, { LaunchTemplateId: "lt-1" })
                 .resolves({
@@ -165,7 +165,7 @@ describe("checkEc2LaunchTemplateImdsv2Compliance", () => {
                     }]
                 });
 
-            const result = await checkEc2LaunchTemplateImdsv2Compliance("us-east-1");
+            const result = await checkEc2LaunchTemplateImdsv2Compliance.execute("us-east-1");
             expect(result.checks).toHaveLength(2);
             expect(result.checks[0].status).toBe(ComplianceStatus.PASS);
             expect(result.checks[1].status).toBe(ComplianceStatus.FAIL);

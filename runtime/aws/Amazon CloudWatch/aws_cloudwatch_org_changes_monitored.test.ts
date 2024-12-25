@@ -1,7 +1,7 @@
 import { CloudWatchClient, GetMetricDataCommand } from '@aws-sdk/client-cloudwatch';
 import { CloudWatchLogsClient, DescribeLogGroupsCommand, DescribeMetricFiltersCommand } from '@aws-sdk/client-cloudwatch-logs';
 import { mockClient } from 'aws-sdk-client-mock';
-import { ComplianceStatus } from '@codegen/utils/stringUtils';
+import { ComplianceStatus } from "~runtime/types";
 import checkCloudWatchOrgChangesMonitored from './aws_cloudwatch_org_changes_monitored';
 
 const mockCloudWatchClient = mockClient(CloudWatchClient);
@@ -40,7 +40,7 @@ describe('checkCloudWatchOrgChangesMonitored', () => {
                 }]
             });
 
-            const result = await checkCloudWatchOrgChangesMonitored('us-east-1');
+            const result = await checkCloudWatchOrgChangesMonitored.execute('us-east-1');
             expect(result.checks[0].status).toBe(ComplianceStatus.PASS);
             expect(result.checks[0].resourceName).toBe('test-log-group');
         });
@@ -52,7 +52,7 @@ describe('checkCloudWatchOrgChangesMonitored', () => {
                 logGroups: []
             });
 
-            const result = await checkCloudWatchOrgChangesMonitored('us-east-1');
+            const result = await checkCloudWatchOrgChangesMonitored.execute('us-east-1');
             expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
             expect(result.checks[0].message).toBe('No CloudWatch Log Groups found');
         });
@@ -75,7 +75,7 @@ describe('checkCloudWatchOrgChangesMonitored', () => {
                 }]
             });
 
-            const result = await checkCloudWatchOrgChangesMonitored('us-east-1');
+            const result = await checkCloudWatchOrgChangesMonitored.execute('us-east-1');
             expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
             expect(result.checks[0].message).toContain('does not have required metric filter');
         });
@@ -95,7 +95,7 @@ describe('checkCloudWatchOrgChangesMonitored', () => {
                 }]
             });
 
-            const result = await checkCloudWatchOrgChangesMonitored('us-east-1');
+            const result = await checkCloudWatchOrgChangesMonitored.execute('us-east-1');
             expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
             expect(result.checks[0].message).toBe('Metric filter does not have a metric transformation');
         });
@@ -124,7 +124,7 @@ describe('checkCloudWatchOrgChangesMonitored', () => {
                 }]
             });
 
-            const result = await checkCloudWatchOrgChangesMonitored('us-east-1');
+            const result = await checkCloudWatchOrgChangesMonitored.execute('us-east-1');
             expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
             expect(result.checks[0].message).toContain('No metric data found');
         });
@@ -134,7 +134,7 @@ describe('checkCloudWatchOrgChangesMonitored', () => {
         it('should return ERROR when API calls fail', async () => {
             mockCloudWatchLogsClient.on(DescribeLogGroupsCommand).rejects(new Error('API Error'));
 
-            const result = await checkCloudWatchOrgChangesMonitored('us-east-1');
+            const result = await checkCloudWatchOrgChangesMonitored.execute('us-east-1');
             expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
             expect(result.checks[0].message).toContain('Error checking CloudWatch configuration');
         });

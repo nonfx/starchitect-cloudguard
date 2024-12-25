@@ -1,21 +1,14 @@
 import { EC2Client, DescribeInstancesCommand } from '@aws-sdk/client-ec2';
 import { IAMClient, GetInstanceProfileCommand } from '@aws-sdk/client-iam';
-import { printSummary, generateSummary, ComplianceStatus, type ComplianceReport } from '@codegen/utils/stringUtils';
+import { printSummary, generateSummary } from '~codegen/utils/stringUtils';
+import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "~runtime/types";
 
 async function checkEc2SystemsManagerCompliance(region: string = 'us-east-1'): Promise<ComplianceReport> {
   const ec2Client = new EC2Client({ region });
   const iamClient = new IAMClient({ region });
-  
+
   const results: ComplianceReport = {
-    checks: [],
-    metadoc: {
-      title: 'Ensure use of AWS Systems Manager to manage EC2 instances',
-      description: 'An inventory and management of Amazon Elastic Compute Cloud (Amazon EC2) instances is made possible with AWS Systems Manager.',
-      controls: [{
-        id: 'CIS-AWS-Compute-Services-Benchmark_v1.0.0_2.9',
-        document: 'CIS-AWS-Compute-Services-Benchmark_v1.0.0'
-      }]
-    }
+    checks: []
   };
 
   try {
@@ -57,7 +50,7 @@ async function checkEc2SystemsManagerCompliance(region: string = 'us-east-1'): P
           });
 
           const profileResponse = await iamClient.send(profileCommand);
-          
+
           // Check if profile has role with SSM policy
           const hasSSMPolicy = profileResponse.InstanceProfile?.Roles?.some(role =>
             role.AssumeRolePolicyDocument?.includes('AmazonSSMManagedInstanceCore')
@@ -95,4 +88,13 @@ if (require.main === module) {
   printSummary(generateSummary(results));
 }
 
-export default checkEc2SystemsManagerCompliance;
+export default {
+  title: 'Ensure use of AWS Systems Manager to manage EC2 instances',
+  description: 'An inventory and management of Amazon Elastic Compute Cloud (Amazon EC2) instances is made possible with AWS Systems Manager.',
+  controls: [{
+    id: 'CIS-AWS-Compute-Services-Benchmark_v1.0.0_2.9',
+    document: 'CIS-AWS-Compute-Services-Benchmark_v1.0.0'
+  }],
+  severity: 'MEDIUM',
+  execute: checkEc2SystemsManagerCompliance
+} satisfies RuntimeTest;

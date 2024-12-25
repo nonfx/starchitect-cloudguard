@@ -3,24 +3,13 @@ import { AccessAnalyzerClient, ListAnalyzersCommand } from "@aws-sdk/client-acce
 import {
 	printSummary,
 	generateSummary,
-	type ComplianceReport,
-	ComplianceStatus
-} from "@codegen/utils/stringUtils";
+} from "~codegen/utils/stringUtils";
+import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "~runtime/types";
 
 async function checkAccessAnalyzerEnabled(region: string = "us-east-1"): Promise<ComplianceReport> {
 	const client = new AccessAnalyzerClient({ region });
 	const results: ComplianceReport = {
-		checks: [],
-		metadoc: {
-			title: "Ensure IAM Access Analyzer is enabled for all regions",
-			description: "Enable IAM Access Analyzer for IAM policies about all resources in each region. IAM Access Analyzer scans policies to show the accessible resources and helps in determining unintended user access.",
-			controls: [
-				{
-					id: "CIS-AWS-Foundations-Benchmark_v3.0.0_1.20",
-					document: "CIS-AWS-Foundations-Benchmark_v3.0.0"
-				}
-			]
-		}
+		checks: []
 	};
 
 	try {
@@ -75,4 +64,15 @@ if (require.main === module) {
 	printSummary(generateSummary(results));
 }
 
-export default checkAccessAnalyzerEnabled;
+export default {
+	title: "Ensure IAM Access Analyzer is enabled for all regions",
+	description: "Enable IAM Access Analyzer for IAM policies about all resources in each region. IAM Access Analyzer scans policies to show the accessible resources and helps in determining unintended user access.",
+	controls: [
+		{
+			id: "CIS-AWS-Foundations-Benchmark_v3.0.0_1.20",
+			document: "CIS-AWS-Foundations-Benchmark_v3.0.0"
+		}
+	],
+	severity: "MEDIUM",
+	execute: checkAccessAnalyzerEnabled
+} satisfies RuntimeTest;

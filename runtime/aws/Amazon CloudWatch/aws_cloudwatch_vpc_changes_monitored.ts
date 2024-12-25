@@ -10,10 +10,10 @@ import {
 
 import {
   printSummary,
-  generateSummary,
-  type ComplianceReport,
-  ComplianceStatus,
-} from "@codegen/utils/stringUtils";
+  generateSummary
+} from "~codegen/utils/stringUtils";
+
+import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "~runtime/types";
 
 const REQUIRED_PATTERN =
   "{ ($.eventName = CreateVpc) || ($.eventName = DeleteVpc) || ($.eventName = ModifyVpcAttribute) || ($.eventName = AcceptVpcPeeringConnection) || ($.eventName = CreateVpcPeeringConnection) || ($.eventName = DeleteVpcPeeringConnection) || ($.eventName = RejectVpcPeeringConnection) || ($.eventName = AttachClassicLinkVpc) || ($.eventName = DetachClassicLinkVpc) || ($.eventName = DisableVpcClassicLink) || ($.eventName = EnableVpcClassicLink) }";
@@ -25,18 +25,7 @@ async function checkVpcChangesMonitored(
   const cwLogsClient = new CloudWatchLogsClient({ region });
 
   const results: ComplianceReport = {
-    checks: [],
-    metadoc: {
-      title: "Ensure VPC changes are monitored",
-      description:
-        "Real-time monitoring of API calls can be achieved by directing CloudTrail Logs to CloudWatch Logs, or an external Security information and event management (SIEM) environment, and establishing corresponding metric filters and alarms. It is possible to have more than 1 VPC within an account, in addition it is also possible to create a peer connection between 2 VPCs enabling network traffic to route between VPCs. It is recommended that a metric filter and alarm be established for changes made to VPCs.",
-      controls: [
-        {
-          id: "CIS-AWS-Foundations-Benchmark_v3.0.0_4.14",
-          document: "CIS-AWS-Foundations-Benchmark_v3.0.0",
-        },
-      ],
-    },
+    checks: []
   };
 
   try {
@@ -126,4 +115,16 @@ if (require.main === module) {
   printSummary(generateSummary(results));
 }
 
-export default checkVpcChangesMonitored;
+export default {
+  title: "Ensure VPC changes are monitored",
+  description:
+    "Real-time monitoring of API calls can be achieved by directing CloudTrail Logs to CloudWatch Logs, or an external Security information and event management (SIEM) environment, and establishing corresponding metric filters and alarms. It is possible to have more than 1 VPC within an account, in addition it is also possible to create a peer connection between 2 VPCs enabling network traffic to route between VPCs. It is recommended that a metric filter and alarm be established for changes made to VPCs.",
+  controls: [
+    {
+      id: "CIS-AWS-Foundations-Benchmark_v3.0.0_4.14",
+      document: "CIS-AWS-Foundations-Benchmark_v3.0.0",
+    },
+  ],
+  severity: "MEDIUM",
+  execute: checkVpcChangesMonitored
+} satisfies RuntimeTest;

@@ -3,26 +3,15 @@ import { AutoScalingClient, DescribeAutoScalingGroupsCommand } from '@aws-sdk/cl
 import {
 	printSummary,
 	generateSummary,
-	type ComplianceReport,
-	ComplianceStatus
-} from '@codegen/utils/stringUtils';
+} from '~codegen/utils/stringUtils';
+import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "~runtime/types";
 
 async function checkAutoScalingLaunchTemplate(
 	region: string = 'us-east-1'
 ): Promise<ComplianceReport> {
 	const client = new AutoScalingClient({ region });
 	const results: ComplianceReport = {
-		checks: [],
-		metadoc: {
-			title: 'Amazon EC2 Auto Scaling groups should use Amazon EC2 launch templates',
-			description: 'EC2 Auto Scaling groups must use launch templates instead of launch configurations for better access to latest features.',
-			controls: [
-				{
-					id: 'AWS-Foundational-Security-Best-Practices_v1.0.0_AutoScaling.9',
-					document: 'AWS-Foundational-Security-Best-Practices_v1.0.0'
-				}
-			]
-		}
+		checks: []
 	};
 
 	try {
@@ -89,4 +78,15 @@ if (require.main === module) {
 	printSummary(generateSummary(results));
 }
 
-export default checkAutoScalingLaunchTemplate;
+export default  {
+	title: 'Amazon EC2 Auto Scaling groups should use Amazon EC2 launch templates',
+	description: 'EC2 Auto Scaling groups must use launch templates instead of launch configurations for better access to latest features.',
+	controls: [
+		{
+			id: 'AWS-Foundational-Security-Best-Practices_v1.0.0_AutoScaling.9',
+			document: 'AWS-Foundational-Security-Best-Practices_v1.0.0'
+		}
+	],
+	severity: 'MEDIUM',
+	execute: checkAutoScalingLaunchTemplate
+} satisfies RuntimeTest;

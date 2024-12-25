@@ -1,39 +1,31 @@
 import { CloudWatchClient, DescribeAlarmsCommand } from '@aws-sdk/client-cloudwatch';
-import { 
-  CloudWatchLogsClient, 
+import {
+  CloudWatchLogsClient,
   DescribeLogGroupsCommand,
-  DescribeMetricFiltersCommand 
+  DescribeMetricFiltersCommand
 } from '@aws-sdk/client-cloudwatch-logs';
 
 import {
   printSummary,
   generateSummary,
-  type ComplianceReport,
-  ComplianceStatus
-} from '@codegen/utils/stringUtils';
+} from '~codegen/utils/stringUtils';
+
+import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "~runtime/types";
 
 const REQUIRED_PATTERN = '{ ($.eventSource = config.amazonaws.com) && (($.eventName=StopConfigurationRecorder)||($.eventName=DeleteDeliveryChannel) ||($.eventName=PutDeliveryChannel)||($.eventName=PutConfigurationRecorder)) }';
 
 async function checkConfigChangeMonitoring(region: string = 'us-east-1'): Promise<ComplianceReport> {
   const cwClient = new CloudWatchClient({ region });
   const cwLogsClient = new CloudWatchLogsClient({ region });
-  
+
   const results: ComplianceReport = {
-    checks: [],
-    metadoc: {
-      title: 'Ensure AWS Config configuration changes are monitored',
-      description: 'Real-time monitoring of API calls can be achieved by directing CloudTrail Logs to CloudWatch Logs, or an external Security information and event management (SIEM) environment, and establishing corresponding metric filters and alarms. It is recommended that a metric filter and alarm be established for detecting changes to AWS Config\'s configurations.',
-      controls: [{
-        id: 'CIS-AWS-Foundations-Benchmark_v3.0.0_4.9',
-        document: 'CIS-AWS-Foundations-Benchmark_v3.0.0'
-      }]
-    }
+    checks: []
   };
 
   try {
     // Get all log groups
     const logGroups = await cwLogsClient.send(new DescribeLogGroupsCommand({}));
-    
+
     if (!logGroups.logGroups || logGroups.logGroups.length === 0) {
       results.checks.push({
         resourceName: 'CloudWatch Logs',
@@ -116,4 +108,13 @@ if (require.main === module) {
   printSummary(generateSummary(results));
 }
 
-export default checkConfigChangeMonitoring;
+export default {
+  title: 'Ensure AWS Config configuration changes are monitored',
+  description: 'Real-time monitoring of API calls can be achieved by directing CloudTrail Logs to CloudWatch Logs, or an external Security information and event management (SIEM) environment, and establishing corresponding metric filters and alarms. It is recommended that a metric filter and alarm be established for detecting changes to AWS Config\'s configurations.',
+  controls: [{
+    id: 'CIS-AWS-Foundations-Benchmark_v3.0.0_4.9',
+    document: 'CIS-AWS-Foundations-Benchmark_v3.0.0'
+  }],
+  severity: 'MEDIUM',
+  execute: checkConfigChangeMonitoring
+} satisfies RuntimeTest;

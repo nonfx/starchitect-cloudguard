@@ -1,24 +1,18 @@
 import { CloudWatchClient, DescribeAlarmsCommand } from '@aws-sdk/client-cloudwatch';
 import { CloudWatchLogsClient, DescribeLogGroupsCommand, DescribeMetricFiltersCommand } from '@aws-sdk/client-cloudwatch-logs';
 
-import { printSummary, generateSummary, ComplianceStatus, type ComplianceReport } from '@codegen/utils/stringUtils';
+import { printSummary, generateSummary } from '~codegen/utils/stringUtils';
+
+import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "~runtime/types";
 
 const REQUIRED_PATTERN = '{ ($.eventSource = s3.amazonaws.com) && (($.eventName = PutBucketAcl) || ($.eventName = PutBucketPolicy) || ($.eventName = PutBucketCors) || ($.eventName = PutBucketLifecycle) || ($.eventName = PutBucketReplication) || ($.eventName = DeleteBucketPolicy) || ($.eventName = DeleteBucketCors) || ($.eventName = DeleteBucketLifecycle) || ($.eventName = DeleteBucketReplication)) }';
 
 async function checkS3PolicyMonitoring(region: string = 'us-east-1'): Promise<ComplianceReport> {
   const cwClient = new CloudWatchClient({ region });
   const cwLogsClient = new CloudWatchLogsClient({ region });
-  
+
   const results: ComplianceReport = {
-    checks: [],
-    metadoc: {
-      title: 'Ensure S3 bucket policy changes are monitored',
-      description: 'Real-time monitoring of API calls can be achieved by directing CloudTrail Logs to CloudWatch Logs, or an external Security information and event management (SIEM) environment, and establishing corresponding metric filters and alarms. It is recommended that a metric filter and alarm be established for changes to S3 bucket policies.',
-      controls: [{
-        id: 'CIS-AWS-Foundations-Benchmark_v3.0.0_4.8',
-        document: 'CIS-AWS-Foundations-Benchmark_v3.0.0'
-      }]
-    }
+    checks: []
   };
 
   try {
@@ -109,4 +103,13 @@ if (require.main === module) {
   printSummary(generateSummary(results));
 }
 
-export default checkS3PolicyMonitoring;
+export default {
+  title: 'Ensure S3 bucket policy changes are monitored',
+  description: 'Real-time monitoring of API calls can be achieved by directing CloudTrail Logs to CloudWatch Logs, or an external Security information and event management (SIEM) environment, and establishing corresponding metric filters and alarms. It is recommended that a metric filter and alarm be established for changes to S3 bucket policies.',
+  controls: [{
+    id: 'CIS-AWS-Foundations-Benchmark_v3.0.0_4.8',
+    document: 'CIS-AWS-Foundations-Benchmark_v3.0.0'
+  }],
+  severity: 'MEDIUM',
+  execute: checkS3PolicyMonitoring
+} satisfies RuntimeTest;

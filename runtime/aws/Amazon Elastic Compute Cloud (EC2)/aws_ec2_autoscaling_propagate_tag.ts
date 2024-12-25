@@ -3,26 +3,15 @@ import { AutoScalingClient, DescribeAutoScalingGroupsCommand } from '@aws-sdk/cl
 import {
 	printSummary,
 	generateSummary,
-	type ComplianceReport,
-	ComplianceStatus
-} from '@codegen/utils/stringUtils';
+} from '~codegen/utils/stringUtils';
+import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "~runtime/types";
 
 async function checkAutoScalingTagPropagation(
 	region: string = 'us-east-1'
 ): Promise<ComplianceReport> {
 	const client = new AutoScalingClient({ region });
 	const results: ComplianceReport = {
-		checks: [],
-		metadoc: {
-			title: 'Ensure EC2 Auto Scaling Groups Propagate Tags to EC2 Instances that it launches',
-			description: 'Tags can help with managing, identifying, organizing, searching for, and filtering resources. Additionally, tags can help with security and compliance. Tags can be propagated from an Auto Scaling group to the EC2 instances that it launches.',
-			controls: [
-				{
-					id: 'CIS-AWS-Compute-Services-Benchmark_v1.0.0_2.14',
-					document: 'CIS-AWS-Compute-Services-Benchmark_v1.0.0'
-				}
-			]
-		}
+		checks: []
 	};
 
 	try {
@@ -96,4 +85,15 @@ if (require.main === module) {
 	printSummary(generateSummary(results));
 }
 
-export default checkAutoScalingTagPropagation;
+export default {
+	title: 'Ensure EC2 Auto Scaling Groups Propagate Tags to EC2 Instances that it launches',
+	description: 'Tags can help with managing, identifying, organizing, searching for, and filtering resources. Additionally, tags can help with security and compliance. Tags can be propagated from an Auto Scaling group to the EC2 instances that it launches.',
+	controls: [
+		{
+			id: 'CIS-AWS-Compute-Services-Benchmark_v1.0.0_2.14',
+			document: 'CIS-AWS-Compute-Services-Benchmark_v1.0.0'
+		}
+	],
+	severity: 'MEDIUM',
+	execute: checkAutoScalingTagPropagation
+} satisfies RuntimeTest;

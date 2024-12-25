@@ -1,11 +1,10 @@
 import { IAMClient, ListPoliciesCommand, GetPolicyVersionCommand } from "@aws-sdk/client-iam";
+import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "~runtime/types";
 
 import {
 	printSummary,
 	generateSummary,
-	type ComplianceReport,
-	ComplianceStatus
-} from "@codegen/utils/stringUtils";
+} from "~codegen/utils/stringUtils";
 
 interface PolicyStatement {
 	Effect: string;
@@ -56,18 +55,7 @@ async function checkIamFullAdminPrivileges(
 ): Promise<ComplianceReport> {
 	const client = new IAMClient({ region });
 	const results: ComplianceReport = {
-		checks: [],
-		metadoc: {
-			title: "Ensure IAM policies that allow full *:* administrative privileges are not attached",
-			description:
-				"IAM policies are the means by which privileges are granted to users, groups, or roles. It is recommended and considered a standard security advice to grant least privilege -that is, granting only the permissions required to perform a task. Determine what users need to do and then craft policies for them that let the users perform only those tasks, instead of allowing full administrative privileges.",
-			controls: [
-				{
-					id: "CIS-AWS-Foundations-Benchmark_v3.0.0_1.16",
-					document: "CIS-AWS-Foundations-Benchmark_v3.0.0"
-				}
-			]
-		}
+		checks: []
 	};
 
 	try {
@@ -194,4 +182,16 @@ if (require.main === module) {
 	printSummary(generateSummary(results));
 }
 
-export default checkIamFullAdminPrivileges;
+export default  {
+	title: "Ensure IAM policies that allow full *:* administrative privileges are not attached",
+	description:
+		"IAM policies are the means by which privileges are granted to users, groups, or roles. It is recommended and considered a standard security advice to grant least privilege -that is, granting only the permissions required to perform a task. Determine what users need to do and then craft policies for them that let the users perform only those tasks, instead of allowing full administrative privileges.",
+	controls: [
+		{
+			id: "CIS-AWS-Foundations-Benchmark_v3.0.0_1.16",
+			document: "CIS-AWS-Foundations-Benchmark_v3.0.0"
+		}
+	],
+	severity: "MEDIUM",
+	execute: checkIamFullAdminPrivileges
+} satisfies RuntimeTest;

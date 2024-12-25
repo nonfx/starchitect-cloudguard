@@ -11,9 +11,9 @@ import {
 import {
   printSummary,
   generateSummary,
-  type ComplianceReport,
-  ComplianceStatus,
-} from "@codegen/utils/stringUtils";
+} from "~codegen/utils/stringUtils";
+
+import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "~runtime/types";
 
 const REQUIRED_PATTERN =
   "{ ($.eventName = AuthorizeSecurityGroupIngress) || ($.eventName = AuthorizeSecurityGroupEgress) || ($.eventName = RevokeSecurityGroupIngress) || ($.eventName = RevokeSecurityGroupEgress) || ($.eventName = CreateSecurityGroup) || ($.eventName = DeleteSecurityGroup) }";
@@ -25,18 +25,7 @@ async function checkSecurityGroupMonitoring(
   const cwLogsClient = new CloudWatchLogsClient({ region });
 
   const results: ComplianceReport = {
-    checks: [],
-    metadoc: {
-      title: "Ensure security group changes are monitored",
-      description:
-        "Real-time monitoring of API calls can be achieved by directing CloudTrail Logs to CloudWatch Logs, or an external Security information and event management (SIEM) environment, and establishing corresponding metric filters and alarms. Security Groups are a stateful packet filter that controls ingress and egress traffic within a VPC.",
-      controls: [
-        {
-          id: "CIS-AWS-Foundations-Benchmark_v3.0.0_4.10",
-          document: "CIS-AWS-Foundations-Benchmark_v3.0.0",
-        },
-      ],
-    },
+    checks: []
   };
 
   try {
@@ -128,4 +117,16 @@ if (require.main === module) {
   printSummary(generateSummary(results));
 }
 
-export default checkSecurityGroupMonitoring;
+export default {
+  title: "Ensure security group changes are monitored",
+  description:
+    "Real-time monitoring of API calls can be achieved by directing CloudTrail Logs to CloudWatch Logs, or an external Security information and event management (SIEM) environment, and establishing corresponding metric filters and alarms. Security Groups are a stateful packet filter that controls ingress and egress traffic within a VPC.",
+  controls: [
+    {
+      id: "CIS-AWS-Foundations-Benchmark_v3.0.0_4.10",
+      document: "CIS-AWS-Foundations-Benchmark_v3.0.0",
+    },
+  ],
+  severity: "MEDIUM",
+  execute: checkSecurityGroupMonitoring
+} satisfies RuntimeTest;

@@ -1,6 +1,6 @@
 import { AutoScalingClient, DescribeLaunchConfigurationsCommand } from "@aws-sdk/client-auto-scaling";
 import { mockClient } from "aws-sdk-client-mock";
-import { ComplianceStatus } from "@codegen/utils/stringUtils";
+import { ComplianceStatus } from "~runtime/types";
 import checkAutoScalingPublicIp from "./aws_autoscaling_no_public_ip";
 
 const mockAutoScalingClient = mockClient(AutoScalingClient);
@@ -28,7 +28,7 @@ describe("checkAutoScalingPublicIp", () => {
                 LaunchConfigurations: [mockLaunchConfigWithoutPublicIP]
             });
 
-            const result = await checkAutoScalingPublicIp("us-east-1");
+            const result = await checkAutoScalingPublicIp.execute("us-east-1");
             expect(result.checks[0].status).toBe(ComplianceStatus.PASS);
             expect(result.checks[0].resourceName).toBe("test-config-2");
             expect(result.checks[0].resourceArn).toBe(mockLaunchConfigWithoutPublicIP.LaunchConfigurationARN);
@@ -39,7 +39,7 @@ describe("checkAutoScalingPublicIp", () => {
                 LaunchConfigurations: []
             });
 
-            const result = await checkAutoScalingPublicIp("us-east-1");
+            const result = await checkAutoScalingPublicIp.execute("us-east-1");
             expect(result.checks[0].status).toBe(ComplianceStatus.NOTAPPLICABLE);
             expect(result.checks[0].message).toBe("No Auto Scaling launch configurations found");
         });
@@ -51,7 +51,7 @@ describe("checkAutoScalingPublicIp", () => {
                 LaunchConfigurations: [mockLaunchConfigWithPublicIP]
             });
 
-            const result = await checkAutoScalingPublicIp("us-east-1");
+            const result = await checkAutoScalingPublicIp.execute("us-east-1");
             expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
             expect(result.checks[0].message).toBe("Launch configuration assigns public IP addresses to instances");
         });
@@ -61,7 +61,7 @@ describe("checkAutoScalingPublicIp", () => {
                 LaunchConfigurations: [mockLaunchConfigWithPublicIP, mockLaunchConfigWithoutPublicIP]
             });
 
-            const result = await checkAutoScalingPublicIp("us-east-1");
+            const result = await checkAutoScalingPublicIp.execute("us-east-1");
             expect(result.checks).toHaveLength(2);
             expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
             expect(result.checks[1].status).toBe(ComplianceStatus.PASS);
@@ -72,7 +72,7 @@ describe("checkAutoScalingPublicIp", () => {
                 LaunchConfigurations: [{ AssociatePublicIpAddress: true }]
             });
 
-            const result = await checkAutoScalingPublicIp("us-east-1");
+            const result = await checkAutoScalingPublicIp.execute("us-east-1");
             expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
             expect(result.checks[0].message).toBe("Launch configuration found without name");
         });
@@ -90,7 +90,7 @@ describe("checkAutoScalingPublicIp", () => {
                     LaunchConfigurations: [mockLaunchConfigWithoutPublicIP]
                 });
 
-            const result = await checkAutoScalingPublicIp("us-east-1");
+            const result = await checkAutoScalingPublicIp.execute("us-east-1");
             expect(result.checks).toHaveLength(2);
         });
 
@@ -99,7 +99,7 @@ describe("checkAutoScalingPublicIp", () => {
                 .on(DescribeLaunchConfigurationsCommand)
                 .rejects(new Error("API Error"));
 
-            const result = await checkAutoScalingPublicIp("us-east-1");
+            const result = await checkAutoScalingPublicIp.execute("us-east-1");
             expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
             expect(result.checks[0].message).toBe("Error checking launch configurations: API Error");
         });

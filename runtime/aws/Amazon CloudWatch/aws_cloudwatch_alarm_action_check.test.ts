@@ -1,6 +1,6 @@
 import { CloudWatchClient, DescribeAlarmsCommand } from "@aws-sdk/client-cloudwatch";
 import { mockClient } from "aws-sdk-client-mock";
-import { ComplianceStatus } from "@codegen/utils/stringUtils";
+import { ComplianceStatus } from "~runtime/types";
 import checkCloudWatchAlarmActions from "./aws_cloudwatch_alarm_action_check";
 
 const mockCloudWatchClient = mockClient(CloudWatchClient);
@@ -28,7 +28,7 @@ describe("checkCloudWatchAlarmActions", () => {
                 MetricAlarms: [mockAlarmWithActions]
             });
 
-            const result = await checkCloudWatchAlarmActions("us-east-1");
+            const result = await checkCloudWatchAlarmActions.execute("us-east-1");
             expect(result.checks[0].status).toBe(ComplianceStatus.PASS);
             expect(result.checks[0].resourceName).toBe("test-alarm-1");
             expect(result.checks[0].resourceArn).toBe(mockAlarmWithActions.AlarmArn);
@@ -39,7 +39,7 @@ describe("checkCloudWatchAlarmActions", () => {
                 MetricAlarms: [mockAlarmWithActions, mockAlarmWithActions]
             });
 
-            const result = await checkCloudWatchAlarmActions("us-east-1");
+            const result = await checkCloudWatchAlarmActions.execute("us-east-1");
             expect(result.checks).toHaveLength(2);
             expect(result.checks.every(check => check.status === ComplianceStatus.PASS)).toBe(true);
         });
@@ -51,7 +51,7 @@ describe("checkCloudWatchAlarmActions", () => {
                 MetricAlarms: [mockAlarmWithoutActions]
             });
 
-            const result = await checkCloudWatchAlarmActions("us-east-1");
+            const result = await checkCloudWatchAlarmActions.execute("us-east-1");
             expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
             expect(result.checks[0].message).toBe("CloudWatch alarm does not have any actions configured for ALARM state");
         });
@@ -61,7 +61,7 @@ describe("checkCloudWatchAlarmActions", () => {
                 MetricAlarms: [mockAlarmWithActions, mockAlarmWithoutActions]
             });
 
-            const result = await checkCloudWatchAlarmActions("us-east-1");
+            const result = await checkCloudWatchAlarmActions.execute("us-east-1");
             expect(result.checks).toHaveLength(2);
             expect(result.checks[0].status).toBe(ComplianceStatus.PASS);
             expect(result.checks[1].status).toBe(ComplianceStatus.FAIL);
@@ -74,7 +74,7 @@ describe("checkCloudWatchAlarmActions", () => {
                 MetricAlarms: []
             });
 
-            const result = await checkCloudWatchAlarmActions("us-east-1");
+            const result = await checkCloudWatchAlarmActions.execute("us-east-1");
             expect(result.checks[0].status).toBe(ComplianceStatus.NOTAPPLICABLE);
             expect(result.checks[0].message).toBe("No CloudWatch alarms found in the region");
         });
@@ -84,7 +84,7 @@ describe("checkCloudWatchAlarmActions", () => {
                 MetricAlarms: [{ AlarmActions: [] }]
             });
 
-            const result = await checkCloudWatchAlarmActions("us-east-1");
+            const result = await checkCloudWatchAlarmActions.execute("us-east-1");
             expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
             expect(result.checks[0].message).toBe("Alarm found without name");
         });
@@ -102,7 +102,7 @@ describe("checkCloudWatchAlarmActions", () => {
                     MetricAlarms: [mockAlarmWithoutActions]
                 });
 
-            const result = await checkCloudWatchAlarmActions("us-east-1");
+            const result = await checkCloudWatchAlarmActions.execute("us-east-1");
             expect(result.checks).toHaveLength(2);
             expect(result.checks[0].status).toBe(ComplianceStatus.PASS);
             expect(result.checks[1].status).toBe(ComplianceStatus.FAIL);
@@ -113,7 +113,7 @@ describe("checkCloudWatchAlarmActions", () => {
         it("should return ERROR when API call fails", async () => {
             mockCloudWatchClient.on(DescribeAlarmsCommand).rejects(new Error("API Error"));
 
-            const result = await checkCloudWatchAlarmActions("us-east-1");
+            const result = await checkCloudWatchAlarmActions.execute("us-east-1");
             expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
             expect(result.checks[0].message).toBe("Error checking CloudWatch alarms: API Error");
         });

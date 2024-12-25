@@ -1,6 +1,6 @@
 import { EC2Client, DescribeInstancesCommand } from "@aws-sdk/client-ec2";
 import { mockClient } from "aws-sdk-client-mock";
-import { ComplianceStatus } from "@codegen/utils/stringUtils";
+import { ComplianceStatus } from "~runtime/types";
 import checkEc2DetailedMonitoring from "./aws_ec2_detailed_monitoring";
 
 const mockEC2Client = mockClient(EC2Client);
@@ -27,7 +27,7 @@ describe("checkEc2DetailedMonitoring", () => {
                 }]
             });
 
-            const result = await checkEc2DetailedMonitoring("us-east-1");
+            const result = await checkEc2DetailedMonitoring.execute("us-east-1");
             expect(result.checks[0].status).toBe(ComplianceStatus.PASS);
             expect(result.checks[0].resourceName).toBe("i-1234567890");
             expect(result.checks[0].resourceArn).toBe(
@@ -40,7 +40,7 @@ describe("checkEc2DetailedMonitoring", () => {
                 Reservations: []
             });
 
-            const result = await checkEc2DetailedMonitoring("us-east-1");
+            const result = await checkEc2DetailedMonitoring.execute("us-east-1");
             expect(result.checks[0].status).toBe(ComplianceStatus.NOTAPPLICABLE);
             expect(result.checks[0].message).toBe("No running EC2 instances found in the region");
         });
@@ -56,7 +56,7 @@ describe("checkEc2DetailedMonitoring", () => {
                 }]
             });
 
-            const result = await checkEc2DetailedMonitoring("us-east-1");
+            const result = await checkEc2DetailedMonitoring.execute("us-east-1");
             expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
             expect(result.checks[0].message).toBe(
                 "Detailed monitoring is not enabled for this EC2 instance"
@@ -73,7 +73,7 @@ describe("checkEc2DetailedMonitoring", () => {
                 }]
             });
 
-            const result = await checkEc2DetailedMonitoring("us-east-1");
+            const result = await checkEc2DetailedMonitoring.execute("us-east-1");
             expect(result.checks).toHaveLength(2);
             expect(result.checks[0].status).toBe(ComplianceStatus.PASS);
             expect(result.checks[1].status).toBe(ComplianceStatus.FAIL);
@@ -88,7 +88,7 @@ describe("checkEc2DetailedMonitoring", () => {
                 }]
             });
 
-            const result = await checkEc2DetailedMonitoring("us-east-1");
+            const result = await checkEc2DetailedMonitoring.execute("us-east-1");
             expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
             expect(result.checks[0].message).toBe("Instance found without ID");
         });
@@ -110,7 +110,7 @@ describe("checkEc2DetailedMonitoring", () => {
                     }]
                 });
 
-            const result = await checkEc2DetailedMonitoring("us-east-1");
+            const result = await checkEc2DetailedMonitoring.execute("us-east-1");
             expect(result.checks).toHaveLength(2);
         });
 
@@ -119,7 +119,7 @@ describe("checkEc2DetailedMonitoring", () => {
                 new Error("API Error")
             );
 
-            const result = await checkEc2DetailedMonitoring("us-east-1");
+            const result = await checkEc2DetailedMonitoring.execute("us-east-1");
             expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
             expect(result.checks[0].message).toBe(
                 "Error checking EC2 instances: API Error"

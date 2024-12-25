@@ -1,6 +1,6 @@
 import { EC2Client, DescribeInstancesCommand } from "@aws-sdk/client-ec2";
 import { mockClient } from "aws-sdk-client-mock";
-import { ComplianceStatus } from "@codegen/utils/stringUtils";
+import { ComplianceStatus } from "~runtime/types";
 import checkEc2ImdsV2Compliance from "./aws_ec2_imdsv2";
 
 const mockEC2Client = mockClient(EC2Client);
@@ -34,7 +34,7 @@ describe("checkEc2ImdsV2Compliance", () => {
                 }]
             });
 
-            const result = await checkEc2ImdsV2Compliance("us-east-1");
+            const result = await checkEc2ImdsV2Compliance.execute("us-east-1");
             expect(result.checks[0].status).toBe(ComplianceStatus.PASS);
             expect(result.checks[0].resourceName).toBe("i-1234567890compliant");
         });
@@ -46,7 +46,7 @@ describe("checkEc2ImdsV2Compliance", () => {
                 }]
             });
 
-            const result = await checkEc2ImdsV2Compliance("us-east-1");
+            const result = await checkEc2ImdsV2Compliance.execute("us-east-1");
             expect(result.checks).toHaveLength(2);
             expect(result.checks.every(check => check.status === ComplianceStatus.PASS)).toBe(true);
         });
@@ -60,7 +60,7 @@ describe("checkEc2ImdsV2Compliance", () => {
                 }]
             });
 
-            const result = await checkEc2ImdsV2Compliance("us-east-1");
+            const result = await checkEc2ImdsV2Compliance.execute("us-east-1");
             expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
             expect(result.checks[0].message).toBe("Instance metadata service is not configured to require IMDSv2");
         });
@@ -72,7 +72,7 @@ describe("checkEc2ImdsV2Compliance", () => {
                 }]
             });
 
-            const result = await checkEc2ImdsV2Compliance("us-east-1");
+            const result = await checkEc2ImdsV2Compliance.execute("us-east-1");
             expect(result.checks).toHaveLength(2);
             expect(result.checks[0].status).toBe(ComplianceStatus.PASS);
             expect(result.checks[1].status).toBe(ComplianceStatus.FAIL);
@@ -87,7 +87,7 @@ describe("checkEc2ImdsV2Compliance", () => {
                 }]
             });
 
-            const result = await checkEc2ImdsV2Compliance("us-east-1");
+            const result = await checkEc2ImdsV2Compliance.execute("us-east-1");
             expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
             expect(result.checks[0].message).toBe("Unable to determine metadata options");
         });
@@ -99,7 +99,7 @@ describe("checkEc2ImdsV2Compliance", () => {
                 Reservations: []
             });
 
-            const result = await checkEc2ImdsV2Compliance("us-east-1");
+            const result = await checkEc2ImdsV2Compliance.execute("us-east-1");
             expect(result.checks[0].status).toBe(ComplianceStatus.NOTAPPLICABLE);
             expect(result.checks[0].message).toBe("No EC2 instances found in the region");
         });
@@ -115,14 +115,14 @@ describe("checkEc2ImdsV2Compliance", () => {
                     Reservations: [{ Instances: [mockNonCompliantInstance] }]
                 });
 
-            const result = await checkEc2ImdsV2Compliance("us-east-1");
+            const result = await checkEc2ImdsV2Compliance.execute("us-east-1");
             expect(result.checks).toHaveLength(2);
         });
 
         it("should return ERROR when API call fails", async () => {
             mockEC2Client.on(DescribeInstancesCommand).rejects(new Error("API Error"));
 
-            const result = await checkEc2ImdsV2Compliance("us-east-1");
+            const result = await checkEc2ImdsV2Compliance.execute("us-east-1");
             expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
             expect(result.checks[0].message).toContain("Error checking EC2 instances: API Error");
         });

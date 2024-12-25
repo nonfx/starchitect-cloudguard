@@ -1,7 +1,7 @@
 import { CloudWatchClient, DescribeAlarmsCommand } from '@aws-sdk/client-cloudwatch';
 import { CloudWatchLogsClient, DescribeLogGroupsCommand, DescribeMetricFiltersCommand } from '@aws-sdk/client-cloudwatch-logs';
 import { mockClient } from 'aws-sdk-client-mock';
-import { ComplianceStatus } from '@codegen/utils/stringUtils';
+import { ComplianceStatus } from "~runtime/types";
 import checkRouteTableMonitoring from './aws_cloudwatch_route_table';
 
 const mockCloudWatchClient = mockClient(CloudWatchClient);
@@ -35,7 +35,7 @@ describe('checkRouteTableMonitoring', () => {
                 .on(DescribeAlarmsCommand)
                 .resolves({ MetricAlarms: [{ AlarmName: 'RouteTableChangesAlarm' }] });
 
-            const result = await checkRouteTableMonitoring('us-east-1');
+            const result = await checkRouteTableMonitoring.execute('us-east-1');
             expect(result.checks[0].status).toBe(ComplianceStatus.PASS);
             expect(result.checks[0].resourceName).toBe(mockLogGroup.logGroupName);
         });
@@ -56,7 +56,7 @@ describe('checkRouteTableMonitoring', () => {
                 .on(DescribeAlarmsCommand)
                 .resolves({ MetricAlarms: [{ AlarmName: 'RouteTableChangesAlarm' }] });
 
-            const result = await checkRouteTableMonitoring('us-east-1');
+            const result = await checkRouteTableMonitoring.execute('us-east-1');
             expect(result.checks).toHaveLength(2);
             expect(result.checks.every(check => check.status === ComplianceStatus.PASS)).toBe(true);
         });
@@ -68,7 +68,7 @@ describe('checkRouteTableMonitoring', () => {
                 .on(DescribeLogGroupsCommand)
                 .resolves({ logGroups: [] });
 
-            const result = await checkRouteTableMonitoring('us-east-1');
+            const result = await checkRouteTableMonitoring.execute('us-east-1');
             expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
             expect(result.checks[0].message).toBe('No CloudWatch log groups found');
         });
@@ -81,7 +81,7 @@ describe('checkRouteTableMonitoring', () => {
                 .on(DescribeMetricFiltersCommand)
                 .resolves({ metricFilters: [] });
 
-            const result = await checkRouteTableMonitoring('us-east-1');
+            const result = await checkRouteTableMonitoring.execute('us-east-1');
             expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
             expect(result.checks[0].message).toContain('does not have required route table monitoring metric filter');
         });
@@ -97,7 +97,7 @@ describe('checkRouteTableMonitoring', () => {
                 .on(DescribeAlarmsCommand)
                 .resolves({ MetricAlarms: [] });
 
-            const result = await checkRouteTableMonitoring('us-east-1');
+            const result = await checkRouteTableMonitoring.execute('us-east-1');
             expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
             expect(result.checks[0].message).toContain('No alarms configured');
         });
@@ -109,7 +109,7 @@ describe('checkRouteTableMonitoring', () => {
                 .on(DescribeLogGroupsCommand)
                 .rejects(new Error('API Error'));
 
-            const result = await checkRouteTableMonitoring('us-east-1');
+            const result = await checkRouteTableMonitoring.execute('us-east-1');
             expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
             expect(result.checks[0].message).toContain('Error checking route table monitoring');
         });
@@ -122,7 +122,7 @@ describe('checkRouteTableMonitoring', () => {
                 .on(DescribeMetricFiltersCommand)
                 .rejects(new Error('Metric Filter API Error'));
 
-            const result = await checkRouteTableMonitoring('us-east-1');
+            const result = await checkRouteTableMonitoring.execute('us-east-1');
             expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
         });
     });

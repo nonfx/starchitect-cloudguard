@@ -1,6 +1,6 @@
 import { AutoScalingClient, DescribeAutoScalingGroupsCommand } from "@aws-sdk/client-auto-scaling";
 import { mockClient } from "aws-sdk-client-mock";
-import { ComplianceStatus } from "@codegen/utils/stringUtils";
+import { ComplianceStatus } from "~runtime/types";
 import checkAutoScalingELBHealthCheck from "./aws_autoscaling_elb_healthcheck_required";
 
 const mockAutoScalingClient = mockClient(AutoScalingClient);
@@ -33,7 +33,7 @@ describe("checkAutoScalingELBHealthCheck", () => {
 			AutoScalingGroups: [mockASGWithELBHealthCheck]
 		});
 
-		const result = await checkAutoScalingELBHealthCheck("us-east-1");
+		const result = await checkAutoScalingELBHealthCheck.execute("us-east-1");
 		expect(result.checks[0].status).toBe(ComplianceStatus.PASS);
 		expect(result.checks[0].resourceName).toBe("test-asg-1");
 		expect(result.checks[0].resourceArn).toBe(mockASGWithELBHealthCheck.AutoScalingGroupARN);
@@ -44,7 +44,7 @@ describe("checkAutoScalingELBHealthCheck", () => {
 			AutoScalingGroups: [mockASGWithoutELBHealthCheck]
 		});
 
-		const result = await checkAutoScalingELBHealthCheck("us-east-1");
+		const result = await checkAutoScalingELBHealthCheck.execute("us-east-1");
 		expect(result.checks[0].status).toBe(ComplianceStatus.PASS);
 		expect(result.checks[0].message).toBe("Auto Scaling group has no load balancer attached");
 	});
@@ -54,14 +54,14 @@ describe("checkAutoScalingELBHealthCheck", () => {
 			AutoScalingGroups: []
 		});
 
-		const result = await checkAutoScalingELBHealthCheck("us-east-1");
+		const result = await checkAutoScalingELBHealthCheck.execute("us-east-1");
 		expect(result.checks[0].status).toBe(ComplianceStatus.NOTAPPLICABLE);
 	});
 
 	it("should return ERROR when API call fails", async () => {
 		mockAutoScalingClient.on(DescribeAutoScalingGroupsCommand).rejects(new Error("API Error"));
 
-		const result = await checkAutoScalingELBHealthCheck("us-east-1");
+		const result = await checkAutoScalingELBHealthCheck.execute("us-east-1");
 		expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
 		expect(result.checks[0].message).toBe("Error checking Auto Scaling groups: API Error");
 	});
@@ -77,7 +77,7 @@ describe("checkAutoScalingELBHealthCheck", () => {
 				AutoScalingGroups: [mockASGWithoutELBHealthCheck]
 			});
 
-		const result = await checkAutoScalingELBHealthCheck("us-east-1");
+		const result = await checkAutoScalingELBHealthCheck.execute("us-east-1");
 		expect(result.checks).toHaveLength(2);
 	});
 });

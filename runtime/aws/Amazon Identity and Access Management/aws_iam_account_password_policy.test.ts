@@ -1,6 +1,6 @@
 import { IAMClient, GetAccountPasswordPolicyCommand } from "@aws-sdk/client-iam";
 import { mockClient } from "aws-sdk-client-mock";
-import { ComplianceStatus } from "@codegen/utils/stringUtils";
+import { ComplianceStatus } from "~runtime/types";
 import checkPasswordPolicyLength from "./aws_iam_account_password_policy";
 
 const mockIAMClient = mockClient(IAMClient);
@@ -18,7 +18,7 @@ describe("checkPasswordPolicyLength", () => {
                 }
             });
 
-            const result = await checkPasswordPolicyLength();
+            const result = await checkPasswordPolicyLength.execute();
             expect(result.checks[0].status).toBe(ComplianceStatus.PASS);
             expect(result.checks[0].resourceName).toBe("Password Policy");
             expect(result.checks[0].message).toBeUndefined();
@@ -31,7 +31,7 @@ describe("checkPasswordPolicyLength", () => {
                 }
             });
 
-            const result = await checkPasswordPolicyLength();
+            const result = await checkPasswordPolicyLength.execute();
             expect(result.checks[0].status).toBe(ComplianceStatus.PASS);
             expect(result.checks[0].resourceName).toBe("Password Policy");
         });
@@ -45,7 +45,7 @@ describe("checkPasswordPolicyLength", () => {
                 }
             });
 
-            const result = await checkPasswordPolicyLength();
+            const result = await checkPasswordPolicyLength.execute();
             expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
             expect(result.checks[0].message).toBe("Password policy minimum length is 8, which is less than the required 14 characters");
         });
@@ -55,7 +55,7 @@ describe("checkPasswordPolicyLength", () => {
                 PasswordPolicy: null
             });
 
-            const result = await checkPasswordPolicyLength();
+            const result = await checkPasswordPolicyLength.execute();
             expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
             expect(result.checks[0].message).toBe("No password policy is configured");
         });
@@ -65,7 +65,7 @@ describe("checkPasswordPolicyLength", () => {
             error.name = "NoSuchEntityException";
             mockIAMClient.on(GetAccountPasswordPolicyCommand).rejects(error);
 
-            const result = await checkPasswordPolicyLength();
+            const result = await checkPasswordPolicyLength.execute();
             expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
             expect(result.checks[0].message).toBe("No password policy is configured");
         });
@@ -75,7 +75,7 @@ describe("checkPasswordPolicyLength", () => {
         it("should return ERROR when API call fails", async () => {
             mockIAMClient.on(GetAccountPasswordPolicyCommand).rejects(new Error("Internal Server Error"));
 
-            const result = await checkPasswordPolicyLength();
+            const result = await checkPasswordPolicyLength.execute();
             expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
             expect(result.checks[0].message).toBe("Error checking password policy: Internal Server Error");
         });
@@ -83,7 +83,7 @@ describe("checkPasswordPolicyLength", () => {
         it("should handle non-Error objects in catch block", async () => {
             mockIAMClient.on(GetAccountPasswordPolicyCommand).rejects("Unknown error");
 
-            const result = await checkPasswordPolicyLength();
+            const result = await checkPasswordPolicyLength.execute();
             expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
             expect(result.checks[0].message).toBe("Error checking password policy: Unknown error");
         });

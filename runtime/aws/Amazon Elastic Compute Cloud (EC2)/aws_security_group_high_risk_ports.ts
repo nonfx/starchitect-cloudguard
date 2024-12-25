@@ -3,9 +3,8 @@ import { EC2Client, DescribeSecurityGroupsCommand } from "@aws-sdk/client-ec2";
 import {
 	printSummary,
 	generateSummary,
-	type ComplianceReport,
-	ComplianceStatus
-} from "@codegen/utils/stringUtils";
+} from "~codegen/utils/stringUtils";
+import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "~runtime/types";
 
 // List of high-risk ports that should be restricted
 const HIGH_RISK_PORTS = new Set([
@@ -35,17 +34,7 @@ async function checkSecurityGroupHighRiskPorts(
 ): Promise<ComplianceReport> {
 	const client = new EC2Client({ region });
 	const results: ComplianceReport = {
-		checks: [],
-		metadoc: {
-			title: "Security groups should not allow unrestricted access to ports with high risk",
-			description: "This control checks if security groups restrict access to high-risk ports from unrestricted sources.",
-			controls: [
-				{
-					id: "AWS-Foundational-Security-Best-Practices_v1.0.0_EC2.19",
-					document: "AWS-Foundational-Security-Best-Practices_v1.0.0"
-				}
-			]
-		}
+		checks: []
 	};
 
 	try {
@@ -129,4 +118,15 @@ if (require.main === module) {
 	printSummary(generateSummary(results));
 }
 
-export default checkSecurityGroupHighRiskPorts;
+export default {
+	title: "Security groups should not allow unrestricted access to ports with high risk",
+	description: "This control checks if security groups restrict access to high-risk ports from unrestricted sources.",
+	controls: [
+		{
+			id: "AWS-Foundational-Security-Best-Practices_v1.0.0_EC2.19",
+			document: "AWS-Foundational-Security-Best-Practices_v1.0.0"
+		}
+	],
+	severity: "MEDIUM",
+	execute: checkSecurityGroupHighRiskPorts
+} satisfies RuntimeTest;

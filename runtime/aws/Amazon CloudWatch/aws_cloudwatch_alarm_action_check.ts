@@ -3,24 +3,13 @@ import { CloudWatchClient, DescribeAlarmsCommand } from '@aws-sdk/client-cloudwa
 import {
 	printSummary,
 	generateSummary,
-	type ComplianceReport,
-	ComplianceStatus
-} from '@codegen/utils/stringUtils';
+} from '~codegen/utils/stringUtils';
+import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "~runtime/types";
 
 async function checkCloudWatchAlarmActions(region: string = 'us-east-1'): Promise<ComplianceReport> {
 	const client = new CloudWatchClient({ region });
 	const results: ComplianceReport = {
-		checks: [],
-		metadoc: {
-			title: 'CloudWatch alarms should have specified actions configured',
-			description: 'This control checks whether an Amazon CloudWatch alarm has at least one action configured for the ALARM state. The control fails if the alarm doesn\'t have an action configured for the ALARM state. Optionally, you can include custom parameter values to also require alarm actions for the INSUFFICIENT_DATA or OK states. This control focuses on whether a CloudWatch alarm has an alarm action configured, whereas CloudWatch.17 focuses on the activation status of a CloudWatch alarm action. We recommend CloudWatch alarm actions to automatically alert you when a monitored metric is outside the defined threshold.',
-			controls: [
-				{
-					id: 'AWS-Foundational-Security-Best-Practices_v1.0.0_CloudTrail.15',
-					document: 'AWS-Foundational-Security-Best-Practices_v1.0.0'
-				}
-			]
-		}
+		checks: []
 	};
 
 	try {
@@ -94,4 +83,15 @@ if (require.main === module) {
 	printSummary(generateSummary(results));
 }
 
-export default checkCloudWatchAlarmActions;
+export default {
+	title: 'CloudWatch alarms should have specified actions configured',
+	description: 'This control checks whether an Amazon CloudWatch alarm has at least one action configured for the ALARM state. The control fails if the alarm doesn\'t have an action configured for the ALARM state. Optionally, you can include custom parameter values to also require alarm actions for the INSUFFICIENT_DATA or OK states. This control focuses on whether a CloudWatch alarm has an alarm action configured, whereas CloudWatch.17 focuses on the activation status of a CloudWatch alarm action. We recommend CloudWatch alarm actions to automatically alert you when a monitored metric is outside the defined threshold.',
+	controls: [
+		{
+			id: 'AWS-Foundational-Security-Best-Practices_v1.0.0_CloudTrail.15',
+			document: 'AWS-Foundational-Security-Best-Practices_v1.0.0'
+		}
+	],
+	severity: "MEDIUM",
+	execute: checkCloudWatchAlarmActions
+} satisfies RuntimeTest;

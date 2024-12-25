@@ -4,9 +4,9 @@ import { OrganizationsClient, DescribeOrganizationCommand } from "@aws-sdk/clien
 import {
 	printSummary,
 	generateSummary,
-	type ComplianceReport,
-	ComplianceStatus
-} from "@codegen/utils/stringUtils";
+} from "~codegen/utils/stringUtils";
+
+import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "~runtime/types";
 
 async function checkIamCentralizedManagement(
 	region: string = "us-east-1"
@@ -15,19 +15,7 @@ async function checkIamCentralizedManagement(
 	const orgClient = new OrganizationsClient({ region });
 
 	const results: ComplianceReport = {
-		checks: [],
-		metadoc: {
-			title:
-				"Ensure IAM users are managed centrally via identity federation or AWS Organizations for multi-account environments",
-			description:
-				"In multi-account environments, IAM user centralization facilitates greater user control. User access beyond the initial account is then provide via role assumption. Centralization of users can be accomplished through federation with an external identity provider or through the use of AWS Organizations.",
-			controls: [
-				{
-					id: "CIS-AWS-Foundations-Benchmark_v3.0.0_1.21",
-					document: "CIS-AWS-Foundations-Benchmark_v3.0.0"
-				}
-			]
-		}
+		checks: []
 	};
 
 	try {
@@ -82,4 +70,17 @@ if (require.main === module) {
 	printSummary(generateSummary(results));
 }
 
-export default checkIamCentralizedManagement;
+export default {
+	title:
+		"Ensure IAM users are managed centrally via identity federation or AWS Organizations for multi-account environments",
+	description:
+		"In multi-account environments, IAM user centralization facilitates greater user control. User access beyond the initial account is then provide via role assumption. Centralization of users can be accomplished through federation with an external identity provider or through the use of AWS Organizations.",
+	controls: [
+		{
+			id: "CIS-AWS-Foundations-Benchmark_v3.0.0_1.21",
+			document: "CIS-AWS-Foundations-Benchmark_v3.0.0"
+		}
+	],
+	severity: "MEDIUM",
+	execute: checkIamCentralizedManagement
+} satisfies RuntimeTest;

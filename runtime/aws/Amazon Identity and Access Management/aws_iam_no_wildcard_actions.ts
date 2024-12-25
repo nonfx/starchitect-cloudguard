@@ -3,9 +3,8 @@ import { IAMClient, ListPoliciesCommand, GetPolicyVersionCommand } from "@aws-sd
 import {
 	printSummary,
 	generateSummary,
-	type ComplianceReport,
-	ComplianceStatus
-} from "@codegen/utils/stringUtils";
+} from "~codegen/utils/stringUtils";
+import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "~runtime/types";
 
 interface PolicyStatement {
 	Effect: string;
@@ -47,17 +46,7 @@ async function checkIamWildcardActions(
 ): Promise<ComplianceReport> {
 	const client = new IAMClient({ region });
 	const results: ComplianceReport = {
-		checks: [],
-		metadoc: {
-			title: "IAM customer managed policies should not allow wildcard actions for services",
-			description: "This control checks if IAM customer managed policies have wildcard actions for services. Using wildcard actions in IAM policies may grant users more privileges than needed.",
-			controls: [
-				{
-					id: "AWS-Foundational-Security-Best-Practices_v1.0.0_IAM.21",
-					document: "AWS-Foundational-Security-Best-Practices_v1.0.0"
-				}
-			]
-		}
+		checks: []
 	};
 
 	try {
@@ -184,4 +173,15 @@ if (require.main === module) {
 	printSummary(generateSummary(results));
 }
 
-export default checkIamWildcardActions;
+export default {
+	title: "IAM customer managed policies should not allow wildcard actions for services",
+	description: "This control checks if IAM customer managed policies have wildcard actions for services. Using wildcard actions in IAM policies may grant users more privileges than needed.",
+	controls: [
+		{
+			id: "AWS-Foundational-Security-Best-Practices_v1.0.0_IAM.21",
+			document: "AWS-Foundational-Security-Best-Practices_v1.0.0"
+		}
+	],
+	severity: "HIGH",
+	execute: checkIamWildcardActions
+} satisfies RuntimeTest;

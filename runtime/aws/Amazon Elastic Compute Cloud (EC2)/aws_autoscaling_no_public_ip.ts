@@ -3,26 +3,15 @@ import { AutoScalingClient, DescribeLaunchConfigurationsCommand, DescribeLaunchC
 import {
   printSummary,
   generateSummary,
-  type ComplianceReport,
-  ComplianceStatus
-} from '@codegen/utils/stringUtils';
+} from '~codegen/utils/stringUtils';
+import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "~runtime/types";
 
 async function checkAutoScalingPublicIp(
   region: string = 'us-east-1'
 ): Promise<ComplianceReport> {
   const client = new AutoScalingClient({ region });
   const results: ComplianceReport = {
-    checks: [],
-    metadoc: {
-      title: 'Auto Scaling group launch configurations should not have Public IP addresses',
-      description: 'Auto Scaling group launch configurations must disable public IP addresses for EC2 instances to enhance network security.',
-      controls: [
-        {
-          id: 'AWS-Foundational-Security-Best-Practices_v1.0.0_AutoScaling.1',
-          document: 'AWS-Foundational-Security-Best-Practices_v1.0.0'
-        }
-      ]
-    }
+    checks: []
   };
 
   try {
@@ -91,4 +80,15 @@ if (require.main === module) {
   printSummary(generateSummary(results));
 }
 
-export default checkAutoScalingPublicIp;
+export default {
+  title: 'Auto Scaling group launch configurations should not have Public IP addresses',
+  description: 'Auto Scaling group launch configurations must disable public IP addresses for EC2 instances to enhance network security.',
+  controls: [
+    {
+      id: 'AWS-Foundational-Security-Best-Practices_v1.0.0_AutoScaling.1',
+      document: 'AWS-Foundational-Security-Best-Practices_v1.0.0'
+    }
+  ],
+  severity: 'MEDIUM',
+  execute: checkAutoScalingPublicIp
+} satisfies RuntimeTest;

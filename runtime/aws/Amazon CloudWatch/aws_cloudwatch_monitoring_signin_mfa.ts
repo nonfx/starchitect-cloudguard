@@ -3,10 +3,10 @@ import { CloudWatchLogsClient, DescribeLogGroupsCommand, DescribeMetricFiltersCo
 
 import {
   printSummary,
-  generateSummary,
-  type ComplianceReport,
-  ComplianceStatus
-} from '@codegen/utils/stringUtils';
+  generateSummary
+} from '~codegen/utils/stringUtils';
+
+import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "~runtime/types";
 
 const REQUIRED_PATTERN = '{ ($.eventName = "ConsoleLogin") && ($.additionalEventData.MFAUsed != "Yes") }';
 
@@ -14,15 +14,7 @@ async function checkMfaMonitoringCompliance(region: string = 'us-east-1'): Promi
   const cwClient = new CloudWatchClient({ region });
   const cwLogsClient = new CloudWatchLogsClient({ region });
   const results: ComplianceReport = {
-    checks: [],
-    metadoc: {
-      title: 'Ensure management console sign-in without MFA is monitored',
-      description: 'Real-time monitoring of API calls can be achieved by directing CloudTrail Logs to CloudWatch Logs, or an external Security information and event management (SIEM) environment, and establishing corresponding metric filters and alarms.',
-      controls: [{
-        id: 'CIS-AWS-Foundations-Benchmark_v3.0.0_4.2',
-        document: 'CIS-AWS-Foundations-Benchmark_v3.0.0'
-      }]
-    }
+    checks: []
   };
 
   try {
@@ -105,4 +97,13 @@ if (require.main === module) {
   printSummary(generateSummary(results));
 }
 
-export default checkMfaMonitoringCompliance;
+export default {
+  title: 'Ensure management console sign-in without MFA is monitored',
+  description: 'Real-time monitoring of API calls can be achieved by directing CloudTrail Logs to CloudWatch Logs, or an external Security information and event management (SIEM) environment, and establishing corresponding metric filters and alarms.',
+  controls: [{
+    id: 'CIS-AWS-Foundations-Benchmark_v3.0.0_4.2',
+    document: 'CIS-AWS-Foundations-Benchmark_v3.0.0'
+  }],
+  severity: 'MEDIUM',
+  execute: checkMfaMonitoringCompliance
+} satisfies RuntimeTest;

@@ -1,19 +1,12 @@
 import { IAMClient, ListUsersCommand, ListAttachedUserPoliciesCommand, ListUserPoliciesCommand } from '@aws-sdk/client-iam';
 
-import { printSummary, generateSummary, type ComplianceReport, ComplianceStatus } from '@codegen/utils/stringUtils';
+import { printSummary, generateSummary } from '~codegen/utils/stringUtils';
+import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "~runtime/types";
 
 async function checkIamUserPolicies(region: string = 'us-east-1'): Promise<ComplianceReport> {
   const client = new IAMClient({ region });
   const results: ComplianceReport = {
-    checks: [],
-    metadoc: {
-      title: 'IAM users should not have IAM policies attached',
-      description: 'IAM users should not have direct policy attachments; instead, policies should be attached to groups or roles to reduce access management complexity and minimize the risk of excessive privileges.',
-      controls: [{
-        id: 'AWS-Foundational-Security-Best-Practices_v1.0.0_IAM.2',
-        document: 'AWS-Foundational-Security-Best-Practices_v1.0.0'
-      }]
-    }
+    checks: []
   };
 
   try {
@@ -93,4 +86,13 @@ if (require.main === module) {
   printSummary(generateSummary(results));
 }
 
-export default checkIamUserPolicies;
+export default {
+  title: 'IAM users should not have IAM policies attached',
+  description: 'IAM users should not have direct policy attachments; instead, policies should be attached to groups or roles to reduce access management complexity and minimize the risk of excessive privileges.',
+  controls: [{
+    id: 'AWS-Foundational-Security-Best-Practices_v1.0.0_IAM.2',
+    document: 'AWS-Foundational-Security-Best-Practices_v1.0.0'
+  }],
+  severity: 'MEDIUM',
+  execute: checkIamUserPolicies
+} satisfies RuntimeTest;

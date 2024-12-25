@@ -1,6 +1,6 @@
 import { EC2Client, DescribeInstancesCommand } from "@aws-sdk/client-ec2";
 import { mockClient } from "aws-sdk-client-mock";
-import { ComplianceStatus } from "@codegen/utils/stringUtils";
+import { ComplianceStatus } from "~runtime/types";
 import checkEc2UserDataSecrets from "./aws_ec2_no_secrets_in_user_data";
 
 const mockEC2Client = mockClient(EC2Client);
@@ -23,7 +23,7 @@ describe("checkEc2UserDataSecrets", () => {
                 }]
             });
 
-            const result = await checkEc2UserDataSecrets();
+            const result = await checkEc2UserDataSecrets.execute();
             expect(result.checks[0].status).toBe(ComplianceStatus.PASS);
             expect(result.checks[0].message).toBe("No user data configured");
         });
@@ -36,7 +36,7 @@ describe("checkEc2UserDataSecrets", () => {
                 }]
             });
 
-            const result = await checkEc2UserDataSecrets();
+            const result = await checkEc2UserDataSecrets.execute();
             expect(result.checks[0].status).toBe(ComplianceStatus.PASS);
         });
 
@@ -45,7 +45,7 @@ describe("checkEc2UserDataSecrets", () => {
                 Reservations: []
             });
 
-            const result = await checkEc2UserDataSecrets();
+            const result = await checkEc2UserDataSecrets.execute();
             expect(result.checks[0].status).toBe(ComplianceStatus.NOTAPPLICABLE);
             expect(result.checks[0].message).toBe("No EC2 instances found in the region");
         });
@@ -60,7 +60,7 @@ describe("checkEc2UserDataSecrets", () => {
                 }]
             });
 
-            const result = await checkEc2UserDataSecrets();
+            const result = await checkEc2UserDataSecrets.execute();
             expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
             expect(result.checks[0].message).toBe("User data contains sensitive information");
         });
@@ -73,7 +73,7 @@ describe("checkEc2UserDataSecrets", () => {
                 }]
             });
 
-            const result = await checkEc2UserDataSecrets();
+            const result = await checkEc2UserDataSecrets.execute();
             expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
             expect(result.checks[0].message).toBe("User data contains sensitive information");
         });
@@ -88,7 +88,7 @@ describe("checkEc2UserDataSecrets", () => {
                 }]
             });
 
-            const result = await checkEc2UserDataSecrets();
+            const result = await checkEc2UserDataSecrets.execute();
             expect(result.checks).toHaveLength(2);
             expect(result.checks[0].status).toBe(ComplianceStatus.PASS);
             expect(result.checks[1].status).toBe(ComplianceStatus.FAIL);
@@ -99,7 +99,7 @@ describe("checkEc2UserDataSecrets", () => {
         it("should return ERROR when API call fails", async () => {
             mockEC2Client.on(DescribeInstancesCommand).rejects(new Error("API Error"));
 
-            const result = await checkEc2UserDataSecrets();
+            const result = await checkEc2UserDataSecrets.execute();
             expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
             expect(result.checks[0].message).toContain("Error checking EC2 instances");
         });
@@ -111,7 +111,7 @@ describe("checkEc2UserDataSecrets", () => {
                 }]
             });
 
-            const result = await checkEc2UserDataSecrets();
+            const result = await checkEc2UserDataSecrets.execute();
             expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
             expect(result.checks[0].message).toBe("Instance found without ID");
         });
@@ -131,7 +131,7 @@ describe("checkEc2UserDataSecrets", () => {
                     }]
                 });
 
-            const result = await checkEc2UserDataSecrets();
+            const result = await checkEc2UserDataSecrets.execute();
             expect(result.checks).toHaveLength(2);
         });
     });

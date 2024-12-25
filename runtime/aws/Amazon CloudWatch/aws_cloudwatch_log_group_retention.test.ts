@@ -1,6 +1,6 @@
 import { CloudWatchLogsClient, DescribeLogGroupsCommand } from "@aws-sdk/client-cloudwatch-logs";
 import { mockClient } from "aws-sdk-client-mock";
-import { ComplianceStatus } from "@codegen/utils/stringUtils";
+import { ComplianceStatus } from "~runtime/types";
 import checkCloudWatchLogGroupRetention from "./aws_cloudwatch_log_group_retention";
 
 const mockCloudWatchLogsClient = mockClient(CloudWatchLogsClient);
@@ -34,7 +34,7 @@ describe("checkCloudWatchLogGroupRetention", () => {
                 logGroups: [mockLogGroups[0]]
             });
 
-            const result = await checkCloudWatchLogGroupRetention("us-east-1");
+            const result = await checkCloudWatchLogGroupRetention.execute("us-east-1");
             expect(result.checks[0].status).toBe(ComplianceStatus.PASS);
             expect(result.checks[0].resourceName).toBe("test-group-1");
         });
@@ -44,7 +44,7 @@ describe("checkCloudWatchLogGroupRetention", () => {
                 logGroups: [mockLogGroups[2]]
             });
 
-            const result = await checkCloudWatchLogGroupRetention("us-east-1");
+            const result = await checkCloudWatchLogGroupRetention.execute("us-east-1");
             expect(result.checks[0].status).toBe(ComplianceStatus.PASS);
             expect(result.checks[0].message).toBe("Retention set to never expire");
         });
@@ -56,7 +56,7 @@ describe("checkCloudWatchLogGroupRetention", () => {
                 logGroups: [mockLogGroups[1]]
             });
 
-            const result = await checkCloudWatchLogGroupRetention("us-east-1");
+            const result = await checkCloudWatchLogGroupRetention.execute("us-east-1");
             expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
             expect(result.checks[0].message).toContain("Retention period (30 days) is less than required");
         });
@@ -69,7 +69,7 @@ describe("checkCloudWatchLogGroupRetention", () => {
                 }]
             });
 
-            const result = await checkCloudWatchLogGroupRetention("us-east-1");
+            const result = await checkCloudWatchLogGroupRetention.execute("us-east-1");
             expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
             expect(result.checks[0].message).toBe("No retention period configured (logs retained indefinitely)");
         });
@@ -81,7 +81,7 @@ describe("checkCloudWatchLogGroupRetention", () => {
                 logGroups: []
             });
 
-            const result = await checkCloudWatchLogGroupRetention("us-east-1");
+            const result = await checkCloudWatchLogGroupRetention.execute("us-east-1");
             expect(result.checks[0].status).toBe(ComplianceStatus.NOTAPPLICABLE);
             expect(result.checks[0].message).toBe("No CloudWatch log groups found in the region");
         });
@@ -94,7 +94,7 @@ describe("checkCloudWatchLogGroupRetention", () => {
                 }]
             });
 
-            const result = await checkCloudWatchLogGroupRetention("us-east-1");
+            const result = await checkCloudWatchLogGroupRetention.execute("us-east-1");
             expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
             expect(result.checks[0].message).toBe("Log group missing ARN");
         });
@@ -112,7 +112,7 @@ describe("checkCloudWatchLogGroupRetention", () => {
                     logGroups: [mockLogGroups[1]]
                 });
 
-            const result = await checkCloudWatchLogGroupRetention("us-east-1");
+            const result = await checkCloudWatchLogGroupRetention.execute("us-east-1");
             expect(result.checks).toHaveLength(2);
             expect(result.checks[0].status).toBe(ComplianceStatus.PASS);
             expect(result.checks[1].status).toBe(ComplianceStatus.FAIL);
@@ -125,7 +125,7 @@ describe("checkCloudWatchLogGroupRetention", () => {
                 new Error("API Error")
             );
 
-            const result = await checkCloudWatchLogGroupRetention("us-east-1");
+            const result = await checkCloudWatchLogGroupRetention.execute("us-east-1");
             expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
             expect(result.checks[0].message).toContain("Error checking CloudWatch log groups: API Error");
         });

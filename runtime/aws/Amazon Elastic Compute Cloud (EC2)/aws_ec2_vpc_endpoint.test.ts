@@ -1,6 +1,6 @@
 import { EC2Client, DescribeInstancesCommand, DescribeVpcEndpointsCommand } from "@aws-sdk/client-ec2";
 import { mockClient } from "aws-sdk-client-mock";
-import { ComplianceStatus } from "@codegen/utils/stringUtils";
+import { ComplianceStatus } from "~runtime/types";
 import checkEc2VpcEndpointCompliance from "./aws_ec2_vpc_endpoint";
 
 const mockEC2Client = mockClient(EC2Client);
@@ -54,7 +54,7 @@ describe("checkEc2VpcEndpointCompliance", () => {
                 .on(DescribeVpcEndpointsCommand)
                 .resolves(mockVpcEndpoints);
 
-            const result = await checkEc2VpcEndpointCompliance("us-east-1");
+            const result = await checkEc2VpcEndpointCompliance.execute("us-east-1");
             expect(result.checks).toHaveLength(2);
             expect(result.checks[0].status).toBe(ComplianceStatus.PASS);
             expect(result.checks[0].resourceName).toBe("VPC vpc-123");
@@ -65,7 +65,7 @@ describe("checkEc2VpcEndpointCompliance", () => {
                 .on(DescribeInstancesCommand)
                 .resolves({ Reservations: [] });
 
-            const result = await checkEc2VpcEndpointCompliance("us-east-1");
+            const result = await checkEc2VpcEndpointCompliance.execute("us-east-1");
             expect(result.checks).toHaveLength(1);
             expect(result.checks[0].status).toBe(ComplianceStatus.NOTAPPLICABLE);
             expect(result.checks[0].message).toBe("No EC2 instances found in the region");
@@ -80,7 +80,7 @@ describe("checkEc2VpcEndpointCompliance", () => {
                 .on(DescribeVpcEndpointsCommand)
                 .resolves({ VpcEndpoints: [] });
 
-            const result = await checkEc2VpcEndpointCompliance("us-east-1");
+            const result = await checkEc2VpcEndpointCompliance.execute("us-east-1");
             expect(result.checks).toHaveLength(2);
             expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
             expect(result.checks[0].message).toContain("no EC2 VPC endpoint");
@@ -102,7 +102,7 @@ describe("checkEc2VpcEndpointCompliance", () => {
                     ]
                 });
 
-            const result = await checkEc2VpcEndpointCompliance("us-east-1");
+            const result = await checkEc2VpcEndpointCompliance.execute("us-east-1");
             expect(result.checks).toHaveLength(2);
             expect(result.checks[0].status).toBe(ComplianceStatus.PASS);
             expect(result.checks[1].status).toBe(ComplianceStatus.FAIL);
@@ -115,7 +115,7 @@ describe("checkEc2VpcEndpointCompliance", () => {
                 .on(DescribeInstancesCommand)
                 .rejects(new Error("API Error"));
 
-            const result = await checkEc2VpcEndpointCompliance("us-east-1");
+            const result = await checkEc2VpcEndpointCompliance.execute("us-east-1");
             expect(result.checks).toHaveLength(1);
             expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
             expect(result.checks[0].message).toContain("Error checking EC2 VPC endpoints");
@@ -128,7 +128,7 @@ describe("checkEc2VpcEndpointCompliance", () => {
                 .on(DescribeVpcEndpointsCommand)
                 .rejects(new Error("API Error"));
 
-            const result = await checkEc2VpcEndpointCompliance("us-east-1");
+            const result = await checkEc2VpcEndpointCompliance.execute("us-east-1");
             expect(result.checks).toHaveLength(1);
             expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
             expect(result.checks[0].message).toContain("Error checking EC2 VPC endpoints");

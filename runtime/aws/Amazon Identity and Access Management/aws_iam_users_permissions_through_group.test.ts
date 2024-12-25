@@ -1,6 +1,6 @@
 import { IAMClient, ListUsersCommand, ListUserPoliciesCommand, ListAttachedUserPoliciesCommand, ListGroupsForUserCommand } from '@aws-sdk/client-iam';
 import { mockClient } from 'aws-sdk-client-mock';
-import { ComplianceStatus } from '@codegen/utils/stringUtils';
+import { ComplianceStatus } from "~runtime/types";
 import checkIamUserPermissionsThroughGroups from './aws_iam_users_permissions_through_group';
 
 const mockIAMClient = mockClient(IAMClient);
@@ -34,7 +34,7 @@ describe('checkIamUserPermissionsThroughGroups', () => {
                 .on(ListGroupsForUserCommand)
                 .resolves({ Groups: [{ GroupName: 'test-group' }] });
 
-            const result = await checkIamUserPermissionsThroughGroups();
+            const result = await checkIamUserPermissionsThroughGroups.execute();
             expect(result.checks[0].status).toBe(ComplianceStatus.PASS);
             expect(result.checks[0].resourceName).toBe(mockUser1.UserName);
         });
@@ -42,7 +42,7 @@ describe('checkIamUserPermissionsThroughGroups', () => {
         it('should return NOTAPPLICABLE when no users exist', async () => {
             mockIAMClient.on(ListUsersCommand).resolves({ Users: [] });
 
-            const result = await checkIamUserPermissionsThroughGroups();
+            const result = await checkIamUserPermissionsThroughGroups.execute();
             expect(result.checks[0].status).toBe(ComplianceStatus.NOTAPPLICABLE);
             expect(result.checks[0].message).toBe('No IAM users found');
         });
@@ -60,7 +60,7 @@ describe('checkIamUserPermissionsThroughGroups', () => {
                 .on(ListGroupsForUserCommand)
                 .resolves({ Groups: [{ GroupName: 'test-group' }] });
 
-            const result = await checkIamUserPermissionsThroughGroups();
+            const result = await checkIamUserPermissionsThroughGroups.execute();
             expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
             expect(result.checks[0].message).toContain('has inline policies');
         });
@@ -76,7 +76,7 @@ describe('checkIamUserPermissionsThroughGroups', () => {
                 .on(ListGroupsForUserCommand)
                 .resolves({ Groups: [{ GroupName: 'test-group' }] });
 
-            const result = await checkIamUserPermissionsThroughGroups();
+            const result = await checkIamUserPermissionsThroughGroups.execute();
             expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
             expect(result.checks[0].message).toContain('has directly attached policies');
         });
@@ -92,7 +92,7 @@ describe('checkIamUserPermissionsThroughGroups', () => {
                 .on(ListGroupsForUserCommand)
                 .resolves({ Groups: [] });
 
-            const result = await checkIamUserPermissionsThroughGroups();
+            const result = await checkIamUserPermissionsThroughGroups.execute();
             expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
             expect(result.checks[0].message).toContain('not member of any groups');
         });
@@ -120,7 +120,7 @@ describe('checkIamUserPermissionsThroughGroups', () => {
                 .on(ListGroupsForUserCommand, { UserName: mockUser2.UserName })
                 .resolves({ Groups: [] });
 
-            const result = await checkIamUserPermissionsThroughGroups();
+            const result = await checkIamUserPermissionsThroughGroups.execute();
             expect(result.checks).toHaveLength(2);
             expect(result.checks[0].status).toBe(ComplianceStatus.PASS);
             expect(result.checks[1].status).toBe(ComplianceStatus.FAIL);
@@ -131,7 +131,7 @@ describe('checkIamUserPermissionsThroughGroups', () => {
         it('should return ERROR when ListUsers fails', async () => {
             mockIAMClient.on(ListUsersCommand).rejects(new Error('Failed to list users'));
 
-            const result = await checkIamUserPermissionsThroughGroups();
+            const result = await checkIamUserPermissionsThroughGroups.execute();
             expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
             expect(result.checks[0].message).toContain('Failed to list users');
         });
@@ -143,7 +143,7 @@ describe('checkIamUserPermissionsThroughGroups', () => {
                 .on(ListUserPoliciesCommand)
                 .rejects(new Error('Failed to list user policies'));
 
-            const result = await checkIamUserPermissionsThroughGroups();
+            const result = await checkIamUserPermissionsThroughGroups.execute();
             expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
             expect(result.checks[0].message).toContain('Failed to list user policies');
         });

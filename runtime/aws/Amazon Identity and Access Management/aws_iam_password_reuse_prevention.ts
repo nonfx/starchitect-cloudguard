@@ -3,26 +3,15 @@ import { IAMClient, GetAccountPasswordPolicyCommand } from '@aws-sdk/client-iam'
 import {
 	printSummary,
 	generateSummary,
-	type ComplianceReport,
-	ComplianceStatus
-} from '@codegen/utils/stringUtils';
+} from '~codegen/utils/stringUtils';
+import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "~runtime/types";
 
 async function checkPasswordReusePreventionCompliance(
 	region: string = 'us-east-1'
 ): Promise<ComplianceReport> {
 	const client = new IAMClient({ region });
 	const results: ComplianceReport = {
-		checks: [],
-		metadoc: {
-			title: 'Ensure IAM password policy prevents password reuse',
-			description: 'IAM password policies can prevent the reuse of a given password by the same user. It is recommended that the password policy prevent the reuse of passwords.',
-			controls: [
-				{
-					id: 'CIS-AWS-Foundations-Benchmark_v3.0.0_1.9',
-					document: 'CIS-AWS-Foundations-Benchmark_v3.0.0'
-				}
-			]
-		}
+		checks: []
 	};
 
 	try {
@@ -76,4 +65,15 @@ if (require.main === module) {
 	printSummary(generateSummary(results));
 }
 
-export default checkPasswordReusePreventionCompliance;
+export default {
+	title: 'Ensure IAM password policy prevents password reuse',
+	description: 'IAM password policies can prevent the reuse of a given password by the same user. It is recommended that the password policy prevent the reuse of passwords.',
+	controls: [
+		{
+			id: 'CIS-AWS-Foundations-Benchmark_v3.0.0_1.9',
+			document: 'CIS-AWS-Foundations-Benchmark_v3.0.0'
+		}
+	],
+	severity: 'MEDIUM',
+	execute: checkPasswordReusePreventionCompliance
+} satisfies RuntimeTest;

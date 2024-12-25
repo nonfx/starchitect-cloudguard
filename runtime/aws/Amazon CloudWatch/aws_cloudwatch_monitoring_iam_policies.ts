@@ -1,5 +1,5 @@
-import { 
-  CloudWatchClient, 
+import {
+  CloudWatchClient,
   GetMetricDataCommand,
   DescribeAlarmsCommand
 } from '@aws-sdk/client-cloudwatch';
@@ -12,10 +12,10 @@ import {
 
 import {
   printSummary,
-  generateSummary,
-  ComplianceStatus,
-  type ComplianceReport
-} from '@codegen/utils/stringUtils';
+  generateSummary
+} from '~codegen/utils/stringUtils';
+
+import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "~runtime/types";
 
 const REQUIRED_PATTERN = '{($.eventName=DeleteGroupPolicy)||($.eventName=DeleteRolePolicy)||($.eventName=DeleteUserPolicy)||($.eventName=PutGroupPolicy)||($.eventName=PutRolePolicy)||($.eventName=PutUserPolicy)||($.eventName=CreatePolicy)||($.eventName=DeletePolicy)||($.eventName=CreatePolicyVersion)||($.eventName=DeletePolicyVersion)||($.eventName=AttachRolePolicy)||($.eventName=DetachRolePolicy)||($.eventName=AttachUserPolicy)||($.eventName=DetachUserPolicy)||($.eventName=AttachGroupPolicy)||($.eventName=DetachGroupPolicy)}';
 
@@ -25,21 +25,13 @@ async function checkIamPolicyMonitoring(
   const cloudwatchClient = new CloudWatchClient({ region });
   const logsClient = new CloudWatchLogsClient({ region });
   const results: ComplianceReport = {
-    checks: [],
-    metadoc: {
-      title: 'Ensure IAM policy changes are monitored',
-      description: 'Real-time monitoring of API calls can be achieved by directing CloudTrail Logs to CloudWatch Logs, or an external Security information and event management (SIEM) environment, and establishing corresponding metric filters and alarms. It is recommended that a metric filter and alarm be established changes made to Identity and Access Management (IAM) policies.',
-      controls: [{
-        id: 'CIS-AWS-Foundations-Benchmark_v3.0.0_4.4',
-        document: 'CIS-AWS-Foundations-Benchmark_v3.0.0'
-      }]
-    }
+    checks: []
   };
 
   try {
     // Get all log groups
     const logGroups = await logsClient.send(new DescribeLogGroupsCommand({}));
-    
+
     if (!logGroups.logGroups || logGroups.logGroups.length === 0) {
       results.checks.push({
         resourceName: 'CloudWatch Logs',
@@ -116,4 +108,13 @@ if (require.main === module) {
   printSummary(generateSummary(results));
 }
 
-export default checkIamPolicyMonitoring;
+export default {
+  title: 'Ensure IAM policy changes are monitored',
+  description: 'Real-time monitoring of API calls can be achieved by directing CloudTrail Logs to CloudWatch Logs, or an external Security information and event management (SIEM) environment, and establishing corresponding metric filters and alarms. It is recommended that a metric filter and alarm be established changes made to Identity and Access Management (IAM) policies.',
+  controls: [{
+    id: 'CIS-AWS-Foundations-Benchmark_v3.0.0_4.4',
+    document: 'CIS-AWS-Foundations-Benchmark_v3.0.0'
+  }],
+  severity: 'MEDIUM',
+  execute: checkIamPolicyMonitoring
+} satisfies RuntimeTest;

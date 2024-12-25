@@ -1,6 +1,6 @@
 import { EC2Client, DescribeInstancesCommand } from "@aws-sdk/client-ec2";
 import { mockClient } from "aws-sdk-client-mock";
-import { ComplianceStatus } from "@codegen/utils/stringUtils";
+import { ComplianceStatus } from "~runtime/types";
 import checkIamInstanceRoles from "./aws_iam_instance_roles";
 
 const mockEC2Client = mockClient(EC2Client);
@@ -32,7 +32,7 @@ describe("checkIamInstanceRoles", () => {
                 }]
             });
 
-            const result = await checkIamInstanceRoles("us-east-1");
+            const result = await checkIamInstanceRoles.execute("us-east-1");
             expect(result.checks[0].status).toBe(ComplianceStatus.PASS);
             expect(result.checks[0].resourceName).toBe(mockInstanceWithRole.InstanceId);
             expect(result.checks[0].resourceArn).toBe(mockInstanceWithRole.IamInstanceProfile.Arn);
@@ -49,7 +49,7 @@ describe("checkIamInstanceRoles", () => {
                     Reservations: [{ Instances: [mockInstanceWithRole] }]
                 });
 
-            const result = await checkIamInstanceRoles("us-east-1");
+            const result = await checkIamInstanceRoles.execute("us-east-1");
             expect(result.checks).toHaveLength(2);
             expect(result.checks.every(check => check.status === ComplianceStatus.PASS)).toBe(true);
         });
@@ -63,7 +63,7 @@ describe("checkIamInstanceRoles", () => {
                 }]
             });
 
-            const result = await checkIamInstanceRoles("us-east-1");
+            const result = await checkIamInstanceRoles.execute("us-east-1");
             expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
             expect(result.checks[0].message).toBe("EC2 instance does not have an IAM role attached");
         });
@@ -75,7 +75,7 @@ describe("checkIamInstanceRoles", () => {
                 }]
             });
 
-            const result = await checkIamInstanceRoles("us-east-1");
+            const result = await checkIamInstanceRoles.execute("us-east-1");
             expect(result.checks).toHaveLength(2);
             expect(result.checks[0].status).toBe(ComplianceStatus.PASS);
             expect(result.checks[1].status).toBe(ComplianceStatus.FAIL);
@@ -88,7 +88,7 @@ describe("checkIamInstanceRoles", () => {
                 Reservations: []
             });
 
-            const result = await checkIamInstanceRoles("us-east-1");
+            const result = await checkIamInstanceRoles.execute("us-east-1");
             expect(result.checks[0].status).toBe(ComplianceStatus.NOTAPPLICABLE);
             expect(result.checks[0].message).toBe("No running EC2 instances found in the region");
         });
@@ -100,7 +100,7 @@ describe("checkIamInstanceRoles", () => {
                 }]
             });
 
-            const result = await checkIamInstanceRoles("us-east-1");
+            const result = await checkIamInstanceRoles.execute("us-east-1");
             expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
             expect(result.checks[0].message).toBe("Instance found without Instance ID");
         });
@@ -110,7 +110,7 @@ describe("checkIamInstanceRoles", () => {
                 new Error("API call failed")
             );
 
-            const result = await checkIamInstanceRoles("us-east-1");
+            const result = await checkIamInstanceRoles.execute("us-east-1");
             expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
             expect(result.checks[0].message).toContain("Error checking EC2 instances");
         });

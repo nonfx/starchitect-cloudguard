@@ -3,24 +3,13 @@ import { EC2Client, DescribeImagesCommand } from '@aws-sdk/client-ec2';
 import {
 	printSummary,
 	generateSummary,
-	type ComplianceReport,
-	ComplianceStatus
-} from '@codegen/utils/stringUtils';
+} from '~codegen/utils/stringUtils';
+import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "~runtime/types";
 
 async function checkAmiEncryption(region: string = 'us-east-1'): Promise<ComplianceReport> {
 	const client = new EC2Client({ region });
 	const results: ComplianceReport = {
-		checks: [],
-		metadoc: {
-			title: 'Ensure Images (AMI\'s) are encrypted',
-			description: 'Amazon Machine Images should utilize EBS Encrypted snapshots.',
-			controls: [
-				{
-					id: 'CIS-AWS-Compute-Services-Benchmark_v1.0.0_2.1.2',
-					document: 'CIS-AWS-Compute-Services-Benchmark_v1.0.0'
-				}
-			]
-		}
+		checks: []
 	};
 
 	try {
@@ -92,4 +81,15 @@ if (require.main === module) {
 	printSummary(generateSummary(results));
 }
 
-export default checkAmiEncryption;
+export default {
+	title: 'Ensure Images (AMI\'s) are encrypted',
+	description: 'Amazon Machine Images should utilize EBS Encrypted snapshots.',
+	controls: [
+		{
+			id: 'CIS-AWS-Compute-Services-Benchmark_v1.0.0_2.1.2',
+			document: 'CIS-AWS-Compute-Services-Benchmark_v1.0.0'
+		}
+	],
+	severity: 'MEDIUM',
+	execute: checkAmiEncryption
+} satisfies RuntimeTest;

@@ -3,27 +3,15 @@ import { EFSClient, DescribeAccessPointsCommand } from '@aws-sdk/client-efs';
 import {
 	printSummary,
 	generateSummary,
-	type ComplianceReport,
-	ComplianceStatus
-} from '@codegen/utils/stringUtils';
+} from '~codegen/utils/stringUtils';
+import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "~runtime/types";
 
 async function checkEfsAccessPointUserIdentity(
 	region: string = 'us-east-1'
 ): Promise<ComplianceReport> {
 	const client = new EFSClient({ region });
 	const results: ComplianceReport = {
-		checks: [],
-		metadoc: {
-			title: 'EFS access points should enforce a user identity',
-			description:
-				'EFS access points must enforce user identity by defining POSIX user identity during creation for secure application access management.',
-			controls: [
-				{
-					id: 'AWS-Foundational-Security-Best-Practices_v1.0.0_EFS.4',
-					document: 'AWS-Foundational-Security-Best-Practices_v1.0.0'
-				}
-			]
-		}
+		checks: []
 	};
 
 	try {
@@ -85,4 +73,16 @@ if (require.main === module) {
 	printSummary(generateSummary(results));
 }
 
-export default checkEfsAccessPointUserIdentity;
+export default {
+	title: 'EFS access points should enforce a user identity',
+	description:
+		'EFS access points must enforce user identity by defining POSIX user identity during creation for secure application access management.',
+	controls: [
+		{
+			id: 'AWS-Foundational-Security-Best-Practices_v1.0.0_EFS.4',
+			document: 'AWS-Foundational-Security-Best-Practices_v1.0.0'
+		}
+	],
+	severity: 'MEDIUM',
+	execute: checkEfsAccessPointUserIdentity
+} satisfies RuntimeTest;

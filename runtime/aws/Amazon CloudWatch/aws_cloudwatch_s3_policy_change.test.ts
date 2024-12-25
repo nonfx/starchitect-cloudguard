@@ -1,7 +1,7 @@
 import { CloudWatchClient, DescribeAlarmsCommand } from '@aws-sdk/client-cloudwatch';
 import { CloudWatchLogsClient, DescribeLogGroupsCommand, DescribeMetricFiltersCommand } from '@aws-sdk/client-cloudwatch-logs';
 import { mockClient } from 'aws-sdk-client-mock';
-import { ComplianceStatus } from '@codegen/utils/stringUtils';
+import { ComplianceStatus } from "~runtime/types";
 import checkS3PolicyMonitoring from './aws_cloudwatch_s3_policy_change';
 
 const mockCloudWatchClient = mockClient(CloudWatchClient);
@@ -40,7 +40,7 @@ describe('checkS3PolicyMonitoring', () => {
                 }]
             });
 
-            const result = await checkS3PolicyMonitoring('us-east-1');
+            const result = await checkS3PolicyMonitoring.execute('us-east-1');
             expect(result.checks[0].status).toBe(ComplianceStatus.PASS);
             expect(result.checks[0].resourceName).toBe('test-log-group');
         });
@@ -52,7 +52,7 @@ describe('checkS3PolicyMonitoring', () => {
                 logGroups: []
             });
 
-            const result = await checkS3PolicyMonitoring('us-east-1');
+            const result = await checkS3PolicyMonitoring.execute('us-east-1');
             expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
             expect(result.checks[0].message).toBe('No CloudWatch Log Groups found');
         });
@@ -69,7 +69,7 @@ describe('checkS3PolicyMonitoring', () => {
                 metricFilters: []
             });
 
-            const result = await checkS3PolicyMonitoring('us-east-1');
+            const result = await checkS3PolicyMonitoring.execute('us-east-1');
             expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
             expect(result.checks[0].message).toContain('does not have required metric filter');
         });
@@ -95,7 +95,7 @@ describe('checkS3PolicyMonitoring', () => {
                 MetricAlarms: []
             });
 
-            const result = await checkS3PolicyMonitoring('us-east-1');
+            const result = await checkS3PolicyMonitoring.execute('us-east-1');
             expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
             expect(result.checks[0].message).toContain('No alarms configured');
         });
@@ -107,7 +107,7 @@ describe('checkS3PolicyMonitoring', () => {
                 new Error('API Error')
             );
 
-            const result = await checkS3PolicyMonitoring('us-east-1');
+            const result = await checkS3PolicyMonitoring.execute('us-east-1');
             expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
             expect(result.checks[0].message).toContain('Error checking CloudWatch configuration');
         });
@@ -117,7 +117,7 @@ describe('checkS3PolicyMonitoring', () => {
                 logGroups: [{ arn: 'test-arn' }] // Missing logGroupName
             });
 
-            const result = await checkS3PolicyMonitoring('us-east-1');
+            const result = await checkS3PolicyMonitoring.execute('us-east-1');
             expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
             expect(result.checks[0].message).toContain('No monitoring configuration found');
         });

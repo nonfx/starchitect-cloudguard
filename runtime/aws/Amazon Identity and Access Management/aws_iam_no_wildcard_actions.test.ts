@@ -1,6 +1,6 @@
 import { IAMClient, ListPoliciesCommand, GetPolicyVersionCommand } from "@aws-sdk/client-iam";
 import { mockClient } from "aws-sdk-client-mock";
-import { ComplianceStatus } from "@codegen/utils/stringUtils";
+import { ComplianceStatus } from "~runtime/types";
 import checkIamWildcardActions from "./aws_iam_no_wildcard_actions";
 
 const mockIAMClient = mockClient(IAMClient);
@@ -56,7 +56,7 @@ describe("checkIamWildcardActions", () => {
 				}
 			});
 
-			const result = await checkIamWildcardActions();
+			const result = await checkIamWildcardActions.execute();
 			expect(result.checks[0].status).toBe(ComplianceStatus.PASS);
 			expect(result.checks[0].resourceName).toBe("RestrictedPolicy");
 		});
@@ -66,7 +66,7 @@ describe("checkIamWildcardActions", () => {
 				Policies: []
 			});
 
-			const result = await checkIamWildcardActions();
+			const result = await checkIamWildcardActions.execute();
 			expect(result.checks[0].status).toBe(ComplianceStatus.NOTAPPLICABLE);
 			expect(result.checks[0].message).toBe("No customer managed policies found");
 		});
@@ -84,7 +84,7 @@ describe("checkIamWildcardActions", () => {
 				}
 			});
 
-			const result = await checkIamWildcardActions();
+			const result = await checkIamWildcardActions.execute();
 			expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
 			expect(result.checks[0].message).toBe("Policy contains wildcard actions for services");
 		});
@@ -108,7 +108,7 @@ describe("checkIamWildcardActions", () => {
 					}
 				});
 
-			const result = await checkIamWildcardActions();
+			const result = await checkIamWildcardActions.execute();
 			expect(result.checks).toHaveLength(2);
 			expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
 			expect(result.checks[1].status).toBe(ComplianceStatus.PASS);
@@ -119,7 +119,7 @@ describe("checkIamWildcardActions", () => {
 		it("should handle ListPolicies API errors", async () => {
 			mockIAMClient.on(ListPoliciesCommand).rejects(new Error("API Error"));
 
-			const result = await checkIamWildcardActions();
+			const result = await checkIamWildcardActions.execute();
 			expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
 			expect(result.checks[0].message).toContain("Error listing policies: API Error");
 		});
@@ -131,7 +131,7 @@ describe("checkIamWildcardActions", () => {
 
 			mockIAMClient.on(GetPolicyVersionCommand).rejects(new Error("Version not found"));
 
-			const result = await checkIamWildcardActions();
+			const result = await checkIamWildcardActions.execute();
 			expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
 			expect(result.checks[0].message).toContain("Error fetching policy version");
 		});
@@ -147,7 +147,7 @@ describe("checkIamWildcardActions", () => {
 				}
 			});
 
-			const result = await checkIamWildcardActions();
+			const result = await checkIamWildcardActions.execute();
 			expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
 			expect(result.checks[0].message).toContain("Error parsing policy document");
 		});

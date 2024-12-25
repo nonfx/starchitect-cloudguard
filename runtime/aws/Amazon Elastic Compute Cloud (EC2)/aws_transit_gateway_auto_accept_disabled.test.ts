@@ -1,6 +1,6 @@
 import { EC2Client, DescribeTransitGatewaysCommand } from "@aws-sdk/client-ec2";
 import { mockClient } from "aws-sdk-client-mock";
-import { ComplianceStatus } from "@codegen/utils/stringUtils";
+import { ComplianceStatus } from "~runtime/types";
 import checkTransitGatewayAutoAccept from "./aws_transit_gateway_auto_accept_disabled";
 
 const mockEC2Client = mockClient(EC2Client);
@@ -32,7 +32,7 @@ describe("checkTransitGatewayAutoAccept", () => {
                 TransitGateways: [mockTransitGatewayCompliant]
             });
 
-            const result = await checkTransitGatewayAutoAccept("us-east-1");
+            const result = await checkTransitGatewayAutoAccept.execute("us-east-1");
             expect(result.checks[0].status).toBe(ComplianceStatus.PASS);
             expect(result.checks[0].resourceName).toBe("tgw-123456789");
             expect(result.checks[0].resourceArn).toBe(mockTransitGatewayCompliant.TransitGatewayArn);
@@ -43,7 +43,7 @@ describe("checkTransitGatewayAutoAccept", () => {
                 TransitGateways: []
             });
 
-            const result = await checkTransitGatewayAutoAccept("us-east-1");
+            const result = await checkTransitGatewayAutoAccept.execute("us-east-1");
             expect(result.checks[0].status).toBe(ComplianceStatus.NOTAPPLICABLE);
             expect(result.checks[0].message).toBe("No Transit Gateways found in the region");
         });
@@ -55,7 +55,7 @@ describe("checkTransitGatewayAutoAccept", () => {
                 TransitGateways: [mockTransitGatewayNonCompliant]
             });
 
-            const result = await checkTransitGatewayAutoAccept("us-east-1");
+            const result = await checkTransitGatewayAutoAccept.execute("us-east-1");
             expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
             expect(result.checks[0].message).toBe(
                 "Transit Gateway is configured to automatically accept VPC attachment requests"
@@ -67,7 +67,7 @@ describe("checkTransitGatewayAutoAccept", () => {
                 TransitGateways: [mockTransitGatewayCompliant, mockTransitGatewayNonCompliant]
             });
 
-            const result = await checkTransitGatewayAutoAccept("us-east-1");
+            const result = await checkTransitGatewayAutoAccept.execute("us-east-1");
             expect(result.checks).toHaveLength(2);
             expect(result.checks[0].status).toBe(ComplianceStatus.PASS);
             expect(result.checks[1].status).toBe(ComplianceStatus.FAIL);
@@ -78,7 +78,7 @@ describe("checkTransitGatewayAutoAccept", () => {
                 TransitGateways: [{ Options: { AutoAcceptSharedAttachments: "enable" } }]
             });
 
-            const result = await checkTransitGatewayAutoAccept("us-east-1");
+            const result = await checkTransitGatewayAutoAccept.execute("us-east-1");
             expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
             expect(result.checks[0].message).toBe("Transit Gateway found without ID or ARN");
         });
@@ -90,7 +90,7 @@ describe("checkTransitGatewayAutoAccept", () => {
                 new Error("API call failed")
             );
 
-            const result = await checkTransitGatewayAutoAccept("us-east-1");
+            const result = await checkTransitGatewayAutoAccept.execute("us-east-1");
             expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
             expect(result.checks[0].message).toContain("Error checking Transit Gateways");
         });

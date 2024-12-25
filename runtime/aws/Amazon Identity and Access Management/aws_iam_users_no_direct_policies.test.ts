@@ -1,6 +1,6 @@
 import { IAMClient, ListUsersCommand, ListAttachedUserPoliciesCommand, ListUserPoliciesCommand } from '@aws-sdk/client-iam';
 import { mockClient } from 'aws-sdk-client-mock';
-import { ComplianceStatus } from '@codegen/utils/stringUtils';
+import { ComplianceStatus } from "~runtime/types";
 import checkIamUserPolicies from './aws_iam_users_no_direct_policies';
 
 const mockIAMClient = mockClient(IAMClient);
@@ -30,7 +30,7 @@ describe('checkIamUserPolicies', () => {
                 .on(ListAttachedUserPoliciesCommand).resolves({ AttachedPolicies: [] })
                 .on(ListUserPoliciesCommand).resolves({ PolicyNames: [] });
 
-            const result = await checkIamUserPolicies();
+            const result = await checkIamUserPolicies.execute();
             expect(result.checks).toHaveLength(2);
             expect(result.checks[0].status).toBe(ComplianceStatus.PASS);
             expect(result.checks[1].status).toBe(ComplianceStatus.PASS);
@@ -39,7 +39,7 @@ describe('checkIamUserPolicies', () => {
         it('should return NOTAPPLICABLE when no users exist', async () => {
             mockIAMClient.on(ListUsersCommand).resolves({ Users: [] });
 
-            const result = await checkIamUserPolicies();
+            const result = await checkIamUserPolicies.execute();
             expect(result.checks).toHaveLength(1);
             expect(result.checks[0].status).toBe(ComplianceStatus.NOTAPPLICABLE);
             expect(result.checks[0].message).toBe('No IAM users found');
@@ -58,7 +58,7 @@ describe('checkIamUserPolicies', () => {
                 })
                 .on(ListUserPoliciesCommand).resolves({ PolicyNames: [] });
 
-            const result = await checkIamUserPolicies();
+            const result = await checkIamUserPolicies.execute();
             expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
             expect(result.checks[0].message).toContain('attached');
         });
@@ -69,7 +69,7 @@ describe('checkIamUserPolicies', () => {
                 .on(ListAttachedUserPoliciesCommand).resolves({ AttachedPolicies: [] })
                 .on(ListUserPoliciesCommand).resolves({ PolicyNames: ['InlinePolicy1'] });
 
-            const result = await checkIamUserPolicies();
+            const result = await checkIamUserPolicies.execute();
             expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
             expect(result.checks[0].message).toContain('inline');
         });
@@ -85,7 +85,7 @@ describe('checkIamUserPolicies', () => {
                 })
                 .on(ListUserPoliciesCommand).resolves({ PolicyNames: ['InlinePolicy1'] });
 
-            const result = await checkIamUserPolicies();
+            const result = await checkIamUserPolicies.execute();
             expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
             expect(result.checks[0].message).toContain('attached and inline');
         });
@@ -95,7 +95,7 @@ describe('checkIamUserPolicies', () => {
         it('should return ERROR when ListUsers fails', async () => {
             mockIAMClient.on(ListUsersCommand).rejects(new Error('Failed to list users'));
 
-            const result = await checkIamUserPolicies();
+            const result = await checkIamUserPolicies.execute();
             expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
             expect(result.checks[0].message).toContain('Failed to list users');
         });
@@ -105,7 +105,7 @@ describe('checkIamUserPolicies', () => {
                 .on(ListUsersCommand).resolves({ Users: [mockUsers[0]] })
                 .on(ListAttachedUserPoliciesCommand).rejects(new Error('Access denied'));
 
-            const result = await checkIamUserPolicies();
+            const result = await checkIamUserPolicies.execute();
             expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
             expect(result.checks[0].message).toContain('Error checking user policies');
         });
@@ -115,7 +115,7 @@ describe('checkIamUserPolicies', () => {
                 Users: [{ CreateDate: new Date() }]
             });
 
-            const result = await checkIamUserPolicies();
+            const result = await checkIamUserPolicies.execute();
             expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
             expect(result.checks[0].message).toBe('User found without name or ARN');
         });

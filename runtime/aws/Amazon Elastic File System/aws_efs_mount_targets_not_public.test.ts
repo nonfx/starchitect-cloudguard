@@ -1,7 +1,7 @@
 import { EFSClient, DescribeMountTargetsCommand } from "@aws-sdk/client-efs";
 import { EC2Client, DescribeSubnetsCommand } from "@aws-sdk/client-ec2";
 import { mockClient } from "aws-sdk-client-mock";
-import { ComplianceStatus } from "@codegen/utils/stringUtils";
+import { ComplianceStatus } from "~runtime/types";
 import checkEfsMountTargetsPublicSubnets from "./aws_efs_mount_targets_not_public";
 
 const mockEfsClient = mockClient(EFSClient);
@@ -40,7 +40,7 @@ describe("checkEfsMountTargetsPublicSubnets", () => {
                 Subnets: [mockPrivateSubnet]
             });
 
-            const result = await checkEfsMountTargetsPublicSubnets("us-east-1");
+            const result = await checkEfsMountTargetsPublicSubnets.execute("us-east-1");
             expect(result.checks[0].status).toBe(ComplianceStatus.PASS);
             expect(result.checks[0].resourceName).toBe(mockMountTarget.MountTargetId);
         });
@@ -50,7 +50,7 @@ describe("checkEfsMountTargetsPublicSubnets", () => {
                 MountTargets: []
             });
 
-            const result = await checkEfsMountTargetsPublicSubnets("us-east-1");
+            const result = await checkEfsMountTargetsPublicSubnets.execute("us-east-1");
             expect(result.checks[0].status).toBe(ComplianceStatus.NOTAPPLICABLE);
             expect(result.checks[0].message).toBe("No EFS mount targets found in the region");
         });
@@ -65,7 +65,7 @@ describe("checkEfsMountTargetsPublicSubnets", () => {
                 Subnets: [mockPublicSubnet]
             });
 
-            const result = await checkEfsMountTargetsPublicSubnets("us-east-1");
+            const result = await checkEfsMountTargetsPublicSubnets.execute("us-east-1");
             expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
             expect(result.checks[0].message).toContain("Mount target is associated with public subnet");
         });
@@ -75,7 +75,7 @@ describe("checkEfsMountTargetsPublicSubnets", () => {
                 MountTargets: [{ MountTargetId: "fsmt-12345678" }]
             });
 
-            const result = await checkEfsMountTargetsPublicSubnets("us-east-1");
+            const result = await checkEfsMountTargetsPublicSubnets.execute("us-east-1");
             expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
             expect(result.checks[0].message).toContain("Mount target found without subnet ID");
         });
@@ -87,7 +87,7 @@ describe("checkEfsMountTargetsPublicSubnets", () => {
                 new Error("Failed to describe mount targets")
             );
 
-            const result = await checkEfsMountTargetsPublicSubnets("us-east-1");
+            const result = await checkEfsMountTargetsPublicSubnets.execute("us-east-1");
             expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
             expect(result.checks[0].message).toContain("Error checking EFS mount targets");
         });
@@ -100,7 +100,7 @@ describe("checkEfsMountTargetsPublicSubnets", () => {
                 new Error("Failed to describe subnets")
             );
 
-            const result = await checkEfsMountTargetsPublicSubnets("us-east-1");
+            const result = await checkEfsMountTargetsPublicSubnets.execute("us-east-1");
             expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
             expect(result.checks[0].message).toContain("Error checking subnet");
         });
@@ -113,7 +113,7 @@ describe("checkEfsMountTargetsPublicSubnets", () => {
                 Subnets: []
             });
 
-            const result = await checkEfsMountTargetsPublicSubnets("us-east-1");
+            const result = await checkEfsMountTargetsPublicSubnets.execute("us-east-1");
             expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
             expect(result.checks[0].message).toContain("Subnet");
             expect(result.checks[0].message).toContain("not found");
@@ -128,14 +128,14 @@ describe("checkEfsMountTargetsPublicSubnets", () => {
                     { ...mockMountTarget, MountTargetId: "fsmt-2", SubnetId: "subnet-2" }
                 ]
             });
-            
+
             mockEc2Client
                 .on(DescribeSubnetsCommand, { SubnetIds: ["subnet-1"] })
                 .resolves({ Subnets: [mockPrivateSubnet] })
                 .on(DescribeSubnetsCommand, { SubnetIds: ["subnet-2"] })
                 .resolves({ Subnets: [mockPublicSubnet] });
 
-            const result = await checkEfsMountTargetsPublicSubnets("us-east-1");
+            const result = await checkEfsMountTargetsPublicSubnets.execute("us-east-1");
             expect(result.checks).toHaveLength(2);
             expect(result.checks[0].status).toBe(ComplianceStatus.PASS);
             expect(result.checks[1].status).toBe(ComplianceStatus.FAIL);

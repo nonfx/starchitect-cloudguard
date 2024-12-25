@@ -3,24 +3,13 @@ import { EFSClient, DescribeFileSystemsCommand } from '@aws-sdk/client-efs';
 import {
 	printSummary,
 	generateSummary,
-	type ComplianceReport,
-	ComplianceStatus
-} from '@codegen/utils/stringUtils';
+} from '~codegen/utils/stringUtils';
+import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "~runtime/types";
 
 async function checkEfsEncryption(region: string = 'us-east-1'): Promise<ComplianceReport> {
 	const client = new EFSClient({ region });
 	const results: ComplianceReport = {
-		checks: [],
-		metadoc: {
-			title: 'Ensure that encryption is enabled for EFS file systems',
-			description: 'EFS data should be encrypted at rest using AWS KMS (Key Management Service).',
-			controls: [
-				{
-					id: 'CIS-AWS-Foundations-Benchmark_v3.0.0_2.4.1',
-					document: 'CIS-AWS-Foundations-Benchmark_v3.0.0'
-				}
-			]
-		}
+		checks: []
 	};
 
 	try {
@@ -80,4 +69,15 @@ if (require.main === module) {
 	printSummary(generateSummary(results));
 }
 
-export default checkEfsEncryption;
+export default {
+	title: 'Ensure that encryption is enabled for EFS file systems',
+	description: 'EFS data should be encrypted at rest using AWS KMS (Key Management Service).',
+	controls: [
+		{
+			id: 'CIS-AWS-Foundations-Benchmark_v3.0.0_2.4.1',
+			document: 'CIS-AWS-Foundations-Benchmark_v3.0.0'
+		}
+	],
+	severity: 'MEDIUM',
+	execute: checkEfsEncryption
+} satisfies RuntimeTest;

@@ -1,11 +1,11 @@
 import { CloudWatchClient, DescribeAlarmsCommand } from '@aws-sdk/client-cloudwatch';
-import { 
-    CloudWatchLogsClient, 
-    DescribeLogGroupsCommand, 
-    DescribeMetricFiltersCommand 
+import {
+    CloudWatchLogsClient,
+    DescribeLogGroupsCommand,
+    DescribeMetricFiltersCommand
 } from '@aws-sdk/client-cloudwatch-logs';
 import { mockClient } from 'aws-sdk-client-mock';
-import { ComplianceStatus } from '@codegen/utils/stringUtils';
+import { ComplianceStatus } from "~runtime/types";
 import checkConfigChangeMonitoring from './aws_cloudwatch_config';
 
 const mockCloudWatchClient = mockClient(CloudWatchClient);
@@ -32,16 +32,16 @@ describe('checkConfigChangeMonitoring', () => {
             mockCloudWatchLogsClient
                 .on(DescribeLogGroupsCommand)
                 .resolves({ logGroups: [mockLogGroup] });
-            
+
             mockCloudWatchLogsClient
                 .on(DescribeMetricFiltersCommand)
                 .resolves({ metricFilters: [mockMetricFilter] });
-            
+
             mockCloudWatchClient
                 .on(DescribeAlarmsCommand)
                 .resolves({ MetricAlarms: [{ AlarmName: 'ConfigChangesAlarm' }] });
 
-            const result = await checkConfigChangeMonitoring('us-east-1');
+            const result = await checkConfigChangeMonitoring.execute('us-east-1');
             expect(result.checks[0].status).toBe(ComplianceStatus.PASS);
             expect(result.checks[0].resourceName).toBe(mockLogGroup.logGroupName);
         });
@@ -55,16 +55,16 @@ describe('checkConfigChangeMonitoring', () => {
             mockCloudWatchLogsClient
                 .on(DescribeLogGroupsCommand)
                 .resolves({ logGroups: multipleLogGroups });
-            
+
             mockCloudWatchLogsClient
                 .on(DescribeMetricFiltersCommand)
                 .resolves({ metricFilters: [mockMetricFilter] });
-            
+
             mockCloudWatchClient
                 .on(DescribeAlarmsCommand)
                 .resolves({ MetricAlarms: [{ AlarmName: 'ConfigChangesAlarm' }] });
 
-            const result = await checkConfigChangeMonitoring('us-east-1');
+            const result = await checkConfigChangeMonitoring.execute('us-east-1');
             expect(result.checks).toHaveLength(2);
             expect(result.checks.every(check => check.status === ComplianceStatus.PASS)).toBe(true);
         });
@@ -76,7 +76,7 @@ describe('checkConfigChangeMonitoring', () => {
                 .on(DescribeLogGroupsCommand)
                 .resolves({ logGroups: [] });
 
-            const result = await checkConfigChangeMonitoring('us-east-1');
+            const result = await checkConfigChangeMonitoring.execute('us-east-1');
             expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
             expect(result.checks[0].message).toBe('No CloudWatch Log Groups found');
         });
@@ -85,12 +85,12 @@ describe('checkConfigChangeMonitoring', () => {
             mockCloudWatchLogsClient
                 .on(DescribeLogGroupsCommand)
                 .resolves({ logGroups: [mockLogGroup] });
-            
+
             mockCloudWatchLogsClient
                 .on(DescribeMetricFiltersCommand)
                 .resolves({ metricFilters: [{ ...mockMetricFilter, filterPattern: 'wrong-pattern' }] });
 
-            const result = await checkConfigChangeMonitoring('us-east-1');
+            const result = await checkConfigChangeMonitoring.execute('us-east-1');
             expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
             expect(result.checks[0].message).toContain('does not have required metric filter');
         });
@@ -99,16 +99,16 @@ describe('checkConfigChangeMonitoring', () => {
             mockCloudWatchLogsClient
                 .on(DescribeLogGroupsCommand)
                 .resolves({ logGroups: [mockLogGroup] });
-            
+
             mockCloudWatchLogsClient
                 .on(DescribeMetricFiltersCommand)
                 .resolves({ metricFilters: [mockMetricFilter] });
-            
+
             mockCloudWatchClient
                 .on(DescribeAlarmsCommand)
                 .resolves({ MetricAlarms: [] });
 
-            const result = await checkConfigChangeMonitoring('us-east-1');
+            const result = await checkConfigChangeMonitoring.execute('us-east-1');
             expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
             expect(result.checks[0].message).toContain('No alarm configured');
         });
@@ -120,7 +120,7 @@ describe('checkConfigChangeMonitoring', () => {
                 .on(DescribeLogGroupsCommand)
                 .rejects(new Error('API Error'));
 
-            const result = await checkConfigChangeMonitoring('us-east-1');
+            const result = await checkConfigChangeMonitoring.execute('us-east-1');
             expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
             expect(result.checks[0].message).toContain('Error checking CloudWatch configuration');
         });
@@ -129,12 +129,12 @@ describe('checkConfigChangeMonitoring', () => {
             mockCloudWatchLogsClient
                 .on(DescribeLogGroupsCommand)
                 .resolves({ logGroups: [mockLogGroup] });
-            
+
             mockCloudWatchLogsClient
                 .on(DescribeMetricFiltersCommand)
                 .resolves({ metricFilters: [{ ...mockMetricFilter, metricTransformations: [] }] });
 
-            const result = await checkConfigChangeMonitoring('us-east-1');
+            const result = await checkConfigChangeMonitoring.execute('us-east-1');
             expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
             expect(result.checks[0].message).toContain('does not have a metric transformation');
         });

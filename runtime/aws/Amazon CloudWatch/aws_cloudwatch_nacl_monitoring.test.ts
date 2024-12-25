@@ -5,7 +5,7 @@ import {
     DescribeMetricFiltersCommand
 } from "@aws-sdk/client-cloudwatch-logs";
 import { mockClient } from "aws-sdk-client-mock";
-import { ComplianceStatus } from "@codegen/utils/stringUtils";
+import { ComplianceStatus } from "~runtime/types";
 import checkNaclMonitoringCompliance from "./aws_cloudwatch_nacl_monitoring";
 
 const mockCloudWatchClient = mockClient(CloudWatchClient);
@@ -37,21 +37,21 @@ describe("checkNaclMonitoringCompliance", () => {
             mockCloudWatchLogsClient
                 .on(DescribeLogGroupsCommand)
                 .resolves({ logGroups: [mockLogGroup] });
-            
+
             mockCloudWatchLogsClient
                 .on(DescribeMetricFiltersCommand)
                 .resolves({ metricFilters: [mockMetricFilter] });
-            
+
             mockCloudWatchClient
                 .on(DescribeAlarmsCommand)
-                .resolves({ 
+                .resolves({
                     MetricAlarms: [{
                         AlarmName: "NACLChangesAlarm",
                         MetricName: "NACLChanges"
                     }]
                 });
 
-            const result = await checkNaclMonitoringCompliance("us-east-1");
+            const result = await checkNaclMonitoringCompliance.execute("us-east-1");
             expect(result.checks[0].status).toBe(ComplianceStatus.PASS);
             expect(result.checks[0].resourceName).toBe(mockLogGroup.logGroupName);
         });
@@ -63,7 +63,7 @@ describe("checkNaclMonitoringCompliance", () => {
                 .on(DescribeLogGroupsCommand)
                 .resolves({ logGroups: [] });
 
-            const result = await checkNaclMonitoringCompliance("us-east-1");
+            const result = await checkNaclMonitoringCompliance.execute("us-east-1");
             expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
             expect(result.checks[0].message).toBe("No CloudWatch Log Groups found");
         });
@@ -72,12 +72,12 @@ describe("checkNaclMonitoringCompliance", () => {
             mockCloudWatchLogsClient
                 .on(DescribeLogGroupsCommand)
                 .resolves({ logGroups: [mockLogGroup] });
-            
+
             mockCloudWatchLogsClient
                 .on(DescribeMetricFiltersCommand)
                 .resolves({ metricFilters: [] });
 
-            const result = await checkNaclMonitoringCompliance("us-east-1");
+            const result = await checkNaclMonitoringCompliance.execute("us-east-1");
             expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
             expect(result.checks[0].message).toContain("does not have required NACL changes metric filter");
         });
@@ -86,16 +86,16 @@ describe("checkNaclMonitoringCompliance", () => {
             mockCloudWatchLogsClient
                 .on(DescribeLogGroupsCommand)
                 .resolves({ logGroups: [mockLogGroup] });
-            
+
             mockCloudWatchLogsClient
                 .on(DescribeMetricFiltersCommand)
                 .resolves({ metricFilters: [mockMetricFilter] });
-            
+
             mockCloudWatchClient
                 .on(DescribeAlarmsCommand)
                 .resolves({ MetricAlarms: [] });
 
-            const result = await checkNaclMonitoringCompliance("us-east-1");
+            const result = await checkNaclMonitoringCompliance.execute("us-east-1");
             expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
             expect(result.checks[0].message).toContain("No alarms configured");
         });
@@ -107,7 +107,7 @@ describe("checkNaclMonitoringCompliance", () => {
                 .on(DescribeLogGroupsCommand)
                 .rejects(new Error("API Error"));
 
-            const result = await checkNaclMonitoringCompliance("us-east-1");
+            const result = await checkNaclMonitoringCompliance.execute("us-east-1");
             expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
             expect(result.checks[0].message).toContain("Error checking CloudWatch configuration");
         });
@@ -116,12 +116,12 @@ describe("checkNaclMonitoringCompliance", () => {
             mockCloudWatchLogsClient
                 .on(DescribeLogGroupsCommand)
                 .resolves({ logGroups: [mockLogGroup] });
-            
+
             mockCloudWatchLogsClient
                 .on(DescribeMetricFiltersCommand)
                 .rejects(new Error("API Error"));
 
-            const result = await checkNaclMonitoringCompliance("us-east-1");
+            const result = await checkNaclMonitoringCompliance.execute("us-east-1");
             expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
         });
     });

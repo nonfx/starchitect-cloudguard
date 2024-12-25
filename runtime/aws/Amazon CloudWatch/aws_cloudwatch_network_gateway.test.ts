@@ -1,7 +1,7 @@
 import { CloudWatchClient, DescribeAlarmsCommand } from '@aws-sdk/client-cloudwatch';
 import { CloudWatchLogsClient, DescribeLogGroupsCommand, DescribeMetricFiltersCommand } from '@aws-sdk/client-cloudwatch-logs';
 import { mockClient } from 'aws-sdk-client-mock';
-import { ComplianceStatus } from '@codegen/utils/stringUtils';
+import { ComplianceStatus } from "~runtime/types";
 import checkNetworkGatewayMonitoring from './aws_cloudwatch_network_gateway';
 
 const mockCloudWatchClient = mockClient(CloudWatchClient);
@@ -39,7 +39,7 @@ describe('checkNetworkGatewayMonitoring', () => {
                 }]
             });
 
-            const result = await checkNetworkGatewayMonitoring('us-east-1');
+            const result = await checkNetworkGatewayMonitoring.execute('us-east-1');
             expect(result.checks[0].status).toBe(ComplianceStatus.PASS);
             expect(result.checks[0].resourceName).toBe('test-log-group');
         });
@@ -63,7 +63,7 @@ describe('checkNetworkGatewayMonitoring', () => {
                 MetricAlarms: [{ AlarmName: 'TestAlarm' }]
             });
 
-            const result = await checkNetworkGatewayMonitoring('us-east-1');
+            const result = await checkNetworkGatewayMonitoring.execute('us-east-1');
             expect(result.checks).toHaveLength(2);
             expect(result.checks.every(check => check.status === ComplianceStatus.PASS)).toBe(true);
         });
@@ -75,7 +75,7 @@ describe('checkNetworkGatewayMonitoring', () => {
                 logGroups: []
             });
 
-            const result = await checkNetworkGatewayMonitoring('us-east-1');
+            const result = await checkNetworkGatewayMonitoring.execute('us-east-1');
             expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
             expect(result.checks[0].message).toBe('No CloudWatch Log Groups found');
         });
@@ -89,7 +89,7 @@ describe('checkNetworkGatewayMonitoring', () => {
                 metricFilters: []
             });
 
-            const result = await checkNetworkGatewayMonitoring('us-east-1');
+            const result = await checkNetworkGatewayMonitoring.execute('us-east-1');
             expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
             expect(result.checks[0].message).toContain('does not have required metric filter');
         });
@@ -110,7 +110,7 @@ describe('checkNetworkGatewayMonitoring', () => {
                 MetricAlarms: []
             });
 
-            const result = await checkNetworkGatewayMonitoring('us-east-1');
+            const result = await checkNetworkGatewayMonitoring.execute('us-east-1');
             expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
             expect(result.checks[0].message).toContain('No alarm configured');
         });
@@ -122,7 +122,7 @@ describe('checkNetworkGatewayMonitoring', () => {
                 new Error('API Error')
             );
 
-            const result = await checkNetworkGatewayMonitoring('us-east-1');
+            const result = await checkNetworkGatewayMonitoring.execute('us-east-1');
             expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
             expect(result.checks[0].message).toContain('Error checking CloudWatch configuration');
         });
@@ -132,7 +132,7 @@ describe('checkNetworkGatewayMonitoring', () => {
                 logGroups: [{ arn: 'arn:1' }] // missing logGroupName
             });
 
-            const result = await checkNetworkGatewayMonitoring('us-east-1');
+            const result = await checkNetworkGatewayMonitoring.execute('us-east-1');
             expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
         });
     });

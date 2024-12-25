@@ -12,10 +12,10 @@ import {
 
 import {
 	printSummary,
-	generateSummary,
-	type ComplianceReport,
-	ComplianceStatus
-} from "@codegen/utils/stringUtils";
+	generateSummary
+} from "~codegen/utils/stringUtils";
+
+import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "~runtime/types";
 
 const REQUIRED_PATTERN = '{ ($.eventName = CreateNetworkAcl) || ($.eventName = CreateNetworkAclEntry) || ($.eventName = DeleteNetworkAcl) || ($.eventName = DeleteNetworkAclEntry) || ($.eventName = ReplaceNetworkAclEntry) || ($.eventName = ReplaceNetworkAclAssociation) }';
 
@@ -26,17 +26,7 @@ async function checkNaclMonitoringCompliance(
 	const cwLogsClient = new CloudWatchLogsClient({ region });
 
 	const results: ComplianceReport = {
-		checks: [],
-		metadoc: {
-			title: "Ensure Network Access Control Lists (NACL) changes are monitored",
-			description: "Real-time monitoring of API calls can be achieved by directing CloudTrail Logs to CloudWatch Logs, or an external Security information and event management (SIEM) environment, and establishing corresponding metric filters and alarms. NACLs are used as a stateless packet filter to control ingress and egress traffic for subnets within a VPC. It is recommended that a metric filter and alarm be established for changes made to NACLs",
-			controls: [
-				{
-					id: "CIS-AWS-Foundations-Benchmark_v3.0.0_4.11",
-					document: "CIS-AWS-Foundations-Benchmark_v3.0.0"
-				}
-			]
-		}
+		checks: []
 	};
 
 	try {
@@ -126,4 +116,15 @@ if (require.main === module) {
 	printSummary(generateSummary(results));
 }
 
-export default checkNaclMonitoringCompliance;
+export default {
+	title: "Ensure Network Access Control Lists (NACL) changes are monitored",
+	description: "Real-time monitoring of API calls can be achieved by directing CloudTrail Logs to CloudWatch Logs, or an external Security information and event management (SIEM) environment, and establishing corresponding metric filters and alarms. NACLs are used as a stateless packet filter to control ingress and egress traffic for subnets within a VPC. It is recommended that a metric filter and alarm be established for changes made to NACLs",
+	controls: [
+		{
+			id: "CIS-AWS-Foundations-Benchmark_v3.0.0_4.11",
+			document: "CIS-AWS-Foundations-Benchmark_v3.0.0"
+		}
+	],
+	severity: "MEDIUM",
+	execute: checkNaclMonitoringCompliance
+} satisfies RuntimeTest;

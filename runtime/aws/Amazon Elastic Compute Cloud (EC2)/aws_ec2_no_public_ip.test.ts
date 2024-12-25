@@ -1,6 +1,6 @@
 import { EC2Client, DescribeInstancesCommand } from "@aws-sdk/client-ec2";
 import { mockClient } from "aws-sdk-client-mock";
-import { ComplianceStatus } from "@codegen/utils/stringUtils";
+import { ComplianceStatus } from "~runtime/types";
 import checkEc2PublicIpCompliance from "./aws_ec2_no_public_ip";
 
 const mockEC2Client = mockClient(EC2Client);
@@ -49,7 +49,7 @@ describe("checkEc2PublicIpCompliance", () => {
                 Reservations: [{ Instances: [mockPrivateInstance] }]
             });
 
-            const result = await checkEc2PublicIpCompliance("us-east-1");
+            const result = await checkEc2PublicIpCompliance.execute("us-east-1");
             expect(result.checks[0].status).toBe(ComplianceStatus.PASS);
             expect(result.checks[0].resourceName).toBe("i-private123");
         });
@@ -59,7 +59,7 @@ describe("checkEc2PublicIpCompliance", () => {
                 Reservations: []
             });
 
-            const result = await checkEc2PublicIpCompliance("us-east-1");
+            const result = await checkEc2PublicIpCompliance.execute("us-east-1");
             expect(result.checks[0].status).toBe(ComplianceStatus.NOTAPPLICABLE);
             expect(result.checks[0].message).toBe("No EC2 instances found in the region");
         });
@@ -71,7 +71,7 @@ describe("checkEc2PublicIpCompliance", () => {
                 Reservations: [{ Instances: [mockPublicInstance] }]
             });
 
-            const result = await checkEc2PublicIpCompliance("us-east-1");
+            const result = await checkEc2PublicIpCompliance.execute("us-east-1");
             expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
             expect(result.checks[0].message).toBe("EC2 instance has a public IPv4 address configured");
         });
@@ -81,23 +81,23 @@ describe("checkEc2PublicIpCompliance", () => {
                 Reservations: [{ Instances: [mockInstanceWithPublicNetworkInterface] }]
             });
 
-            const result = await checkEc2PublicIpCompliance("us-east-1");
+            const result = await checkEc2PublicIpCompliance.execute("us-east-1");
             expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
             expect(result.checks[0].message).toBe("EC2 instance has a public IPv4 address configured");
         });
 
         it("should handle mixed compliance scenarios", async () => {
             mockEC2Client.on(DescribeInstancesCommand).resolves({
-                Reservations: [{ 
+                Reservations: [{
                     Instances: [
                         mockPrivateInstance,
                         mockPublicInstance,
                         mockInstanceWithPublicNetworkInterface
-                    ] 
+                    ]
                 }]
             });
 
-            const result = await checkEc2PublicIpCompliance("us-east-1");
+            const result = await checkEc2PublicIpCompliance.execute("us-east-1");
             expect(result.checks).toHaveLength(3);
             expect(result.checks[0].status).toBe(ComplianceStatus.PASS);
             expect(result.checks[1].status).toBe(ComplianceStatus.FAIL);
@@ -109,22 +109,22 @@ describe("checkEc2PublicIpCompliance", () => {
         it("should return ERROR when API call fails", async () => {
             mockEC2Client.on(DescribeInstancesCommand).rejects(new Error("API Error"));
 
-            const result = await checkEc2PublicIpCompliance("us-east-1");
+            const result = await checkEc2PublicIpCompliance.execute("us-east-1");
             expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
             expect(result.checks[0].message).toBe("Error checking EC2 instances: API Error");
         });
 
         it("should handle instances without IDs", async () => {
             mockEC2Client.on(DescribeInstancesCommand).resolves({
-                Reservations: [{ 
-                    Instances: [{ 
+                Reservations: [{
+                    Instances: [{
                         InstanceId: undefined,
-                        PublicIpAddress: "203.0.113.1" 
-                    }] 
+                        PublicIpAddress: "203.0.113.1"
+                    }]
                 }]
             });
 
-            const result = await checkEc2PublicIpCompliance("us-east-1");
+            const result = await checkEc2PublicIpCompliance.execute("us-east-1");
             expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
             expect(result.checks[0].message).toBe("Instance found without ID");
         });
@@ -142,7 +142,7 @@ describe("checkEc2PublicIpCompliance", () => {
                     Reservations: [{ Instances: [mockPublicInstance] }]
                 });
 
-            const result = await checkEc2PublicIpCompliance("us-east-1");
+            const result = await checkEc2PublicIpCompliance.execute("us-east-1");
             expect(result.checks).toHaveLength(2);
             expect(result.checks[0].status).toBe(ComplianceStatus.PASS);
             expect(result.checks[1].status).toBe(ComplianceStatus.FAIL);

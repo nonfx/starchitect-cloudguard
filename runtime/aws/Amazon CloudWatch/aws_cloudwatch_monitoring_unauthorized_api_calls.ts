@@ -4,9 +4,9 @@ import { CloudWatchLogsClient, DescribeLogGroupsCommand, DescribeMetricFiltersCo
 import {
   printSummary,
   generateSummary,
-  type ComplianceReport,
-  ComplianceStatus
-} from '@codegen/utils/stringUtils';
+} from '~codegen/utils/stringUtils';
+
+import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "~runtime/types";
 
 const REQUIRED_PATTERN = '{ ($.errorCode ="*UnauthorizedOperation") || ($.errorCode ="AccessDenied*") && ($.sourceIPAddress!="delivery.logs.amazonaws.com") && ($.eventName!="HeadBucket") }';
 
@@ -14,15 +14,7 @@ async function checkCloudWatchApiMonitoring(region: string = 'us-east-1'): Promi
   const cwClient = new CloudWatchClient({ region });
   const cwLogsClient = new CloudWatchLogsClient({ region });
   const results: ComplianceReport = {
-    checks: [],
-    metadoc: {
-      title: 'Ensure unauthorized API calls are monitored',
-      description: 'Real-time monitoring of API calls can be achieved by directing CloudTrail Logs to CloudWatch Logs, or an external Security information and event management (SIEM) environment, and establishing corresponding metric filters and alarms. It is recommended that a metric filter and alarm be established to monitor unauthorized API calls.',
-      controls: [{
-        id: 'CIS-AWS-Foundations-Benchmark_v3.0.0_4.1',
-        document: 'CIS-AWS-Foundations-Benchmark_v3.0.0'
-      }]
-    }
+    checks: []
   };
 
   try {
@@ -112,4 +104,13 @@ if (require.main === module) {
   printSummary(generateSummary(results));
 }
 
-export default checkCloudWatchApiMonitoring;
+export default {
+  title: 'Ensure unauthorized API calls are monitored',
+  description: 'Real-time monitoring of API calls can be achieved by directing CloudTrail Logs to CloudWatch Logs, or an external Security information and event management (SIEM) environment, and establishing corresponding metric filters and alarms. It is recommended that a metric filter and alarm be established to monitor unauthorized API calls.',
+  controls: [{
+    id: 'CIS-AWS-Foundations-Benchmark_v3.0.0_4.1',
+    document: 'CIS-AWS-Foundations-Benchmark_v3.0.0'
+  }],
+  severity: 'MEDIUM',
+  execute: checkCloudWatchApiMonitoring
+} satisfies RuntimeTest;

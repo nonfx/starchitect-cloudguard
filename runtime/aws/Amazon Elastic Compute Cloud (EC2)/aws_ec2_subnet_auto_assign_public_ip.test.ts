@@ -1,6 +1,6 @@
 import { EC2Client, DescribeSubnetsCommand } from "@aws-sdk/client-ec2";
 import { mockClient } from "aws-sdk-client-mock";
-import { ComplianceStatus } from "@codegen/utils/stringUtils";
+import { ComplianceStatus } from "~runtime/types";
 import checkSubnetAutoAssignPublicIp from "./aws_ec2_subnet_auto_assign_public_ip";
 
 const mockEC2Client = mockClient(EC2Client);
@@ -30,7 +30,7 @@ describe("checkSubnetAutoAssignPublicIp", () => {
                 Subnets: [mockCompliantSubnet]
             });
 
-            const result = await checkSubnetAutoAssignPublicIp("us-east-1");
+            const result = await checkSubnetAutoAssignPublicIp.execute("us-east-1");
             expect(result.checks[0].status).toBe(ComplianceStatus.PASS);
             expect(result.checks[0].resourceName).toBe("compliant-subnet");
         });
@@ -40,7 +40,7 @@ describe("checkSubnetAutoAssignPublicIp", () => {
                 Subnets: [mockCompliantSubnet, { ...mockCompliantSubnet, SubnetId: "subnet-abcde" }]
             });
 
-            const result = await checkSubnetAutoAssignPublicIp("us-east-1");
+            const result = await checkSubnetAutoAssignPublicIp.execute("us-east-1");
             expect(result.checks).toHaveLength(2);
             expect(result.checks.every(check => check.status === ComplianceStatus.PASS)).toBe(true);
         });
@@ -52,7 +52,7 @@ describe("checkSubnetAutoAssignPublicIp", () => {
                 Subnets: [mockNonCompliantSubnet]
             });
 
-            const result = await checkSubnetAutoAssignPublicIp("us-east-1");
+            const result = await checkSubnetAutoAssignPublicIp.execute("us-east-1");
             expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
             expect(result.checks[0].message).toBe("Subnet automatically assigns public IP addresses");
         });
@@ -62,7 +62,7 @@ describe("checkSubnetAutoAssignPublicIp", () => {
                 Subnets: [mockCompliantSubnet, mockNonCompliantSubnet]
             });
 
-            const result = await checkSubnetAutoAssignPublicIp("us-east-1");
+            const result = await checkSubnetAutoAssignPublicIp.execute("us-east-1");
             expect(result.checks).toHaveLength(2);
             expect(result.checks[0].status).toBe(ComplianceStatus.PASS);
             expect(result.checks[1].status).toBe(ComplianceStatus.FAIL);
@@ -73,7 +73,7 @@ describe("checkSubnetAutoAssignPublicIp", () => {
                 Subnets: [{ MapPublicIpOnLaunch: true }]
             });
 
-            const result = await checkSubnetAutoAssignPublicIp("us-east-1");
+            const result = await checkSubnetAutoAssignPublicIp.execute("us-east-1");
             expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
             expect(result.checks[0].message).toBe("Subnet found without Subnet ID");
         });
@@ -85,7 +85,7 @@ describe("checkSubnetAutoAssignPublicIp", () => {
                 Subnets: []
             });
 
-            const result = await checkSubnetAutoAssignPublicIp("us-east-1");
+            const result = await checkSubnetAutoAssignPublicIp.execute("us-east-1");
             expect(result.checks[0].status).toBe(ComplianceStatus.NOTAPPLICABLE);
             expect(result.checks[0].message).toBe("No subnets found in the region");
         });
@@ -93,7 +93,7 @@ describe("checkSubnetAutoAssignPublicIp", () => {
         it("should handle undefined Subnets in response", async () => {
             mockEC2Client.on(DescribeSubnetsCommand).resolves({});
 
-            const result = await checkSubnetAutoAssignPublicIp("us-east-1");
+            const result = await checkSubnetAutoAssignPublicIp.execute("us-east-1");
             expect(result.checks[0].status).toBe(ComplianceStatus.NOTAPPLICABLE);
         });
     });
@@ -102,7 +102,7 @@ describe("checkSubnetAutoAssignPublicIp", () => {
         it("should return ERROR when API call fails", async () => {
             mockEC2Client.on(DescribeSubnetsCommand).rejects(new Error("API Error"));
 
-            const result = await checkSubnetAutoAssignPublicIp("us-east-1");
+            const result = await checkSubnetAutoAssignPublicIp.execute("us-east-1");
             expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
             expect(result.checks[0].message).toContain("Error checking subnets: API Error");
         });
@@ -110,7 +110,7 @@ describe("checkSubnetAutoAssignPublicIp", () => {
         it("should handle non-Error exceptions", async () => {
             mockEC2Client.on(DescribeSubnetsCommand).rejects("String error");
 
-            const result = await checkSubnetAutoAssignPublicIp("us-east-1");
+            const result = await checkSubnetAutoAssignPublicIp.execute("us-east-1");
             expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
             expect(result.checks[0].message).toContain("Error checking subnets: String error");
         });

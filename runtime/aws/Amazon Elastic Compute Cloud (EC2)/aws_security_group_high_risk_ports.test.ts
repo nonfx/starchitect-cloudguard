@@ -1,6 +1,6 @@
 import { EC2Client, DescribeSecurityGroupsCommand } from "@aws-sdk/client-ec2";
 import { mockClient } from "aws-sdk-client-mock";
-import { ComplianceStatus } from "@codegen/utils/stringUtils";
+import { ComplianceStatus } from "~runtime/types";
 import checkSecurityGroupHighRiskPorts from "./aws_security_group_high_risk_ports";
 
 const mockEC2Client = mockClient(EC2Client);
@@ -60,7 +60,7 @@ describe("checkSecurityGroupHighRiskPorts", () => {
                 SecurityGroups: [mockCompliantSG]
             });
 
-            const result = await checkSecurityGroupHighRiskPorts();
+            const result = await checkSecurityGroupHighRiskPorts.execute();
             expect(result.checks[0].status).toBe(ComplianceStatus.PASS);
             expect(result.checks[0].resourceName).toBe("sg-compliant");
         });
@@ -79,7 +79,7 @@ describe("checkSecurityGroupHighRiskPorts", () => {
                 SecurityGroups: [restrictedSG]
             });
 
-            const result = await checkSecurityGroupHighRiskPorts();
+            const result = await checkSecurityGroupHighRiskPorts.execute();
             expect(result.checks[0].status).toBe(ComplianceStatus.PASS);
         });
     });
@@ -90,7 +90,7 @@ describe("checkSecurityGroupHighRiskPorts", () => {
                 SecurityGroups: [mockNonCompliantSG]
             });
 
-            const result = await checkSecurityGroupHighRiskPorts();
+            const result = await checkSecurityGroupHighRiskPorts.execute();
             expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
             expect(result.checks[0].message).toContain("22");
         });
@@ -100,7 +100,7 @@ describe("checkSecurityGroupHighRiskPorts", () => {
                 SecurityGroups: [mockMixedSG]
             });
 
-            const result = await checkSecurityGroupHighRiskPorts();
+            const result = await checkSecurityGroupHighRiskPorts.execute();
             expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
             expect(result.checks[0].message).toContain("3306");
         });
@@ -119,7 +119,7 @@ describe("checkSecurityGroupHighRiskPorts", () => {
                 SecurityGroups: [multiPortSG]
             });
 
-            const result = await checkSecurityGroupHighRiskPorts();
+            const result = await checkSecurityGroupHighRiskPorts.execute();
             expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
             expect(result.checks[0].message).toContain("20");
         });
@@ -131,7 +131,7 @@ describe("checkSecurityGroupHighRiskPorts", () => {
                 SecurityGroups: []
             });
 
-            const result = await checkSecurityGroupHighRiskPorts();
+            const result = await checkSecurityGroupHighRiskPorts.execute();
             expect(result.checks[0].status).toBe(ComplianceStatus.NOTAPPLICABLE);
         });
 
@@ -141,7 +141,7 @@ describe("checkSecurityGroupHighRiskPorts", () => {
                 SecurityGroups: [invalidSG]
             });
 
-            const result = await checkSecurityGroupHighRiskPorts();
+            const result = await checkSecurityGroupHighRiskPorts.execute();
             expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
         });
 
@@ -150,7 +150,7 @@ describe("checkSecurityGroupHighRiskPorts", () => {
                 new Error("API Error")
             );
 
-            const result = await checkSecurityGroupHighRiskPorts();
+            const result = await checkSecurityGroupHighRiskPorts.execute();
             expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
             expect(result.checks[0].message).toContain("API Error");
         });

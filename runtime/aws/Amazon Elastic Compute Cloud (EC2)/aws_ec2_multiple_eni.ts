@@ -3,24 +3,13 @@ import { EC2Client, DescribeInstancesCommand, DescribeNetworkInterfacesCommand }
 import {
 	printSummary,
 	generateSummary,
-	type ComplianceReport,
-	ComplianceStatus
-} from '@codegen/utils/stringUtils';
+} from '~codegen/utils/stringUtils';
+import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "~runtime/types";
 
 async function checkEc2MultipleEniCompliance(region: string = 'us-east-1'): Promise<ComplianceReport> {
 	const client = new EC2Client({ region });
 	const results: ComplianceReport = {
-		checks: [],
-		metadoc: {
-			title: 'Amazon EC2 instances should not use multiple ENIs',
-			description: 'This control checks if EC2 instances use multiple Elastic Network Interfaces (ENIs). The control fails if an instance has more than one ENI attached.',
-			controls: [
-				{
-					id: 'AWS-Foundational-Security-Best-Practices_v1.0.0_EC2.17',
-					document: 'AWS-Foundational-Security-Best-Practices_v1.0.0'
-				}
-			]
-		}
+		checks: []
 	};
 
 	try {
@@ -105,4 +94,15 @@ if (require.main === module) {
 	printSummary(generateSummary(results));
 }
 
-export default checkEc2MultipleEniCompliance;
+export default {
+	title: 'Amazon EC2 instances should not use multiple ENIs',
+	description: 'This control checks if EC2 instances use multiple Elastic Network Interfaces (ENIs). The control fails if an instance has more than one ENI attached.',
+	controls: [
+		{
+			id: 'AWS-Foundational-Security-Best-Practices_v1.0.0_EC2.17',
+			document: 'AWS-Foundational-Security-Best-Practices_v1.0.0'
+		}
+	],
+	severity: 'MEDIUM',
+	execute: checkEc2MultipleEniCompliance
+} satisfies RuntimeTest;

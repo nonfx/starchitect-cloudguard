@@ -1,6 +1,6 @@
 import { EC2Client, DescribeSecurityGroupsCommand } from "@aws-sdk/client-ec2";
 import { mockClient } from "aws-sdk-client-mock";
-import { ComplianceStatus } from "@codegen/utils/stringUtils";
+import { ComplianceStatus } from "~runtime/types";
 import checkSecurityGroupAuthorizedPorts from "./aws_security_group_authorized_ports";
 
 const mockEC2Client = mockClient(EC2Client);
@@ -50,7 +50,7 @@ describe("checkSecurityGroupAuthorizedPorts", () => {
                 SecurityGroups: [mockCompliantSG]
             });
 
-            const result = await checkSecurityGroupAuthorizedPorts("us-east-1");
+            const result = await checkSecurityGroupAuthorizedPorts.execute("us-east-1");
             expect(result.checks[0].status).toBe(ComplianceStatus.PASS);
             expect(result.checks[0].resourceName).toBe("compliant-sg");
         });
@@ -70,7 +70,7 @@ describe("checkSecurityGroupAuthorizedPorts", () => {
                 SecurityGroups: [sgWithRestrictedCIDR]
             });
 
-            const result = await checkSecurityGroupAuthorizedPorts("us-east-1");
+            const result = await checkSecurityGroupAuthorizedPorts.execute("us-east-1");
             expect(result.checks[0].status).toBe(ComplianceStatus.PASS);
         });
     });
@@ -81,7 +81,7 @@ describe("checkSecurityGroupAuthorizedPorts", () => {
                 SecurityGroups: [mockNonCompliantSG]
             });
 
-            const result = await checkSecurityGroupAuthorizedPorts("us-east-1");
+            const result = await checkSecurityGroupAuthorizedPorts.execute("us-east-1");
             expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
             expect(result.checks[0].message).toContain("22");
         });
@@ -109,7 +109,7 @@ describe("checkSecurityGroupAuthorizedPorts", () => {
                 SecurityGroups: [sgWithMultipleViolations]
             });
 
-            const result = await checkSecurityGroupAuthorizedPorts("us-east-1");
+            const result = await checkSecurityGroupAuthorizedPorts.execute("us-east-1");
             expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
             expect(result.checks[0].message).toContain("22, 3389");
         });
@@ -121,7 +121,7 @@ describe("checkSecurityGroupAuthorizedPorts", () => {
                 SecurityGroups: []
             });
 
-            const result = await checkSecurityGroupAuthorizedPorts("us-east-1");
+            const result = await checkSecurityGroupAuthorizedPorts.execute("us-east-1");
             expect(result.checks[0].status).toBe(ComplianceStatus.NOTAPPLICABLE);
         });
 
@@ -130,7 +130,7 @@ describe("checkSecurityGroupAuthorizedPorts", () => {
                 SecurityGroups: [{ IpPermissions: [] }]
             });
 
-            const result = await checkSecurityGroupAuthorizedPorts("us-east-1");
+            const result = await checkSecurityGroupAuthorizedPorts.execute("us-east-1");
             expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
         });
 
@@ -139,7 +139,7 @@ describe("checkSecurityGroupAuthorizedPorts", () => {
                 new Error("API Error")
             );
 
-            const result = await checkSecurityGroupAuthorizedPorts("us-east-1");
+            const result = await checkSecurityGroupAuthorizedPorts.execute("us-east-1");
             expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
             expect(result.checks[0].message).toContain("API Error");
         });

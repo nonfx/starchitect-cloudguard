@@ -1,6 +1,6 @@
 import { EC2Client, DescribeInstancesCommand, DescribeNetworkInterfacesCommand } from "@aws-sdk/client-ec2";
 import { mockClient } from "aws-sdk-client-mock";
-import { ComplianceStatus } from "@codegen/utils/stringUtils";
+import { ComplianceStatus } from "~runtime/types";
 import checkEc2MultipleEniCompliance from "./aws_ec2_multiple_eni";
 
 const mockEC2Client = mockClient(EC2Client);
@@ -20,12 +20,12 @@ describe("checkEc2MultipleEniCompliance", () => {
             mockEC2Client.on(DescribeInstancesCommand).resolves({
                 Reservations: [{ Instances: [mockInstance] }]
             });
-            
+
             mockEC2Client.on(DescribeNetworkInterfacesCommand).resolves({
                 NetworkInterfaces: [{ NetworkInterfaceId: "eni-12345" }]
             });
 
-            const result = await checkEc2MultipleEniCompliance("us-east-1");
+            const result = await checkEc2MultipleEniCompliance.execute("us-east-1");
             expect(result.checks[0].status).toBe(ComplianceStatus.PASS);
             expect(result.checks[0].resourceName).toBe(mockInstance.InstanceId);
         });
@@ -35,7 +35,7 @@ describe("checkEc2MultipleEniCompliance", () => {
                 Reservations: []
             });
 
-            const result = await checkEc2MultipleEniCompliance("us-east-1");
+            const result = await checkEc2MultipleEniCompliance.execute("us-east-1");
             expect(result.checks[0].status).toBe(ComplianceStatus.NOTAPPLICABLE);
             expect(result.checks[0].message).toBe("No EC2 instances found in the region");
         });
@@ -46,7 +46,7 @@ describe("checkEc2MultipleEniCompliance", () => {
             mockEC2Client.on(DescribeInstancesCommand).resolves({
                 Reservations: [{ Instances: [mockInstance] }]
             });
-            
+
             mockEC2Client.on(DescribeNetworkInterfacesCommand).resolves({
                 NetworkInterfaces: [
                     { NetworkInterfaceId: "eni-12345" },
@@ -54,7 +54,7 @@ describe("checkEc2MultipleEniCompliance", () => {
                 ]
             });
 
-            const result = await checkEc2MultipleEniCompliance("us-east-1");
+            const result = await checkEc2MultipleEniCompliance.execute("us-east-1");
             expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
             expect(result.checks[0].message).toContain("Instance has 2 ENIs attached");
         });
@@ -64,7 +64,7 @@ describe("checkEc2MultipleEniCompliance", () => {
                 Reservations: [{ Instances: [{ OwnerId: "123456789012" }] }]
             });
 
-            const result = await checkEc2MultipleEniCompliance("us-east-1");
+            const result = await checkEc2MultipleEniCompliance.execute("us-east-1");
             expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
             expect(result.checks[0].message).toBe("Instance found without ID");
         });
@@ -76,7 +76,7 @@ describe("checkEc2MultipleEniCompliance", () => {
                 new Error("Failed to describe instances")
             );
 
-            const result = await checkEc2MultipleEniCompliance("us-east-1");
+            const result = await checkEc2MultipleEniCompliance.execute("us-east-1");
             expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
             expect(result.checks[0].message).toContain("Failed to describe instances");
         });
@@ -85,12 +85,12 @@ describe("checkEc2MultipleEniCompliance", () => {
             mockEC2Client.on(DescribeInstancesCommand).resolves({
                 Reservations: [{ Instances: [mockInstance] }]
             });
-            
+
             mockEC2Client.on(DescribeNetworkInterfacesCommand).rejects(
                 new Error("Failed to describe network interfaces")
             );
 
-            const result = await checkEc2MultipleEniCompliance("us-east-1");
+            const result = await checkEc2MultipleEniCompliance.execute("us-east-1");
             expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
             expect(result.checks[0].message).toContain("Failed to describe network interfaces");
         });
@@ -106,7 +106,7 @@ describe("checkEc2MultipleEniCompliance", () => {
             mockEC2Client.on(DescribeInstancesCommand).resolves({
                 Reservations: [{ Instances: instances }]
             });
-            
+
             mockEC2Client
                 .on(DescribeNetworkInterfacesCommand, {
                     Filters: [{ Name: "attachment.instance-id", Values: ["i-111"] }]
@@ -122,7 +122,7 @@ describe("checkEc2MultipleEniCompliance", () => {
                     ]
                 });
 
-            const result = await checkEc2MultipleEniCompliance("us-east-1");
+            const result = await checkEc2MultipleEniCompliance.execute("us-east-1");
             expect(result.checks).toHaveLength(2);
             expect(result.checks[0].status).toBe(ComplianceStatus.PASS);
             expect(result.checks[1].status).toBe(ComplianceStatus.FAIL);

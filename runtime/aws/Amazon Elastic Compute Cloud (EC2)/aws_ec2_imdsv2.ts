@@ -3,24 +3,13 @@ import { EC2Client, DescribeInstancesCommand } from '@aws-sdk/client-ec2';
 import {
 	printSummary,
 	generateSummary,
-	type ComplianceReport,
-	ComplianceStatus
-} from '@codegen/utils/stringUtils';
+} from '~codegen/utils/stringUtils';
+import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "~runtime/types";
 
 async function checkEc2ImdsV2Compliance(region: string = 'us-east-1'): Promise<ComplianceReport> {
 	const client = new EC2Client({ region });
 	const results: ComplianceReport = {
-		checks: [],
-		metadoc: {
-			title: 'Ensure that EC2 Metadata Service only allows IMDSv2',
-			description: 'When enabling the Metadata Service on AWS EC2 instances, users have the option of using either Instance Metadata Service Version 1 (IMDSv1; a request/response method) or Instance Metadata Service Version 2 (IMDSv2; a session-oriented method).',
-			controls: [
-				{
-					id: 'CIS-AWS-Foundations-Benchmark_v3.0.0_5.6',
-					document: 'CIS-AWS-Foundations-Benchmark_v3.0.0'
-				}
-			]
-		}
+		checks: []
 	};
 
 	try {
@@ -106,4 +95,15 @@ if (require.main === module) {
 	printSummary(generateSummary(results));
 }
 
-export default checkEc2ImdsV2Compliance;
+export default {
+	title: 'Ensure that EC2 Metadata Service only allows IMDSv2',
+	description: 'When enabling the Metadata Service on AWS EC2 instances, users have the option of using either Instance Metadata Service Version 1 (IMDSv1; a request/response method) or Instance Metadata Service Version 2 (IMDSv2; a session-oriented method).',
+	controls: [
+		{
+			id: 'CIS-AWS-Foundations-Benchmark_v3.0.0_5.6',
+			document: 'CIS-AWS-Foundations-Benchmark_v3.0.0'
+		}
+	],
+	severity: 'MEDIUM',
+	execute: checkEc2ImdsV2Compliance
+} satisfies RuntimeTest;

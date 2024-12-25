@@ -3,24 +3,13 @@ import { EC2Client, DescribeInstancesCommand } from '@aws-sdk/client-ec2';
 import {
 	printSummary,
 	generateSummary,
-	type ComplianceReport,
-	ComplianceStatus
-} from '@codegen/utils/stringUtils';
+} from '~codegen/utils/stringUtils';
+import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "~runtime/types";
 
 async function checkEc2PublicIpCompliance(region: string = 'us-east-1'): Promise<ComplianceReport> {
 	const client = new EC2Client({ region });
 	const results: ComplianceReport = {
-		checks: [],
-		metadoc: {
-			title: 'Amazon EC2 instances should not have a public IPv4 address',
-			description: 'This control checks whether EC2 instances have a public IPv4 address. The control fails if an EC2 instance has a public IP address configured.',
-			controls: [
-				{
-					id: 'AWS-Foundational-Security-Best-Practices_v1.0.0_EC2.9',
-					document: 'AWS-Foundational-Security-Best-Practices_v1.0.0'
-				}
-			]
-		}
+		checks: []
 	};
 
 	try {
@@ -97,4 +86,15 @@ if (require.main === module) {
 	printSummary(generateSummary(results));
 }
 
-export default checkEc2PublicIpCompliance;
+export default {
+	title: 'Amazon EC2 instances should not have a public IPv4 address',
+	description: 'This control checks whether EC2 instances have a public IPv4 address. The control fails if an EC2 instance has a public IP address configured.',
+	controls: [
+		{
+			id: 'AWS-Foundational-Security-Best-Practices_v1.0.0_EC2.9',
+			document: 'AWS-Foundational-Security-Best-Practices_v1.0.0'
+		}
+	],
+	severity: 'MEDIUM',
+	execute: checkEc2PublicIpCompliance
+} satisfies RuntimeTest;

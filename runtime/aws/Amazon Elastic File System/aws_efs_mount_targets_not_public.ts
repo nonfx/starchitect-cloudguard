@@ -3,9 +3,8 @@ import { EC2Client, DescribeSubnetsCommand } from '@aws-sdk/client-ec2';
 import {
   printSummary,
   generateSummary,
-  ComplianceStatus,
-  type ComplianceReport
-} from '@codegen/utils/stringUtils';
+} from '~codegen/utils/stringUtils';
+import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "~runtime/types";
 
 async function checkEfsMountTargetsPublicSubnets(
   region: string = 'us-east-1'
@@ -13,23 +12,13 @@ async function checkEfsMountTargetsPublicSubnets(
   const efsClient = new EFSClient({ region });
   const ec2Client = new EC2Client({ region });
   const results: ComplianceReport = {
-    checks: [],
-    metadoc: {
-      title: 'EFS mount targets should not be associated with a public subnet',
-      description: 'This control checks if EFS mount targets are associated with private subnets to prevent unauthorized access from the internet.',
-      controls: [
-        {
-          id: 'AWS-Foundational-Security-Best-Practices_v1.0.0_EFS.6',
-          document: 'AWS-Foundational-Security-Best-Practices_v1.0.0'
-        }
-      ]
-    }
+    checks: []
   };
 
   try {
     // Get all mount targets
     const mountTargetsResponse = await efsClient.send(new DescribeMountTargetsCommand({}));
-    
+
     if (!mountTargetsResponse.MountTargets || mountTargetsResponse.MountTargets.length === 0) {
       results.checks.push({
         resourceName: 'No EFS Mount Targets',
@@ -99,4 +88,15 @@ if (require.main === module) {
   printSummary(generateSummary(results));
 }
 
-export default checkEfsMountTargetsPublicSubnets;
+export default {
+  title: 'EFS mount targets should not be associated with a public subnet',
+  description: 'This control checks if EFS mount targets are associated with private subnets to prevent unauthorized access from the internet.',
+  controls: [
+    {
+      id: 'AWS-Foundational-Security-Best-Practices_v1.0.0_EFS.6',
+      document: 'AWS-Foundational-Security-Best-Practices_v1.0.0'
+    }
+  ],
+  severity: 'MEDIUM',
+  execute: checkEfsMountTargetsPublicSubnets
+} satisfies RuntimeTest;

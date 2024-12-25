@@ -4,26 +4,18 @@ import { CloudWatchLogsClient, DescribeLogGroupsCommand, DescribeMetricFiltersCo
 import {
   printSummary,
   generateSummary,
-  type ComplianceReport,
-  ComplianceStatus
-} from '@codegen/utils/stringUtils';
+} from '~codegen/utils/stringUtils';
+
+import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "~runtime/types";
 
 const REQUIRED_PATTERN = '{ ($.eventName = CreateRoute) || ($.eventName = CreateRouteTable) || ($.eventName = ReplaceRoute) || ($.eventName = ReplaceRouteTableAssociation) || ($.eventName = DeleteRouteTable) || ($.eventName = DeleteRoute) || ($.eventName = DisassociateRouteTable) }';
 
 async function checkRouteTableMonitoring(region: string = 'us-east-1'): Promise<ComplianceReport> {
   const cwClient = new CloudWatchClient({ region });
   const cwLogsClient = new CloudWatchLogsClient({ region });
-  
+
   const results: ComplianceReport = {
-    checks: [],
-    metadoc: {
-      title: 'Ensure route table changes are monitored',
-      description: 'Real-time monitoring of API calls can be achieved by directing CloudTrail Logs to CloudWatch Logs, or an external Security information and event management (SIEM) environment, and establishing corresponding metric filters and alarms. Routing tables are used to route network traffic between subnets and to network gateways. It is recommended that a metric filter and alarm be established for changes to route tables.',
-      controls: [{
-        id: 'CIS-AWS-Foundations-Benchmark_v3.0.0_4.13',
-        document: 'CIS-AWS-Foundations-Benchmark_v3.0.0'
-      }]
-    }
+    checks: []
   };
 
   try {
@@ -111,4 +103,13 @@ if (require.main === module) {
   printSummary(generateSummary(results));
 }
 
-export default checkRouteTableMonitoring;
+export default {
+  title: 'Ensure route table changes are monitored',
+  description: 'Real-time monitoring of API calls can be achieved by directing CloudTrail Logs to CloudWatch Logs, or an external Security information and event management (SIEM) environment, and establishing corresponding metric filters and alarms. Routing tables are used to route network traffic between subnets and to network gateways. It is recommended that a metric filter and alarm be established for changes to route tables.',
+  controls: [{
+    id: 'CIS-AWS-Foundations-Benchmark_v3.0.0_4.13',
+    document: 'CIS-AWS-Foundations-Benchmark_v3.0.0'
+  }],
+  severity: 'MEDIUM',
+  execute: checkRouteTableMonitoring
+} satisfies RuntimeTest;

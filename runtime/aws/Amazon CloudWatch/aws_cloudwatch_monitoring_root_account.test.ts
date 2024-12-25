@@ -1,7 +1,7 @@
 import { CloudWatchClient, DescribeAlarmsCommand } from '@aws-sdk/client-cloudwatch';
 import { CloudWatchLogsClient, DescribeLogGroupsCommand, DescribeMetricFiltersCommand } from '@aws-sdk/client-cloudwatch-logs';
 import { mockClient } from 'aws-sdk-client-mock';
-import { ComplianceStatus } from '@codegen/utils/stringUtils';
+import { ComplianceStatus } from "~runtime/types";
 import checkRootAccountMonitoring from './aws_cloudwatch_monitoring_root_account';
 
 const mockCloudWatchClient = mockClient(CloudWatchClient);
@@ -30,16 +30,16 @@ describe('checkRootAccountMonitoring', () => {
             mockCloudWatchLogsClient
                 .on(DescribeLogGroupsCommand)
                 .resolves({ logGroups: [mockLogGroup] });
-            
+
             mockCloudWatchLogsClient
                 .on(DescribeMetricFiltersCommand)
                 .resolves({ metricFilters: [mockMetricFilter] });
-            
+
             mockCloudWatchClient
                 .on(DescribeAlarmsCommand)
                 .resolves({ MetricAlarms: [{ AlarmName: 'RootAccountUsageAlarm' }] });
 
-            const result = await checkRootAccountMonitoring('us-east-1');
+            const result = await checkRootAccountMonitoring.execute('us-east-1');
             expect(result.checks[0].status).toBe(ComplianceStatus.PASS);
             expect(result.checks[0].resourceName).toBe('test-log-group');
         });
@@ -53,16 +53,16 @@ describe('checkRootAccountMonitoring', () => {
             mockCloudWatchLogsClient
                 .on(DescribeLogGroupsCommand)
                 .resolves({ logGroups: multipleLogGroups });
-            
+
             mockCloudWatchLogsClient
                 .on(DescribeMetricFiltersCommand)
                 .resolves({ metricFilters: [mockMetricFilter] });
-            
+
             mockCloudWatchClient
                 .on(DescribeAlarmsCommand)
                 .resolves({ MetricAlarms: [{ AlarmName: 'RootAccountUsageAlarm' }] });
 
-            const result = await checkRootAccountMonitoring('us-east-1');
+            const result = await checkRootAccountMonitoring.execute('us-east-1');
             expect(result.checks).toHaveLength(2);
             expect(result.checks.every(check => check.status === ComplianceStatus.PASS)).toBe(true);
         });
@@ -74,7 +74,7 @@ describe('checkRootAccountMonitoring', () => {
                 .on(DescribeLogGroupsCommand)
                 .resolves({ logGroups: [] });
 
-            const result = await checkRootAccountMonitoring('us-east-1');
+            const result = await checkRootAccountMonitoring.execute('us-east-1');
             expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
             expect(result.checks[0].message).toBe('No CloudWatch Log Groups found');
         });
@@ -83,12 +83,12 @@ describe('checkRootAccountMonitoring', () => {
             mockCloudWatchLogsClient
                 .on(DescribeLogGroupsCommand)
                 .resolves({ logGroups: [mockLogGroup] });
-            
+
             mockCloudWatchLogsClient
                 .on(DescribeMetricFiltersCommand)
                 .resolves({ metricFilters: [] });
 
-            const result = await checkRootAccountMonitoring('us-east-1');
+            const result = await checkRootAccountMonitoring.execute('us-east-1');
             expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
             expect(result.checks[0].message).toContain('does not have required metric filter');
         });
@@ -97,16 +97,16 @@ describe('checkRootAccountMonitoring', () => {
             mockCloudWatchLogsClient
                 .on(DescribeLogGroupsCommand)
                 .resolves({ logGroups: [mockLogGroup] });
-            
+
             mockCloudWatchLogsClient
                 .on(DescribeMetricFiltersCommand)
                 .resolves({ metricFilters: [mockMetricFilter] });
-            
+
             mockCloudWatchClient
                 .on(DescribeAlarmsCommand)
                 .resolves({ MetricAlarms: [] });
 
-            const result = await checkRootAccountMonitoring('us-east-1');
+            const result = await checkRootAccountMonitoring.execute('us-east-1');
             expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
             expect(result.checks[0].message).toContain('No alarms configured');
         });
@@ -118,7 +118,7 @@ describe('checkRootAccountMonitoring', () => {
                 .on(DescribeLogGroupsCommand)
                 .rejects(new Error('API Error'));
 
-            const result = await checkRootAccountMonitoring('us-east-1');
+            const result = await checkRootAccountMonitoring.execute('us-east-1');
             expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
             expect(result.checks[0].message).toContain('Error checking root account monitoring');
         });
@@ -127,12 +127,12 @@ describe('checkRootAccountMonitoring', () => {
             mockCloudWatchLogsClient
                 .on(DescribeLogGroupsCommand)
                 .resolves({ logGroups: [mockLogGroup] });
-            
+
             mockCloudWatchLogsClient
                 .on(DescribeMetricFiltersCommand)
                 .rejects(new Error('Metric Filter Error'));
 
-            const result = await checkRootAccountMonitoring('us-east-1');
+            const result = await checkRootAccountMonitoring.execute('us-east-1');
             expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
             expect(result.checks[0].message).toContain('Error checking metric filters');
         });

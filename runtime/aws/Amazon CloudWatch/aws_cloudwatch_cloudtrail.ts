@@ -12,9 +12,8 @@ import {
 import {
   printSummary,
   generateSummary,
-  ComplianceStatus,
-  type ComplianceReport
-} from "@codegen/utils/stringUtils";
+} from "~codegen/utils/stringUtils";
+import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "~runtime/types";
 
 const REQUIRED_PATTERN = '{ ($.eventName = CreateTrail) || ($.eventName = UpdateTrail) || ($.eventName = DeleteTrail) || ($.eventName = StartLogging) || ($.eventName = StopLogging) }';
 
@@ -23,23 +22,9 @@ async function checkCloudTrailConfigurationMonitoring(
 ): Promise<ComplianceReport> {
   const logsClient = new CloudWatchLogsClient({ region });
   const cloudWatchClient = new CloudWatchClient({ region });
-  
+
   const results: ComplianceReport = {
-    checks: [],
-    metadoc: {
-      title: "Ensure CloudTrail configuration changes are monitored",
-      description: "Real-time monitoring of API calls can be achieved by directing CloudTrail Logs to CloudWatch Logs, or an external Security information and event management (SIEM) environment, where metric filters and alarms can be established. It is recommended that a metric filter and alarm be utilized for detecting changes to CloudTrail's configurations.",
-      controls: [
-        {
-          id: "CIS-AWS-Foundations-Benchmark_v3.0.0_4.5",
-          document: "CIS-AWS-Foundations-Benchmark_v3.0.0"
-        },
-        {
-          id: "AWS-Foundational-Security-Best-Practices_v1.0.0_CloudTrail.5",
-          document: "AWS-Foundational-Security-Best-Practices_v1.0.0"
-        }
-      ]
-    }
+    checks: []
   };
 
   try {
@@ -125,4 +110,19 @@ if (require.main === module) {
   printSummary(generateSummary(results));
 }
 
-export default checkCloudTrailConfigurationMonitoring;
+export default {
+  title: "Ensure CloudTrail configuration changes are monitored",
+  description: "Real-time monitoring of API calls can be achieved by directing CloudTrail Logs to CloudWatch Logs, or an external Security information and event management (SIEM) environment, where metric filters and alarms can be established. It is recommended that a metric filter and alarm be utilized for detecting changes to CloudTrail's configurations.",
+  controls: [
+    {
+      id: "CIS-AWS-Foundations-Benchmark_v3.0.0_4.5",
+      document: "CIS-AWS-Foundations-Benchmark_v3.0.0"
+    },
+    {
+      id: "AWS-Foundational-Security-Best-Practices_v1.0.0_CloudTrail.5",
+      document: "AWS-Foundational-Security-Best-Practices_v1.0.0"
+    }
+  ],
+  severity: "MEDIUM",
+  execute: checkCloudTrailConfigurationMonitoring
+} satisfies RuntimeTest;

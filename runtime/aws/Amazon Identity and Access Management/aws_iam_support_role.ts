@@ -3,24 +3,14 @@ import { IAMClient, ListRolesCommand, ListAttachedRolePoliciesCommand } from "@a
 import {
 	printSummary,
 	generateSummary,
-	type ComplianceReport,
-	ComplianceStatus
-} from "@codegen/utils/stringUtils";
+} from "~codegen/utils/stringUtils";
+
+import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "~runtime/types";
 
 async function checkIamSupportRole(region: string = "us-east-1"): Promise<ComplianceReport> {
 	const client = new IAMClient({ region });
 	const results: ComplianceReport = {
-		checks: [],
-		metadoc: {
-			title: "Ensure a support role has been created to manage incidents with AWS Support",
-			description: "AWS provides a support center that can be used for incident notification and response, as well as technical support and customer services. Create an IAM Role to allow authorized users to manage incidents with AWS Support.",
-			controls: [
-				{
-					id: "CIS-AWS-Foundations-Benchmark_v3.0.0_1.17",
-					document: "CIS-AWS-Foundations-Benchmark_v3.0.0"
-				}
-			]
-		}
+		checks: []
 	};
 
 	try {
@@ -116,4 +106,15 @@ if (require.main === module) {
 	printSummary(generateSummary(results));
 }
 
-export default checkIamSupportRole;
+export default {
+	title: "Ensure a support role has been created to manage incidents with AWS Support",
+	description: "AWS provides a support center that can be used for incident notification and response, as well as technical support and customer services. Create an IAM Role to allow authorized users to manage incidents with AWS Support.",
+	controls: [
+		{
+			id: "CIS-AWS-Foundations-Benchmark_v3.0.0_1.17",
+			document: "CIS-AWS-Foundations-Benchmark_v3.0.0"
+		}
+	],
+	severity: "MEDIUM",
+	execute: checkIamSupportRole
+} satisfies RuntimeTest;

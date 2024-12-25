@@ -1,7 +1,7 @@
 import { CloudWatchLogsClient, DescribeLogGroupsCommand, DescribeMetricFiltersCommand } from "@aws-sdk/client-cloudwatch-logs";
 import { CloudWatchClient, DescribeAlarmsCommand } from "@aws-sdk/client-cloudwatch";
 import { mockClient } from "aws-sdk-client-mock";
-import { ComplianceStatus } from "@codegen/utils/stringUtils";
+import { ComplianceStatus } from "~runtime/types";
 import checkCloudTrailConfigurationMonitoring from "./aws_cloudwatch_cloudtrail";
 
 const mockCloudWatchLogsClient = mockClient(CloudWatchLogsClient);
@@ -45,7 +45,7 @@ describe("checkCloudTrailConfigurationMonitoring", () => {
                     }]
                 });
 
-            const result = await checkCloudTrailConfigurationMonitoring();
+            const result = await checkCloudTrailConfigurationMonitoring.execute();
             expect(result.checks[0].status).toBe(ComplianceStatus.PASS);
             expect(result.checks[0].resourceName).toBe("test-log-group");
         });
@@ -75,7 +75,7 @@ describe("checkCloudTrailConfigurationMonitoring", () => {
                     MetricAlarms: [{ AlarmName: "CloudTrailChangeAlarm" }]
                 });
 
-            const result = await checkCloudTrailConfigurationMonitoring();
+            const result = await checkCloudTrailConfigurationMonitoring.execute();
             expect(result.checks).toHaveLength(2);
             expect(result.checks.every(check => check.status === ComplianceStatus.PASS)).toBe(true);
         });
@@ -87,7 +87,7 @@ describe("checkCloudTrailConfigurationMonitoring", () => {
                 .on(DescribeLogGroupsCommand)
                 .resolves({ logGroups: [] });
 
-            const result = await checkCloudTrailConfigurationMonitoring();
+            const result = await checkCloudTrailConfigurationMonitoring.execute();
             expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
             expect(result.checks[0].message).toBe("No CloudWatch Log Groups found");
         });
@@ -108,7 +108,7 @@ describe("checkCloudTrailConfigurationMonitoring", () => {
                     }]
                 });
 
-            const result = await checkCloudTrailConfigurationMonitoring();
+            const result = await checkCloudTrailConfigurationMonitoring.execute();
             expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
             expect(result.checks[0].message).toContain("does not have required metric filter");
         });
@@ -133,7 +133,7 @@ describe("checkCloudTrailConfigurationMonitoring", () => {
                 .on(DescribeAlarmsCommand)
                 .resolves({ MetricAlarms: [] });
 
-            const result = await checkCloudTrailConfigurationMonitoring();
+            const result = await checkCloudTrailConfigurationMonitoring.execute();
             expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
             expect(result.checks[0].message).toContain("No alarm configured");
         });
@@ -145,7 +145,7 @@ describe("checkCloudTrailConfigurationMonitoring", () => {
                 .on(DescribeLogGroupsCommand)
                 .rejects(new Error("API Error"));
 
-            const result = await checkCloudTrailConfigurationMonitoring();
+            const result = await checkCloudTrailConfigurationMonitoring.execute();
             expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
             expect(result.checks[0].message).toContain("Error checking CloudWatch configuration");
         });
@@ -161,7 +161,7 @@ describe("checkCloudTrailConfigurationMonitoring", () => {
                 .on(DescribeMetricFiltersCommand)
                 .rejects(new Error("Metric Filter API Error"));
 
-            const result = await checkCloudTrailConfigurationMonitoring();
+            const result = await checkCloudTrailConfigurationMonitoring.execute();
             expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
         });
     });

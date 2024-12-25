@@ -1,6 +1,6 @@
 import { IAMClient, ListUsersCommand, GetLoginProfileCommand, ListAccessKeysCommand } from "@aws-sdk/client-iam";
 import { mockClient } from "aws-sdk-client-mock";
-import { ComplianceStatus } from "@codegen/utils/stringUtils";
+import { ComplianceStatus } from "~runtime/types";
 import checkInitialAccessKeys from "./aws_iam_no_initial_access_keys";
 
 const mockIAMClient = mockClient(IAMClient);
@@ -28,7 +28,7 @@ describe("checkInitialAccessKeys", () => {
             mockIAMClient.on(ListUsersCommand).resolves({ Users: [mockUsers[0]] });
             mockIAMClient.on(GetLoginProfileCommand).rejects({ name: "NoSuchEntity" });
 
-            const result = await checkInitialAccessKeys();
+            const result = await checkInitialAccessKeys.execute();
             expect(result.checks[0].status).toBe(ComplianceStatus.PASS);
             expect(result.checks[0].message).toBe("User does not have console access");
         });
@@ -38,14 +38,14 @@ describe("checkInitialAccessKeys", () => {
             mockIAMClient.on(GetLoginProfileCommand).resolves({});
             mockIAMClient.on(ListAccessKeysCommand).resolves({ AccessKeyMetadata: [] });
 
-            const result = await checkInitialAccessKeys();
+            const result = await checkInitialAccessKeys.execute();
             expect(result.checks[0].status).toBe(ComplianceStatus.PASS);
         });
 
         it("should return NOTAPPLICABLE when no IAM users exist", async () => {
             mockIAMClient.on(ListUsersCommand).resolves({ Users: [] });
 
-            const result = await checkInitialAccessKeys();
+            const result = await checkInitialAccessKeys.execute();
             expect(result.checks[0].status).toBe(ComplianceStatus.NOTAPPLICABLE);
             expect(result.checks[0].message).toBe("No IAM users found");
         });
@@ -59,7 +59,7 @@ describe("checkInitialAccessKeys", () => {
                 AccessKeyMetadata: [{ AccessKeyId: "AKIA123456789" }]
             });
 
-            const result = await checkInitialAccessKeys();
+            const result = await checkInitialAccessKeys.execute();
             expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
             expect(result.checks[0].message).toBe("User has both console access and access keys");
         });
@@ -73,7 +73,7 @@ describe("checkInitialAccessKeys", () => {
                 .on(ListAccessKeysCommand, { UserName: "user-1" }).resolves({ AccessKeyMetadata: [{ AccessKeyId: "AKIA123" }] })
                 .on(ListAccessKeysCommand, { UserName: "user-2" }).resolves({ AccessKeyMetadata: [] });
 
-            const result = await checkInitialAccessKeys();
+            const result = await checkInitialAccessKeys.execute();
             expect(result.checks).toHaveLength(2);
             expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
             expect(result.checks[1].status).toBe(ComplianceStatus.PASS);
@@ -84,7 +84,7 @@ describe("checkInitialAccessKeys", () => {
         it("should return ERROR when ListUsers fails", async () => {
             mockIAMClient.on(ListUsersCommand).rejects(new Error("Failed to list users"));
 
-            const result = await checkInitialAccessKeys();
+            const result = await checkInitialAccessKeys.execute();
             expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
             expect(result.checks[0].message).toContain("Error listing IAM users");
         });
@@ -93,7 +93,7 @@ describe("checkInitialAccessKeys", () => {
             mockIAMClient.on(ListUsersCommand).resolves({ Users: [mockUsers[0]] });
             mockIAMClient.on(GetLoginProfileCommand).rejects(new Error("Internal error"));
 
-            const result = await checkInitialAccessKeys();
+            const result = await checkInitialAccessKeys.execute();
             expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
             expect(result.checks[0].message).toContain("Error checking user");
         });
@@ -103,7 +103,7 @@ describe("checkInitialAccessKeys", () => {
             mockIAMClient.on(GetLoginProfileCommand).resolves({});
             mockIAMClient.on(ListAccessKeysCommand).rejects(new Error("Access denied"));
 
-            const result = await checkInitialAccessKeys();
+            const result = await checkInitialAccessKeys.execute();
             expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
             expect(result.checks[0].message).toContain("Error checking user");
         });

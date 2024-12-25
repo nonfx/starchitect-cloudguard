@@ -1,21 +1,12 @@
 import { EC2Client, DescribeLaunchTemplatesCommand, DescribeLaunchTemplateVersionsCommand } from '@aws-sdk/client-ec2';
 
-import { printSummary, generateSummary, type ComplianceReport, ComplianceStatus } from '@codegen/utils/stringUtils';
+import { printSummary, generateSummary} from '~codegen/utils/stringUtils';
+import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "~runtime/types";
 
 async function checkEc2LaunchTemplateImdsv2Compliance(region: string = 'us-east-1'): Promise<ComplianceReport> {
   const client = new EC2Client({ region });
   const results: ComplianceReport = {
-    checks: [],
-    metadoc: {
-      title: 'EC2 launch templates should use Instance Metadata Service Version 2 (IMDSv2)',
-      description: 'This control checks if EC2 launch templates are configured to use IMDSv2. IMDSv2 provides enhanced security through token-based authentication for instance metadata requests.',
-      controls: [
-        {
-          id: 'AWS-Foundational-Security-Best-Practices_v1.0.0_EC2.170',
-          document: 'AWS-Foundational-Security-Best-Practices_v1.0.0'
-        }
-      ]
-    }
+    checks: []
   };
 
   try {
@@ -96,4 +87,16 @@ if (require.main === module) {
   printSummary(generateSummary(results));
 }
 
-export default checkEc2LaunchTemplateImdsv2Compliance;
+
+export default {
+  title: 'EC2 launch templates should use Instance Metadata Service Version 2 (IMDSv2)',
+  description: 'This control checks if EC2 launch templates are configured to use IMDSv2. IMDSv2 provides enhanced security through token-based authentication for instance metadata requests.',
+  controls: [
+    {
+      id: 'AWS-Foundational-Security-Best-Practices_v1.0.0_EC2.170',
+      document: 'AWS-Foundational-Security-Best-Practices_v1.0.0'
+    }
+  ],
+  severity: 'MEDIUM',
+  execute: checkEc2LaunchTemplateImdsv2Compliance
+} satisfies RuntimeTest;

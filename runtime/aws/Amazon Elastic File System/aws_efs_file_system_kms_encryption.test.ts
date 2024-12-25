@@ -1,6 +1,6 @@
 import { EFSClient, DescribeFileSystemsCommand } from "@aws-sdk/client-efs";
 import { mockClient } from "aws-sdk-client-mock";
-import { ComplianceStatus } from "@codegen/utils/stringUtils";
+import { ComplianceStatus } from "~runtime/types";
 import checkEfsEncryption from "./aws_efs_file_system_kms_encryption";
 
 const mockEfsClient = mockClient(EFSClient);
@@ -29,7 +29,7 @@ describe("checkEfsEncryption", () => {
                 FileSystems: [mockEncryptedFileSystem]
             });
 
-            const result = await checkEfsEncryption("us-east-1");
+            const result = await checkEfsEncryption.execute("us-east-1");
             expect(result.checks).toHaveLength(1);
             expect(result.checks[0].status).toBe(ComplianceStatus.PASS);
             expect(result.checks[0].resourceName).toBe(mockEncryptedFileSystem.FileSystemId);
@@ -41,7 +41,7 @@ describe("checkEfsEncryption", () => {
                 FileSystems: []
             });
 
-            const result = await checkEfsEncryption("us-east-1");
+            const result = await checkEfsEncryption.execute("us-east-1");
             expect(result.checks).toHaveLength(1);
             expect(result.checks[0].status).toBe(ComplianceStatus.NOTAPPLICABLE);
             expect(result.checks[0].message).toBe("No EFS file systems found in the region");
@@ -54,7 +54,7 @@ describe("checkEfsEncryption", () => {
                 FileSystems: [mockUnencryptedFileSystem]
             });
 
-            const result = await checkEfsEncryption("us-east-1");
+            const result = await checkEfsEncryption.execute("us-east-1");
             expect(result.checks).toHaveLength(1);
             expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
             expect(result.checks[0].message).toBe("EFS file system is not encrypted with KMS");
@@ -65,7 +65,7 @@ describe("checkEfsEncryption", () => {
                 FileSystems: [mockEncryptedFileSystem, mockUnencryptedFileSystem]
             });
 
-            const result = await checkEfsEncryption("us-east-1");
+            const result = await checkEfsEncryption.execute("us-east-1");
             expect(result.checks).toHaveLength(2);
             expect(result.checks[0].status).toBe(ComplianceStatus.PASS);
             expect(result.checks[1].status).toBe(ComplianceStatus.FAIL);
@@ -76,7 +76,7 @@ describe("checkEfsEncryption", () => {
                 FileSystems: [{ Encrypted: true }]
             });
 
-            const result = await checkEfsEncryption("us-east-1");
+            const result = await checkEfsEncryption.execute("us-east-1");
             expect(result.checks).toHaveLength(1);
             expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
             expect(result.checks[0].message).toBe("File system found without ID");
@@ -89,7 +89,7 @@ describe("checkEfsEncryption", () => {
                 new Error("API Error")
             );
 
-            const result = await checkEfsEncryption("us-east-1");
+            const result = await checkEfsEncryption.execute("us-east-1");
             expect(result.checks).toHaveLength(1);
             expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
             expect(result.checks[0].message).toBe("Error checking EFS file systems: API Error");
@@ -98,7 +98,7 @@ describe("checkEfsEncryption", () => {
         it("should handle undefined FileSystems response", async () => {
             mockEfsClient.on(DescribeFileSystemsCommand).resolves({});
 
-            const result = await checkEfsEncryption("us-east-1");
+            const result = await checkEfsEncryption.execute("us-east-1");
             expect(result.checks).toHaveLength(1);
             expect(result.checks[0].status).toBe(ComplianceStatus.NOTAPPLICABLE);
         });

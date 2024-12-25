@@ -1,6 +1,6 @@
 import { AutoScalingClient, DescribeAutoScalingGroupsCommand } from "@aws-sdk/client-auto-scaling";
 import { mockClient } from "aws-sdk-client-mock";
-import { ComplianceStatus } from "@codegen/utils/stringUtils";
+import { ComplianceStatus } from "~runtime/types";
 import checkAutoScalingTagPropagation from "./aws_ec2_autoscaling_propagate_tag";
 
 const mockAutoScalingClient = mockClient(AutoScalingClient);
@@ -34,7 +34,7 @@ describe("checkAutoScalingTagPropagation", () => {
                 AutoScalingGroups: [mockASGWithPropagatingTags]
             });
 
-            const result = await checkAutoScalingTagPropagation("us-east-1");
+            const result = await checkAutoScalingTagPropagation.execute("us-east-1");
             expect(result.checks[0].status).toBe(ComplianceStatus.PASS);
             expect(result.checks[0].resourceName).toBe("test-asg-1");
             expect(result.checks[0].message).toBeUndefined();
@@ -45,7 +45,7 @@ describe("checkAutoScalingTagPropagation", () => {
                 AutoScalingGroups: []
             });
 
-            const result = await checkAutoScalingTagPropagation("us-east-1");
+            const result = await checkAutoScalingTagPropagation.execute("us-east-1");
             expect(result.checks[0].status).toBe(ComplianceStatus.NOTAPPLICABLE);
             expect(result.checks[0].message).toBe("No Auto Scaling Groups found in the region");
         });
@@ -57,7 +57,7 @@ describe("checkAutoScalingTagPropagation", () => {
                 AutoScalingGroups: [mockASGWithNonPropagatingTags]
             });
 
-            const result = await checkAutoScalingTagPropagation("us-east-1");
+            const result = await checkAutoScalingTagPropagation.execute("us-east-1");
             expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
             expect(result.checks[0].message).toBe("1 tags are not set to propagate to EC2 instances");
         });
@@ -67,7 +67,7 @@ describe("checkAutoScalingTagPropagation", () => {
                 AutoScalingGroups: [{ Tags: [] }]
             });
 
-            const result = await checkAutoScalingTagPropagation("us-east-1");
+            const result = await checkAutoScalingTagPropagation.execute("us-east-1");
             expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
             expect(result.checks[0].message).toBe("Auto Scaling Group found without name or ARN");
         });
@@ -85,7 +85,7 @@ describe("checkAutoScalingTagPropagation", () => {
                     AutoScalingGroups: [mockASGWithNonPropagatingTags]
                 });
 
-            const result = await checkAutoScalingTagPropagation("us-east-1");
+            const result = await checkAutoScalingTagPropagation.execute("us-east-1");
             expect(result.checks).toHaveLength(2);
             expect(result.checks[0].status).toBe(ComplianceStatus.PASS);
             expect(result.checks[1].status).toBe(ComplianceStatus.FAIL);
@@ -96,7 +96,7 @@ describe("checkAutoScalingTagPropagation", () => {
                 .on(DescribeAutoScalingGroupsCommand)
                 .rejects(new Error("API Error"));
 
-            const result = await checkAutoScalingTagPropagation("us-east-1");
+            const result = await checkAutoScalingTagPropagation.execute("us-east-1");
             expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
             expect(result.checks[0].message).toBe("Error checking Auto Scaling Groups: API Error");
         });

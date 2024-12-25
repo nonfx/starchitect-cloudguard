@@ -3,26 +3,15 @@ import { EFSClient, DescribeAccessPointsCommand } from '@aws-sdk/client-efs';
 import {
 	printSummary,
 	generateSummary,
-	type ComplianceReport,
-	ComplianceStatus
-} from '@codegen/utils/stringUtils';
+} from '~codegen/utils/stringUtils';
+import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "~runtime/types";
 
 async function checkEfsAccessPointsRootDirectory(
 	region: string = 'us-east-1'
 ): Promise<ComplianceReport> {
 	const client = new EFSClient({ region });
 	const results: ComplianceReport = {
-		checks: [],
-		metadoc: {
-			title: 'EFS access points should enforce a root directory',
-			description: 'EFS access points must enforce a root directory to restrict data access by ensuring users can only access specified subdirectory files.',
-			controls: [
-				{
-					id: 'AWS-Foundational-Security-Best-Practices_v1.0.0_EFS.3',
-					document: 'AWS-Foundational-Security-Best-Practices_v1.0.0'
-				}
-			]
-		}
+		checks: []
 	};
 
 	try {
@@ -97,4 +86,15 @@ if (require.main === module) {
 	printSummary(generateSummary(results));
 }
 
-export default checkEfsAccessPointsRootDirectory;
+export default {
+	title: 'EFS access points should enforce a root directory',
+	description: 'EFS access points must enforce a root directory to restrict data access by ensuring users can only access specified subdirectory files.',
+	controls: [
+		{
+			id: 'AWS-Foundational-Security-Best-Practices_v1.0.0_EFS.3',
+			document: 'AWS-Foundational-Security-Best-Practices_v1.0.0'
+		}
+	],
+	severity: 'MEDIUM',
+	execute: checkEfsAccessPointsRootDirectory
+} satisfies RuntimeTest;

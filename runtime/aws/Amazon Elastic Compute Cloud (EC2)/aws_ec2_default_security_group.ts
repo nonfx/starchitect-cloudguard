@@ -3,24 +3,13 @@ import { EC2Client, DescribeInstancesCommand, DescribeSecurityGroupsCommand } fr
 import {
 	printSummary,
 	generateSummary,
-	type ComplianceReport,
-	ComplianceStatus
-} from '@codegen/utils/stringUtils';
+} from '~codegen/utils/stringUtils';
+import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "~runtime/types";
 
 async function checkDefaultSecurityGroupUsage(region: string = 'us-east-1'): Promise<ComplianceReport> {
 	const client = new EC2Client({ region });
 	const results: ComplianceReport = {
-		checks: [],
-		metadoc: {
-			title: 'Ensure Default EC2 Security groups are not being used',
-			description: 'When an EC2 instance is launched a specified custom security group should be assigned to the instance',
-			controls: [
-				{
-					id: 'CIS-AWS-Compute-Services-Benchmark_v1.0.0_2.7',
-					document: 'CIS-AWS-Compute-Services-Benchmark_v1.0.0'
-				}
-			]
-		}
+		checks: []
 	};
 
 	try {
@@ -53,15 +42,15 @@ async function checkDefaultSecurityGroupUsage(region: string = 'us-east-1'): Pro
 			}
 
 			const instanceSecurityGroups = instance.SecurityGroups || [];
-			const usesDefaultSg = instanceSecurityGroups.some(sg => 
+			const usesDefaultSg = instanceSecurityGroups.some(sg =>
 				sg.GroupId && defaultSecurityGroups.has(sg.GroupId)
 			);
 
 			results.checks.push({
 				resourceName: instance.InstanceId,
 				status: usesDefaultSg ? ComplianceStatus.FAIL : ComplianceStatus.PASS,
-				message: usesDefaultSg ? 
-					'Instance is using default security group. Use custom security group instead.' : 
+				message: usesDefaultSg ?
+					'Instance is using default security group. Use custom security group instead.' :
 					undefined
 			});
 		}
@@ -69,14 +58,14 @@ async function checkDefaultSecurityGroupUsage(region: string = 'us-east-1'): Pro
 		// Check default security groups configuration
 		for (const sg of securityGroups) {
 			if (sg.GroupName === 'default' && sg.GroupId) {
-				const hasRules = (sg.IpPermissions && sg.IpPermissions.length > 0) || 
+				const hasRules = (sg.IpPermissions && sg.IpPermissions.length > 0) ||
 								(sg.IpPermissionsEgress && sg.IpPermissionsEgress.length > 0);
 
 				results.checks.push({
 					resourceName: sg.GroupId,
 					status: hasRules ? ComplianceStatus.FAIL : ComplianceStatus.PASS,
-					message: hasRules ? 
-						'Default security group has active rules configured' : 
+					message: hasRules ?
+						'Default security group has active rules configured' :
 						undefined
 				});
 			}
@@ -99,4 +88,15 @@ if (require.main === module) {
 	printSummary(generateSummary(results));
 }
 
-export default checkDefaultSecurityGroupUsage;
+export default {
+	title: 'Ensure Default EC2 Security groups are not being used',
+	description: 'When an EC2 instance is launched a specified custom security group should be assigned to the instance',
+	controls: [
+		{
+			id: 'CIS-AWS-Compute-Services-Benchmark_v1.0.0_2.7',
+			document: 'CIS-AWS-Compute-Services-Benchmark_v1.0.0'
+		}
+	],
+	severity: 'MEDIUM',
+	execute: checkDefaultSecurityGroupUsage
+} satisfies RuntimeTest;

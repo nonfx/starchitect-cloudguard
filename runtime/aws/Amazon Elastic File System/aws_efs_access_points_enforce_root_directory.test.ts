@@ -1,6 +1,6 @@
 import { EFSClient, DescribeAccessPointsCommand } from '@aws-sdk/client-efs';
 import { mockClient } from 'aws-sdk-client-mock';
-import { ComplianceStatus } from '@codegen/utils/stringUtils';
+import { ComplianceStatus } from "~runtime/types";
 import checkEfsAccessPointsRootDirectory from './aws_efs_access_points_enforce_root_directory';
 
 const mockEfsClient = mockClient(EFSClient);
@@ -32,7 +32,7 @@ describe('checkEfsAccessPointsRootDirectory', () => {
                 AccessPoints: [mockCompliantAccessPoint]
             });
 
-            const result = await checkEfsAccessPointsRootDirectory();
+            const result = await checkEfsAccessPointsRootDirectory.execute();
             expect(result.checks[0].status).toBe(ComplianceStatus.PASS);
             expect(result.checks[0].resourceName).toBe('fsap-compliant123');
             expect(result.checks[0].resourceArn).toBe(mockCompliantAccessPoint.AccessPointArn);
@@ -53,7 +53,7 @@ describe('checkEfsAccessPointsRootDirectory', () => {
                 AccessPoints: multipleCompliant
             });
 
-            const result = await checkEfsAccessPointsRootDirectory();
+            const result = await checkEfsAccessPointsRootDirectory.execute();
             expect(result.checks).toHaveLength(2);
             expect(result.checks.every(check => check.status === ComplianceStatus.PASS)).toBe(true);
         });
@@ -65,7 +65,7 @@ describe('checkEfsAccessPointsRootDirectory', () => {
                 AccessPoints: [mockNonCompliantAccessPoint]
             });
 
-            const result = await checkEfsAccessPointsRootDirectory();
+            const result = await checkEfsAccessPointsRootDirectory.execute();
             expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
             expect(result.checks[0].message).toBe('EFS access point does not enforce a root directory or uses root path "/"');
         });
@@ -75,7 +75,7 @@ describe('checkEfsAccessPointsRootDirectory', () => {
                 AccessPoints: [mockCompliantAccessPoint, mockNonCompliantAccessPoint]
             });
 
-            const result = await checkEfsAccessPointsRootDirectory();
+            const result = await checkEfsAccessPointsRootDirectory.execute();
             expect(result.checks).toHaveLength(2);
             expect(result.checks[0].status).toBe(ComplianceStatus.PASS);
             expect(result.checks[1].status).toBe(ComplianceStatus.FAIL);
@@ -88,7 +88,7 @@ describe('checkEfsAccessPointsRootDirectory', () => {
                 AccessPoints: []
             });
 
-            const result = await checkEfsAccessPointsRootDirectory();
+            const result = await checkEfsAccessPointsRootDirectory.execute();
             expect(result.checks[0].status).toBe(ComplianceStatus.NOTAPPLICABLE);
             expect(result.checks[0].message).toBe('No EFS access points found in the region');
         });
@@ -101,7 +101,7 @@ describe('checkEfsAccessPointsRootDirectory', () => {
                 }]
             });
 
-            const result = await checkEfsAccessPointsRootDirectory();
+            const result = await checkEfsAccessPointsRootDirectory.execute();
             expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
             expect(result.checks[0].message).toBe('Access point found without ARN');
         });
@@ -109,7 +109,7 @@ describe('checkEfsAccessPointsRootDirectory', () => {
         it('should handle API errors', async () => {
             mockEfsClient.on(DescribeAccessPointsCommand).rejects(new Error('API Error'));
 
-            const result = await checkEfsAccessPointsRootDirectory();
+            const result = await checkEfsAccessPointsRootDirectory.execute();
             expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
             expect(result.checks[0].message).toContain('Error checking EFS access points: API Error');
         });
@@ -125,7 +125,7 @@ describe('checkEfsAccessPointsRootDirectory', () => {
                     AccessPoints: [mockNonCompliantAccessPoint]
                 });
 
-            const result = await checkEfsAccessPointsRootDirectory();
+            const result = await checkEfsAccessPointsRootDirectory.execute();
             expect(result.checks).toHaveLength(2);
             expect(result.checks[0].status).toBe(ComplianceStatus.PASS);
             expect(result.checks[1].status).toBe(ComplianceStatus.FAIL);

@@ -3,24 +3,13 @@ import { EC2Client, DescribeInstancesCommand } from '@aws-sdk/client-ec2';
 import {
 	printSummary,
 	generateSummary,
-	type ComplianceReport,
-	ComplianceStatus
-} from '@codegen/utils/stringUtils';
+} from '~codegen/utils/stringUtils';
+import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "~runtime/types";
 
 async function checkEc2DetailedMonitoring(region: string = 'us-east-1'): Promise<ComplianceReport> {
 	const client = new EC2Client({ region });
 	const results: ComplianceReport = {
-		checks: [],
-		metadoc: {
-			title: 'Ensure detailed monitoring is enable for production EC2 Instances',
-			description: 'Ensure that detailed monitoring is enabled for your Amazon EC2 instances.',
-			controls: [
-				{
-					id: 'CIS-AWS-Compute-Services-Benchmark_v1.0.0_2.6',
-					document: 'CIS-AWS-Compute-Services-Benchmark_v1.0.0'
-				}
-			]
-		}
+		checks: []
 	};
 
 	try {
@@ -97,4 +86,16 @@ if (require.main === module) {
 	printSummary(generateSummary(results));
 }
 
-export default checkEc2DetailedMonitoring;
+
+export default {
+	title: 'Ensure detailed monitoring is enable for production EC2 Instances',
+	description: 'Ensure that detailed monitoring is enabled for your Amazon EC2 instances.',
+	controls: [
+		{
+			id: 'CIS-AWS-Compute-Services-Benchmark_v1.0.0_2.6',
+			document: 'CIS-AWS-Compute-Services-Benchmark_v1.0.0'
+		}
+	],
+	severity: 'MEDIUM',
+	execute: checkEc2DetailedMonitoring
+} satisfies RuntimeTest;

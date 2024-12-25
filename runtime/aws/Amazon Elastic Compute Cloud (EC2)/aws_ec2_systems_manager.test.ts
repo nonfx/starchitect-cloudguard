@@ -1,7 +1,7 @@
 import { EC2Client, DescribeInstancesCommand } from '@aws-sdk/client-ec2';
 import { IAMClient, GetInstanceProfileCommand } from '@aws-sdk/client-iam';
 import { mockClient } from 'aws-sdk-client-mock';
-import { ComplianceStatus } from '@codegen/utils/stringUtils';
+import { ComplianceStatus } from "~runtime/types";
 import checkEc2SystemsManagerCompliance from './aws_ec2_systems_manager';
 
 const mockEC2Client = mockClient(EC2Client);
@@ -36,7 +36,7 @@ describe('checkEc2SystemsManagerCompliance', () => {
                 }
             });
 
-            const result = await checkEc2SystemsManagerCompliance();
+            const result = await checkEc2SystemsManagerCompliance.execute();
             expect(result.checks[0].status).toBe(ComplianceStatus.PASS);
             expect(result.checks[0].resourceName).toBe(mockInstance.InstanceId);
         });
@@ -46,7 +46,7 @@ describe('checkEc2SystemsManagerCompliance', () => {
                 Reservations: []
             });
 
-            const result = await checkEc2SystemsManagerCompliance();
+            const result = await checkEc2SystemsManagerCompliance.execute();
             expect(result.checks[0].status).toBe(ComplianceStatus.NOTAPPLICABLE);
             expect(result.checks[0].message).toBe('No EC2 instances found in the region');
         });
@@ -62,7 +62,7 @@ describe('checkEc2SystemsManagerCompliance', () => {
                 }]
             });
 
-            const result = await checkEc2SystemsManagerCompliance();
+            const result = await checkEc2SystemsManagerCompliance.execute();
             expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
             expect(result.checks[0].message).toBe('EC2 instance does not have an IAM instance profile attached');
         });
@@ -82,7 +82,7 @@ describe('checkEc2SystemsManagerCompliance', () => {
                 }
             });
 
-            const result = await checkEc2SystemsManagerCompliance();
+            const result = await checkEc2SystemsManagerCompliance.execute();
             expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
             expect(result.checks[0].message).toBe('Instance profile does not have AmazonSSMManagedInstanceCore policy attached');
         });
@@ -92,7 +92,7 @@ describe('checkEc2SystemsManagerCompliance', () => {
         it('should return ERROR when EC2 API call fails', async () => {
             mockEC2Client.on(DescribeInstancesCommand).rejects(new Error('EC2 API Error'));
 
-            const result = await checkEc2SystemsManagerCompliance();
+            const result = await checkEc2SystemsManagerCompliance.execute();
             expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
             expect(result.checks[0].message).toContain('Error checking EC2 instances');
         });
@@ -106,7 +106,7 @@ describe('checkEc2SystemsManagerCompliance', () => {
 
             mockIAMClient.on(GetInstanceProfileCommand).rejects(new Error('IAM API Error'));
 
-            const result = await checkEc2SystemsManagerCompliance();
+            const result = await checkEc2SystemsManagerCompliance.execute();
             expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
             expect(result.checks[0].message).toContain('Error checking instance profile');
         });
@@ -143,7 +143,7 @@ describe('checkEc2SystemsManagerCompliance', () => {
                     }
                 });
 
-            const result = await checkEc2SystemsManagerCompliance();
+            const result = await checkEc2SystemsManagerCompliance.execute();
             expect(result.checks).toHaveLength(2);
             expect(result.checks[0].status).toBe(ComplianceStatus.PASS);
             expect(result.checks[1].status).toBe(ComplianceStatus.FAIL);

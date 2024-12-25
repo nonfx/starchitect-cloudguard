@@ -4,34 +4,24 @@ import { CloudWatchLogsClient, DescribeLogGroupsCommand, DescribeMetricFiltersCo
 import {
   printSummary,
   generateSummary,
-  type ComplianceReport,
-  ComplianceStatus
-} from '@codegen/utils/stringUtils';
+} from '~codegen/utils/stringUtils';
+
+import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "~runtime/types";
 
 const REQUIRED_PATTERN = '{ ($.eventSource = organizations.amazonaws.com) && (($.eventName = "AcceptHandshake") || ($.eventName = "AttachPolicy") || ($.eventName = "CreateAccount") || ($.eventName = "CreateOrganizationalUnit") || ($.eventName = "CreatePolicy") || ($.eventName = "DeclineHandshake") || ($.eventName = "DeleteOrganization") || ($.eventName = "DeleteOrganizationalUnit") || ($.eventName = "DeletePolicy") || ($.eventName = "DetachPolicy") || ($.eventName = "DisablePolicyType") || ($.eventName = "EnablePolicyType") || ($.eventName = "InviteAccountToOrganization") || ($.eventName = "LeaveOrganization") || ($.eventName = "MoveAccount") || ($.eventName = "RemoveAccountFromOrganization") || ($.eventName = "UpdatePolicy") || ($.eventName = "UpdateOrganizationalUnit")) }';
 
 async function checkCloudWatchOrgChangesMonitored(region: string = 'us-east-1'): Promise<ComplianceReport> {
   const cwClient = new CloudWatchClient({ region });
   const cwLogsClient = new CloudWatchLogsClient({ region });
-  
+
   const results: ComplianceReport = {
-    checks: [],
-    metadoc: {
-      title: 'Ensure AWS Organizations changes are monitored',
-      description: 'Real-time monitoring of API calls can be achieved by directing CloudTrail Logs to CloudWatch Logs and establishing corresponding metric filters and alarms. It is recommended that a metric filter and alarm be established for AWS Organizations changes made in the master AWS Account.',
-      controls: [
-        {
-          id: 'CIS-AWS-Foundations-Benchmark_v3.0.0_4.15',
-          document: 'CIS-AWS-Foundations-Benchmark_v3.0.0'
-        }
-      ]
-    }
+    checks: []
   };
 
   try {
     // Get all log groups
     const logGroups = await cwLogsClient.send(new DescribeLogGroupsCommand({}));
-    
+
     if (!logGroups.logGroups || logGroups.logGroups.length === 0) {
       results.checks.push({
         resourceName: 'CloudWatch Logs',
@@ -132,4 +122,15 @@ if (require.main === module) {
   printSummary(generateSummary(results));
 }
 
-export default checkCloudWatchOrgChangesMonitored;
+export default {
+  title: 'Ensure AWS Organizations changes are monitored',
+  description: 'Real-time monitoring of API calls can be achieved by directing CloudTrail Logs to CloudWatch Logs and establishing corresponding metric filters and alarms. It is recommended that a metric filter and alarm be established for AWS Organizations changes made in the master AWS Account.',
+  controls: [
+    {
+      id: 'CIS-AWS-Foundations-Benchmark_v3.0.0_4.15',
+      document: 'CIS-AWS-Foundations-Benchmark_v3.0.0'
+    }
+  ],
+  severity: 'MEDIUM',
+  execute: checkCloudWatchOrgChangesMonitored
+} satisfies RuntimeTest;

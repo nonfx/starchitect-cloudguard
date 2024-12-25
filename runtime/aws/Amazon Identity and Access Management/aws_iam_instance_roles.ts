@@ -1,18 +1,11 @@
 import { EC2Client, DescribeInstancesCommand } from '@aws-sdk/client-ec2';
-import { printSummary, generateSummary, ComplianceStatus, type ComplianceReport } from '@codegen/utils/stringUtils';
+import { printSummary, generateSummary } from '~codegen/utils/stringUtils';
+import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "~runtime/types";
 
 async function checkIamInstanceRoles(region: string = 'us-east-1'): Promise<ComplianceReport> {
   const client = new EC2Client({ region });
   const results: ComplianceReport = {
-    checks: [],
-    metadoc: {
-      title: 'Ensure IAM instance roles are used for AWS resource access from instances',
-      description: 'AWS access from within AWS instances can be done by either encoding AWS keys into AWS API calls or by assigning the instance to a role which has an appropriate permissions policy for the required access. AWS Access means accessing the APIs of AWS in order to access AWS resources or manage AWS account resources.',
-      controls: [{
-        id: 'CIS-AWS-Foundations-Benchmark_v3.0.0_1.18',
-        document: 'CIS-AWS-Foundations-Benchmark_v3.0.0'
-      }]
-    }
+    checks: []
   };
 
   try {
@@ -90,4 +83,13 @@ if (require.main === module) {
   printSummary(generateSummary(results));
 }
 
-export default checkIamInstanceRoles;
+export default {
+  title: 'Ensure IAM instance roles are used for AWS resource access from instances',
+  description: 'AWS access from within AWS instances can be done by either encoding AWS keys into AWS API calls or by assigning the instance to a role which has an appropriate permissions policy for the required access. AWS Access means accessing the APIs of AWS in order to access AWS resources or manage AWS account resources.',
+  controls: [{
+    id: 'CIS-AWS-Foundations-Benchmark_v3.0.0_1.18',
+    document: 'CIS-AWS-Foundations-Benchmark_v3.0.0'
+  }],
+  severity: 'MEDIUM',
+  execute: checkIamInstanceRoles
+} satisfies RuntimeTest;

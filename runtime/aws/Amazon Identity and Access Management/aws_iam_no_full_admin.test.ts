@@ -1,6 +1,6 @@
 import { IAMClient, ListPoliciesCommand, GetPolicyVersionCommand } from "@aws-sdk/client-iam";
 import { mockClient } from "aws-sdk-client-mock";
-import { ComplianceStatus } from "@codegen/utils/stringUtils";
+import { ComplianceStatus } from "~runtime/types";
 import checkIamFullAdminPrivileges from "./aws_iam_no_full_admin";
 
 const mockIAMClient = mockClient(IAMClient);
@@ -40,7 +40,7 @@ describe("checkIamFullAdminPrivileges", () => {
 				}
 			});
 
-		const result = await checkIamFullAdminPrivileges();
+		const result = await checkIamFullAdminPrivileges.execute();
 		expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
 		expect(result.checks[0].message).toContain("full administrative privileges");
 	});
@@ -75,7 +75,7 @@ describe("checkIamFullAdminPrivileges", () => {
 				}
 			});
 
-		const result = await checkIamFullAdminPrivileges();
+		const result = await checkIamFullAdminPrivileges.execute();
 		expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
 	});
 
@@ -109,7 +109,7 @@ describe("checkIamFullAdminPrivileges", () => {
 				}
 			});
 
-		const result = await checkIamFullAdminPrivileges();
+		const result = await checkIamFullAdminPrivileges.execute();
 		expect(result.checks[0].status).toBe(ComplianceStatus.PASS);
 	});
 
@@ -171,7 +171,7 @@ describe("checkIamFullAdminPrivileges", () => {
 				}
 			});
 
-		const result = await checkIamFullAdminPrivileges();
+		const result = await checkIamFullAdminPrivileges.execute();
 		expect(result.checks).toHaveLength(2);
 		expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
 		expect(result.checks[1].status).toBe(ComplianceStatus.PASS);
@@ -180,7 +180,7 @@ describe("checkIamFullAdminPrivileges", () => {
 	it("should return NOTAPPLICABLE when no policies exist", async () => {
 		mockIAMClient.on(ListPoliciesCommand).resolves({ Policies: [] });
 
-		const result = await checkIamFullAdminPrivileges();
+		const result = await checkIamFullAdminPrivileges.execute();
 		expect(result.checks[0].status).toBe(ComplianceStatus.NOTAPPLICABLE);
 		expect(result.checks[0].message).toBe("No customer managed policies found");
 	});
@@ -188,7 +188,7 @@ describe("checkIamFullAdminPrivileges", () => {
 	it("should return ERROR on API failure", async () => {
 		mockIAMClient.on(ListPoliciesCommand).rejects(new Error("API Error"));
 
-		const result = await checkIamFullAdminPrivileges();
+		const result = await checkIamFullAdminPrivileges.execute();
 		expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
 		expect(result.checks[0].message).toContain("Error listing policies");
 	});

@@ -4,9 +4,10 @@ import { CloudWatchLogsClient, DescribeLogGroupsCommand, DescribeMetricFiltersCo
 import {
   printSummary,
   generateSummary,
-  type ComplianceReport,
-  ComplianceStatus
-} from '@codegen/utils/stringUtils';
+} from '~codegen/utils/stringUtils';
+
+import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "~runtime/types";
+
 
 const REQUIRED_PATTERN = '{($.eventSource = kms.amazonaws.com) && (($.eventName=DisableKey)||($.eventName=ScheduleKeyDeletion)) }';
 
@@ -14,23 +15,13 @@ async function checkCmkMonitoringCompliance(region: string = 'us-east-1'): Promi
   const cwClient = new CloudWatchClient({ region });
   const cwLogsClient = new CloudWatchLogsClient({ region });
   const results: ComplianceReport = {
-    checks: [],
-    metadoc: {
-      title: 'Ensure disabling or scheduled deletion of customer created CMKs is monitored',
-      description: 'Real-time monitoring of API calls can be achieved by directing CloudTrail Logs to CloudWatch Logs, or an external Security information and event management (SIEM) environment, and establishing corresponding metric filters and alarms. It is recommended that a metric filter and alarm be established for customer created CMKs which have changed state to disabled or scheduled deletion.',
-      controls: [
-        {
-          id: 'CIS-AWS-Foundations-Benchmark_v3.0.0_4.7',
-          document: 'CIS-AWS-Foundations-Benchmark_v3.0.0'
-        }
-      ]
-    }
+    checks: []
   };
 
   try {
     // Get all log groups
     const logGroups = await cwLogsClient.send(new DescribeLogGroupsCommand({}));
-    
+
     if (!logGroups.logGroups || logGroups.logGroups.length === 0) {
       results.checks.push({
         resourceName: 'CloudWatch Logs',
@@ -114,4 +105,16 @@ if (require.main === module) {
   printSummary(generateSummary(results));
 }
 
-export default checkCmkMonitoringCompliance;
+export default {
+  title: 'Ensure disabling or scheduled deletion of customer created CMKs is monitored',
+  description: 'Real-time monitoring of API calls can be achieved by directing CloudTrail Logs to CloudWatch Logs, or an external Security information and event management (SIEM) environment, and establishing corresponding metric filters and alarms. It is recommended that a metric filter and alarm be established for customer created CMKs which have changed state to disabled or scheduled deletion.',
+  controls: [
+    {
+      id: 'CIS-AWS-Foundations-Benchmark_v3.0.0_4.7',
+      document: 'CIS-AWS-Foundations-Benchmark_v3.0.0'
+    }
+  ],
+  severity: 'MEDIUM',
+  execute: checkCmkMonitoringCompliance
+
+} satisfies RuntimeTest;

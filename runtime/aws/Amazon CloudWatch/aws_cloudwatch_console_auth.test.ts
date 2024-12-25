@@ -1,7 +1,7 @@
 import { CloudWatchClient, DescribeAlarmsCommand } from '@aws-sdk/client-cloudwatch';
 import { CloudWatchLogsClient, DescribeLogGroupsCommand, DescribeMetricFiltersCommand } from '@aws-sdk/client-cloudwatch-logs';
 import { mockClient } from 'aws-sdk-client-mock';
-import { ComplianceStatus } from '@codegen/utils/stringUtils';
+import { ComplianceStatus } from "~runtime/types";
 import checkConsoleAuthMonitoring from './aws_cloudwatch_console_auth';
 
 const mockCloudWatchClient = mockClient(CloudWatchClient);
@@ -39,7 +39,7 @@ describe('checkConsoleAuthMonitoring', () => {
                 }]
             });
 
-            const result = await checkConsoleAuthMonitoring('us-east-1');
+            const result = await checkConsoleAuthMonitoring.execute('us-east-1');
             expect(result.checks[0].status).toBe(ComplianceStatus.PASS);
             expect(result.checks[0].resourceName).toBe('test-log-group');
         });
@@ -51,7 +51,7 @@ describe('checkConsoleAuthMonitoring', () => {
                 logGroups: []
             });
 
-            const result = await checkConsoleAuthMonitoring('us-east-1');
+            const result = await checkConsoleAuthMonitoring.execute('us-east-1');
             expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
             expect(result.checks[0].message).toBe('No CloudWatch Log Groups found');
         });
@@ -68,7 +68,7 @@ describe('checkConsoleAuthMonitoring', () => {
                 metricFilters: []
             });
 
-            const result = await checkConsoleAuthMonitoring('us-east-1');
+            const result = await checkConsoleAuthMonitoring.execute('us-east-1');
             expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
             expect(result.checks[0].message).toContain('does not have required metric filter');
         });
@@ -94,7 +94,7 @@ describe('checkConsoleAuthMonitoring', () => {
                 MetricAlarms: []
             });
 
-            const result = await checkConsoleAuthMonitoring('us-east-1');
+            const result = await checkConsoleAuthMonitoring.execute('us-east-1');
             expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
             expect(result.checks[0].message).toContain('No alarm configured');
         });
@@ -106,7 +106,7 @@ describe('checkConsoleAuthMonitoring', () => {
                 new Error('API Error')
             );
 
-            const result = await checkConsoleAuthMonitoring('us-east-1');
+            const result = await checkConsoleAuthMonitoring.execute('us-east-1');
             expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
             expect(result.checks[0].message).toContain('Error checking CloudWatch configuration');
         });
@@ -135,7 +135,7 @@ describe('checkConsoleAuthMonitoring', () => {
                 MetricAlarms: [{ AlarmName: 'Alarm1' }]
             });
 
-            const result = await checkConsoleAuthMonitoring('us-east-1');
+            const result = await checkConsoleAuthMonitoring.execute('us-east-1');
             expect(result.checks).toHaveLength(2);
             expect(result.checks[0].status).toBe(ComplianceStatus.PASS);
             expect(result.checks[1].status).toBe(ComplianceStatus.FAIL);

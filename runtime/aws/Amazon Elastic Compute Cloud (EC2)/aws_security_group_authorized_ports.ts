@@ -3,9 +3,8 @@ import { EC2Client, DescribeSecurityGroupsCommand } from '@aws-sdk/client-ec2';
 import {
 	printSummary,
 	generateSummary,
-	type ComplianceReport,
-	ComplianceStatus
-} from '@codegen/utils/stringUtils';
+} from '~codegen/utils/stringUtils';
+import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "~runtime/types";
 
 // Default authorized ports
 const AUTHORIZED_TCP_PORTS = [80, 443];
@@ -15,17 +14,7 @@ async function checkSecurityGroupAuthorizedPorts(
 ): Promise<ComplianceReport> {
 	const client = new EC2Client({ region });
 	const results: ComplianceReport = {
-		checks: [],
-		metadoc: {
-			title: 'Security groups should only allow unrestricted incoming traffic for authorized ports',
-			description: 'Security groups should only allow unrestricted incoming traffic on authorized ports to protect network security.',
-			controls: [
-				{
-					id: 'AWS-Foundational-Security-Best-Practices_v1.0.0_EC2.18',
-					document: 'AWS-Foundational-Security-Best-Practices_v1.0.0'
-				}
-			]
-		}
+		checks: []
 	};
 
 	try {
@@ -106,4 +95,15 @@ if (require.main === module) {
 	printSummary(generateSummary(results));
 }
 
-export default checkSecurityGroupAuthorizedPorts;
+export default {
+	title: 'Security groups should only allow unrestricted incoming traffic for authorized ports',
+	description: 'Security groups should only allow unrestricted incoming traffic on authorized ports to protect network security.',
+	controls: [
+		{
+			id: 'AWS-Foundational-Security-Best-Practices_v1.0.0_EC2.18',
+			document: 'AWS-Foundational-Security-Best-Practices_v1.0.0'
+		}
+	],
+	severity: 'MEDIUM',
+	execute: checkSecurityGroupAuthorizedPorts
+} satisfies RuntimeTest;

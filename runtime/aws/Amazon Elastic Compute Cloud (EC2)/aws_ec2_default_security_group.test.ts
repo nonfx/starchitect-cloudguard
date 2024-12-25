@@ -1,6 +1,6 @@
 import { EC2Client, DescribeInstancesCommand, DescribeSecurityGroupsCommand } from "@aws-sdk/client-ec2";
 import { mockClient } from "aws-sdk-client-mock";
-import { ComplianceStatus } from "@codegen/utils/stringUtils";
+import { ComplianceStatus } from "~runtime/types";
 import checkDefaultSecurityGroupUsage from "./aws_ec2_default_security_group";
 
 const mockEC2Client = mockClient(EC2Client);
@@ -50,7 +50,7 @@ describe("checkDefaultSecurityGroupUsage", () => {
                 .on(DescribeSecurityGroupsCommand)
                 .resolves({ SecurityGroups: mockSecurityGroups });
 
-            const result = await checkDefaultSecurityGroupUsage("us-east-1");
+            const result = await checkDefaultSecurityGroupUsage.execute("us-east-1");
             expect(result.checks[0].status).toBe(ComplianceStatus.PASS);
             expect(result.checks[0].resourceName).toBe(mockInstance1.InstanceId);
         });
@@ -63,7 +63,7 @@ describe("checkDefaultSecurityGroupUsage", () => {
                 });
             mockEC2Client
                 .on(DescribeSecurityGroupsCommand)
-                .resolves({ 
+                .resolves({
                     SecurityGroups: [{
                         GroupId: "sg-default",
                         GroupName: "default",
@@ -72,7 +72,7 @@ describe("checkDefaultSecurityGroupUsage", () => {
                     }]
                 });
 
-            const result = await checkDefaultSecurityGroupUsage("us-east-1");
+            const result = await checkDefaultSecurityGroupUsage.execute("us-east-1");
             expect(result.checks[1].status).toBe(ComplianceStatus.PASS);
         });
     });
@@ -88,7 +88,7 @@ describe("checkDefaultSecurityGroupUsage", () => {
                 .on(DescribeSecurityGroupsCommand)
                 .resolves({ SecurityGroups: mockSecurityGroups });
 
-            const result = await checkDefaultSecurityGroupUsage("us-east-1");
+            const result = await checkDefaultSecurityGroupUsage.execute("us-east-1");
             expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
             expect(result.checks[0].message).toContain("using default security group");
         });
@@ -101,7 +101,7 @@ describe("checkDefaultSecurityGroupUsage", () => {
                 });
             mockEC2Client
                 .on(DescribeSecurityGroupsCommand)
-                .resolves({ 
+                .resolves({
                     SecurityGroups: [{
                         GroupId: "sg-default",
                         GroupName: "default",
@@ -110,7 +110,7 @@ describe("checkDefaultSecurityGroupUsage", () => {
                     }]
                 });
 
-            const result = await checkDefaultSecurityGroupUsage("us-east-1");
+            const result = await checkDefaultSecurityGroupUsage.execute("us-east-1");
             expect(result.checks[1].status).toBe(ComplianceStatus.FAIL);
             expect(result.checks[1].message).toContain("active rules configured");
         });
@@ -122,7 +122,7 @@ describe("checkDefaultSecurityGroupUsage", () => {
                 .on(DescribeInstancesCommand)
                 .resolves({ Reservations: [] });
 
-            const result = await checkDefaultSecurityGroupUsage("us-east-1");
+            const result = await checkDefaultSecurityGroupUsage.execute("us-east-1");
             expect(result.checks[0].status).toBe(ComplianceStatus.NOTAPPLICABLE);
         });
 
@@ -131,7 +131,7 @@ describe("checkDefaultSecurityGroupUsage", () => {
                 .on(DescribeInstancesCommand)
                 .rejects(new Error("API Error"));
 
-            const result = await checkDefaultSecurityGroupUsage("us-east-1");
+            const result = await checkDefaultSecurityGroupUsage.execute("us-east-1");
             expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
             expect(result.checks[0].message).toContain("Error checking security groups");
         });
@@ -151,7 +151,7 @@ describe("checkDefaultSecurityGroupUsage", () => {
                 .on(DescribeSecurityGroupsCommand)
                 .resolves({ SecurityGroups: mockSecurityGroups });
 
-            const result = await checkDefaultSecurityGroupUsage("us-east-1");
+            const result = await checkDefaultSecurityGroupUsage.execute("us-east-1");
             expect(result.checks[0].status).toBe(ComplianceStatus.PASS);
         });
     });

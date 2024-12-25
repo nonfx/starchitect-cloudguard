@@ -3,7 +3,7 @@ import {
   DescribeAutoScalingGroupsCommand,
 } from "@aws-sdk/client-auto-scaling";
 import { mockClient } from "aws-sdk-client-mock";
-import { ComplianceStatus } from "@codegen/utils/stringUtils";
+import { ComplianceStatus } from "~runtime/types";
 import checkAutoScalingLaunchTemplate from "./aws_autoscaling_launch_template";
 
 const mockAutoScalingClient = mockClient(AutoScalingClient);
@@ -50,7 +50,7 @@ describe("checkAutoScalingLaunchTemplate", () => {
         AutoScalingGroups: [mockASGWithLaunchTemplate],
       });
 
-      const result = await checkAutoScalingLaunchTemplate("us-east-1");
+      const result = await checkAutoScalingLaunchTemplate.execute("us-east-1");
       expect(result.checks[0].status).toBe(ComplianceStatus.PASS);
       expect(result.checks[0].resourceName).toBe("test-asg-1");
     });
@@ -60,7 +60,7 @@ describe("checkAutoScalingLaunchTemplate", () => {
         AutoScalingGroups: [mockASGWithMixedInstances],
       });
 
-      const result = await checkAutoScalingLaunchTemplate("us-east-1");
+      const result = await checkAutoScalingLaunchTemplate.execute("us-east-1");
       expect(result.checks[0].status).toBe(ComplianceStatus.PASS);
       expect(result.checks[0].resourceName).toBe("test-asg-2");
     });
@@ -70,7 +70,7 @@ describe("checkAutoScalingLaunchTemplate", () => {
         AutoScalingGroups: [],
       });
 
-      const result = await checkAutoScalingLaunchTemplate("us-east-1");
+      const result = await checkAutoScalingLaunchTemplate.execute("us-east-1");
       expect(result.checks[0].status).toBe(ComplianceStatus.NOTAPPLICABLE);
       expect(result.checks[0].message).toBe(
         "No Auto Scaling groups found in the region"
@@ -84,7 +84,7 @@ describe("checkAutoScalingLaunchTemplate", () => {
         AutoScalingGroups: [mockASGWithLaunchConfig],
       });
 
-      const result = await checkAutoScalingLaunchTemplate("us-east-1");
+      const result = await checkAutoScalingLaunchTemplate.execute("us-east-1");
       expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
       expect(result.checks[0].message).toBe(
         "Auto Scaling group must use launch template instead of launch configuration"
@@ -100,7 +100,7 @@ describe("checkAutoScalingLaunchTemplate", () => {
         ],
       });
 
-      const result = await checkAutoScalingLaunchTemplate("us-east-1");
+      const result = await checkAutoScalingLaunchTemplate.execute("us-east-1");
       expect(result.checks).toHaveLength(3);
       expect(result.checks[0].status).toBe(ComplianceStatus.PASS);
       expect(result.checks[1].status).toBe(ComplianceStatus.FAIL);
@@ -114,7 +114,7 @@ describe("checkAutoScalingLaunchTemplate", () => {
         .on(DescribeAutoScalingGroupsCommand)
         .rejects(new Error("API Error"));
 
-      const result = await checkAutoScalingLaunchTemplate("us-east-1");
+      const result = await checkAutoScalingLaunchTemplate.execute("us-east-1");
       expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
       expect(result.checks[0].message).toBe(
         "Error checking Auto Scaling groups: API Error"
@@ -126,7 +126,7 @@ describe("checkAutoScalingLaunchTemplate", () => {
         AutoScalingGroups: [{ AutoScalingGroupARN: "arn:aws:..." }],
       });
 
-      const result = await checkAutoScalingLaunchTemplate("us-east-1");
+      const result = await checkAutoScalingLaunchTemplate.execute("us-east-1");
       expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
       expect(result.checks[0].message).toBe(
         "Auto Scaling group found without name"

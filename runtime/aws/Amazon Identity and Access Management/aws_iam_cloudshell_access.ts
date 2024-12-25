@@ -1,21 +1,14 @@
 import { IAMClient, ListAttachedUserPoliciesCommand, ListAttachedGroupPoliciesCommand, ListAttachedRolePoliciesCommand, ListUsersCommand, ListGroupsCommand, ListRolesCommand } from '@aws-sdk/client-iam';
 
-import { printSummary, generateSummary, type ComplianceReport, ComplianceStatus } from '@codegen/utils/stringUtils';
+import { printSummary, generateSummary } from '~codegen/utils/stringUtils';
+import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "~runtime/types";
 
 const CLOUDSHELL_FULL_ACCESS_ARN = 'arn:aws:iam::aws:policy/AWSCloudShellFullAccess';
 
 async function checkCloudShellAccess(region: string = 'us-east-1'): Promise<ComplianceReport> {
   const client = new IAMClient({ region });
   const results: ComplianceReport = {
-    checks: [],
-    metadoc: {
-      title: 'Ensure access to AWSCloudShellFullAccess is restricted',
-      description: 'AWS CloudShell is a convenient way of running CLI commands against AWS services; a managed IAM policy (\'AWSCloudShellFullAccess\') provides full access to CloudShell, which allows file upload and download capability between a user\'s local system and the CloudShell environment. Within the CloudShell environment a user has sudo permissions, and can access the internet. So it is feasible to install file transfer software (for example) and move data from CloudShell to external internet servers.',
-      controls: [{
-        id: 'CIS-AWS-Foundations-Benchmark_v3.0.0_1.22',
-        document: 'CIS-AWS-Foundations-Benchmark_v3.0.0'
-      }]
-    }
+    checks: []
   };
 
   try {
@@ -120,4 +113,13 @@ if (require.main === module) {
   printSummary(generateSummary(results));
 }
 
-export default checkCloudShellAccess;
+export default {
+  title: 'Ensure access to AWSCloudShellFullAccess is restricted',
+  description: 'AWS CloudShell is a convenient way of running CLI commands against AWS services; a managed IAM policy (\'AWSCloudShellFullAccess\') provides full access to CloudShell, which allows file upload and download capability between a user\'s local system and the CloudShell environment. Within the CloudShell environment a user has sudo permissions, and can access the internet. So it is feasible to install file transfer software (for example) and move data from CloudShell to external internet servers.',
+  controls: [{
+    id: 'CIS-AWS-Foundations-Benchmark_v3.0.0_1.22',
+    document: 'CIS-AWS-Foundations-Benchmark_v3.0.0'
+  }],
+  severity: 'MEDIUM',
+  execute: checkCloudShellAccess
+} satisfies RuntimeTest;

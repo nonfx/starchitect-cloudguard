@@ -1,6 +1,6 @@
 import { EFSClient, DescribeAccessPointsCommand } from '@aws-sdk/client-efs';
 import { mockClient } from 'aws-sdk-client-mock';
-import { ComplianceStatus } from '@codegen/utils/stringUtils';
+import { ComplianceStatus } from "~runtime/types";
 import checkEfsAccessPointUserIdentity from './aws_efs_access_points_enforce_user_identity';
 
 const mockEfsClient = mockClient(EFSClient);
@@ -31,7 +31,7 @@ describe('checkEfsAccessPointUserIdentity', () => {
                 AccessPoints: [mockValidAccessPoint]
             });
 
-            const result = await checkEfsAccessPointUserIdentity('us-east-1');
+            const result = await checkEfsAccessPointUserIdentity.execute('us-east-1');
             expect(result.checks[0].status).toBe(ComplianceStatus.PASS);
             expect(result.checks[0].resourceName).toBe('fsap-valid123');
             expect(result.checks[0].resourceArn).toBe(mockValidAccessPoint.AccessPointArn);
@@ -42,7 +42,7 @@ describe('checkEfsAccessPointUserIdentity', () => {
                 AccessPoints: []
             });
 
-            const result = await checkEfsAccessPointUserIdentity('us-east-1');
+            const result = await checkEfsAccessPointUserIdentity.execute('us-east-1');
             expect(result.checks[0].status).toBe(ComplianceStatus.NOTAPPLICABLE);
             expect(result.checks[0].message).toBe('No EFS access points found in the region');
         });
@@ -54,7 +54,7 @@ describe('checkEfsAccessPointUserIdentity', () => {
                 AccessPoints: [mockInvalidAccessPoint]
             });
 
-            const result = await checkEfsAccessPointUserIdentity('us-east-1');
+            const result = await checkEfsAccessPointUserIdentity.execute('us-east-1');
             expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
             expect(result.checks[0].message).toBe('EFS access point does not have a valid POSIX user identity configured');
         });
@@ -64,7 +64,7 @@ describe('checkEfsAccessPointUserIdentity', () => {
                 AccessPoints: [mockValidAccessPoint, mockInvalidAccessPoint]
             });
 
-            const result = await checkEfsAccessPointUserIdentity('us-east-1');
+            const result = await checkEfsAccessPointUserIdentity.execute('us-east-1');
             expect(result.checks).toHaveLength(2);
             expect(result.checks[0].status).toBe(ComplianceStatus.PASS);
             expect(result.checks[1].status).toBe(ComplianceStatus.FAIL);
@@ -75,7 +75,7 @@ describe('checkEfsAccessPointUserIdentity', () => {
                 AccessPoints: [{ AccessPointId: 'fsap-noarn789' }]
             });
 
-            const result = await checkEfsAccessPointUserIdentity('us-east-1');
+            const result = await checkEfsAccessPointUserIdentity.execute('us-east-1');
             expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
             expect(result.checks[0].message).toBe('Access point found without ARN');
         });
@@ -85,7 +85,7 @@ describe('checkEfsAccessPointUserIdentity', () => {
         it('should return ERROR when API call fails', async () => {
             mockEfsClient.on(DescribeAccessPointsCommand).rejects(new Error('API Error'));
 
-            const result = await checkEfsAccessPointUserIdentity('us-east-1');
+            const result = await checkEfsAccessPointUserIdentity.execute('us-east-1');
             expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
             expect(result.checks[0].message).toContain('Error checking EFS access points: API Error');
         });
@@ -93,7 +93,7 @@ describe('checkEfsAccessPointUserIdentity', () => {
         it('should handle undefined AccessPoints in response', async () => {
             mockEfsClient.on(DescribeAccessPointsCommand).resolves({});
 
-            const result = await checkEfsAccessPointUserIdentity('us-east-1');
+            const result = await checkEfsAccessPointUserIdentity.execute('us-east-1');
             expect(result.checks[0].status).toBe(ComplianceStatus.NOTAPPLICABLE);
             expect(result.checks[0].message).toBe('No EFS access points found in the region');
         });

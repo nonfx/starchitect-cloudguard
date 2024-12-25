@@ -1,6 +1,6 @@
 import { EC2Client, DescribeImagesCommand } from '@aws-sdk/client-ec2';
 import { mockClient } from 'aws-sdk-client-mock';
-import { ComplianceStatus } from '@codegen/utils/stringUtils';
+import { ComplianceStatus } from "~runtime/types";
 import checkAmiEncryption from './aws_ec2_ami_encryption';
 
 const mockEC2Client = mockClient(EC2Client);
@@ -62,7 +62,7 @@ describe('checkAmiEncryption', () => {
                 Images: [mockEncryptedAMI]
             });
 
-            const result = await checkAmiEncryption('us-east-1');
+            const result = await checkAmiEncryption.execute('us-east-1');
             expect(result.checks).toHaveLength(1);
             expect(result.checks[0].status).toBe(ComplianceStatus.PASS);
             expect(result.checks[0].resourceName).toBe('ami-123456789');
@@ -73,7 +73,7 @@ describe('checkAmiEncryption', () => {
                 Images: []
             });
 
-            const result = await checkAmiEncryption('us-east-1');
+            const result = await checkAmiEncryption.execute('us-east-1');
             expect(result.checks).toHaveLength(1);
             expect(result.checks[0].status).toBe(ComplianceStatus.NOTAPPLICABLE);
             expect(result.checks[0].message).toBe('No AMIs found in the account');
@@ -86,7 +86,7 @@ describe('checkAmiEncryption', () => {
                 Images: [mockUnencryptedAMI]
             });
 
-            const result = await checkAmiEncryption('us-east-1');
+            const result = await checkAmiEncryption.execute('us-east-1');
             expect(result.checks).toHaveLength(1);
             expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
             expect(result.checks[0].message).toBe('AMI contains unencrypted EBS volumes');
@@ -97,7 +97,7 @@ describe('checkAmiEncryption', () => {
                 Images: [mockMixedEncryptionAMI]
             });
 
-            const result = await checkAmiEncryption('us-east-1');
+            const result = await checkAmiEncryption.execute('us-east-1');
             expect(result.checks).toHaveLength(1);
             expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
             expect(result.checks[0].message).toBe('AMI contains unencrypted EBS volumes');
@@ -108,7 +108,7 @@ describe('checkAmiEncryption', () => {
                 Images: [mockEncryptedAMI, mockUnencryptedAMI, mockMixedEncryptionAMI]
             });
 
-            const result = await checkAmiEncryption('us-east-1');
+            const result = await checkAmiEncryption.execute('us-east-1');
             expect(result.checks).toHaveLength(3);
             expect(result.checks[0].status).toBe(ComplianceStatus.PASS);
             expect(result.checks[1].status).toBe(ComplianceStatus.FAIL);
@@ -120,7 +120,7 @@ describe('checkAmiEncryption', () => {
         it('should return ERROR when API call fails', async () => {
             mockEC2Client.on(DescribeImagesCommand).rejects(new Error('API Error'));
 
-            const result = await checkAmiEncryption('us-east-1');
+            const result = await checkAmiEncryption.execute('us-east-1');
             expect(result.checks).toHaveLength(1);
             expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
             expect(result.checks[0].message).toContain('Error checking AMIs: API Error');
@@ -131,7 +131,7 @@ describe('checkAmiEncryption', () => {
                 Images: [{ BlockDeviceMappings: [] }]
             });
 
-            const result = await checkAmiEncryption('us-east-1');
+            const result = await checkAmiEncryption.execute('us-east-1');
             expect(result.checks).toHaveLength(1);
             expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
             expect(result.checks[0].message).toBe('AMI found without Image ID');

@@ -1,6 +1,6 @@
 import { EC2Client, DescribeLaunchTemplatesCommand, DescribeLaunchTemplateVersionsCommand } from "@aws-sdk/client-ec2";
 import { mockClient } from "aws-sdk-client-mock";
-import { ComplianceStatus } from "@codegen/utils/stringUtils";
+import { ComplianceStatus } from "~runtime/types";
 import checkLaunchTemplatePublicIp from "./aws_ec2_launch_template_public_ip";
 
 const mockEC2Client = mockClient(EC2Client);
@@ -24,7 +24,7 @@ describe("checkLaunchTemplatePublicIp", () => {
             mockEC2Client
                 .on(DescribeLaunchTemplatesCommand)
                 .resolves({ LaunchTemplates: [mockLaunchTemplate] });
-            
+
             mockEC2Client
                 .on(DescribeLaunchTemplateVersionsCommand)
                 .resolves({
@@ -37,7 +37,7 @@ describe("checkLaunchTemplatePublicIp", () => {
                     }]
                 });
 
-            const result = await checkLaunchTemplatePublicIp("us-east-1");
+            const result = await checkLaunchTemplatePublicIp.execute("us-east-1");
             expect(result.checks[0].status).toBe(ComplianceStatus.PASS);
             expect(result.checks[0].resourceName).toBe("test-template");
         });
@@ -47,7 +47,7 @@ describe("checkLaunchTemplatePublicIp", () => {
                 .on(DescribeLaunchTemplatesCommand)
                 .resolves({ LaunchTemplates: [] });
 
-            const result = await checkLaunchTemplatePublicIp("us-east-1");
+            const result = await checkLaunchTemplatePublicIp.execute("us-east-1");
             expect(result.checks[0].status).toBe(ComplianceStatus.NOTAPPLICABLE);
             expect(result.checks[0].message).toBe("No EC2 launch templates found in the region");
         });
@@ -58,7 +58,7 @@ describe("checkLaunchTemplatePublicIp", () => {
             mockEC2Client
                 .on(DescribeLaunchTemplatesCommand)
                 .resolves({ LaunchTemplates: [mockLaunchTemplate] });
-            
+
             mockEC2Client
                 .on(DescribeLaunchTemplateVersionsCommand)
                 .resolves({
@@ -71,7 +71,7 @@ describe("checkLaunchTemplatePublicIp", () => {
                     }]
                 });
 
-            const result = await checkLaunchTemplatePublicIp("us-east-1");
+            const result = await checkLaunchTemplatePublicIp.execute("us-east-1");
             expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
             expect(result.checks[0].message).toBe("Launch template assigns public IP addresses to network interfaces");
         });
@@ -80,7 +80,7 @@ describe("checkLaunchTemplatePublicIp", () => {
             mockEC2Client
                 .on(DescribeLaunchTemplatesCommand)
                 .resolves({ LaunchTemplates: [mockLaunchTemplate] });
-            
+
             mockEC2Client
                 .on(DescribeLaunchTemplateVersionsCommand)
                 .resolves({
@@ -94,7 +94,7 @@ describe("checkLaunchTemplatePublicIp", () => {
                     }]
                 });
 
-            const result = await checkLaunchTemplatePublicIp("us-east-1");
+            const result = await checkLaunchTemplatePublicIp.execute("us-east-1");
             expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
         });
     });
@@ -105,7 +105,7 @@ describe("checkLaunchTemplatePublicIp", () => {
                 .on(DescribeLaunchTemplatesCommand)
                 .rejects(new Error("API Error"));
 
-            const result = await checkLaunchTemplatePublicIp("us-east-1");
+            const result = await checkLaunchTemplatePublicIp.execute("us-east-1");
             expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
             expect(result.checks[0].message).toContain("Error checking launch templates");
         });
@@ -114,12 +114,12 @@ describe("checkLaunchTemplatePublicIp", () => {
             mockEC2Client
                 .on(DescribeLaunchTemplatesCommand)
                 .resolves({ LaunchTemplates: [mockLaunchTemplate] });
-            
+
             mockEC2Client
                 .on(DescribeLaunchTemplateVersionsCommand)
                 .rejects(new Error("Version API Error"));
 
-            const result = await checkLaunchTemplatePublicIp("us-east-1");
+            const result = await checkLaunchTemplatePublicIp.execute("us-east-1");
             expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
             expect(result.checks[0].message).toContain("Error checking launch template version");
         });
@@ -129,7 +129,7 @@ describe("checkLaunchTemplatePublicIp", () => {
                 .on(DescribeLaunchTemplatesCommand)
                 .resolves({ LaunchTemplates: [{ }] });
 
-            const result = await checkLaunchTemplatePublicIp("us-east-1");
+            const result = await checkLaunchTemplatePublicIp.execute("us-east-1");
             expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
             expect(result.checks[0].message).toBe("Launch template found without ID or name");
         });

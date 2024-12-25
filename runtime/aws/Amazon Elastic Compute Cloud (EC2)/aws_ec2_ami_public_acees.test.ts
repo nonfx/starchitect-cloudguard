@@ -1,6 +1,6 @@
 import { EC2Client, DescribeImagesCommand } from '@aws-sdk/client-ec2';
 import { mockClient } from 'aws-sdk-client-mock';
-import { ComplianceStatus } from '@codegen/utils/stringUtils';
+import { ComplianceStatus } from "~runtime/types";
 import checkPublicAMIs from './aws_ec2_ami_public_acees';
 
 const mockEC2Client = mockClient(EC2Client);
@@ -28,7 +28,7 @@ describe('checkPublicAMIs', () => {
                 Images: [mockPrivateAMI]
             });
 
-            const result = await checkPublicAMIs('us-east-1');
+            const result = await checkPublicAMIs.execute('us-east-1');
             expect(result.checks).toHaveLength(1);
             expect(result.checks[0].status).toBe(ComplianceStatus.PASS);
             expect(result.checks[0].resourceName).toBe('ami-12345678');
@@ -40,7 +40,7 @@ describe('checkPublicAMIs', () => {
                 Images: []
             });
 
-            const result = await checkPublicAMIs('us-east-1');
+            const result = await checkPublicAMIs.execute('us-east-1');
             expect(result.checks).toHaveLength(1);
             expect(result.checks[0].status).toBe(ComplianceStatus.NOTAPPLICABLE);
             expect(result.checks[0].message).toBe('No AMIs found in the account');
@@ -54,7 +54,7 @@ describe('checkPublicAMIs', () => {
                 ]
             });
 
-            const result = await checkPublicAMIs('us-east-1');
+            const result = await checkPublicAMIs.execute('us-east-1');
             expect(result.checks).toHaveLength(2);
             expect(result.checks.every(check => check.status === ComplianceStatus.PASS)).toBe(true);
         });
@@ -66,7 +66,7 @@ describe('checkPublicAMIs', () => {
                 Images: [mockPublicAMI]
             });
 
-            const result = await checkPublicAMIs('us-east-1');
+            const result = await checkPublicAMIs.execute('us-east-1');
             expect(result.checks).toHaveLength(1);
             expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
             expect(result.checks[0].message).toBe('AMI is publicly accessible');
@@ -77,7 +77,7 @@ describe('checkPublicAMIs', () => {
                 Images: [mockPrivateAMI, mockPublicAMI]
             });
 
-            const result = await checkPublicAMIs('us-east-1');
+            const result = await checkPublicAMIs.execute('us-east-1');
             expect(result.checks).toHaveLength(2);
             expect(result.checks[0].status).toBe(ComplianceStatus.PASS);
             expect(result.checks[1].status).toBe(ComplianceStatus.FAIL);
@@ -88,7 +88,7 @@ describe('checkPublicAMIs', () => {
                 Images: [{ Public: false }]
             });
 
-            const result = await checkPublicAMIs('us-east-1');
+            const result = await checkPublicAMIs.execute('us-east-1');
             expect(result.checks).toHaveLength(1);
             expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
             expect(result.checks[0].message).toBe('AMI found without Image ID');
@@ -99,7 +99,7 @@ describe('checkPublicAMIs', () => {
         it('should return ERROR when API call fails', async () => {
             mockEC2Client.on(DescribeImagesCommand).rejects(new Error('API Error'));
 
-            const result = await checkPublicAMIs('us-east-1');
+            const result = await checkPublicAMIs.execute('us-east-1');
             expect(result.checks).toHaveLength(1);
             expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
             expect(result.checks[0].message).toBe('Error checking AMIs: API Error');
@@ -108,7 +108,7 @@ describe('checkPublicAMIs', () => {
         it('should handle undefined Images response', async () => {
             mockEC2Client.on(DescribeImagesCommand).resolves({});
 
-            const result = await checkPublicAMIs('us-east-1');
+            const result = await checkPublicAMIs.execute('us-east-1');
             expect(result.checks).toHaveLength(1);
             expect(result.checks[0].status).toBe(ComplianceStatus.NOTAPPLICABLE);
             expect(result.checks[0].message).toBe('No AMIs found in the account');

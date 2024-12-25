@@ -1,19 +1,12 @@
 import { EC2Client, DescribeLaunchTemplatesCommand, DescribeLaunchTemplateVersionsCommand } from '@aws-sdk/client-ec2';
 
-import { printSummary, generateSummary, type ComplianceReport, ComplianceStatus } from '@codegen/utils/stringUtils';
+import { printSummary, generateSummary } from '~codegen/utils/stringUtils';
+import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "~runtime/types";
 
 async function checkLaunchTemplatePublicIp(region: string = 'us-east-1'): Promise<ComplianceReport> {
   const client = new EC2Client({ region });
   const results: ComplianceReport = {
-    checks: [],
-    metadoc: {
-      title: 'Amazon EC2 launch templates should not assign public IPs to network interfaces',
-      description: 'This control checks whether EC2 launch templates are configured to assign public IP addresses to network interfaces. Assigning public IPs directly exposes instances to the internet and increases security risks.',
-      controls: [{
-        id: 'AWS-Foundational-Security-Best-Practices_v1.0.0_EC2.25',
-        document: 'AWS-Foundational-Security-Best-Practices_v1.0.0'
-      }]
-    }
+    checks: []
   };
 
   try {
@@ -92,4 +85,13 @@ if (require.main === module) {
   printSummary(generateSummary(results));
 }
 
-export default checkLaunchTemplatePublicIp;
+export default {
+  title: 'Amazon EC2 launch templates should not assign public IPs to network interfaces',
+  description: 'This control checks whether EC2 launch templates are configured to assign public IP addresses to network interfaces. Assigning public IPs directly exposes instances to the internet and increases security risks.',
+  controls: [{
+    id: 'AWS-Foundational-Security-Best-Practices_v1.0.0_EC2.25',
+    document: 'AWS-Foundational-Security-Best-Practices_v1.0.0'
+  }],
+  severity: 'MEDIUM',
+  execute: checkLaunchTemplatePublicIp
+} satisfies RuntimeTest;

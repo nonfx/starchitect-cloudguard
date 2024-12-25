@@ -9,27 +9,16 @@ import {
 import {
   printSummary,
   generateSummary,
-  type ComplianceReport,
-  ComplianceStatus,
-} from "@codegen/utils/stringUtils";
+} from "~codegen/utils/stringUtils";
+
+import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "~runtime/types";
 
 async function checkIamUserPermissionsThroughGroups(
   region: string = "us-east-1"
 ): Promise<ComplianceReport> {
   const client = new IAMClient({ region });
   const results: ComplianceReport = {
-    checks: [],
-    metadoc: {
-      title: "Ensure IAM Users Receive Permissions Only Through Groups",
-      description:
-        "IAM users should be granted permissions only through groups. Directly attached policies or inline policies should be avoided.",
-      controls: [
-        {
-          id: "CIS-AWS-Foundations-Benchmark_v3.0.0_1.15",
-          document: "CIS-AWS-Foundations-Benchmark_v3.0.0",
-        },
-      ],
-    },
+    checks: []
   };
 
   try {
@@ -132,4 +121,16 @@ if (require.main === module) {
   printSummary(generateSummary(results));
 }
 
-export default checkIamUserPermissionsThroughGroups;
+export default {
+  title: "Ensure IAM Users Receive Permissions Only Through Groups",
+  description:
+    "IAM users should be granted permissions only through groups. Directly attached policies or inline policies should be avoided.",
+  controls: [
+    {
+      id: "CIS-AWS-Foundations-Benchmark_v3.0.0_1.15",
+      document: "CIS-AWS-Foundations-Benchmark_v3.0.0",
+    },
+  ],
+  severity: "MEDIUM",
+  execute: checkIamUserPermissionsThroughGroups
+} satisfies RuntimeTest;
