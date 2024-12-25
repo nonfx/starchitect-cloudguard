@@ -7,96 +7,51 @@ Testing 123
 [![Downloads/week](https://img.shields.io/npm/dw/mynewcli.svg)](https://npmjs.org/package/mynewcli)
 
 <!-- toc -->
-
-- [Usage](#usage)
-- [Commands](#commands)
+* [mynewcli](#mynewcli)
+* [Usage](#usage)
+* [Commands](#commands)
 <!-- tocstop -->
 
 # Usage
 
 <!-- usage -->
-
 ```sh-session
-$ npm install -g mynewcli
-$ mynewcli COMMAND
+$ npm install -g starchitect-cloudguard
+$ starchitect-cloudguard COMMAND
 running command...
-$ mynewcli (--version)
-mynewcli/0.0.0 darwin-arm64 node-v20.16.0
-$ mynewcli --help [COMMAND]
+$ starchitect-cloudguard (--version)
+starchitect-cloudguard/0.0.0 darwin-arm64 node-v22.6.0
+$ starchitect-cloudguard --help [COMMAND]
 USAGE
-  $ mynewcli COMMAND
+  $ starchitect-cloudguard COMMAND
 ...
 ```
-
 <!-- usagestop -->
 
 # Commands
 
 <!-- commands -->
+* [`starchitect-cloudguard help [COMMAND]`](#starchitect-cloudguard-help-command)
+* [`starchitect-cloudguard iac test`](#starchitect-cloudguard-iac-test)
+* [`starchitect-cloudguard plugins`](#starchitect-cloudguard-plugins)
+* [`starchitect-cloudguard plugins add PLUGIN`](#starchitect-cloudguard-plugins-add-plugin)
+* [`starchitect-cloudguard plugins:inspect PLUGIN...`](#starchitect-cloudguard-pluginsinspect-plugin)
+* [`starchitect-cloudguard plugins install PLUGIN`](#starchitect-cloudguard-plugins-install-plugin)
+* [`starchitect-cloudguard plugins link PATH`](#starchitect-cloudguard-plugins-link-path)
+* [`starchitect-cloudguard plugins remove [PLUGIN]`](#starchitect-cloudguard-plugins-remove-plugin)
+* [`starchitect-cloudguard plugins reset`](#starchitect-cloudguard-plugins-reset)
+* [`starchitect-cloudguard plugins uninstall [PLUGIN]`](#starchitect-cloudguard-plugins-uninstall-plugin)
+* [`starchitect-cloudguard plugins unlink [PLUGIN]`](#starchitect-cloudguard-plugins-unlink-plugin)
+* [`starchitect-cloudguard plugins update`](#starchitect-cloudguard-plugins-update)
+* [`starchitect-cloudguard runtime test`](#starchitect-cloudguard-runtime-test)
 
-- [`mynewcli hello PERSON`](#mynewcli-hello-person)
-- [`mynewcli hello world`](#mynewcli-hello-world)
-- [`mynewcli help [COMMAND]`](#mynewcli-help-command)
-- [`mynewcli plugins`](#mynewcli-plugins)
-- [`mynewcli plugins add PLUGIN`](#mynewcli-plugins-add-plugin)
-- [`mynewcli plugins:inspect PLUGIN...`](#mynewcli-pluginsinspect-plugin)
-- [`mynewcli plugins install PLUGIN`](#mynewcli-plugins-install-plugin)
-- [`mynewcli plugins link PATH`](#mynewcli-plugins-link-path)
-- [`mynewcli plugins remove [PLUGIN]`](#mynewcli-plugins-remove-plugin)
-- [`mynewcli plugins reset`](#mynewcli-plugins-reset)
-- [`mynewcli plugins uninstall [PLUGIN]`](#mynewcli-plugins-uninstall-plugin)
-- [`mynewcli plugins unlink [PLUGIN]`](#mynewcli-plugins-unlink-plugin)
-- [`mynewcli plugins update`](#mynewcli-plugins-update)
+## `starchitect-cloudguard help [COMMAND]`
 
-## `mynewcli hello PERSON`
-
-Say hello
-
-```
-USAGE
-  $ mynewcli hello PERSON -f <value>
-
-ARGUMENTS
-  PERSON  Person to say hello to
-
-FLAGS
-  -f, --from=<value>  (required) Who is saying hello
-
-DESCRIPTION
-  Say hello
-
-EXAMPLES
-  $ mynewcli hello friend --from oclif
-  hello friend from oclif! (./src/commands/hello/index.ts)
-```
-
-_See code: [src/commands/hello/index.ts](https://github.com/nonfx/starchitect-cloudguard/blob/v0.0.0/src/commands/hello/index.ts)_
-
-## `mynewcli hello world`
-
-Say hello world
+Display help for starchitect-cloudguard.
 
 ```
 USAGE
-  $ mynewcli hello world
-
-DESCRIPTION
-  Say hello world
-
-EXAMPLES
-  $ mynewcli hello world
-  hello world! (./src/commands/hello/world.ts)
-```
-
-_See code: [src/commands/hello/world.ts](https://github.com/nonfx/starchitect-cloudguard/blob/v0.0.0/src/commands/hello/world.ts)_
-
-## `mynewcli help [COMMAND]`
-
-Display help for mynewcli.
-
-```
-USAGE
-  $ mynewcli help [COMMAND...] [-n]
+  $ starchitect-cloudguard help [COMMAND...] [-n]
 
 ARGUMENTS
   COMMAND...  Command to show help for.
@@ -105,18 +60,38 @@ FLAGS
   -n, --nested-commands  Include all nested commands in the output.
 
 DESCRIPTION
-  Display help for mynewcli.
+  Display help for starchitect-cloudguard.
 ```
 
 _See code: [@oclif/plugin-help](https://github.com/oclif/plugin-help/blob/v6.2.20/src/commands/help.ts)_
 
-## `mynewcli plugins`
+## `starchitect-cloudguard iac test`
+
+Run security tests against Infrastructure as Code (coming soon)
+
+```
+USAGE
+  $ starchitect-cloudguard iac test -p <value> -t terraform|cloudformation [--skip-install]
+
+FLAGS
+  -p, --path=<value>   (required) [default: .] Path to IAC code
+  -t, --type=<option>  (required) [default: terraform] Type of IAC
+                       <options: terraform|cloudformation>
+      --skip-install   Skip installation of missing tools
+
+DESCRIPTION
+  Run security tests against Infrastructure as Code (coming soon)
+```
+
+_See code: [src/commands/iac/test.ts](https://github.com/nonfx/starchitect-cloudguard/blob/v0.0.0/src/commands/iac/test.ts)_
+
+## `starchitect-cloudguard plugins`
 
 List installed plugins.
 
 ```
 USAGE
-  $ mynewcli plugins [--json] [--core]
+  $ starchitect-cloudguard plugins [--json] [--core]
 
 FLAGS
   --core  Show core plugins.
@@ -128,18 +103,18 @@ DESCRIPTION
   List installed plugins.
 
 EXAMPLES
-  $ mynewcli plugins
+  $ starchitect-cloudguard plugins
 ```
 
 _See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v5.4.23/src/commands/plugins/index.ts)_
 
-## `mynewcli plugins add PLUGIN`
+## `starchitect-cloudguard plugins add PLUGIN`
 
-Installs a plugin into mynewcli.
+Installs a plugin into starchitect-cloudguard.
 
 ```
 USAGE
-  $ mynewcli plugins add PLUGIN... [--json] [-f] [-h] [-s | -v]
+  $ starchitect-cloudguard plugins add PLUGIN... [--json] [-f] [-h] [-s | -v]
 
 ARGUMENTS
   PLUGIN...  Plugin to install.
@@ -154,39 +129,39 @@ GLOBAL FLAGS
   --json  Format output as json.
 
 DESCRIPTION
-  Installs a plugin into mynewcli.
+  Installs a plugin into starchitect-cloudguard.
 
   Uses npm to install plugins.
 
   Installation of a user-installed plugin will override a core plugin.
 
-  Use the MYNEWCLI_NPM_LOG_LEVEL environment variable to set the npm loglevel.
-  Use the MYNEWCLI_NPM_REGISTRY environment variable to set the npm registry.
+  Use the STARCHITECT_CLOUDGUARD_NPM_LOG_LEVEL environment variable to set the npm loglevel.
+  Use the STARCHITECT_CLOUDGUARD_NPM_REGISTRY environment variable to set the npm registry.
 
 ALIASES
-  $ mynewcli plugins add
+  $ starchitect-cloudguard plugins add
 
 EXAMPLES
   Install a plugin from npm registry.
 
-    $ mynewcli plugins add myplugin
+    $ starchitect-cloudguard plugins add myplugin
 
   Install a plugin from a github url.
 
-    $ mynewcli plugins add https://github.com/someuser/someplugin
+    $ starchitect-cloudguard plugins add https://github.com/someuser/someplugin
 
   Install a plugin from a github slug.
 
-    $ mynewcli plugins add someuser/someplugin
+    $ starchitect-cloudguard plugins add someuser/someplugin
 ```
 
-## `mynewcli plugins:inspect PLUGIN...`
+## `starchitect-cloudguard plugins:inspect PLUGIN...`
 
 Displays installation properties of a plugin.
 
 ```
 USAGE
-  $ mynewcli plugins inspect PLUGIN...
+  $ starchitect-cloudguard plugins inspect PLUGIN...
 
 ARGUMENTS
   PLUGIN...  [default: .] Plugin to inspect.
@@ -202,18 +177,18 @@ DESCRIPTION
   Displays installation properties of a plugin.
 
 EXAMPLES
-  $ mynewcli plugins inspect myplugin
+  $ starchitect-cloudguard plugins inspect myplugin
 ```
 
 _See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v5.4.23/src/commands/plugins/inspect.ts)_
 
-## `mynewcli plugins install PLUGIN`
+## `starchitect-cloudguard plugins install PLUGIN`
 
-Installs a plugin into mynewcli.
+Installs a plugin into starchitect-cloudguard.
 
 ```
 USAGE
-  $ mynewcli plugins install PLUGIN... [--json] [-f] [-h] [-s | -v]
+  $ starchitect-cloudguard plugins install PLUGIN... [--json] [-f] [-h] [-s | -v]
 
 ARGUMENTS
   PLUGIN...  Plugin to install.
@@ -228,41 +203,41 @@ GLOBAL FLAGS
   --json  Format output as json.
 
 DESCRIPTION
-  Installs a plugin into mynewcli.
+  Installs a plugin into starchitect-cloudguard.
 
   Uses npm to install plugins.
 
   Installation of a user-installed plugin will override a core plugin.
 
-  Use the MYNEWCLI_NPM_LOG_LEVEL environment variable to set the npm loglevel.
-  Use the MYNEWCLI_NPM_REGISTRY environment variable to set the npm registry.
+  Use the STARCHITECT_CLOUDGUARD_NPM_LOG_LEVEL environment variable to set the npm loglevel.
+  Use the STARCHITECT_CLOUDGUARD_NPM_REGISTRY environment variable to set the npm registry.
 
 ALIASES
-  $ mynewcli plugins add
+  $ starchitect-cloudguard plugins add
 
 EXAMPLES
   Install a plugin from npm registry.
 
-    $ mynewcli plugins install myplugin
+    $ starchitect-cloudguard plugins install myplugin
 
   Install a plugin from a github url.
 
-    $ mynewcli plugins install https://github.com/someuser/someplugin
+    $ starchitect-cloudguard plugins install https://github.com/someuser/someplugin
 
   Install a plugin from a github slug.
 
-    $ mynewcli plugins install someuser/someplugin
+    $ starchitect-cloudguard plugins install someuser/someplugin
 ```
 
 _See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v5.4.23/src/commands/plugins/install.ts)_
 
-## `mynewcli plugins link PATH`
+## `starchitect-cloudguard plugins link PATH`
 
 Links a plugin into the CLI for development.
 
 ```
 USAGE
-  $ mynewcli plugins link PATH [-h] [--install] [-v]
+  $ starchitect-cloudguard plugins link PATH [-h] [--install] [-v]
 
 ARGUMENTS
   PATH  [default: .] path to plugin
@@ -282,18 +257,18 @@ DESCRIPTION
 
 
 EXAMPLES
-  $ mynewcli plugins link myplugin
+  $ starchitect-cloudguard plugins link myplugin
 ```
 
 _See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v5.4.23/src/commands/plugins/link.ts)_
 
-## `mynewcli plugins remove [PLUGIN]`
+## `starchitect-cloudguard plugins remove [PLUGIN]`
 
 Removes a plugin from the CLI.
 
 ```
 USAGE
-  $ mynewcli plugins remove [PLUGIN...] [-h] [-v]
+  $ starchitect-cloudguard plugins remove [PLUGIN...] [-h] [-v]
 
 ARGUMENTS
   PLUGIN...  plugin to uninstall
@@ -306,20 +281,20 @@ DESCRIPTION
   Removes a plugin from the CLI.
 
 ALIASES
-  $ mynewcli plugins unlink
-  $ mynewcli plugins remove
+  $ starchitect-cloudguard plugins unlink
+  $ starchitect-cloudguard plugins remove
 
 EXAMPLES
-  $ mynewcli plugins remove myplugin
+  $ starchitect-cloudguard plugins remove myplugin
 ```
 
-## `mynewcli plugins reset`
+## `starchitect-cloudguard plugins reset`
 
 Remove all user-installed and linked plugins.
 
 ```
 USAGE
-  $ mynewcli plugins reset [--hard] [--reinstall]
+  $ starchitect-cloudguard plugins reset [--hard] [--reinstall]
 
 FLAGS
   --hard       Delete node_modules and package manager related files in addition to uninstalling plugins.
@@ -328,13 +303,13 @@ FLAGS
 
 _See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v5.4.23/src/commands/plugins/reset.ts)_
 
-## `mynewcli plugins uninstall [PLUGIN]`
+## `starchitect-cloudguard plugins uninstall [PLUGIN]`
 
 Removes a plugin from the CLI.
 
 ```
 USAGE
-  $ mynewcli plugins uninstall [PLUGIN...] [-h] [-v]
+  $ starchitect-cloudguard plugins uninstall [PLUGIN...] [-h] [-v]
 
 ARGUMENTS
   PLUGIN...  plugin to uninstall
@@ -347,22 +322,22 @@ DESCRIPTION
   Removes a plugin from the CLI.
 
 ALIASES
-  $ mynewcli plugins unlink
-  $ mynewcli plugins remove
+  $ starchitect-cloudguard plugins unlink
+  $ starchitect-cloudguard plugins remove
 
 EXAMPLES
-  $ mynewcli plugins uninstall myplugin
+  $ starchitect-cloudguard plugins uninstall myplugin
 ```
 
 _See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v5.4.23/src/commands/plugins/uninstall.ts)_
 
-## `mynewcli plugins unlink [PLUGIN]`
+## `starchitect-cloudguard plugins unlink [PLUGIN]`
 
 Removes a plugin from the CLI.
 
 ```
 USAGE
-  $ mynewcli plugins unlink [PLUGIN...] [-h] [-v]
+  $ starchitect-cloudguard plugins unlink [PLUGIN...] [-h] [-v]
 
 ARGUMENTS
   PLUGIN...  plugin to uninstall
@@ -375,20 +350,20 @@ DESCRIPTION
   Removes a plugin from the CLI.
 
 ALIASES
-  $ mynewcli plugins unlink
-  $ mynewcli plugins remove
+  $ starchitect-cloudguard plugins unlink
+  $ starchitect-cloudguard plugins remove
 
 EXAMPLES
-  $ mynewcli plugins unlink myplugin
+  $ starchitect-cloudguard plugins unlink myplugin
 ```
 
-## `mynewcli plugins update`
+## `starchitect-cloudguard plugins update`
 
 Update installed plugins.
 
 ```
 USAGE
-  $ mynewcli plugins update [-h] [-v]
+  $ starchitect-cloudguard plugins update [-h] [-v]
 
 FLAGS
   -h, --help     Show CLI help.
@@ -400,4 +375,29 @@ DESCRIPTION
 
 _See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v5.4.23/src/commands/plugins/update.ts)_
 
+## `starchitect-cloudguard runtime test`
+
+Run security tests against cloud runtime environments
+
+```
+USAGE
+  $ starchitect-cloudguard runtime test [-c aws|azure|gcp] [-s <value>] [--profile <value>] [--region <value>]
+    [--parallel] [--concurrency <value>] [--format json|stdout|html]
+
+FLAGS
+  -c, --cloud=<option>       Cloud provider to test
+                             <options: aws|azure|gcp>
+  -s, --service=<value>      Specific service to test
+      --concurrency=<value>  [default: 5] Number of tests to run concurrently
+      --format=<option>      [default: stdout] Output format
+                             <options: json|stdout|html>
+      --parallel             Run tests in parallel
+      --profile=<value>      Cloud provider profile to use
+      --region=<value>       Region to test
+
+DESCRIPTION
+  Run security tests against cloud runtime environments
+```
+
+_See code: [src/commands/runtime/test.ts](https://github.com/nonfx/starchitect-cloudguard/blob/v0.0.0/src/commands/runtime/test.ts)_
 <!-- commandsstop -->

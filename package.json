@@ -10,6 +10,7 @@
     "@aws-sdk/client-accessanalyzer": "^3.712.0",
     "@aws-sdk/client-auto-scaling": "^3.714.0",
     "@aws-sdk/client-cloudtrail": "^3.714.0",
+    "@aws-sdk/client-cloudwatch": "^3.716.0",
     "@aws-sdk/client-cloudwatch-logs": "^3.716.0",
     "@aws-sdk/client-config-service": "^3.716.0",
     "@aws-sdk/client-dynamodb": "^3.713.0",
