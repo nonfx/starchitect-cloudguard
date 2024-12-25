@@ -4,12 +4,10 @@
   "version": "0.0.0",
   "author": "The Non-Functional Company",
   "bin": {
-    "mynewcli": "./bin/run.js"
+    "starchitect-cloudguard": "./bin/run.js"
   },
   "bugs": "https://github.com/nonfx/starchitect-cloudguard/issues",
   "dependencies": {
-    "@aws-sdk/client-sts": "^3.716.0",
-    "@aws-sdk/credential-providers": "^3.716.0",
     "@oclif/core": "^4",
     "@oclif/plugin-help": "^6",
     "@oclif/plugin-plugins": "^5",
@@ -22,17 +20,7 @@
   },
   "devDependencies": {
     "@oclif/test": "^4",
-    "@types/chai": "^4",
-    "@types/mocha": "^10",
-    "@types/node": "^18",
-    "chai": "^4",
-    "eslint": "^8",
-    "eslint-config-oclif": "^5",
-    "eslint-config-oclif-typescript": "^3",
-    "mocha": "^10",
     "oclif": "^4",
-    "shx": "^0.3.3",
-    "ts-node": "^10",
     "typescript": "^5"
   },
   "engines": {
@@ -64,7 +52,6 @@
   "scripts": {
     "build": "shx rm -rf dist && tsc -b",
     "dev": "./bin/dev.js",
-    "lint": "eslint . --ext .ts",
     "postpack": "shx rm -f oclif.manifest.json",
     "posttest": "npm run lint",
     "prepack": "bun --bun oclif manifest && bun --bun oclif readme",

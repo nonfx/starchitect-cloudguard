@@ -38,7 +38,7 @@ async function checkSecurityGroupAdminPorts(
 			}
 
 			let hasViolation = false;
-			let violatingPorts: number[] = [];
+			const violatingPorts: number[] = [];
 
 			// Check ingress rules
 			for (const rule of sg.IpPermissions || []) {

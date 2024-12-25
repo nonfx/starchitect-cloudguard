@@ -40,7 +40,7 @@ async function checkSecurityGroupAuthorizedPorts(
 			}
 
 			let hasUnauthorizedAccess = false;
-			let unauthorizedPorts: number[] = [];
+			const unauthorizedPorts: number[] = [];
 
 			// Check ingress rules
 			for (const rule of sg.IpPermissions || []) {

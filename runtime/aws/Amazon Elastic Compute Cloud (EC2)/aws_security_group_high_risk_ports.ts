@@ -58,7 +58,7 @@ async function checkSecurityGroupHighRiskPorts(
 			}
 
 			let hasUnrestrictedHighRiskPort = false;
-			let violatingPorts: number[] = [];
+			const violatingPorts: number[] = [];
 
 			// Check inbound rules
 			for (const rule of sg.IpPermissions || []) {

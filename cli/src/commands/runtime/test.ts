@@ -9,6 +9,8 @@ import { TestRunner } from "../../lib/test-runner";
 import type { TestResult } from "../../types";
 
 export default class RuntimeTestRunner extends Command {
+	public static enableJsonFlag = true;
+
 	static description = "Run security tests against cloud runtime environments";
 
 	static flags = {

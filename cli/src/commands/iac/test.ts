@@ -1,7 +1,8 @@
 import { Command, Flags } from "@oclif/core";
-import inquirer from "inquirer";
 
 export default class IacTest extends Command {
+	public static enableJsonFlag = true;
+
 	static description = "Run security tests against Infrastructure as Code (coming soon)";
 
 	static flags = {
@@ -25,6 +26,7 @@ export default class IacTest extends Command {
 	};
 
 	async run(): Promise<void> {
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		const { flags } = await this.parse(IacTest);
 
 		try {

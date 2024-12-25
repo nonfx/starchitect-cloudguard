@@ -1,8 +1,4 @@
-import {
-	CloudWatchClient,
-	GetMetricDataCommand,
-	DescribeAlarmsCommand
-} from "@aws-sdk/client-cloudwatch";
+import { CloudWatchClient, DescribeAlarmsCommand } from "@aws-sdk/client-cloudwatch";
 
 import {
 	CloudWatchLogsClient,
@@ -10,7 +6,7 @@ import {
 	DescribeMetricFiltersCommand
 } from "@aws-sdk/client-cloudwatch-logs";
 
-import { printSummary, generateSummary } from "~codegen/utils/stringUtils";
+import { generateSummary, printSummary } from "~codegen/utils/stringUtils";
 
 import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "~runtime/types";
 
