@@ -1,12 +1,9 @@
-import { EFSClient, DescribeFileSystemsCommand } from '@aws-sdk/client-efs';
+import { EFSClient, DescribeFileSystemsCommand } from "@aws-sdk/client-efs";
 
-import {
-	printSummary,
-	generateSummary,
-} from '~codegen/utils/stringUtils';
+import { printSummary, generateSummary } from "~codegen/utils/stringUtils";
 import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "~runtime/types";
 
-async function checkEfsEncryption(region: string = 'us-east-1'): Promise<ComplianceReport> {
+async function checkEfsEncryption(region: string = "us-east-1"): Promise<ComplianceReport> {
 	const client = new EFSClient({ region });
 	const results: ComplianceReport = {
 		checks: []
@@ -19,9 +16,9 @@ async function checkEfsEncryption(region: string = 'us-east-1'): Promise<Complia
 		if (!response.FileSystems || response.FileSystems.length === 0) {
 			results.checks = [
 				{
-					resourceName: 'No EFS File Systems',
+					resourceName: "No EFS File Systems",
 					status: ComplianceStatus.NOTAPPLICABLE,
-					message: 'No EFS file systems found in the region'
+					message: "No EFS file systems found in the region"
 				}
 			];
 			return results;
@@ -31,9 +28,9 @@ async function checkEfsEncryption(region: string = 'us-east-1'): Promise<Complia
 		for (const fs of response.FileSystems) {
 			if (!fs.FileSystemId) {
 				results.checks.push({
-					resourceName: 'Unknown File System',
+					resourceName: "Unknown File System",
 					status: ComplianceStatus.ERROR,
-					message: 'File system found without ID'
+					message: "File system found without ID"
 				});
 				continue;
 			}
@@ -44,15 +41,13 @@ async function checkEfsEncryption(region: string = 'us-east-1'): Promise<Complia
 				resourceName: fs.FileSystemId,
 				resourceArn: fs.FileSystemArn,
 				status: isEncrypted ? ComplianceStatus.PASS : ComplianceStatus.FAIL,
-				message: isEncrypted
-					? undefined
-					: 'EFS file system is not encrypted with KMS'
+				message: isEncrypted ? undefined : "EFS file system is not encrypted with KMS"
 			});
 		}
 	} catch (error) {
 		results.checks = [
 			{
-				resourceName: 'Region Check',
+				resourceName: "Region Check",
 				status: ComplianceStatus.ERROR,
 				message: `Error checking EFS file systems: ${error instanceof Error ? error.message : String(error)}`
 			}
@@ -64,20 +59,20 @@ async function checkEfsEncryption(region: string = 'us-east-1'): Promise<Complia
 }
 
 if (require.main === module) {
-	const region = process.env.AWS_REGION ?? 'ap-southeast-1';
+	const region = process.env.AWS_REGION ?? "ap-southeast-1";
 	const results = await checkEfsEncryption(region);
 	printSummary(generateSummary(results));
 }
 
 export default {
-	title: 'Ensure that encryption is enabled for EFS file systems',
-	description: 'EFS data should be encrypted at rest using AWS KMS (Key Management Service).',
+	title: "Ensure that encryption is enabled for EFS file systems",
+	description: "EFS data should be encrypted at rest using AWS KMS (Key Management Service).",
 	controls: [
 		{
-			id: 'CIS-AWS-Foundations-Benchmark_v3.0.0_2.4.1',
-			document: 'CIS-AWS-Foundations-Benchmark_v3.0.0'
+			id: "CIS-AWS-Foundations-Benchmark_v3.0.0_2.4.1",
+			document: "CIS-AWS-Foundations-Benchmark_v3.0.0"
 		}
 	],
-	severity: 'MEDIUM',
+	severity: "MEDIUM",
 	execute: checkEfsEncryption
 } satisfies RuntimeTest;

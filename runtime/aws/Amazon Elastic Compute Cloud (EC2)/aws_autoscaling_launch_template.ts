@@ -1,13 +1,10 @@
-import { AutoScalingClient, DescribeAutoScalingGroupsCommand } from '@aws-sdk/client-auto-scaling';
+import { AutoScalingClient, DescribeAutoScalingGroupsCommand } from "@aws-sdk/client-auto-scaling";
 
-import {
-	printSummary,
-	generateSummary,
-} from '~codegen/utils/stringUtils';
+import { printSummary, generateSummary } from "~codegen/utils/stringUtils";
 import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "~runtime/types";
 
 async function checkAutoScalingLaunchTemplate(
-	region: string = 'us-east-1'
+	region: string = "us-east-1"
 ): Promise<ComplianceReport> {
 	const client = new AutoScalingClient({ region });
 	const results: ComplianceReport = {
@@ -21,9 +18,9 @@ async function checkAutoScalingLaunchTemplate(
 		if (!response.AutoScalingGroups || response.AutoScalingGroups.length === 0) {
 			results.checks = [
 				{
-					resourceName: 'No Auto Scaling Groups',
+					resourceName: "No Auto Scaling Groups",
 					status: ComplianceStatus.NOTAPPLICABLE,
-					message: 'No Auto Scaling groups found in the region'
+					message: "No Auto Scaling groups found in the region"
 				}
 			];
 			return results;
@@ -33,9 +30,9 @@ async function checkAutoScalingLaunchTemplate(
 		for (const asg of response.AutoScalingGroups) {
 			if (!asg.AutoScalingGroupName) {
 				results.checks.push({
-					resourceName: 'Unknown ASG',
+					resourceName: "Unknown ASG",
 					status: ComplianceStatus.ERROR,
-					message: 'Auto Scaling group found without name'
+					message: "Auto Scaling group found without name"
 				});
 				continue;
 			}
@@ -55,13 +52,13 @@ async function checkAutoScalingLaunchTemplate(
 				message:
 					usesLaunchTemplate || usesMixedInstancesTemplate
 						? undefined
-						: 'Auto Scaling group must use launch template instead of launch configuration'
+						: "Auto Scaling group must use launch template instead of launch configuration"
 			});
 		}
 	} catch (error) {
 		results.checks = [
 			{
-				resourceName: 'Region Check',
+				resourceName: "Region Check",
 				status: ComplianceStatus.ERROR,
 				message: `Error checking Auto Scaling groups: ${error instanceof Error ? error.message : String(error)}`
 			}
@@ -73,20 +70,21 @@ async function checkAutoScalingLaunchTemplate(
 }
 
 if (require.main === module) {
-	const region = process.env.AWS_REGION ?? 'ap-southeast-1';
+	const region = process.env.AWS_REGION ?? "ap-southeast-1";
 	const results = await checkAutoScalingLaunchTemplate(region);
 	printSummary(generateSummary(results));
 }
 
-export default  {
-	title: 'Amazon EC2 Auto Scaling groups should use Amazon EC2 launch templates',
-	description: 'EC2 Auto Scaling groups must use launch templates instead of launch configurations for better access to latest features.',
+export default {
+	title: "Amazon EC2 Auto Scaling groups should use Amazon EC2 launch templates",
+	description:
+		"EC2 Auto Scaling groups must use launch templates instead of launch configurations for better access to latest features.",
 	controls: [
 		{
-			id: 'AWS-Foundational-Security-Best-Practices_v1.0.0_AutoScaling.9',
-			document: 'AWS-Foundational-Security-Best-Practices_v1.0.0'
+			id: "AWS-Foundational-Security-Best-Practices_v1.0.0_AutoScaling.9",
+			document: "AWS-Foundational-Security-Best-Practices_v1.0.0"
 		}
 	],
-	severity: 'MEDIUM',
+	severity: "MEDIUM",
 	execute: checkAutoScalingLaunchTemplate
 } satisfies RuntimeTest;

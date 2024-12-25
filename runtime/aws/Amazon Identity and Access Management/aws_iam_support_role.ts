@@ -1,9 +1,6 @@
 import { IAMClient, ListRolesCommand, ListAttachedRolePoliciesCommand } from "@aws-sdk/client-iam";
 
-import {
-	printSummary,
-	generateSummary,
-} from "~codegen/utils/stringUtils";
+import { printSummary, generateSummary } from "~codegen/utils/stringUtils";
 
 import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "~runtime/types";
 
@@ -18,9 +15,7 @@ async function checkIamSupportRole(region: string = "us-east-1"): Promise<Compli
 		let marker: string | undefined;
 
 		do {
-			const listRolesResponse = await client.send(
-				new ListRolesCommand({ Marker: marker })
-			);
+			const listRolesResponse = await client.send(new ListRolesCommand({ Marker: marker }));
 
 			if (!listRolesResponse.Roles || listRolesResponse.Roles.length === 0) {
 				if (!roleFound) {
@@ -108,7 +103,8 @@ if (require.main === module) {
 
 export default {
 	title: "Ensure a support role has been created to manage incidents with AWS Support",
-	description: "AWS provides a support center that can be used for incident notification and response, as well as technical support and customer services. Create an IAM Role to allow authorized users to manage incidents with AWS Support.",
+	description:
+		"AWS provides a support center that can be used for incident notification and response, as well as technical support and customer services. Create an IAM Role to allow authorized users to manage incidents with AWS Support.",
 	controls: [
 		{
 			id: "CIS-AWS-Foundations-Benchmark_v3.0.0_1.17",

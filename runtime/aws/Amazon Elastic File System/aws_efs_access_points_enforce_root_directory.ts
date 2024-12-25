@@ -1,13 +1,10 @@
-import { EFSClient, DescribeAccessPointsCommand } from '@aws-sdk/client-efs';
+import { EFSClient, DescribeAccessPointsCommand } from "@aws-sdk/client-efs";
 
-import {
-	printSummary,
-	generateSummary,
-} from '~codegen/utils/stringUtils';
+import { printSummary, generateSummary } from "~codegen/utils/stringUtils";
 import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "~runtime/types";
 
 async function checkEfsAccessPointsRootDirectory(
-	region: string = 'us-east-1'
+	region: string = "us-east-1"
 ): Promise<ComplianceReport> {
 	const client = new EFSClient({ region });
 	const results: ComplianceReport = {
@@ -29,9 +26,9 @@ async function checkEfsAccessPointsRootDirectory(
 				if (!accessPointFound) {
 					results.checks = [
 						{
-							resourceName: 'No EFS Access Points',
+							resourceName: "No EFS Access Points",
 							status: ComplianceStatus.NOTAPPLICABLE,
-							message: 'No EFS access points found in the region'
+							message: "No EFS access points found in the region"
 						}
 					];
 					return results;
@@ -44,18 +41,18 @@ async function checkEfsAccessPointsRootDirectory(
 
 				if (!accessPoint.AccessPointArn) {
 					results.checks.push({
-						resourceName: 'Unknown Access Point',
+						resourceName: "Unknown Access Point",
 						status: ComplianceStatus.ERROR,
-						message: 'Access point found without ARN'
+						message: "Access point found without ARN"
 					});
 					continue;
 				}
 
 				const rootDirectory = accessPoint.RootDirectory?.Path;
-				const isCompliant = rootDirectory && rootDirectory !== '/';
+				const isCompliant = rootDirectory && rootDirectory !== "/";
 
 				results.checks.push({
-					resourceName: accessPoint.AccessPointId || 'Unknown ID',
+					resourceName: accessPoint.AccessPointId || "Unknown ID",
 					resourceArn: accessPoint.AccessPointArn,
 					status: isCompliant ? ComplianceStatus.PASS : ComplianceStatus.FAIL,
 					message: isCompliant
@@ -69,7 +66,7 @@ async function checkEfsAccessPointsRootDirectory(
 	} catch (error) {
 		results.checks = [
 			{
-				resourceName: 'EFS Check',
+				resourceName: "EFS Check",
 				status: ComplianceStatus.ERROR,
 				message: `Error checking EFS access points: ${error instanceof Error ? error.message : String(error)}`
 			}
@@ -81,20 +78,21 @@ async function checkEfsAccessPointsRootDirectory(
 }
 
 if (require.main === module) {
-	const region = process.env.AWS_REGION ?? 'ap-southeast-1';
+	const region = process.env.AWS_REGION ?? "ap-southeast-1";
 	const results = await checkEfsAccessPointsRootDirectory(region);
 	printSummary(generateSummary(results));
 }
 
 export default {
-	title: 'EFS access points should enforce a root directory',
-	description: 'EFS access points must enforce a root directory to restrict data access by ensuring users can only access specified subdirectory files.',
+	title: "EFS access points should enforce a root directory",
+	description:
+		"EFS access points must enforce a root directory to restrict data access by ensuring users can only access specified subdirectory files.",
 	controls: [
 		{
-			id: 'AWS-Foundational-Security-Best-Practices_v1.0.0_EFS.3',
-			document: 'AWS-Foundational-Security-Best-Practices_v1.0.0'
+			id: "AWS-Foundational-Security-Best-Practices_v1.0.0_EFS.3",
+			document: "AWS-Foundational-Security-Best-Practices_v1.0.0"
 		}
 	],
-	severity: 'MEDIUM',
+	severity: "MEDIUM",
 	execute: checkEfsAccessPointsRootDirectory
 } satisfies RuntimeTest;

@@ -10,14 +10,12 @@ import {
 	DescribeMetricFiltersCommand
 } from "@aws-sdk/client-cloudwatch-logs";
 
-import {
-	printSummary,
-	generateSummary
-} from "~codegen/utils/stringUtils";
+import { printSummary, generateSummary } from "~codegen/utils/stringUtils";
 
 import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "~runtime/types";
 
-const REQUIRED_PATTERN = '{ ($.eventName = CreateNetworkAcl) || ($.eventName = CreateNetworkAclEntry) || ($.eventName = DeleteNetworkAcl) || ($.eventName = DeleteNetworkAclEntry) || ($.eventName = ReplaceNetworkAclEntry) || ($.eventName = ReplaceNetworkAclAssociation) }';
+const REQUIRED_PATTERN =
+	"{ ($.eventName = CreateNetworkAcl) || ($.eventName = CreateNetworkAclEntry) || ($.eventName = DeleteNetworkAcl) || ($.eventName = DeleteNetworkAclEntry) || ($.eventName = ReplaceNetworkAclEntry) || ($.eventName = ReplaceNetworkAclAssociation) }";
 
 async function checkNaclMonitoringCompliance(
 	region: string = "us-east-1"
@@ -118,7 +116,8 @@ if (require.main === module) {
 
 export default {
 	title: "Ensure Network Access Control Lists (NACL) changes are monitored",
-	description: "Real-time monitoring of API calls can be achieved by directing CloudTrail Logs to CloudWatch Logs, or an external Security information and event management (SIEM) environment, and establishing corresponding metric filters and alarms. NACLs are used as a stateless packet filter to control ingress and egress traffic for subnets within a VPC. It is recommended that a metric filter and alarm be established for changes made to NACLs",
+	description:
+		"Real-time monitoring of API calls can be achieved by directing CloudTrail Logs to CloudWatch Logs, or an external Security information and event management (SIEM) environment, and establishing corresponding metric filters and alarms. NACLs are used as a stateless packet filter to control ingress and egress traffic for subnets within a VPC. It is recommended that a metric filter and alarm be established for changes made to NACLs",
 	controls: [
 		{
 			id: "CIS-AWS-Foundations-Benchmark_v3.0.0_4.11",

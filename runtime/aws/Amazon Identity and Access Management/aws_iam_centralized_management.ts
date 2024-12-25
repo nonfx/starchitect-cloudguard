@@ -1,10 +1,7 @@
 import { IAMClient, ListUsersCommand, ListSAMLProvidersCommand } from "@aws-sdk/client-iam";
 import { OrganizationsClient, DescribeOrganizationCommand } from "@aws-sdk/client-organizations";
 
-import {
-	printSummary,
-	generateSummary,
-} from "~codegen/utils/stringUtils";
+import { printSummary, generateSummary } from "~codegen/utils/stringUtils";
 
 import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "~runtime/types";
 

@@ -1,12 +1,9 @@
-import { EC2Client, DescribeInstancesCommand } from '@aws-sdk/client-ec2';
+import { EC2Client, DescribeInstancesCommand } from "@aws-sdk/client-ec2";
 
-import {
-	printSummary,
-	generateSummary,
-} from '~codegen/utils/stringUtils';
+import { printSummary, generateSummary } from "~codegen/utils/stringUtils";
 import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "~runtime/types";
 
-async function checkEc2PublicIpCompliance(region: string = 'us-east-1'): Promise<ComplianceReport> {
+async function checkEc2PublicIpCompliance(region: string = "us-east-1"): Promise<ComplianceReport> {
 	const client = new EC2Client({ region });
 	const results: ComplianceReport = {
 		checks: []
@@ -25,9 +22,9 @@ async function checkEc2PublicIpCompliance(region: string = 'us-east-1'): Promise
 			if (!response.Reservations || response.Reservations.length === 0) {
 				if (results.checks.length === 0) {
 					results.checks.push({
-						resourceName: 'No EC2 Instances',
+						resourceName: "No EC2 Instances",
 						status: ComplianceStatus.NOTAPPLICABLE,
-						message: 'No EC2 instances found in the region'
+						message: "No EC2 instances found in the region"
 					});
 				}
 				break;
@@ -39,9 +36,9 @@ async function checkEc2PublicIpCompliance(region: string = 'us-east-1'): Promise
 				for (const instance of reservation.Instances) {
 					if (!instance.InstanceId) {
 						results.checks.push({
-							resourceName: 'Unknown Instance',
+							resourceName: "Unknown Instance",
 							status: ComplianceStatus.ERROR,
-							message: 'Instance found without ID'
+							message: "Instance found without ID"
 						});
 						continue;
 					}
@@ -57,10 +54,14 @@ async function checkEc2PublicIpCompliance(region: string = 'us-east-1'): Promise
 					results.checks.push({
 						resourceName: instance.InstanceId,
 						resourceArn: `arn:aws:ec2:${region}:${instance.OwnerId}:instance/${instance.InstanceId}`,
-						status: hasPublicIp || hasPublicIpInNetworkInterface ? ComplianceStatus.FAIL : ComplianceStatus.PASS,
-						message: hasPublicIp || hasPublicIpInNetworkInterface
-							? 'EC2 instance has a public IPv4 address configured'
-							: undefined
+						status:
+							hasPublicIp || hasPublicIpInNetworkInterface
+								? ComplianceStatus.FAIL
+								: ComplianceStatus.PASS,
+						message:
+							hasPublicIp || hasPublicIpInNetworkInterface
+								? "EC2 instance has a public IPv4 address configured"
+								: undefined
 					});
 				}
 			}
@@ -70,7 +71,7 @@ async function checkEc2PublicIpCompliance(region: string = 'us-east-1'): Promise
 	} catch (error) {
 		results.checks = [
 			{
-				resourceName: 'EC2 Check',
+				resourceName: "EC2 Check",
 				status: ComplianceStatus.ERROR,
 				message: `Error checking EC2 instances: ${error instanceof Error ? error.message : String(error)}`
 			}
@@ -81,20 +82,21 @@ async function checkEc2PublicIpCompliance(region: string = 'us-east-1'): Promise
 }
 
 if (require.main === module) {
-	const region = process.env.AWS_REGION ?? 'ap-southeast-1';
+	const region = process.env.AWS_REGION ?? "ap-southeast-1";
 	const results = await checkEc2PublicIpCompliance(region);
 	printSummary(generateSummary(results));
 }
 
 export default {
-	title: 'Amazon EC2 instances should not have a public IPv4 address',
-	description: 'This control checks whether EC2 instances have a public IPv4 address. The control fails if an EC2 instance has a public IP address configured.',
+	title: "Amazon EC2 instances should not have a public IPv4 address",
+	description:
+		"This control checks whether EC2 instances have a public IPv4 address. The control fails if an EC2 instance has a public IP address configured.",
 	controls: [
 		{
-			id: 'AWS-Foundational-Security-Best-Practices_v1.0.0_EC2.9',
-			document: 'AWS-Foundational-Security-Best-Practices_v1.0.0'
+			id: "AWS-Foundational-Security-Best-Practices_v1.0.0_EC2.9",
+			document: "AWS-Foundational-Security-Best-Practices_v1.0.0"
 		}
 	],
-	severity: 'MEDIUM',
+	severity: "MEDIUM",
 	execute: checkEc2PublicIpCompliance
 } satisfies RuntimeTest;

@@ -1,13 +1,10 @@
-import { EFSClient, DescribeAccessPointsCommand } from '@aws-sdk/client-efs';
+import { EFSClient, DescribeAccessPointsCommand } from "@aws-sdk/client-efs";
 
-import {
-	printSummary,
-	generateSummary,
-} from '~codegen/utils/stringUtils';
+import { printSummary, generateSummary } from "~codegen/utils/stringUtils";
 import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "~runtime/types";
 
 async function checkEfsAccessPointUserIdentity(
-	region: string = 'us-east-1'
+	region: string = "us-east-1"
 ): Promise<ComplianceReport> {
 	const client = new EFSClient({ region });
 	const results: ComplianceReport = {
@@ -21,9 +18,9 @@ async function checkEfsAccessPointUserIdentity(
 		if (!response.AccessPoints || response.AccessPoints.length === 0) {
 			results.checks = [
 				{
-					resourceName: 'No EFS Access Points',
+					resourceName: "No EFS Access Points",
 					status: ComplianceStatus.NOTAPPLICABLE,
-					message: 'No EFS access points found in the region'
+					message: "No EFS access points found in the region"
 				}
 			];
 			return results;
@@ -32,9 +29,9 @@ async function checkEfsAccessPointUserIdentity(
 		for (const accessPoint of response.AccessPoints) {
 			if (!accessPoint.AccessPointArn) {
 				results.checks.push({
-					resourceName: 'Unknown Access Point',
+					resourceName: "Unknown Access Point",
 					status: ComplianceStatus.ERROR,
-					message: 'Access point found without ARN'
+					message: "Access point found without ARN"
 				});
 				continue;
 			}
@@ -45,18 +42,18 @@ async function checkEfsAccessPointUserIdentity(
 				accessPoint.PosixUser.Gid !== undefined;
 
 			results.checks.push({
-				resourceName: accessPoint.AccessPointId || 'Unknown ID',
+				resourceName: accessPoint.AccessPointId || "Unknown ID",
 				resourceArn: accessPoint.AccessPointArn,
 				status: hasValidPosixUser ? ComplianceStatus.PASS : ComplianceStatus.FAIL,
 				message: hasValidPosixUser
 					? undefined
-					: 'EFS access point does not have a valid POSIX user identity configured'
+					: "EFS access point does not have a valid POSIX user identity configured"
 			});
 		}
 	} catch (error) {
 		results.checks = [
 			{
-				resourceName: 'Region Check',
+				resourceName: "Region Check",
 				status: ComplianceStatus.ERROR,
 				message: `Error checking EFS access points: ${error instanceof Error ? error.message : String(error)}`
 			}
@@ -68,21 +65,21 @@ async function checkEfsAccessPointUserIdentity(
 }
 
 if (require.main === module) {
-	const region = process.env.AWS_REGION ?? 'ap-southeast-1';
+	const region = process.env.AWS_REGION ?? "ap-southeast-1";
 	const results = await checkEfsAccessPointUserIdentity(region);
 	printSummary(generateSummary(results));
 }
 
 export default {
-	title: 'EFS access points should enforce a user identity',
+	title: "EFS access points should enforce a user identity",
 	description:
-		'EFS access points must enforce user identity by defining POSIX user identity during creation for secure application access management.',
+		"EFS access points must enforce user identity by defining POSIX user identity during creation for secure application access management.",
 	controls: [
 		{
-			id: 'AWS-Foundational-Security-Best-Practices_v1.0.0_EFS.4',
-			document: 'AWS-Foundational-Security-Best-Practices_v1.0.0'
+			id: "AWS-Foundational-Security-Best-Practices_v1.0.0_EFS.4",
+			document: "AWS-Foundational-Security-Best-Practices_v1.0.0"
 		}
 	],
-	severity: 'MEDIUM',
+	severity: "MEDIUM",
 	execute: checkEfsAccessPointUserIdentity
 } satisfies RuntimeTest;

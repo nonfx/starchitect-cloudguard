@@ -1,12 +1,11 @@
-import { CloudWatchClient, DescribeAlarmsCommand } from '@aws-sdk/client-cloudwatch';
+import { CloudWatchClient, DescribeAlarmsCommand } from "@aws-sdk/client-cloudwatch";
 
-import {
-	printSummary,
-	generateSummary,
-} from '~codegen/utils/stringUtils';
+import { printSummary, generateSummary } from "~codegen/utils/stringUtils";
 import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "~runtime/types";
 
-async function checkCloudWatchAlarmActions(region: string = 'us-east-1'): Promise<ComplianceReport> {
+async function checkCloudWatchAlarmActions(
+	region: string = "us-east-1"
+): Promise<ComplianceReport> {
 	const client = new CloudWatchClient({ region });
 	const results: ComplianceReport = {
 		checks: []
@@ -27,9 +26,9 @@ async function checkCloudWatchAlarmActions(region: string = 'us-east-1'): Promis
 				if (!alarmsFound) {
 					results.checks = [
 						{
-							resourceName: 'No CloudWatch Alarms',
+							resourceName: "No CloudWatch Alarms",
 							status: ComplianceStatus.NOTAPPLICABLE,
-							message: 'No CloudWatch alarms found in the region'
+							message: "No CloudWatch alarms found in the region"
 						}
 					];
 					return results;
@@ -42,9 +41,9 @@ async function checkCloudWatchAlarmActions(region: string = 'us-east-1'): Promis
 			for (const alarm of response.MetricAlarms) {
 				if (!alarm.AlarmName) {
 					results.checks.push({
-						resourceName: 'Unknown Alarm',
+						resourceName: "Unknown Alarm",
 						status: ComplianceStatus.ERROR,
-						message: 'Alarm found without name'
+						message: "Alarm found without name"
 					});
 					continue;
 				}
@@ -57,7 +56,7 @@ async function checkCloudWatchAlarmActions(region: string = 'us-east-1'): Promis
 					status: hasAlarmActions ? ComplianceStatus.PASS : ComplianceStatus.FAIL,
 					message: hasAlarmActions
 						? undefined
-						: 'CloudWatch alarm does not have any actions configured for ALARM state'
+						: "CloudWatch alarm does not have any actions configured for ALARM state"
 				});
 			}
 
@@ -66,7 +65,7 @@ async function checkCloudWatchAlarmActions(region: string = 'us-east-1'): Promis
 	} catch (error) {
 		results.checks = [
 			{
-				resourceName: 'CloudWatch Check',
+				resourceName: "CloudWatch Check",
 				status: ComplianceStatus.ERROR,
 				message: `Error checking CloudWatch alarms: ${error instanceof Error ? error.message : String(error)}`
 			}
@@ -78,18 +77,19 @@ async function checkCloudWatchAlarmActions(region: string = 'us-east-1'): Promis
 }
 
 if (require.main === module) {
-	const region = process.env.AWS_REGION ?? 'ap-southeast-1';
+	const region = process.env.AWS_REGION ?? "ap-southeast-1";
 	const results = await checkCloudWatchAlarmActions(region);
 	printSummary(generateSummary(results));
 }
 
 export default {
-	title: 'CloudWatch alarms should have specified actions configured',
-	description: 'This control checks whether an Amazon CloudWatch alarm has at least one action configured for the ALARM state. The control fails if the alarm doesn\'t have an action configured for the ALARM state. Optionally, you can include custom parameter values to also require alarm actions for the INSUFFICIENT_DATA or OK states. This control focuses on whether a CloudWatch alarm has an alarm action configured, whereas CloudWatch.17 focuses on the activation status of a CloudWatch alarm action. We recommend CloudWatch alarm actions to automatically alert you when a monitored metric is outside the defined threshold.',
+	title: "CloudWatch alarms should have specified actions configured",
+	description:
+		"This control checks whether an Amazon CloudWatch alarm has at least one action configured for the ALARM state. The control fails if the alarm doesn't have an action configured for the ALARM state. Optionally, you can include custom parameter values to also require alarm actions for the INSUFFICIENT_DATA or OK states. This control focuses on whether a CloudWatch alarm has an alarm action configured, whereas CloudWatch.17 focuses on the activation status of a CloudWatch alarm action. We recommend CloudWatch alarm actions to automatically alert you when a monitored metric is outside the defined threshold.",
 	controls: [
 		{
-			id: 'AWS-Foundational-Security-Best-Practices_v1.0.0_CloudTrail.15',
-			document: 'AWS-Foundational-Security-Best-Practices_v1.0.0'
+			id: "AWS-Foundational-Security-Best-Practices_v1.0.0_CloudTrail.15",
+			document: "AWS-Foundational-Security-Best-Practices_v1.0.0"
 		}
 	],
 	severity: "MEDIUM",

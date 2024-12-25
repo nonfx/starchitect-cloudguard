@@ -1,9 +1,6 @@
 import { IAMClient, GetAccountPasswordPolicyCommand } from "@aws-sdk/client-iam";
 
-import {
-	printSummary,
-	generateSummary,
-} from "~codegen/utils/stringUtils";
+import { printSummary, generateSummary } from "~codegen/utils/stringUtils";
 
 import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "~runtime/types";
 
@@ -64,7 +61,8 @@ if (require.main === module) {
 
 export default {
 	title: "Ensure IAM password policy requires minimum length of 14 or greater",
-	description: "Password policies are, in part, used to enforce password complexity requirements. IAM password policies can be used to ensure password are at least a given length. It is recommended that the password policy require a minimum password length 14.",
+	description:
+		"Password policies are, in part, used to enforce password complexity requirements. IAM password policies can be used to ensure password are at least a given length. It is recommended that the password policy require a minimum password length 14.",
 	controls: [
 		{
 			id: "CIS-AWS-Foundations-Benchmark_v3.0.0_1.8",

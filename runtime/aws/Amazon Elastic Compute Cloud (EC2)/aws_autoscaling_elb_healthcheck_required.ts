@@ -1,13 +1,10 @@
-import { AutoScalingClient, DescribeAutoScalingGroupsCommand } from '@aws-sdk/client-auto-scaling';
+import { AutoScalingClient, DescribeAutoScalingGroupsCommand } from "@aws-sdk/client-auto-scaling";
 
-import {
-	printSummary,
-	generateSummary,
-} from '~codegen/utils/stringUtils';
+import { printSummary, generateSummary } from "~codegen/utils/stringUtils";
 import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "~runtime/types";
 
 async function checkAutoScalingELBHealthCheck(
-	region: string = 'us-east-1'
+	region: string = "us-east-1"
 ): Promise<ComplianceReport> {
 	const client = new AutoScalingClient({ region });
 	const results: ComplianceReport = {
@@ -28,9 +25,9 @@ async function checkAutoScalingELBHealthCheck(
 				if (!groupFound) {
 					results.checks = [
 						{
-							resourceName: 'No Auto Scaling Groups',
+							resourceName: "No Auto Scaling Groups",
 							status: ComplianceStatus.NOTAPPLICABLE,
-							message: 'No Auto Scaling groups found in the region'
+							message: "No Auto Scaling groups found in the region"
 						}
 					];
 				}
@@ -39,7 +36,7 @@ async function checkAutoScalingELBHealthCheck(
 
 			for (const asg of response.AutoScalingGroups) {
 				groupFound = true;
-				const asgName = asg.AutoScalingGroupName || 'Unknown ASG';
+				const asgName = asg.AutoScalingGroupName || "Unknown ASG";
 				const asgArn = asg.AutoScalingGroupARN;
 
 				// Check if ASG has load balancer attached
@@ -53,13 +50,13 @@ async function checkAutoScalingELBHealthCheck(
 						resourceName: asgName,
 						resourceArn: asgArn,
 						status: ComplianceStatus.PASS,
-						message: 'Auto Scaling group has no load balancer attached'
+						message: "Auto Scaling group has no load balancer attached"
 					});
 					continue;
 				}
 
 				// Check if ELB health check is enabled
-				const hasELBHealthCheck = asg.HealthCheckType === 'ELB';
+				const hasELBHealthCheck = asg.HealthCheckType === "ELB";
 
 				results.checks.push({
 					resourceName: asgName,
@@ -67,7 +64,7 @@ async function checkAutoScalingELBHealthCheck(
 					status: hasELBHealthCheck ? ComplianceStatus.PASS : ComplianceStatus.FAIL,
 					message: hasELBHealthCheck
 						? undefined
-						: 'Auto Scaling group with load balancer must use ELB health checks'
+						: "Auto Scaling group with load balancer must use ELB health checks"
 				});
 			}
 
@@ -76,7 +73,7 @@ async function checkAutoScalingELBHealthCheck(
 	} catch (error) {
 		results.checks = [
 			{
-				resourceName: 'Auto Scaling Check',
+				resourceName: "Auto Scaling Check",
 				status: ComplianceStatus.ERROR,
 				message: `Error checking Auto Scaling groups: ${error instanceof Error ? error.message : String(error)}`
 			}
@@ -87,20 +84,21 @@ async function checkAutoScalingELBHealthCheck(
 }
 
 if (require.main === module) {
-	const region = process.env.AWS_REGION ?? 'ap-southeast-1';
+	const region = process.env.AWS_REGION ?? "ap-southeast-1";
 	const results = await checkAutoScalingELBHealthCheck(region);
 	printSummary(generateSummary(results));
 }
 
-export default  {
-	title: 'Auto Scaling groups associated with a load balancer should use ELB health checks',
-	description: 'This control checks whether Auto Scaling groups that are associated with a load balancer are using Elastic Load Balancing (ELB) health checks. The control fails if an Auto Scaling group with an attached load balancer is not using ELB health checks.',
+export default {
+	title: "Auto Scaling groups associated with a load balancer should use ELB health checks",
+	description:
+		"This control checks whether Auto Scaling groups that are associated with a load balancer are using Elastic Load Balancing (ELB) health checks. The control fails if an Auto Scaling group with an attached load balancer is not using ELB health checks.",
 	controls: [
 		{
-			id: 'AWS-Foundational-Security-Best-Practices_v1.0.0_AutoScaling.1',
-			document: 'AWS-Foundational-Security-Best-Practices_v1.0.0'
+			id: "AWS-Foundational-Security-Best-Practices_v1.0.0_AutoScaling.1",
+			document: "AWS-Foundational-Security-Best-Practices_v1.0.0"
 		}
 	],
-	severity: 'MEDIUM',
+	severity: "MEDIUM",
 	execute: checkAutoScalingELBHealthCheck
 } satisfies RuntimeTest;

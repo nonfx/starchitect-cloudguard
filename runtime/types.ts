@@ -1,3 +1,4 @@
+import type * as bunType from "bun:test";
 export enum ComplianceStatus {
 	PASS = "PASS",
 	FAIL = "FAIL",
@@ -43,4 +44,14 @@ export interface ComplianceStatistics {
 	fail: number;
 	error: number;
 	na: number;
+}
+
+declare global {
+	const describe: typeof bunType.describe;
+	const beforeEach: typeof bunType.beforeEach;
+	const beforeAll: typeof bunType.beforeAll;
+	const afterAll: typeof bunType.afterAll;
+	const test: typeof bunType.test;
+	const expect: typeof bunType.expect;
+	const it: typeof bunType.it;
 }

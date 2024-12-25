@@ -1,10 +1,7 @@
 import { IAMClient, ListPoliciesCommand, GetPolicyVersionCommand } from "@aws-sdk/client-iam";
 import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "~runtime/types";
 
-import {
-	printSummary,
-	generateSummary,
-} from "~codegen/utils/stringUtils";
+import { printSummary, generateSummary } from "~codegen/utils/stringUtils";
 
 interface PolicyStatement {
 	Effect: string;
@@ -182,7 +179,7 @@ if (require.main === module) {
 	printSummary(generateSummary(results));
 }
 
-export default  {
+export default {
 	title: "Ensure IAM policies that allow full *:* administrative privileges are not attached",
 	description:
 		"IAM policies are the means by which privileges are granted to users, groups, or roles. It is recommended and considered a standard security advice to grant least privilege -that is, granting only the permissions required to perform a task. Determine what users need to do and then craft policies for them that let the users perform only those tasks, instead of allowing full administrative privileges.",

@@ -1,17 +1,12 @@
 import { EC2Client, DescribeSecurityGroupsCommand } from "@aws-sdk/client-ec2";
 
-import {
-	printSummary,
-	generateSummary,
-} from "~codegen/utils/stringUtils";
+import { printSummary, generateSummary } from "~codegen/utils/stringUtils";
 import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "~runtime/types";
 
 // List of high-risk ports that should be restricted
 const HIGH_RISK_PORTS = new Set([
-	20, 21, 22, 23, 25, 110, 135, 143, 445,
-	1433, 1434, 3000, 3306, 3389, 4333,
-	5000, 5432, 5500, 5601, 8080, 8088,
-	8888, 9200, 9300
+	20, 21, 22, 23, 25, 110, 135, 143, 445, 1433, 1434, 3000, 3306, 3389, 4333, 5000, 5432, 5500,
+	5601, 8080, 8088, 8888, 9200, 9300
 ]);
 
 // Check if a port falls within high-risk range
@@ -120,7 +115,8 @@ if (require.main === module) {
 
 export default {
 	title: "Security groups should not allow unrestricted access to ports with high risk",
-	description: "This control checks if security groups restrict access to high-risk ports from unrestricted sources.",
+	description:
+		"This control checks if security groups restrict access to high-risk ports from unrestricted sources.",
 	controls: [
 		{
 			id: "AWS-Foundational-Security-Best-Practices_v1.0.0_EC2.19",

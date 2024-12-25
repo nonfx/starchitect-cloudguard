@@ -1,13 +1,10 @@
-import { AutoScalingClient, DescribeAutoScalingGroupsCommand } from '@aws-sdk/client-auto-scaling';
+import { AutoScalingClient, DescribeAutoScalingGroupsCommand } from "@aws-sdk/client-auto-scaling";
 
-import {
-	printSummary,
-	generateSummary,
-} from '~codegen/utils/stringUtils';
+import { printSummary, generateSummary } from "~codegen/utils/stringUtils";
 import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "~runtime/types";
 
 async function checkAutoScalingTagPropagation(
-	region: string = 'us-east-1'
+	region: string = "us-east-1"
 ): Promise<ComplianceReport> {
 	const client = new AutoScalingClient({ region });
 	const results: ComplianceReport = {
@@ -28,9 +25,9 @@ async function checkAutoScalingTagPropagation(
 				if (!asgFound) {
 					results.checks = [
 						{
-							resourceName: 'No Auto Scaling Groups',
+							resourceName: "No Auto Scaling Groups",
 							status: ComplianceStatus.NOTAPPLICABLE,
-							message: 'No Auto Scaling Groups found in the region'
+							message: "No Auto Scaling Groups found in the region"
 						}
 					];
 					return results;
@@ -42,9 +39,9 @@ async function checkAutoScalingTagPropagation(
 			for (const asg of response.AutoScalingGroups) {
 				if (!asg.AutoScalingGroupName || !asg.AutoScalingGroupARN) {
 					results.checks.push({
-						resourceName: 'Unknown ASG',
+						resourceName: "Unknown ASG",
 						status: ComplianceStatus.ERROR,
-						message: 'Auto Scaling Group found without name or ARN'
+						message: "Auto Scaling Group found without name or ARN"
 					});
 					continue;
 				}
@@ -68,7 +65,7 @@ async function checkAutoScalingTagPropagation(
 	} catch (error) {
 		results.checks = [
 			{
-				resourceName: 'Region Check',
+				resourceName: "Region Check",
 				status: ComplianceStatus.ERROR,
 				message: `Error checking Auto Scaling Groups: ${error instanceof Error ? error.message : String(error)}`
 			}
@@ -80,20 +77,21 @@ async function checkAutoScalingTagPropagation(
 }
 
 if (require.main === module) {
-	const region = process.env.AWS_REGION ?? 'ap-southeast-1';
+	const region = process.env.AWS_REGION ?? "ap-southeast-1";
 	const results = await checkAutoScalingTagPropagation(region);
 	printSummary(generateSummary(results));
 }
 
 export default {
-	title: 'Ensure EC2 Auto Scaling Groups Propagate Tags to EC2 Instances that it launches',
-	description: 'Tags can help with managing, identifying, organizing, searching for, and filtering resources. Additionally, tags can help with security and compliance. Tags can be propagated from an Auto Scaling group to the EC2 instances that it launches.',
+	title: "Ensure EC2 Auto Scaling Groups Propagate Tags to EC2 Instances that it launches",
+	description:
+		"Tags can help with managing, identifying, organizing, searching for, and filtering resources. Additionally, tags can help with security and compliance. Tags can be propagated from an Auto Scaling group to the EC2 instances that it launches.",
 	controls: [
 		{
-			id: 'CIS-AWS-Compute-Services-Benchmark_v1.0.0_2.14',
-			document: 'CIS-AWS-Compute-Services-Benchmark_v1.0.0'
+			id: "CIS-AWS-Compute-Services-Benchmark_v1.0.0_2.14",
+			document: "CIS-AWS-Compute-Services-Benchmark_v1.0.0"
 		}
 	],
-	severity: 'MEDIUM',
+	severity: "MEDIUM",
 	execute: checkAutoScalingTagPropagation
 } satisfies RuntimeTest;

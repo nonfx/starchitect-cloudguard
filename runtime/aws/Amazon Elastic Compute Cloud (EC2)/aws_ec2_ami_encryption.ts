@@ -1,12 +1,9 @@
-import { EC2Client, DescribeImagesCommand } from '@aws-sdk/client-ec2';
+import { EC2Client, DescribeImagesCommand } from "@aws-sdk/client-ec2";
 
-import {
-	printSummary,
-	generateSummary,
-} from '~codegen/utils/stringUtils';
+import { printSummary, generateSummary } from "~codegen/utils/stringUtils";
 import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "~runtime/types";
 
-async function checkAmiEncryption(region: string = 'us-east-1'): Promise<ComplianceReport> {
+async function checkAmiEncryption(region: string = "us-east-1"): Promise<ComplianceReport> {
 	const client = new EC2Client({ region });
 	const results: ComplianceReport = {
 		checks: []
@@ -15,7 +12,7 @@ async function checkAmiEncryption(region: string = 'us-east-1'): Promise<Complia
 	try {
 		// Get all AMIs owned by the account
 		const command = new DescribeImagesCommand({
-			Owners: ['self']
+			Owners: ["self"]
 		});
 
 		const response = await client.send(command);
@@ -23,9 +20,9 @@ async function checkAmiEncryption(region: string = 'us-east-1'): Promise<Complia
 		if (!response.Images || response.Images.length === 0) {
 			results.checks = [
 				{
-					resourceName: 'No AMIs',
+					resourceName: "No AMIs",
 					status: ComplianceStatus.NOTAPPLICABLE,
-					message: 'No AMIs found in the account'
+					message: "No AMIs found in the account"
 				}
 			];
 			return results;
@@ -35,9 +32,9 @@ async function checkAmiEncryption(region: string = 'us-east-1'): Promise<Complia
 		for (const ami of response.Images) {
 			if (!ami.ImageId) {
 				results.checks.push({
-					resourceName: 'Unknown AMI',
+					resourceName: "Unknown AMI",
 					status: ComplianceStatus.ERROR,
-					message: 'AMI found without Image ID'
+					message: "AMI found without Image ID"
 				});
 				continue;
 			}
@@ -56,15 +53,13 @@ async function checkAmiEncryption(region: string = 'us-east-1'): Promise<Complia
 			results.checks.push({
 				resourceName: ami.ImageId,
 				status: hasUnencryptedVolume ? ComplianceStatus.FAIL : ComplianceStatus.PASS,
-				message: hasUnencryptedVolume
-					? 'AMI contains unencrypted EBS volumes'
-					: undefined
+				message: hasUnencryptedVolume ? "AMI contains unencrypted EBS volumes" : undefined
 			});
 		}
 	} catch (error) {
 		results.checks = [
 			{
-				resourceName: 'AMI Check',
+				resourceName: "AMI Check",
 				status: ComplianceStatus.ERROR,
 				message: `Error checking AMIs: ${error instanceof Error ? error.message : String(error)}`
 			}
@@ -76,20 +71,20 @@ async function checkAmiEncryption(region: string = 'us-east-1'): Promise<Complia
 }
 
 if (require.main === module) {
-	const region = process.env.AWS_REGION ?? 'ap-southeast-1';
+	const region = process.env.AWS_REGION ?? "ap-southeast-1";
 	const results = await checkAmiEncryption(region);
 	printSummary(generateSummary(results));
 }
 
 export default {
-	title: 'Ensure Images (AMI\'s) are encrypted',
-	description: 'Amazon Machine Images should utilize EBS Encrypted snapshots.',
+	title: "Ensure Images (AMI's) are encrypted",
+	description: "Amazon Machine Images should utilize EBS Encrypted snapshots.",
 	controls: [
 		{
-			id: 'CIS-AWS-Compute-Services-Benchmark_v1.0.0_2.1.2',
-			document: 'CIS-AWS-Compute-Services-Benchmark_v1.0.0'
+			id: "CIS-AWS-Compute-Services-Benchmark_v1.0.0_2.1.2",
+			document: "CIS-AWS-Compute-Services-Benchmark_v1.0.0"
 		}
 	],
-	severity: 'MEDIUM',
+	severity: "MEDIUM",
 	execute: checkAmiEncryption
 } satisfies RuntimeTest;
