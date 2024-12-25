@@ -1,26 +1,11 @@
-import { KMSClient, ListKeysCommand, DescribeKeyCommand } from "@aws-sdk/client-kms";
-
-import {
-	printSummary,
-	generateSummary,
-	type ComplianceReport,
-	ComplianceStatus
-} from "@codegen/utils/stringUtils";
+import { DescribeKeyCommand, KMSClient, ListKeysCommand } from "@aws-sdk/client-kms";
+import { generateSummary, printSummary } from "~codegen/utils/stringUtils";
+import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "~runtime/types";
 
 async function checkKmsKeysDeletionStatus(region: string = "us-east-1"): Promise<ComplianceReport> {
 	const client = new KMSClient({ region });
 	const results: ComplianceReport = {
-		checks: [],
-		metadoc: {
-			title: "AWS KMS keys should not be scheduled for deletion",
-			description: "This control checks if any KMS keys are scheduled for deletion. KMS keys and their encrypted data cannot be recovered once deleted, potentially causing permanent data loss.",
-			controls: [
-				{
-					id: "AWS-Foundational-Security-Best-Practices_v1.0.0_KMS.3",
-					document: "AWS-Foundational-Security-Best-Practices_v1.0.0"
-				}
-			]
-		}
+		checks: []
 	};
 
 	try {
@@ -36,11 +21,13 @@ async function checkKmsKeysDeletionStatus(region: string = "us-east-1"): Promise
 
 			if (!response.Keys || response.Keys.length === 0) {
 				if (!keyFound) {
-					results.checks = [{
-						resourceName: "No KMS Keys",
-						status: ComplianceStatus.NOTAPPLICABLE,
-						message: "No KMS keys found in the region"
-					}];
+					results.checks = [
+						{
+							resourceName: "No KMS Keys",
+							status: ComplianceStatus.NOTAPPLICABLE,
+							message: "No KMS keys found in the region"
+						}
+					];
 					return results;
 				}
 				break;
@@ -79,9 +66,9 @@ async function checkKmsKeysDeletionStatus(region: string = "us-east-1"): Promise
 						resourceName: key.KeyId,
 						resourceArn: keyDetails.KeyMetadata.Arn,
 						status: isDeletionScheduled ? ComplianceStatus.FAIL : ComplianceStatus.PASS,
-						message: isDeletionScheduled ? 
-							`KMS key is scheduled for deletion on ${keyDetails.KeyMetadata.DeletionDate}` : 
-							undefined
+						message: isDeletionScheduled
+							? `KMS key is scheduled for deletion on ${keyDetails.KeyMetadata.DeletionDate}`
+							: undefined
 					});
 				} catch (error) {
 					results.checks.push({
@@ -95,11 +82,13 @@ async function checkKmsKeysDeletionStatus(region: string = "us-east-1"): Promise
 			marker = response.NextMarker;
 		} while (marker);
 	} catch (error) {
-		results.checks = [{
-			resourceName: "KMS Check",
-			status: ComplianceStatus.ERROR,
-			message: `Error checking KMS keys: ${error instanceof Error ? error.message : String(error)}`
-		}];
+		results.checks = [
+			{
+				resourceName: "KMS Check",
+				status: ComplianceStatus.ERROR,
+				message: `Error checking KMS keys: ${error instanceof Error ? error.message : String(error)}`
+			}
+		];
 		return results;
 	}
 
@@ -112,4 +101,16 @@ if (require.main === module) {
 	printSummary(generateSummary(results));
 }
 
-export default checkKmsKeysDeletionStatus;
+export default {
+	title: "AWS KMS keys should not be scheduled for deletion",
+	description:
+		"This control checks if any KMS keys are scheduled for deletion. KMS keys and their encrypted data cannot be recovered once deleted, potentially causing permanent data loss.",
+	controls: [
+		{
+			id: "AWS-Foundational-Security-Best-Practices_v1.0.0_KMS.3",
+			document: "AWS-Foundational-Security-Best-Practices_v1.0.0"
+		}
+	],
+	severity: "MEDIUM",
+	execute: checkKmsKeysDeletionStatus
+} satisfies RuntimeTest;

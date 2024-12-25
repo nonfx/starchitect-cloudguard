@@ -1,26 +1,11 @@
-import { ECSClient, DescribeClustersCommand, ListClustersCommand } from '@aws-sdk/client-ecs';
+import { DescribeClustersCommand, ECSClient, ListClustersCommand } from "@aws-sdk/client-ecs";
+import { generateSummary, printSummary } from "~codegen/utils/stringUtils";
+import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "~runtime/types";
 
-import {
-	printSummary,
-	generateSummary,
-	type ComplianceReport,
-	ComplianceStatus
-} from '@codegen/utils/stringUtils';
-
-async function checkEcsContainerInsights(region: string = 'us-east-1'): Promise<ComplianceReport> {
+async function checkEcsContainerInsights(region: string = "us-east-1"): Promise<ComplianceReport> {
 	const client = new ECSClient({ region });
 	const results: ComplianceReport = {
-		checks: [],
-		metadoc: {
-			title: 'ECS clusters should use Container Insights',
-			description: 'ECS clusters must enable Container Insights for monitoring metrics, logs, and diagnostics to maintain reliability and performance.',
-			controls: [
-				{
-					id: 'AWS-Foundational-Security-Best-Practices_v1.0.0_ECS.12',
-					document: 'AWS-Foundational-Security-Best-Practices_v1.0.0'
-				}
-			]
-		}
+		checks: []
 	};
 
 	try {
@@ -31,9 +16,9 @@ async function checkEcsContainerInsights(region: string = 'us-east-1'): Promise<
 		if (!listResponse.clusterArns || listResponse.clusterArns.length === 0) {
 			results.checks = [
 				{
-					resourceName: 'No ECS Clusters',
+					resourceName: "No ECS Clusters",
 					status: ComplianceStatus.NOTAPPLICABLE,
-					message: 'No ECS clusters found in the region'
+					message: "No ECS clusters found in the region"
 				}
 			];
 			return results;
@@ -46,36 +31,36 @@ async function checkEcsContainerInsights(region: string = 'us-east-1'): Promise<
 		const describeResponse = await client.send(describeCommand);
 
 		if (!describeResponse.clusters) {
-			throw new Error('Failed to get cluster details');
+			throw new Error("Failed to get cluster details");
 		}
 
 		// Check each cluster for Container Insights
 		for (const cluster of describeResponse.clusters) {
 			if (!cluster.clusterName || !cluster.clusterArn) {
 				results.checks.push({
-					resourceName: 'Unknown Cluster',
+					resourceName: "Unknown Cluster",
 					status: ComplianceStatus.ERROR,
-					message: 'Cluster found without name or ARN'
+					message: "Cluster found without name or ARN"
 				});
 				continue;
 			}
 
 			// Check if Container Insights is enabled
 			const insightsEnabled = cluster.settings?.some(
-				setting => setting.name === 'containerInsights' && setting.value === 'enabled'
+				setting => setting.name === "containerInsights" && setting.value === "enabled"
 			);
 
 			results.checks.push({
 				resourceName: cluster.clusterName,
 				resourceArn: cluster.clusterArn,
 				status: insightsEnabled ? ComplianceStatus.PASS : ComplianceStatus.FAIL,
-				message: insightsEnabled ? undefined : 'Container Insights is not enabled for this cluster'
+				message: insightsEnabled ? undefined : "Container Insights is not enabled for this cluster"
 			});
 		}
 	} catch (error) {
 		results.checks = [
 			{
-				resourceName: 'Region Check',
+				resourceName: "Region Check",
 				status: ComplianceStatus.ERROR,
 				message: `Error checking ECS clusters: ${error instanceof Error ? error.message : String(error)}`
 			}
@@ -87,9 +72,21 @@ async function checkEcsContainerInsights(region: string = 'us-east-1'): Promise<
 }
 
 if (require.main === module) {
-	const region = process.env.AWS_REGION ?? 'ap-southeast-1';
+	const region = process.env.AWS_REGION ?? "ap-southeast-1";
 	const results = await checkEcsContainerInsights(region);
 	printSummary(generateSummary(results));
 }
 
-export default checkEcsContainerInsights;
+export default {
+	title: "ECS clusters should use Container Insights",
+	description:
+		"ECS clusters must enable Container Insights for monitoring metrics, logs, and diagnostics to maintain reliability and performance.",
+	controls: [
+		{
+			id: "AWS-Foundational-Security-Best-Practices_v1.0.0_ECS.12",
+			document: "AWS-Foundational-Security-Best-Practices_v1.0.0"
+		}
+	],
+	severity: "MEDIUM",
+	execute: checkEcsContainerInsights
+} satisfies RuntimeTest;

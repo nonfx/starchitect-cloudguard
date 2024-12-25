@@ -1,11 +1,6 @@
-import { IAMClient, ListPoliciesCommand, GetPolicyVersionCommand } from "@aws-sdk/client-iam";
-
-import {
-	printSummary,
-	generateSummary,
-	type ComplianceReport,
-	ComplianceStatus
-} from "@codegen/utils/stringUtils";
+import { GetPolicyVersionCommand, IAMClient, ListPoliciesCommand } from "@aws-sdk/client-iam";
+import { generateSummary, printSummary } from "~codegen/utils/stringUtils";
+import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "~runtime/types";
 
 interface PolicyStatement {
 	Effect: string;
@@ -41,10 +36,8 @@ function hasUnrestrictedKmsDecrypt(policyDocument: PolicyDocument): boolean {
 		const resources = asArray(statement.Resource);
 
 		// Check if any KMS decrypt actions are allowed
-		const hasDecryptAction = actions.some(action =>
-			kmsDecryptActions.includes(action) ||
-			action === "kms:*" ||
-			action === "*"
+		const hasDecryptAction = actions.some(
+			action => kmsDecryptActions.includes(action) || action === "kms:*" || action === "*"
 		);
 
 		// Check if resources include all KMS keys
@@ -60,22 +53,10 @@ function hasUnrestrictedKmsDecrypt(policyDocument: PolicyDocument): boolean {
 	});
 }
 
-async function checkIamKmsDecryptPolicy(
-	region: string = "us-east-1"
-): Promise<ComplianceReport> {
+async function checkIamKmsDecryptPolicy(region: string = "us-east-1"): Promise<ComplianceReport> {
 	const client = new IAMClient({ region });
 	const results: ComplianceReport = {
-		checks: [],
-		metadoc: {
-			title: "IAM customer managed policies should not allow decryption actions on all KMS keys",
-			description: "This control checks if IAM customer managed policies allow decryption actions (kms:Decrypt or kms:ReEncryptFrom) on all KMS keys. Following least privilege principles, policies should restrict these actions to specific keys.",
-			controls: [
-				{
-					id: "AWS-Foundational-Security-Best-Practices_v1.0.0_KMS.1",
-					document: "AWS-Foundational-Security-Best-Practices_v1.0.0"
-				}
-			]
-		}
+		checks: []
 	};
 
 	try {
@@ -200,4 +181,16 @@ if (require.main === module) {
 	printSummary(generateSummary(results));
 }
 
-export default checkIamKmsDecryptPolicy;
+export default {
+	title: "IAM customer managed policies should not allow decryption actions on all KMS keys",
+	description:
+		"This control checks if IAM customer managed policies allow decryption actions (kms:Decrypt or kms:ReEncryptFrom) on all KMS keys. Following least privilege principles, policies should restrict these actions to specific keys.",
+	controls: [
+		{
+			id: "AWS-Foundational-Security-Best-Practices_v1.0.0_KMS.1",
+			document: "AWS-Foundational-Security-Best-Practices_v1.0.0"
+		}
+	],
+	severity: "MEDIUM",
+	execute: checkIamKmsDecryptPolicy
+} satisfies RuntimeTest;

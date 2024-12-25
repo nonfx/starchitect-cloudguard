@@ -1,26 +1,16 @@
-import { ConfigServiceClient, DescribeConfigurationAggregatorsCommand } from '@aws-sdk/client-config-service';
-
 import {
-	printSummary,
-	generateSummary,
-	type ComplianceReport,
-	ComplianceStatus
-} from '@codegen/utils/stringUtils';
+	ConfigServiceClient,
+	DescribeConfigurationAggregatorsCommand
+} from "@aws-sdk/client-config-service";
+import { generateSummary, printSummary } from "~codegen/utils/stringUtils";
+import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "~runtime/types";
 
-async function checkConfigEnabledAllRegions(region: string = 'us-east-1'): Promise<ComplianceReport> {
+async function checkConfigEnabledAllRegions(
+	region: string = "us-east-1"
+): Promise<ComplianceReport> {
 	const client = new ConfigServiceClient({ region });
 	const results: ComplianceReport = {
-		checks: [],
-		metadoc: {
-			title: 'Ensure AWS Config is enabled in all regions',
-			description: 'AWS Config is a web service that performs configuration management of supported AWS resources within your account and delivers log files to you. The recorded information includes the configuration item (AWS resource), relationships between configuration items (AWS resources), any configuration changes between resources. It is recommended AWS Config be enabled in all regions.',
-			controls: [
-				{
-					id: 'CIS-AWS-Foundations-Benchmark_v3.0.0_3.3',
-					document: 'CIS-AWS-Foundations-Benchmark_v3.0.0'
-				}
-			]
-		}
+		checks: []
 	};
 
 	try {
@@ -30,16 +20,16 @@ async function checkConfigEnabledAllRegions(region: string = 'us-east-1'): Promi
 
 		if (!response.ConfigurationAggregators || response.ConfigurationAggregators.length === 0) {
 			results.checks.push({
-				resourceName: 'AWS Config',
+				resourceName: "AWS Config",
 				status: ComplianceStatus.FAIL,
-				message: 'No configuration aggregators found. AWS Config might not be enabled.'
+				message: "No configuration aggregators found. AWS Config might not be enabled."
 			});
 			return results;
 		}
 
 		// Check each aggregator
 		for (const aggregator of response.ConfigurationAggregators) {
-			const aggregatorName = aggregator.ConfigurationAggregatorName || 'Unknown Aggregator';
+			const aggregatorName = aggregator.ConfigurationAggregatorName || "Unknown Aggregator";
 
 			// Check account aggregation source
 			const accountAggregationEnabled = aggregator.AccountAggregationSources?.some(
@@ -47,27 +37,25 @@ async function checkConfigEnabledAllRegions(region: string = 'us-east-1'): Promi
 			);
 
 			// Check organization aggregation source
-			const orgAggregationEnabled =
-				aggregator.OrganizationAggregationSource?.AllRegions === true;
+			const orgAggregationEnabled = aggregator.OrganizationAggregationSource?.AllRegions === true;
 
 			if (accountAggregationEnabled || orgAggregationEnabled) {
 				results.checks.push({
 					resourceName: aggregatorName,
 					status: ComplianceStatus.PASS,
-					message: 'Config aggregator is properly configured for all regions'
+					message: "Config aggregator is properly configured for all regions"
 				});
 			} else {
 				results.checks.push({
 					resourceName: aggregatorName,
 					status: ComplianceStatus.FAIL,
-					message:
-						'Config aggregator is not configured to collect data from all regions'
+					message: "Config aggregator is not configured to collect data from all regions"
 				});
 			}
 		}
 	} catch (error) {
 		results.checks.push({
-			resourceName: 'AWS Config',
+			resourceName: "AWS Config",
 			status: ComplianceStatus.ERROR,
 			message: `Error checking AWS Config: ${error instanceof Error ? error.message : String(error)}`
 		});
@@ -77,9 +65,21 @@ async function checkConfigEnabledAllRegions(region: string = 'us-east-1'): Promi
 }
 
 if (require.main === module) {
-	const region = process.env.AWS_REGION ?? 'ap-southeast-1';
+	const region = process.env.AWS_REGION ?? "ap-southeast-1";
 	const results = await checkConfigEnabledAllRegions(region);
 	printSummary(generateSummary(results));
 }
 
-export default checkConfigEnabledAllRegions;
+export default {
+	title: "Ensure AWS Config is enabled in all regions",
+	description:
+		"AWS Config is a web service that performs configuration management of supported AWS resources within your account and delivers log files to you. The recorded information includes the configuration item (AWS resource), relationships between configuration items (AWS resources), any configuration changes between resources. It is recommended AWS Config be enabled in all regions.",
+	controls: [
+		{
+			id: "CIS-AWS-Foundations-Benchmark_v3.0.0_3.3",
+			document: "CIS-AWS-Foundations-Benchmark_v3.0.0"
+		}
+	],
+	severity: "MEDIUM",
+	execute: checkConfigEnabledAllRegions
+} satisfies RuntimeTest;

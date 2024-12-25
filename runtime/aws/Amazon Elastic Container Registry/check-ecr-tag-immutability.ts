@@ -1,26 +1,11 @@
-import { ECRClient, DescribeRepositoriesCommand } from "@aws-sdk/client-ecr";
-
-import {
-	printSummary,
-	generateSummary,
-	ComplianceStatus,
-	type ComplianceReport
-} from "@codegen/utils/stringUtils";
+import { DescribeRepositoriesCommand, ECRClient } from "@aws-sdk/client-ecr";
+import { generateSummary, printSummary } from "~codegen/utils/stringUtils";
+import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "~runtime/types";
 
 async function checkEcrTagImmutability(region: string = "us-east-1"): Promise<ComplianceReport> {
 	const client = new ECRClient({ region });
 	const results: ComplianceReport = {
-		checks: [],
-		metadoc: {
-			title: "ECR private repositories should have tag immutability configured",
-			description: "This control checks if private ECR repositories have tag immutability enabled. Immutable tags prevent overwriting of container images, ensuring consistent deployments and reducing security risks.",
-			controls: [
-				{
-					id: "AWS-Foundational-Security-Best-Practices_v1.0.0_ECR.2",
-					document: "AWS-Foundational-Security-Best-Practices_v1.0.0"
-				}
-			]
-		}
+		checks: []
 	};
 
 	try {
@@ -55,9 +40,7 @@ async function checkEcrTagImmutability(region: string = "us-east-1"): Promise<Co
 				resourceName: repo.repositoryName,
 				resourceArn: repo.repositoryArn,
 				status: isImmutable ? ComplianceStatus.PASS : ComplianceStatus.FAIL,
-				message: isImmutable
-					? undefined
-					: "ECR repository does not have tag immutability enabled"
+				message: isImmutable ? undefined : "ECR repository does not have tag immutability enabled"
 			});
 		}
 	} catch (error) {
@@ -78,4 +61,16 @@ if (require.main === module) {
 	printSummary(generateSummary(results));
 }
 
-export default checkEcrTagImmutability;
+export default {
+	title: "ECR private repositories should have tag immutability configured",
+	description:
+		"This control checks if private ECR repositories have tag immutability enabled. Immutable tags prevent overwriting of container images, ensuring consistent deployments and reducing security risks.",
+	controls: [
+		{
+			id: "AWS-Foundational-Security-Best-Practices_v1.0.0_ECR.2",
+			document: "AWS-Foundational-Security-Best-Practices_v1.0.0"
+		}
+	],
+	severity: "MEDIUM",
+	execute: checkEcrTagImmutability
+} satisfies RuntimeTest;
