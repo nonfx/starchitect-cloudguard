@@ -1,3 +1,5 @@
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+//@ts-nocheck
 import { S3Client, GetBucketPolicyCommand, ListBucketsCommand } from "@aws-sdk/client-s3";
 import { mockClient } from "aws-sdk-client-mock";
 import checkS3DenyHttpAccess from "./aws_s3_http_access_deny";

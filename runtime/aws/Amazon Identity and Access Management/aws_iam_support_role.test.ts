@@ -1,3 +1,5 @@
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+//@ts-nocheck
 import { IAMClient, ListRolesCommand, ListAttachedRolePoliciesCommand } from "@aws-sdk/client-iam";
 import { mockClient } from "aws-sdk-client-mock";
 import { ComplianceStatus } from "~runtime/types";

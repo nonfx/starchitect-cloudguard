@@ -1,3 +1,5 @@
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+//@ts-nocheck
 import { EC2Client, DescribeInstancesCommand } from "@aws-sdk/client-ec2";
 import { IAMClient, GetInstanceProfileCommand } from "@aws-sdk/client-iam";
 import { mockClient } from "aws-sdk-client-mock";

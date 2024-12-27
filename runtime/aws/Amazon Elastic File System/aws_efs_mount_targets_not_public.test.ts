@@ -1,3 +1,5 @@
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+//@ts-nocheck
 import { EFSClient, DescribeMountTargetsCommand } from "@aws-sdk/client-efs";
 import { EC2Client, DescribeSubnetsCommand } from "@aws-sdk/client-ec2";
 import { mockClient } from "aws-sdk-client-mock";

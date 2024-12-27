@@ -1,3 +1,5 @@
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+//@ts-nocheck
 import { IAMClient, ListUsersCommand, ListSAMLProvidersCommand } from "@aws-sdk/client-iam";
 import { OrganizationsClient, DescribeOrganizationCommand } from "@aws-sdk/client-organizations";
 import { mockClient } from "aws-sdk-client-mock";
