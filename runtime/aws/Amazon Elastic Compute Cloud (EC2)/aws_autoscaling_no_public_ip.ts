@@ -1,9 +1,7 @@
 import {
 	AutoScalingClient,
 	DescribeLaunchConfigurationsCommand,
-
-	//@ts-expect-error @todo - to be fixed, temporary fix for CLI unblock
-	DescribeLaunchConfigurationsCommandOutput
+	type DescribeLaunchConfigurationsCommandOutput
 } from "@aws-sdk/client-auto-scaling";
 
 import { printSummary, generateSummary } from "~codegen/utils/stringUtils";

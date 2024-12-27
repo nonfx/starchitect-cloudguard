@@ -42,7 +42,7 @@
   "oclif": {
     "bin": "starchitect-cloudguard",
     "dirname": "starchitect-cloudguard",
-    "commands": "./dist/commands",
+    "commands": "./dist/cli/src/commands",
     "plugins": [
       "@oclif/plugin-help",
       "@oclif/plugin-plugins"
