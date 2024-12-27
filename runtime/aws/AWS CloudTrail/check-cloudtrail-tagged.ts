@@ -4,8 +4,8 @@ import {
 	ListTagsCommand,
 	ListTrailsCommand
 } from "@aws-sdk/client-cloudtrail";
-import { generateSummary, printSummary } from "~codegen/utils/stringUtils";
-import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "~runtime/types";
+import { generateSummary, printSummary } from "../../utils/string-utils";
+import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "../../types";
 
 async function checkCloudTrailTagged(region: string = "us-east-1"): Promise<ComplianceReport> {
 	const client = new CloudTrailClient({ region });

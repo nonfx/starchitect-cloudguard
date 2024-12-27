@@ -2,7 +2,7 @@
 //@ts-nocheck
 import { KMSClient, ListKeysCommand, GetKeyPolicyCommand } from "@aws-sdk/client-kms";
 import { mockClient } from "aws-sdk-client-mock";
-import { ComplianceStatus } from "~runtime/types";
+import { ComplianceStatus } from "../../types";
 import checkKmsPublicAccess from "./check-kms-public-access";
 
 const mockKmsClient = mockClient(KMSClient);

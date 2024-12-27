@@ -1,7 +1,7 @@
 //@ts-nocheck
 import { RDSClient, DescribeDBClustersCommand, type DBCluster } from "@aws-sdk/client-rds";
 import { mockClient } from "aws-sdk-client-mock";
-import { ComplianceStatus } from "~runtime/types";
+import { ComplianceStatus } from "../../types";
 import checkAuroraPostgresCloudWatchLogs from "./check-aurora-postgres-cloudwatch-logs";
 
 const mockRDSClient = mockClient(RDSClient);

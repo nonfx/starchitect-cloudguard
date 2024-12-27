@@ -3,7 +3,7 @@
 import { IAMClient, ListUsersCommand, ListSAMLProvidersCommand } from "@aws-sdk/client-iam";
 import { OrganizationsClient, DescribeOrganizationCommand } from "@aws-sdk/client-organizations";
 import { mockClient } from "aws-sdk-client-mock";
-import { ComplianceStatus } from "~runtime/types";
+import { ComplianceStatus } from "../../types";
 import checkIamCentralizedManagement from "./aws_iam_centralized_management";
 
 const mockIAMClient = mockClient(IAMClient);

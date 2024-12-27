@@ -3,7 +3,7 @@
 import { S3Client, GetBucketPolicyCommand, ListBucketsCommand } from "@aws-sdk/client-s3";
 import { mockClient } from "aws-sdk-client-mock";
 import checkS3DenyHttpAccess from "./aws_s3_http_access_deny";
-import { ComplianceStatus } from "~runtime/types";
+import { ComplianceStatus } from "../../types";
 
 const mockS3Client = mockClient(S3Client);
 

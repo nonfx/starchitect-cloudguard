@@ -7,7 +7,7 @@ import {
 	ListUserPoliciesCommand
 } from "@aws-sdk/client-iam";
 import { mockClient } from "aws-sdk-client-mock";
-import { ComplianceStatus } from "~runtime/types";
+import { ComplianceStatus } from "../../types";
 import checkIamUserPolicies from "./aws_iam_users_no_direct_policies";
 
 const mockIAMClient = mockClient(IAMClient);

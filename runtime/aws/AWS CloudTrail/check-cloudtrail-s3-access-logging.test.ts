@@ -3,7 +3,7 @@
 import { S3Client, GetBucketLoggingCommand } from "@aws-sdk/client-s3";
 import { CloudTrailClient, ListTrailsCommand, GetTrailCommand } from "@aws-sdk/client-cloudtrail";
 import { mockClient } from "aws-sdk-client-mock";
-import { ComplianceStatus } from "~runtime/types";
+import { ComplianceStatus } from "../../types";
 import checkCloudTrailS3AccessLogging from "./check-cloudtrail-s3-access-logging";
 
 const mockS3Client = mockClient(S3Client);

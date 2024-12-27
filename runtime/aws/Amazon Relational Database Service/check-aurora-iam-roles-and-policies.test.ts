@@ -7,7 +7,7 @@ import {
 } from "@aws-sdk/client-iam";
 import { RDSClient, DescribeDBClustersCommand, type DBCluster } from "@aws-sdk/client-rds";
 import { mockClient } from "aws-sdk-client-mock";
-import { ComplianceStatus } from "~runtime/types";
+import { ComplianceStatus } from "../../types";
 import checkAuroraIamRolesAndPolicies from "./check-aurora-iam-roles-and-policies";
 
 const mockIAMClient = mockClient(IAMClient);

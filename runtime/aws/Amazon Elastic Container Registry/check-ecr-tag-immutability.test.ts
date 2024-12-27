@@ -2,7 +2,7 @@
 //@ts-nocheck
 import { ECRClient, DescribeRepositoriesCommand } from "@aws-sdk/client-ecr";
 import { mockClient } from "aws-sdk-client-mock";
-import { ComplianceStatus } from "~runtime/types";
+import { ComplianceStatus } from "../../types";
 import checkEcrTagImmutability from "./check-ecr-tag-immutability";
 
 const mockEcrClient = mockClient(ECRClient);

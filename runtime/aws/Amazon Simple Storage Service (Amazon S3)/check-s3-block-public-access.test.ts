@@ -2,7 +2,7 @@
 //@ts-nocheck
 import { S3Client, GetPublicAccessBlockCommand, ListBucketsCommand } from "@aws-sdk/client-s3";
 import { mockClient } from "aws-sdk-client-mock";
-import { ComplianceStatus } from "~runtime/types";
+import { ComplianceStatus } from "../../types";
 import checkS3BlockPublicAccess from "./check-s3-block-public-access";
 
 const mockS3Client = mockClient(S3Client);

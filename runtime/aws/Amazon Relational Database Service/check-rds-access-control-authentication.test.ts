@@ -1,7 +1,7 @@
 //@ts-nocheck
 import { RDSClient, DescribeDBInstancesCommand, type DBInstance } from "@aws-sdk/client-rds";
 import { mockClient } from "aws-sdk-client-mock";
-import { ComplianceStatus } from "~runtime/types";
+import { ComplianceStatus } from "../../types";
 import checkRdsAccessControlAuthentication from "./check-rds-access-control-authentication";
 
 const mockRdsClient = mockClient(RDSClient);

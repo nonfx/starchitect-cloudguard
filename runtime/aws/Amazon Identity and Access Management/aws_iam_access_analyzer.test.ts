@@ -2,7 +2,7 @@
 //@ts-nocheck
 import { AccessAnalyzerClient, ListAnalyzersCommand } from "@aws-sdk/client-accessanalyzer";
 import { mockClient } from "aws-sdk-client-mock";
-import { ComplianceStatus } from "~runtime/types";
+import { ComplianceStatus } from "../../types";
 import checkAccessAnalyzerEnabled from "./aws_iam_access_analyzer";
 
 const mockAccessAnalyzerClient = mockClient(AccessAnalyzerClient);

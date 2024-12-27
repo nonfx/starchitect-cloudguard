@@ -2,7 +2,7 @@
 //@ts-nocheck
 import { EFSClient, DescribeAccessPointsCommand } from "@aws-sdk/client-efs";
 import { mockClient } from "aws-sdk-client-mock";
-import { ComplianceStatus } from "~runtime/types";
+import { ComplianceStatus } from "../../types";
 import checkEfsAccessPointsRootDirectory from "./aws_efs_access_points_enforce_root_directory";
 
 const mockEfsClient = mockClient(EFSClient);

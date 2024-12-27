@@ -1,7 +1,7 @@
 import { EC2Client, DescribeInstancesCommand } from "@aws-sdk/client-ec2";
 import { IAMClient, GetInstanceProfileCommand } from "@aws-sdk/client-iam";
-import { printSummary, generateSummary } from "~codegen/utils/stringUtils";
-import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "~runtime/types";
+import { printSummary, generateSummary } from "../../utils/string-utils";
+import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "../../types";
 
 async function checkEc2SystemsManagerCompliance(
 	region: string = "us-east-1"

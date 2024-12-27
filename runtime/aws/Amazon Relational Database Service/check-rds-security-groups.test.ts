@@ -13,7 +13,7 @@ import {
 	type IpPermission
 } from "@aws-sdk/client-ec2";
 import { mockClient } from "aws-sdk-client-mock";
-import { ComplianceStatus } from "~runtime/types";
+import { ComplianceStatus } from "../../types";
 import { test, describe, expect, beforeEach } from "bun:test";
 import checkRdsSecurityGroups from "./check-rds-security-groups";
 

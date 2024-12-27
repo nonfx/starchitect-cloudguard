@@ -3,8 +3,8 @@ import {
 	ECRClient,
 	GetLifecyclePolicyCommand
 } from "@aws-sdk/client-ecr";
-import { generateSummary, printSummary } from "~codegen/utils/stringUtils";
-import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "~runtime/types";
+import { generateSummary, printSummary } from "../../utils/string-utils";
+import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "../../types";
 
 interface EcrRepository {
 	name: string;

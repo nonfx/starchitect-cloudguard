@@ -1,7 +1,7 @@
 import { EC2Client, DescribeSecurityGroupsCommand } from "@aws-sdk/client-ec2";
 
-import { printSummary, generateSummary } from "~codegen/utils/stringUtils";
-import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "~runtime/types";
+import { printSummary, generateSummary } from "../../utils/string-utils";
+import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "../../types";
 
 // Default authorized ports
 const AUTHORIZED_TCP_PORTS = [80, 443];

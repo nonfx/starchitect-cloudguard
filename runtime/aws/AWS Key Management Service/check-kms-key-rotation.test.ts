@@ -7,7 +7,7 @@ import {
 	DescribeKeyCommand
 } from "@aws-sdk/client-kms";
 import { mockClient } from "aws-sdk-client-mock";
-import { ComplianceStatus } from "~runtime/types";
+import { ComplianceStatus } from "../../types";
 import checkKmsKeyRotation from "./check-kms-key-rotation";
 
 const mockKmsClient = mockClient(KMSClient);

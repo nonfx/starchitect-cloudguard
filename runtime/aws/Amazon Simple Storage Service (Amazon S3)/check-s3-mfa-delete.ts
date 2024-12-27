@@ -1,6 +1,6 @@
 import { GetBucketVersioningCommand, ListBucketsCommand, S3Client } from "@aws-sdk/client-s3";
-import { generateSummary, printSummary } from "~codegen/utils/stringUtils";
-import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "~runtime/types";
+import { generateSummary, printSummary } from "../../utils/string-utils";
+import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "../../types";
 
 async function checkS3MfaDelete(region: string = "us-east-1"): Promise<ComplianceReport> {
 	const client = new S3Client({ region });

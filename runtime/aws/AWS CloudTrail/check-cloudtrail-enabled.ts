@@ -3,8 +3,8 @@ import {
 	DescribeTrailsCommand,
 	GetTrailStatusCommand
 } from "@aws-sdk/client-cloudtrail";
-import { generateSummary, printSummary } from "~codegen/utils/stringUtils";
-import { type ComplianceReport, ComplianceStatus, type RuntimeTest } from "~runtime/types";
+import { generateSummary, printSummary } from "../../utils/string-utils";
+import { type ComplianceReport, ComplianceStatus, type RuntimeTest } from "../../types";
 
 async function checkCloudTrailEnabled(region: string = "us-east-1"): Promise<ComplianceReport> {
 	const client = new CloudTrailClient({ region });

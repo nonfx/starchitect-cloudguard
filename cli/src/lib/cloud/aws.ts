@@ -1,9 +1,9 @@
 import { GetCallerIdentityCommand, STSClient } from "@aws-sdk/client-sts";
 import { EC2Client, DescribeRegionsCommand } from "@aws-sdk/client-ec2";
-import type { RuntimeTest } from "~runtime/types";
 import allTests from "../../../../runtime/aws";
 import { logger } from "../logger";
 import { CloudProvider } from "./base";
+import type { RuntimeTest } from "../../types";
 
 export class AWSProvider extends CloudProvider {
 	async detectCredentials(): Promise<boolean> {

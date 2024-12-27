@@ -2,7 +2,7 @@
 //@ts-nocheck
 import { S3Client, GetBucketVersioningCommand, ListBucketsCommand } from "@aws-sdk/client-s3";
 import { mockClient } from "aws-sdk-client-mock";
-import { ComplianceStatus } from "~runtime/types";
+import { ComplianceStatus } from "../../types";
 import checkS3MfaDelete from "./check-s3-mfa-delete";
 
 const mockS3Client = mockClient(S3Client);

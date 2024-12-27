@@ -13,7 +13,7 @@ import {
 	GetGroupPolicyCommand
 } from "@aws-sdk/client-iam";
 import { mockClient } from "aws-sdk-client-mock";
-import { ComplianceStatus } from "~runtime/types";
+import { ComplianceStatus } from "../../types";
 import checkInlinePolicyKmsDecrypt from "./check-inline-policy-kms-decrypt";
 
 const mockIAMClient = mockClient(IAMClient);

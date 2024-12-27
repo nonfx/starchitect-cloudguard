@@ -2,7 +2,7 @@
 //@ts-nocheck
 import { KMSClient, ListKeysCommand, DescribeKeyCommand } from "@aws-sdk/client-kms";
 import { mockClient } from "aws-sdk-client-mock";
-import { ComplianceStatus } from "~runtime/types";
+import { ComplianceStatus } from "../../types";
 import checkKmsKeysDeletionStatus from "./check-kms-keys-deletion-status";
 
 const mockKmsClient = mockClient(KMSClient);

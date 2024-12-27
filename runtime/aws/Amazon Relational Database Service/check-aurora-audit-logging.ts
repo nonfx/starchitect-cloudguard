@@ -1,7 +1,7 @@
 import { RDSClient, DescribeDBClustersCommand } from "@aws-sdk/client-rds";
 import { CloudTrailClient, DescribeTrailsCommand } from "@aws-sdk/client-cloudtrail";
-import { generateSummary, printSummary } from "~codegen/utils/stringUtils";
-import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "~runtime/types";
+import { generateSummary, printSummary } from "../../utils/string-utils";
+import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "../../types";
 
 async function checkAuroraAuditLoggingCompliance(
 	region: string = "us-east-1"

@@ -6,9 +6,9 @@ import {
 	DescribeMetricFiltersCommand
 } from "@aws-sdk/client-cloudwatch-logs";
 
-import { generateSummary, printSummary } from "~codegen/utils/stringUtils";
+import { generateSummary, printSummary } from "../../utils/string-utils";
 
-import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "~runtime/types";
+import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "../../types";
 
 const REQUIRED_PATTERN =
 	"{ ($.eventName = CreateNetworkAcl) || ($.eventName = CreateNetworkAclEntry) || ($.eventName = DeleteNetworkAcl) || ($.eventName = DeleteNetworkAclEntry) || ($.eventName = ReplaceNetworkAclEntry) || ($.eventName = ReplaceNetworkAclAssociation) }";

@@ -6,7 +6,7 @@ import {
 	DescribeSecurityGroupsCommand
 } from "@aws-sdk/client-ec2";
 import { mockClient } from "aws-sdk-client-mock";
-import { ComplianceStatus } from "~runtime/types";
+import { ComplianceStatus } from "../../types";
 import checkDefaultSecurityGroupUsage from "./aws_ec2_default_security_group";
 
 const mockEC2Client = mockClient(EC2Client);

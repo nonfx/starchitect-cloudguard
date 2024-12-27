@@ -4,7 +4,7 @@
 		// Module Configuration
 		// Controls how modules are resolved and handled
 		"module": "ESNext", // Use ESNext module system
-		"moduleResolution": "bundler", // Use bundler-style module resolution
+		"moduleResolution": "node", // Use bundler-style module resolution
 		"moduleDetection": "force", // Force modules for all files
 		"resolveJsonModule": true, // Allow importing .json files
 		"allowImportingTsExtensions": false, // Allow imports with .ts extensions
@@ -55,11 +55,7 @@
 			"dom.iterable",
 			"scripthost"
 		],
-		"types": ["node", "bun"], // Type definitions to include
-		"paths": {
-			"~codegen/*": ["./codegen/*"],
-			"~runtime/*": ["./runtime/*"]
-		}
+		"types": ["node", "bun"] // Type definitions to include
 	},
 	"exclude": ["node_modules", "dist"]
 }

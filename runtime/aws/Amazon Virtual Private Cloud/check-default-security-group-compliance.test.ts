@@ -2,7 +2,7 @@
 //@ts-nocheck
 import { EC2Client, DescribeVpcsCommand, DescribeSecurityGroupsCommand } from "@aws-sdk/client-ec2";
 import { mockClient } from "aws-sdk-client-mock";
-import { ComplianceStatus } from "~runtime/types";
+import { ComplianceStatus } from "../../types";
 import checkDefaultSecurityGroupCompliance from "./check-default-security-group-compliance";
 
 const mockEC2Client = mockClient(EC2Client);

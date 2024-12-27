@@ -6,7 +6,7 @@ import {
 	DescribeLaunchTemplateVersionsCommand
 } from "@aws-sdk/client-ec2";
 import { mockClient } from "aws-sdk-client-mock";
-import { ComplianceStatus } from "~runtime/types";
+import { ComplianceStatus } from "../../types";
 import checkLaunchTemplatePublicIp from "./aws_ec2_launch_template_public_ip";
 
 const mockEC2Client = mockClient(EC2Client);

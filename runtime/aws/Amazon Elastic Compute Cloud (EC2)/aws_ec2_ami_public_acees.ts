@@ -1,7 +1,7 @@
 import { EC2Client, DescribeImagesCommand } from "@aws-sdk/client-ec2";
 
-import { printSummary, generateSummary } from "~codegen/utils/stringUtils";
-import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "~runtime/types";
+import { printSummary, generateSummary } from "../../utils/string-utils";
+import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "../../types";
 
 async function checkPublicAMIs(region: string = "us-east-1"): Promise<ComplianceReport> {
 	const client = new EC2Client({ region });

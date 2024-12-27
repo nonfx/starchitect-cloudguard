@@ -7,7 +7,7 @@ import {
 	ListTagsCommand
 } from "@aws-sdk/client-cloudtrail";
 import { mockClient } from "aws-sdk-client-mock";
-import { ComplianceStatus } from "~runtime/types";
+import { ComplianceStatus } from "../../types";
 import checkCloudTrailTagged from "./check-cloudtrail-tagged";
 
 const mockCloudTrailClient = mockClient(CloudTrailClient);

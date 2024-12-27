@@ -2,7 +2,7 @@
 //@ts-nocheck
 import { IAMClient, ListPoliciesCommand, GetPolicyVersionCommand } from "@aws-sdk/client-iam";
 import { mockClient } from "aws-sdk-client-mock";
-import { ComplianceStatus } from "~runtime/types";
+import { ComplianceStatus } from "../../types";
 import checkIamWildcardActions from "./aws_iam_no_wildcard_actions";
 
 const mockIAMClient = mockClient(IAMClient);

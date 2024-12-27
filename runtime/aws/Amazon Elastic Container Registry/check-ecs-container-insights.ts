@@ -1,6 +1,6 @@
 import { DescribeClustersCommand, ECSClient, ListClustersCommand } from "@aws-sdk/client-ecs";
-import { generateSummary, printSummary } from "~codegen/utils/stringUtils";
-import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "~runtime/types";
+import { generateSummary, printSummary } from "../../utils/string-utils";
+import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "../../types";
 
 async function checkEcsContainerInsights(region: string = "us-east-1"): Promise<ComplianceReport> {
 	const client = new ECSClient({ region });

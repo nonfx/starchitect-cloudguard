@@ -5,9 +5,9 @@ import {
 	DescribeMetricFiltersCommand
 } from "@aws-sdk/client-cloudwatch-logs";
 
-import { printSummary, generateSummary } from "~codegen/utils/stringUtils";
+import { printSummary, generateSummary } from "../../utils/string-utils";
 
-import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "~runtime/types";
+import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "../../types";
 
 const REQUIRED_PATTERN =
 	'{ ($.eventSource = organizations.amazonaws.com) && (($.eventName = "AcceptHandshake") || ($.eventName = "AttachPolicy") || ($.eventName = "CreateAccount") || ($.eventName = "CreateOrganizationalUnit") || ($.eventName = "CreatePolicy") || ($.eventName = "DeclineHandshake") || ($.eventName = "DeleteOrganization") || ($.eventName = "DeleteOrganizationalUnit") || ($.eventName = "DeletePolicy") || ($.eventName = "DetachPolicy") || ($.eventName = "DisablePolicyType") || ($.eventName = "EnablePolicyType") || ($.eventName = "InviteAccountToOrganization") || ($.eventName = "LeaveOrganization") || ($.eventName = "MoveAccount") || ($.eventName = "RemoveAccountFromOrganization") || ($.eventName = "UpdatePolicy") || ($.eventName = "UpdateOrganizationalUnit")) }';

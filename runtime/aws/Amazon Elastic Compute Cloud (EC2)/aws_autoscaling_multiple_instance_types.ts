@@ -4,7 +4,7 @@ import {
 	type AutoScalingGroup
 } from "@aws-sdk/client-auto-scaling";
 
-import { printSummary, generateSummary } from "~codegen/utils/stringUtils";
+import { printSummary, generateSummary } from "../../utils/string-utils";
 import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "../../types";
 
 function isValidMixedInstancesPolicy(asg: AutoScalingGroup): boolean {

@@ -1,7 +1,7 @@
 import { DescribeInstancesCommand, EC2Client } from "@aws-sdk/client-ec2";
 
-import { generateSummary, printSummary } from "~codegen/utils/stringUtils";
-import { ComplianceStatus, type ComplianceReport } from "~runtime/types";
+import { generateSummary, printSummary } from "../../utils/string-utils";
+import { ComplianceStatus, type ComplianceReport } from "../../types";
 
 function containsSensitiveData(userData: string): boolean {
 	// Common patterns for sensitive data

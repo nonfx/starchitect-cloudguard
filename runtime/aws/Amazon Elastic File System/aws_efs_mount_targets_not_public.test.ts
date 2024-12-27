@@ -3,7 +3,7 @@
 import { EFSClient, DescribeMountTargetsCommand } from "@aws-sdk/client-efs";
 import { EC2Client, DescribeSubnetsCommand } from "@aws-sdk/client-ec2";
 import { mockClient } from "aws-sdk-client-mock";
-import { ComplianceStatus } from "~runtime/types";
+import { ComplianceStatus } from "../../types";
 import checkEfsMountTargetsPublicSubnets from "./aws_efs_mount_targets_not_public";
 
 const mockEfsClient = mockClient(EFSClient);

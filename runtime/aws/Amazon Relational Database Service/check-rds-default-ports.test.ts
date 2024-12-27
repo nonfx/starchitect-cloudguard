@@ -1,7 +1,7 @@
 //@ts-nocheck
 import { RDSClient, DescribeDBInstancesCommand, type DBInstance } from "@aws-sdk/client-rds";
 import { mockClient } from "aws-sdk-client-mock";
-import { ComplianceStatus } from "~runtime/types";
+import { ComplianceStatus } from "../../types";
 import { test, describe, expect, beforeEach } from "bun:test";
 import checkRdsDefaultPorts from "./check-rds-default-ports";
 

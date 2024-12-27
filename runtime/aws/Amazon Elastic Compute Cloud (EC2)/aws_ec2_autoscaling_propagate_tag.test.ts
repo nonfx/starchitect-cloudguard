@@ -2,7 +2,7 @@
 //@ts-nocheck
 import { AutoScalingClient, DescribeAutoScalingGroupsCommand } from "@aws-sdk/client-auto-scaling";
 import { mockClient } from "aws-sdk-client-mock";
-import { ComplianceStatus } from "~runtime/types";
+import { ComplianceStatus } from "../../types";
 import checkAutoScalingTagPropagation from "./aws_ec2_autoscaling_propagate_tag";
 
 const mockAutoScalingClient = mockClient(AutoScalingClient);

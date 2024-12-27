@@ -7,7 +7,7 @@ import {
 	type DBCluster
 } from "@aws-sdk/client-rds";
 import { mockClient } from "aws-sdk-client-mock";
-import { ComplianceStatus } from "~runtime/types";
+import { ComplianceStatus } from "../../types";
 import checkAuroraEncryptionInTransit from "./check-aurora-encryption-in-transit";
 
 const mockRDSClient = mockClient(RDSClient);

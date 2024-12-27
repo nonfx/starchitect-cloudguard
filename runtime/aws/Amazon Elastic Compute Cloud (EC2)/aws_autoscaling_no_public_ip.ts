@@ -4,8 +4,8 @@ import {
 	type DescribeLaunchConfigurationsCommandOutput
 } from "@aws-sdk/client-auto-scaling";
 
-import { printSummary, generateSummary } from "~codegen/utils/stringUtils";
-import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "~runtime/types";
+import { printSummary, generateSummary } from "../../utils/string-utils";
+import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "../../types";
 
 async function checkAutoScalingPublicIp(region: string = "us-east-1"): Promise<ComplianceReport> {
 	const client = new AutoScalingClient({ region });

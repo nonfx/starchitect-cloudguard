@@ -5,9 +5,9 @@ import {
 	DescribeMetricFiltersCommand
 } from "@aws-sdk/client-cloudwatch-logs";
 
-import { printSummary, generateSummary } from "~codegen/utils/stringUtils";
+import { printSummary, generateSummary } from "../../utils/string-utils";
 
-import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "~runtime/types";
+import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "../../types";
 
 const REQUIRED_PATTERN =
 	"{ ($.eventSource = s3.amazonaws.com) && (($.eventName = PutBucketAcl) || ($.eventName = PutBucketPolicy) || ($.eventName = PutBucketCors) || ($.eventName = PutBucketLifecycle) || ($.eventName = PutBucketReplication) || ($.eventName = DeleteBucketPolicy) || ($.eventName = DeleteBucketCors) || ($.eventName = DeleteBucketLifecycle) || ($.eventName = DeleteBucketReplication)) }";

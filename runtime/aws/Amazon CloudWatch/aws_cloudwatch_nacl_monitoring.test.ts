@@ -7,7 +7,7 @@ import {
 	DescribeMetricFiltersCommand
 } from "@aws-sdk/client-cloudwatch-logs";
 import { mockClient } from "aws-sdk-client-mock";
-import { ComplianceStatus } from "~runtime/types";
+import { ComplianceStatus } from "../../types";
 import checkNaclMonitoringCompliance from "./aws_cloudwatch_nacl_monitoring";
 
 const mockCloudWatchClient = mockClient(CloudWatchClient);

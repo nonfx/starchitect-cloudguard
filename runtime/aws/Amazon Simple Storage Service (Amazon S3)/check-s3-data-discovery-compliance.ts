@@ -4,8 +4,8 @@ import {
 	Macie2Client
 } from "@aws-sdk/client-macie2";
 import { ListBucketsCommand, S3Client } from "@aws-sdk/client-s3";
-import { generateSummary, printSummary } from "~codegen/utils/stringUtils";
-import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "~runtime/types";
+import { generateSummary, printSummary } from "../../utils/string-utils";
+import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "../../types";
 
 async function checkS3DataDiscoveryCompliance(
 	region: string = "us-east-1"

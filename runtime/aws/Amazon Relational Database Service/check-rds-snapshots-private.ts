@@ -5,8 +5,8 @@ import {
 	DescribeDBSnapshotAttributesCommand,
 	DescribeDBClusterSnapshotAttributesCommand
 } from "@aws-sdk/client-rds";
-import { generateSummary, printSummary } from "~codegen/utils/stringUtils";
-import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "~runtime/types";
+import { generateSummary, printSummary } from "../../utils/string-utils";
+import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "../../types";
 
 async function checkRdsSnapshotsPrivate(region: string = "us-east-1"): Promise<ComplianceReport> {
 	const client = new RDSClient({ region });

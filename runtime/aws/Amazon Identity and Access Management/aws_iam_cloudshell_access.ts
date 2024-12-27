@@ -8,8 +8,8 @@ import {
 	ListRolesCommand
 } from "@aws-sdk/client-iam";
 
-import { printSummary, generateSummary } from "~codegen/utils/stringUtils";
-import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "~runtime/types";
+import { printSummary, generateSummary } from "../../utils/string-utils";
+import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "../../types";
 
 const CLOUDSHELL_FULL_ACCESS_ARN = "arn:aws:iam::aws:policy/AWSCloudShellFullAccess";
 

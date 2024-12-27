@@ -1,7 +1,7 @@
 import { EFSClient, DescribeMountTargetsCommand } from "@aws-sdk/client-efs";
 import { EC2Client, DescribeSubnetsCommand } from "@aws-sdk/client-ec2";
-import { printSummary, generateSummary } from "~codegen/utils/stringUtils";
-import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "~runtime/types";
+import { printSummary, generateSummary } from "../../utils/string-utils";
+import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "../../types";
 
 async function checkEfsMountTargetsPublicSubnets(
 	region: string = "us-east-1"

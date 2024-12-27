@@ -2,7 +2,7 @@
 //@ts-nocheck
 import { ECRClient, DescribeRepositoriesCommand } from "@aws-sdk/client-ecr";
 import { mockClient } from "aws-sdk-client-mock";
-import { ComplianceStatus } from "~runtime/types";
+import { ComplianceStatus } from "../../types";
 import checkEcrImageScanningCompliance from "./check-ecr-image-scanning";
 
 const mockEcrClient = mockClient(ECRClient);

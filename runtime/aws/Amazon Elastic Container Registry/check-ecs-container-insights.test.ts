@@ -2,7 +2,7 @@
 //@ts-nocheck
 import { ECSClient, ListClustersCommand, DescribeClustersCommand } from "@aws-sdk/client-ecs";
 import { mockClient } from "aws-sdk-client-mock";
-import { ComplianceStatus } from "~runtime/types";
+import { ComplianceStatus } from "../../types";
 import checkEcsContainerInsights from "./check-ecs-container-insights";
 
 const mockEcsClient = mockClient(ECSClient);

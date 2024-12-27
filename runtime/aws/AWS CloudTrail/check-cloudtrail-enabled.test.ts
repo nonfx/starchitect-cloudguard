@@ -6,7 +6,7 @@ import {
 	GetTrailStatusCommand
 } from "@aws-sdk/client-cloudtrail";
 import { mockClient } from "aws-sdk-client-mock";
-import { ComplianceStatus } from "~runtime/types";
+import { ComplianceStatus } from "../../types";
 import checkCloudTrailEnabled from "./check-cloudtrail-enabled";
 
 const mockCloudTrailClient = mockClient(CloudTrailClient);

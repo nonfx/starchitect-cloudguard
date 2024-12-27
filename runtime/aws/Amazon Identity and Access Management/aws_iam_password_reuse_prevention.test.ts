@@ -2,7 +2,7 @@
 //@ts-nocheck
 import { IAMClient, GetAccountPasswordPolicyCommand } from "@aws-sdk/client-iam";
 import { mockClient } from "aws-sdk-client-mock";
-import { ComplianceStatus } from "~runtime/types";
+import { ComplianceStatus } from "../../types";
 import checkPasswordReusePreventionCompliance from "./aws_iam_password_reuse_prevention";
 
 const mockIAMClient = mockClient(IAMClient);

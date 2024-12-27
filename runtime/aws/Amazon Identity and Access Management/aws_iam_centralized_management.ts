@@ -1,9 +1,9 @@
 import { IAMClient, ListUsersCommand, ListSAMLProvidersCommand } from "@aws-sdk/client-iam";
 import { OrganizationsClient, DescribeOrganizationCommand } from "@aws-sdk/client-organizations";
 
-import { printSummary, generateSummary } from "~codegen/utils/stringUtils";
+import { printSummary, generateSummary } from "../../utils/string-utils";
 
-import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "~runtime/types";
+import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "../../types";
 
 async function checkIamCentralizedManagement(
 	region: string = "us-east-1"

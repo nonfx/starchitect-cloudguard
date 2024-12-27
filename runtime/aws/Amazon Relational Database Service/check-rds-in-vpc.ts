@@ -4,8 +4,8 @@ import {
 	DescribeDBSubnetGroupsCommand
 } from "@aws-sdk/client-rds";
 import { EC2Client, DescribeVpcsCommand } from "@aws-sdk/client-ec2";
-import { generateSummary, printSummary } from "~codegen/utils/stringUtils";
-import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "~runtime/types";
+import { generateSummary, printSummary } from "../../utils/string-utils";
+import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "../../types";
 
 async function checkRdsInVpcCompliance(region: string = "us-east-1"): Promise<ComplianceReport> {
 	const rdsClient = new RDSClient({ region });

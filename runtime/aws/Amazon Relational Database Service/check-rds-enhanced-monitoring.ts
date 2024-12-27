@@ -1,6 +1,6 @@
 import { RDSClient, DescribeDBInstancesCommand } from "@aws-sdk/client-rds";
-import { generateSummary, printSummary } from "~codegen/utils/stringUtils";
-import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "~runtime/types";
+import { generateSummary, printSummary } from "../../utils/string-utils";
+import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "../../types";
 
 // Valid monitoring intervals in seconds
 const VALID_INTERVALS = new Set([1, 5, 10, 15, 30, 60]);
