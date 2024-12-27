@@ -74,6 +74,7 @@ async function checkNaclMonitoringCompliance(
 
 			const alarms = await cwClient.send(
 				new DescribeAlarmsCommand({
+					//@ts-expect-error @todo - to be fixed, temporary fix for CLI unblock
 					MetricName: metricName
 				})
 			);

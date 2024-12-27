@@ -84,6 +84,7 @@ async function checkCloudWatchOrgChangesMonitored(
 								Metric: {
 									MetricName: metricName,
 									Namespace:
+										//@ts-expect-error @todo - to be fixed, temporary fix for CLI unblock
 										orgChangeFilter.metricTransformations[0].metricNamespace || "CloudTrail"
 								},
 								Period: 3600,

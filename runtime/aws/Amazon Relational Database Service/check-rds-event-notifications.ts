@@ -73,7 +73,7 @@ async function checkRdsEventNotifications(region: string = "us-east-1"): Promise
 			}
 
 			let isCompliant = false;
-			let message: string[] = [];
+			const message: string[] = [];
 
 			// First check if instance is part of a cluster with notifications
 			if (instance.DBClusterIdentifier) {

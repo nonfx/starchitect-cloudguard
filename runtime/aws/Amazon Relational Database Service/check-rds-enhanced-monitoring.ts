@@ -57,7 +57,7 @@ async function checkRdsEnhancedMonitoring(region: string = "us-east-1"): Promise
 					instance.MonitoringRoleArn && instance.MonitoringRoleArn.length > 0;
 
 				if (!hasValidInterval || !hasMonitoringRole) {
-					let message = [];
+					const message = [];
 					if (!hasValidInterval) {
 						message.push(
 							`Invalid monitoring interval: ${instance.MonitoringInterval}. Must be one of: 1, 5, 10, 15, 30, or 60 seconds`

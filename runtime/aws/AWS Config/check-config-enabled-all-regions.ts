@@ -33,11 +33,12 @@ async function checkConfigEnabledAllRegions(
 
 			// Check account aggregation source
 			const accountAggregationEnabled = aggregator.AccountAggregationSources?.some(
-				source => source.AllRegions === true
+				source => source.AllAwsRegions === true
 			);
 
 			// Check organization aggregation source
-			const orgAggregationEnabled = aggregator.OrganizationAggregationSource?.AllRegions === true;
+			const orgAggregationEnabled =
+				aggregator.OrganizationAggregationSource?.AllAwsRegions === true;
 
 			if (accountAggregationEnabled || orgAggregationEnabled) {
 				results.checks.push({

@@ -44,6 +44,8 @@ async function checkRdsEventSubscriptions(region: string = "us-east-1"): Promise
 
 		// Get all clusters for lookup
 		const clustersResponse = await client.send(new DescribeDBClustersCommand({}));
+		//@todo - figure out what it's meant to be used for
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		const clusterMap = new Map(
 			(clustersResponse.DBClusters || []).map(c => [c.DBClusterIdentifier!, c])
 		);

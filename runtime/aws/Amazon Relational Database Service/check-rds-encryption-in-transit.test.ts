@@ -12,6 +12,7 @@ import checkRdsEncryptionInTransit from "./check-rds-encryption-in-transit";
 
 const mockRdsClient = mockClient(RDSClient);
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const mockMySQLCluster = (id: string, requireSSL: boolean): DBCluster => ({
 	DBClusterIdentifier: id,
 	DBClusterArn: `arn:aws:rds:us-east-1:123456789012:cluster:${id}`,
@@ -19,6 +20,7 @@ const mockMySQLCluster = (id: string, requireSSL: boolean): DBCluster => ({
 	Engine: "aurora-mysql"
 });
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const mockPostgresCluster = (id: string, requireSSL: boolean): DBCluster => ({
 	DBClusterIdentifier: id,
 	DBClusterArn: `arn:aws:rds:us-east-1:123456789012:cluster:${id}`,
