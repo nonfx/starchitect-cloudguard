@@ -1,15 +1,14 @@
 {
   "name": "@nonfx/starchitect-cloudguard",
-  "module": "index.ts",
   "type": "module",
   "scripts": {
     "prepare": "husky",
     "prettier:lint": "prettier --config .prettierrc.cjs --cache --cache-location .cache/prettier --check .",
     "lint:files": "env TIMING=1 eslint --quiet",
     "lint:fix": "env TIMING=1 eslint --fix .",
-    "lint": "bun lint:files",
+    "lint": "npm run lint:files",
     "prettify": "prettier --config .prettierrc.cjs --cache --cache-location .cache/prettier --write .",
-    "generate-runtime-index": "bun ./.scripts/generate-runtime-index.ts"
+    "generate-runtime-index": "node ./.scripts/generate-runtime-index.ts"
   },
   "dependencies": {
     "@aws-sdk/client-accessanalyzer": "^3.716.0",

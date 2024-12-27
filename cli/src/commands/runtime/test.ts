@@ -65,6 +65,13 @@ export default class RuntimeTestRunner extends Command {
 				this.error("Only AWS is supported at the moment", { exit: 1 });
 		}
 
+		// Validate credentials for selected provider
+		try {
+			await provider.validateCredentials();
+		} catch (error) {
+			this.error(error as Error, { exit: 1 });
+		}
+
 		// Get region selection
 		const regions = await provider.getRegions();
 		flags.region = await this.promptForSelection(flags.region, "Select region:", regions);
@@ -80,16 +87,7 @@ export default class RuntimeTestRunner extends Command {
 		);
 
 		try {
-			// Validate credentials for selected provider
-
-			try {
-				await provider.validateCredentials();
-			} catch (error) {
-				this.error(error as Error, { exit: 1 });
-			}
-
 			const runner = new TestRunner();
-
 			const tests = await provider.getTests();
 
 			progressBar.start(tests.length, 0);

@@ -108,7 +108,7 @@ async function checkNetworkGatewayMonitoring(
 	return results;
 }
 
-if (require.main === module) {
+if (import.meta.main) {
 	const region = process.env.AWS_REGION ?? "ap-southeast-1";
 	const results = await checkNetworkGatewayMonitoring(region);
 	printSummary(generateSummary(results));

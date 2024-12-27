@@ -96,7 +96,7 @@ async function checkS3DataDiscoveryCompliance(
 	return results;
 }
 
-if (require.main === module) {
+if (import.meta.main) {
 	const region = process.env.AWS_REGION;
 	const results = await checkS3DataDiscoveryCompliance(region);
 	printSummary(generateSummary(results));

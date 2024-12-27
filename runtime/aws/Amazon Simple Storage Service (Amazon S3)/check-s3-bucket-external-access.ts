@@ -176,7 +176,7 @@ async function checkS3BucketExternalAccess(
 	return results;
 }
 
-if (require.main === module) {
+if (import.meta.main) {
 	const region = process.env.AWS_REGION;
 	const results = await checkS3BucketExternalAccess(region);
 	printSummary(generateSummary(results));

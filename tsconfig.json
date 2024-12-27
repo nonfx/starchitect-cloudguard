@@ -7,7 +7,7 @@
 		"moduleResolution": "bundler", // Use bundler-style module resolution
 		"moduleDetection": "force", // Force modules for all files
 		"resolveJsonModule": true, // Allow importing .json files
-		"allowImportingTsExtensions": true, // Allow imports with .ts extensions
+		"allowImportingTsExtensions": false, // Allow imports with .ts extensions
 		"verbatimModuleSyntax": true, // Use exact import/export syntax
 
 		// JavaScript Support

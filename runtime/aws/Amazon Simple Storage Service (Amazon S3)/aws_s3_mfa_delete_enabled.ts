@@ -63,7 +63,7 @@ async function checkS3MfaDelete(region: string = "us-east-1"): Promise<Complianc
 	return results;
 }
 
-if (require.main === module) {
+if (import.meta.main) {
 	const region = process.env.AWS_REGION;
 	const results = await checkS3MfaDelete(region);
 	printSummary(generateSummary(results));

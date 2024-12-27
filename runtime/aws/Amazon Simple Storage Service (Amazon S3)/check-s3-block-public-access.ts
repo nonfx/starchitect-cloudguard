@@ -90,7 +90,7 @@ async function checkS3BlockPublicAccess(region: string = "us-east-1"): Promise<C
 	return results;
 }
 
-if (require.main === module) {
+if (import.meta.main) {
 	const region = process.env.AWS_REGION;
 	const results = await checkS3BlockPublicAccess(region);
 	printSummary(generateSummary(results));

@@ -79,7 +79,7 @@ async function checkCloudTrailEnabled(region: string = "us-east-1"): Promise<Com
 	return results;
 }
 
-if (require.main === module) {
+if (import.meta.main) {
 	const region = process.env.AWS_REGION;
 	const results = await checkCloudTrailEnabled(region);
 	printSummary(generateSummary(results));

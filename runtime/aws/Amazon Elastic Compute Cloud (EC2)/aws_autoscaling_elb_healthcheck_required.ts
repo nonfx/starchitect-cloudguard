@@ -83,7 +83,7 @@ async function checkAutoScalingELBHealthCheck(
 	return results;
 }
 
-if (require.main === module) {
+if (import.meta.main) {
 	const region = process.env.AWS_REGION ?? "ap-southeast-1";
 	const results = await checkAutoScalingELBHealthCheck(region);
 	printSummary(generateSummary(results));

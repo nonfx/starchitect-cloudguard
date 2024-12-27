@@ -58,7 +58,7 @@ async function checkEfsEncryption(region: string = "us-east-1"): Promise<Complia
 	return results;
 }
 
-if (require.main === module) {
+if (import.meta.main) {
 	const region = process.env.AWS_REGION ?? "ap-southeast-1";
 	const results = await checkEfsEncryption(region);
 	printSummary(generateSummary(results));

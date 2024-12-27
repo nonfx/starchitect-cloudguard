@@ -111,7 +111,7 @@ async function checkS3AccessPointBlockPublicAccess(
 	return results;
 }
 
-if (require.main === module) {
+if (import.meta.main) {
 	const region = process.env.AWS_REGION;
 	const results = await checkS3AccessPointBlockPublicAccess(region);
 	printSummary(generateSummary(results));

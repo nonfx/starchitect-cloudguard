@@ -169,7 +169,7 @@ async function isTrailMonitoringBucket(
 	}
 }
 
-if (require.main === module) {
+if (import.meta.main) {
 	const region = process.env.AWS_REGION;
 	const results = await checkS3ObjectLevelLogging(region);
 	printSummary(generateSummary(results));

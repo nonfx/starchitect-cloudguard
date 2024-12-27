@@ -62,7 +62,7 @@ async function checkPublicAMIs(region: string = "us-east-1"): Promise<Compliance
 	return results;
 }
 
-if (require.main === module) {
+if (import.meta.main) {
 	const region = process.env.AWS_REGION ?? "ap-southeast-1";
 	const results = await checkPublicAMIs(region);
 	printSummary(generateSummary(results));

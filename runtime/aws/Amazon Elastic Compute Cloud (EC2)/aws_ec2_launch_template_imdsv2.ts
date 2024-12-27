@@ -95,7 +95,7 @@ async function checkEc2LaunchTemplateImdsv2Compliance(
 	return results;
 }
 
-if (require.main === module) {
+if (import.meta.main) {
 	const region = process.env.AWS_REGION ?? "ap-southeast-1";
 	const results = await checkEc2LaunchTemplateImdsv2Compliance(region);
 	printSummary(generateSummary(results));

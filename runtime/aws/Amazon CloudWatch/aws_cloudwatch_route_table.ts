@@ -103,7 +103,7 @@ async function checkRouteTableMonitoring(region: string = "us-east-1"): Promise<
 	return results;
 }
 
-if (require.main === module) {
+if (import.meta.main) {
 	const region = process.env.AWS_REGION ?? "ap-southeast-1";
 	const results = await checkRouteTableMonitoring(region);
 	printSummary(generateSummary(results));

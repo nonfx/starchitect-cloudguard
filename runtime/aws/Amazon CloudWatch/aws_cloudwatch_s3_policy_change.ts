@@ -106,7 +106,7 @@ async function checkS3PolicyMonitoring(region: string = "us-east-1"): Promise<Co
 	return results;
 }
 
-if (require.main === module) {
+if (import.meta.main) {
 	const region = process.env.AWS_REGION ?? "ap-southeast-1";
 	const results = await checkS3PolicyMonitoring(region);
 	printSummary(generateSummary(results));

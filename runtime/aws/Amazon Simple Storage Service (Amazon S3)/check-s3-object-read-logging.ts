@@ -174,7 +174,7 @@ async function isS3ObjectLoggingEnabled(
 	}
 }
 
-if (require.main === module) {
+if (import.meta.main) {
 	const region = process.env.AWS_REGION;
 	const results = await checkS3ObjectReadLogging(region);
 	printSummary(generateSummary(results));

@@ -96,7 +96,7 @@ async function checkAutoScalingMultipleInstanceTypes(
 	return results;
 }
 
-if (require.main === module) {
+if (import.meta.main) {
 	const results = await checkAutoScalingMultipleInstanceTypes(process.env.AWS_REGION);
 	printSummary(generateSummary(results));
 }

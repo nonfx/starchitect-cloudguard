@@ -57,7 +57,7 @@ async function checkCloudTrailEncryption(region: string = "us-east-1"): Promise<
 	return results;
 }
 
-if (require.main === module) {
+if (import.meta.main) {
 	const region = process.env.AWS_REGION;
 	const results = await checkCloudTrailEncryption(region);
 	printSummary(generateSummary(results));

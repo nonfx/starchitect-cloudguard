@@ -87,7 +87,7 @@ async function checkSecurityGroupAdminPorts(
 	return results;
 }
 
-if (require.main === module) {
+if (import.meta.main) {
 	const region = process.env.AWS_REGION;
 	const results = await checkSecurityGroupAdminPorts(region);
 	printSummary(generateSummary(results));

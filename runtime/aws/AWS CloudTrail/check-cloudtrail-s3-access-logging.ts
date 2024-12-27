@@ -91,7 +91,7 @@ async function checkCloudTrailS3AccessLogging(
 	return results;
 }
 
-if (require.main === module) {
+if (import.meta.main) {
 	const region = process.env.AWS_REGION;
 	const results = await checkCloudTrailS3AccessLogging(region);
 	printSummary(generateSummary(results));

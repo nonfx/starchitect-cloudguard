@@ -106,7 +106,7 @@ async function checkCloudWatchApiMonitoring(
 	return results;
 }
 
-if (require.main === module) {
+if (import.meta.main) {
 	const region = process.env.AWS_REGION ?? "ap-southeast-1";
 	const results = await checkCloudWatchApiMonitoring(region);
 	printSummary(generateSummary(results));

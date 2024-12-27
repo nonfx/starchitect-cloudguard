@@ -109,7 +109,7 @@ async function checkCloudTrailMultiRegionEnabled(
 	return results;
 }
 
-if (require.main === module) {
+if (import.meta.main) {
 	const region = process.env.AWS_REGION;
 	const results = await checkCloudTrailMultiRegionEnabled(region);
 	printSummary(generateSummary(results));

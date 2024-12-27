@@ -100,7 +100,7 @@ async function checkCloudTrailConfigurationMonitoring(
 	return results;
 }
 
-if (require.main === module) {
+if (import.meta.main) {
 	const region = process.env.AWS_REGION ?? "ap-southeast-1";
 	const results = await checkCloudTrailConfigurationMonitoring(region);
 	printSummary(generateSummary(results));

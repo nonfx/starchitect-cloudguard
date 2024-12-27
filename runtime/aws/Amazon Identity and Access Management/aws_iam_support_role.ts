@@ -95,7 +95,7 @@ async function checkIamSupportRole(region: string = "us-east-1"): Promise<Compli
 	return results;
 }
 
-if (require.main === module) {
+if (import.meta.main) {
 	const region = process.env.AWS_REGION ?? "ap-southeast-1";
 	const results = await checkIamSupportRole(region);
 	printSummary(generateSummary(results));

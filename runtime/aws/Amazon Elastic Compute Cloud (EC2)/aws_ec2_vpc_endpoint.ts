@@ -80,7 +80,7 @@ async function checkEc2VpcEndpointCompliance(
 	return results;
 }
 
-if (require.main === module) {
+if (import.meta.main) {
 	const region = process.env.AWS_REGION ?? "ap-southeast-1";
 	const results = await checkEc2VpcEndpointCompliance(region);
 	printSummary(generateSummary(results));

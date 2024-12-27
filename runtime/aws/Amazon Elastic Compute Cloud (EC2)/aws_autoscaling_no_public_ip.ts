@@ -76,7 +76,7 @@ async function checkAutoScalingPublicIp(region: string = "us-east-1"): Promise<C
 	return results;
 }
 
-if (require.main === module) {
+if (import.meta.main) {
 	const region = process.env.AWS_REGION ?? "ap-southeast-1";
 	const results = await checkAutoScalingPublicIp(region);
 	printSummary(generateSummary(results));

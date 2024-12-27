@@ -107,7 +107,7 @@ async function checkDefaultSecurityGroupCompliance(
 	return results;
 }
 
-if (require.main === module) {
+if (import.meta.main) {
 	const region = process.env.AWS_REGION;
 	void (async () => {
 		const results = await checkDefaultSecurityGroupCompliance(region);

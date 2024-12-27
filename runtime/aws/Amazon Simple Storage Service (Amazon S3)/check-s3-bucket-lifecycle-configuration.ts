@@ -89,7 +89,7 @@ async function checkS3BucketLifecycleConfiguration(
 	return results;
 }
 
-if (require.main === module) {
+if (import.meta.main) {
 	const region = process.env.AWS_REGION;
 	const results = await checkS3BucketLifecycleConfiguration(region);
 	printSummary(generateSummary(results));
