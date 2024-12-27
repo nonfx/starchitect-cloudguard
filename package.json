@@ -26,6 +26,7 @@
     "@aws-sdk/client-kms": "^3.716.0",
     "@aws-sdk/client-macie2": "^3.717.0",
     "@aws-sdk/client-organizations": "^3.716.0",
+    "@aws-sdk/client-rds": "^3.716.0",
     "@aws-sdk/client-s3": "^3.717.0",
     "@aws-sdk/client-s3-control": "^3.716.0",
     "@aws-sdk/client-sts": "^3.716.0",
