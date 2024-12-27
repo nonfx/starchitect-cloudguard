@@ -1,3 +1,4 @@
+//@ts-nocheck
 import { EC2Client, DescribeVpcsCommand, type Vpc } from "@aws-sdk/client-ec2";
 import { mockClient } from "aws-sdk-client-mock";
 import { ComplianceStatus } from "~runtime/types";

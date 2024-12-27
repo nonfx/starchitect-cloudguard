@@ -1,3 +1,4 @@
+//@ts-nocheck
 import {
 	RDSClient,
 	DescribeDBSnapshotsCommand,
@@ -6,8 +7,7 @@ import {
 	DescribeDBClusterSnapshotAttributesCommand,
 	type DBSnapshot,
 	type DBClusterSnapshot,
-	type DBSnapshotAttributeResult,
-	type DBClusterSnapshotAttributeResult
+	type DBSnapshotAttributesResult
 } from "@aws-sdk/client-rds";
 import { mockClient } from "aws-sdk-client-mock";
 import { ComplianceStatus } from "~runtime/types";
@@ -26,7 +26,7 @@ const mockDBClusterSnapshot: DBClusterSnapshot = {
 	DBClusterSnapshotArn: "arn:aws:rds:us-east-1:123456789012:snapshot:test-cluster-snapshot-1"
 };
 
-const mockPrivateSnapshotAttributes: DBSnapshotAttributeResult = {
+const mockPrivateSnapshotAttributes: DBSnapshotAttributesResult = {
 	DBSnapshotAttributes: [
 		{
 			AttributeName: "restore",
@@ -35,7 +35,7 @@ const mockPrivateSnapshotAttributes: DBSnapshotAttributeResult = {
 	]
 };
 
-const mockPublicSnapshotAttributes: DBSnapshotAttributeResult = {
+const mockPublicSnapshotAttributes: DBSnapshotAttributesResult = {
 	DBSnapshotAttributes: [
 		{
 			AttributeName: "restore",

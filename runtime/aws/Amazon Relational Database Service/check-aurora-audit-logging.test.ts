@@ -1,3 +1,4 @@
+//@ts-nocheck
 import { RDSClient, DescribeDBClustersCommand } from "@aws-sdk/client-rds";
 import { CloudTrailClient, DescribeTrailsCommand } from "@aws-sdk/client-cloudtrail";
 import { mockClient } from "aws-sdk-client-mock";

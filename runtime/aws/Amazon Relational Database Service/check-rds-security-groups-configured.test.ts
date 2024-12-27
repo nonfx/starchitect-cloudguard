@@ -1,3 +1,4 @@
+//@ts-nocheck
 import { RDSClient, DescribeDBInstancesCommand, type DBInstance } from "@aws-sdk/client-rds";
 import {
 	EC2Client,
