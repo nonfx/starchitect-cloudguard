@@ -8,7 +8,7 @@
     "lint:fix": "env TIMING=1 eslint --fix .",
     "lint": "npm run lint:files",
     "prettify": "prettier --config .prettierrc.cjs --cache --cache-location .cache/prettier --write .",
-    "generate-runtime-index": "node ./.scripts/generate-runtime-index.ts"
+    "generate-runtime-index": "bun ./.scripts/generate-runtime-index.ts"
   },
   "dependencies": {
     "@aws-sdk/client-accessanalyzer": "^3.716.0",

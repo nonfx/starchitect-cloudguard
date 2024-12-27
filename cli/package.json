@@ -51,7 +51,7 @@
   },
   "repository": "nonfx/starchitect-cloudguard",
   "scripts": {
-    "build": "shx rm -rf dist && tsc -b",
+    "build": "shx rm -rf dist && tsc -b --incremental",
     "dev": "npm run build && ./bin/dev.js",
     "postpack": "shx rm -f oclif.manifest.json",
     "prepack": "bunx oclif manifest && bunx oclif readme",

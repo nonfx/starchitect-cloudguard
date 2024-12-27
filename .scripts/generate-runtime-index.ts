@@ -31,7 +31,7 @@ function generateIndexFor(cloud: string) {
 	}
 
 	const imports = runtimeFiles.map((file, idx) => {
-		return `import import${idx} from "./${file}";`;
+		return `import import${idx} from "./${file.replace(/\.[^/.]+$/, "")}";`;
 	});
 
 	const outfile = resolve(runtimeDir, "index.ts");
