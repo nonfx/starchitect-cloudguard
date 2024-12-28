@@ -1,7 +1,7 @@
 import { EFSClient, DescribeAccessPointsCommand } from "@aws-sdk/client-efs";
 
-import { printSummary, generateSummary } from "../../utils/string-utils";
-import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "../../types";
+import { printSummary, generateSummary } from "../../utils/string-utils.js";
+import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "../../types.js";
 
 async function checkEfsAccessPointsRootDirectory(
 	region: string = "us-east-1"

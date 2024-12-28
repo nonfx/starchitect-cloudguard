@@ -1,4 +1,4 @@
-import type { RuntimeTest } from "../../types";
+import type { RuntimeTest } from "../../types.js";
 
 export abstract class CloudProvider {
 	abstract detectCredentials(): Promise<boolean>;

@@ -1,6 +1,6 @@
 import { RDSClient, DescribeDBInstancesCommand } from "@aws-sdk/client-rds";
-import { generateSummary, printSummary } from "../../utils/string-utils";
-import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "../../types";
+import { generateSummary, printSummary } from "../../utils/string-utils.js";
+import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "../../types.js";
 
 // Define required log types per engine
 const REQUIRED_LOGS = {
@@ -117,7 +117,7 @@ async function checkRdsCloudWatchLogsEnabled(
 	return results;
 }
 
-if (require.main === module) {
+if (import.meta.main) {
 	const region = process.env.AWS_REGION;
 	const results = await checkRdsCloudWatchLogsEnabled(region);
 	printSummary(generateSummary(results));

@@ -1,7 +1,7 @@
 import { RDSClient, DescribeDBClustersCommand } from "@aws-sdk/client-rds";
 import { CloudTrailClient, DescribeTrailsCommand } from "@aws-sdk/client-cloudtrail";
-import { generateSummary, printSummary } from "../../utils/string-utils";
-import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "../../types";
+import { generateSummary, printSummary } from "../../utils/string-utils.js";
+import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "../../types.js";
 
 async function checkAuroraAuditLoggingCompliance(
 	region: string = "us-east-1"
@@ -75,7 +75,7 @@ async function checkAuroraAuditLoggingCompliance(
 	return results;
 }
 
-if (require.main === module) {
+if (import.meta.main) {
 	const region = process.env.AWS_REGION;
 	const results = await checkAuroraAuditLoggingCompliance(region);
 	printSummary(generateSummary(results));

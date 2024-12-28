@@ -1,4 +1,4 @@
-import { ComplianceStatus, type TestResult } from "../../types";
+import { ComplianceStatus, type TestResult } from "../../types.js";
 
 export interface Reporter {
 	report(results: TestResult[]): void | Promise<void>;

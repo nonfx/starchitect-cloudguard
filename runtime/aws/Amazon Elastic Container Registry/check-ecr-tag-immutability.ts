@@ -1,6 +1,6 @@
 import { DescribeRepositoriesCommand, ECRClient } from "@aws-sdk/client-ecr";
-import { generateSummary, printSummary } from "../../utils/string-utils";
-import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "../../types";
+import { generateSummary, printSummary } from "../../utils/string-utils.js";
+import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "../../types.js";
 
 async function checkEcrTagImmutability(region: string = "us-east-1"): Promise<ComplianceReport> {
 	const client = new ECRClient({ region });

@@ -8,7 +8,7 @@ import {
 } from "@aws-sdk/client-rds";
 import { EC2Client, DescribeVpcsCommand, type Vpc } from "@aws-sdk/client-ec2";
 import { mockClient } from "aws-sdk-client-mock";
-import { ComplianceStatus } from "../../types";
+import { ComplianceStatus } from "../../types.js";
 import { test, describe, expect, beforeEach } from "bun:test";
 import checkRdsInVpcCompliance from "./check-rds-in-vpc";
 

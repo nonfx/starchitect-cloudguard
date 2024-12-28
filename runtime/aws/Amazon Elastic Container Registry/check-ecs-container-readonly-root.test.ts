@@ -6,7 +6,7 @@ import {
 	DescribeTaskDefinitionCommand
 } from "@aws-sdk/client-ecs";
 import { mockClient } from "aws-sdk-client-mock";
-import { ComplianceStatus } from "../../types";
+import { ComplianceStatus } from "../../types.js";
 import checkEcsContainerReadonlyRoot from "./check-ecs-container-readonly-root";
 
 const mockECSClient = mockClient(ECSClient);

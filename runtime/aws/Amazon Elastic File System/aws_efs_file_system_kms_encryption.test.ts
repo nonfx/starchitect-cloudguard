@@ -2,7 +2,7 @@
 //@ts-nocheck
 import { EFSClient, DescribeFileSystemsCommand } from "@aws-sdk/client-efs";
 import { mockClient } from "aws-sdk-client-mock";
-import { ComplianceStatus } from "../../types";
+import { ComplianceStatus } from "../../types.js";
 import checkEfsEncryption from "./aws_efs_file_system_kms_encryption";
 
 const mockEfsClient = mockClient(EFSClient);

@@ -1,7 +1,7 @@
 import { IAMClient, GetAccountPasswordPolicyCommand } from "@aws-sdk/client-iam";
 
-import { printSummary, generateSummary } from "../../utils/string-utils";
-import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "../../types";
+import { printSummary, generateSummary } from "../../utils/string-utils.js";
+import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "../../types.js";
 
 async function checkPasswordReusePreventionCompliance(
 	region: string = "us-east-1"

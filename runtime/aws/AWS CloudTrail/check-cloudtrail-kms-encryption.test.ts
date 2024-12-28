@@ -2,7 +2,7 @@
 //@ts-nocheck
 import { CloudTrailClient, DescribeTrailsCommand } from "@aws-sdk/client-cloudtrail";
 import { mockClient } from "aws-sdk-client-mock";
-import { ComplianceStatus } from "../../types";
+import { ComplianceStatus } from "../../types.js";
 import checkCloudTrailKmsEncryption from "./check-cloudtrail-kms-encryption";
 
 const mockCloudTrailClient = mockClient(CloudTrailClient);

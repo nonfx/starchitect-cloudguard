@@ -1,6 +1,6 @@
 import { RDSClient, DescribeDBClustersCommand } from "@aws-sdk/client-rds";
-import { generateSummary, printSummary } from "../../utils/string-utils";
-import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "../../types";
+import { generateSummary, printSummary } from "../../utils/string-utils.js";
+import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "../../types.js";
 
 async function checkAuroraBackupCompliance(
 	region: string = "us-east-1"
@@ -66,7 +66,7 @@ async function checkAuroraBackupCompliance(
 	return results;
 }
 
-if (require.main === module) {
+if (import.meta.main) {
 	const region = process.env.AWS_REGION;
 	const results = await checkAuroraBackupCompliance(region);
 	printSummary(generateSummary(results));

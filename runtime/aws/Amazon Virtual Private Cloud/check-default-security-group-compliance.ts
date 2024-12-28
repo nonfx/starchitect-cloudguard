@@ -4,8 +4,8 @@ import {
 	EC2Client,
 	type SecurityGroup
 } from "@aws-sdk/client-ec2";
-import { generateSummary, printSummary } from "../../utils/string-utils";
-import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "../../types";
+import { generateSummary, printSummary } from "../../utils/string-utils.js";
+import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "../../types.js";
 
 function isSecurityGroupCompliant(sg: SecurityGroup): boolean {
 	// Check ingress rules - should either be empty or have single self-referencing rule

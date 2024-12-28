@@ -6,7 +6,7 @@ import {
 	GetBucketLifecycleConfigurationCommand
 } from "@aws-sdk/client-s3";
 import { mockClient } from "aws-sdk-client-mock";
-import { ComplianceStatus } from "../../types";
+import { ComplianceStatus } from "../../types.js";
 import checkS3BucketLifecycleConfiguration from "./check-s3-bucket-lifecycle-configuration";
 
 const mockS3Client = mockClient(S3Client);

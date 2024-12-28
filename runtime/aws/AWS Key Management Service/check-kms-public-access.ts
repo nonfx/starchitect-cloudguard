@@ -1,6 +1,6 @@
 import { KMSClient, ListKeysCommand, GetKeyPolicyCommand } from "@aws-sdk/client-kms";
-import { printSummary, generateSummary } from "../../utils/string-utils";
-import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "../../types";
+import { printSummary, generateSummary } from "../../utils/string-utils.js";
+import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "../../types.js";
 
 interface PolicyDocument {
 	Statement: PolicyStatement[];

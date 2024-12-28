@@ -1,6 +1,6 @@
 import { RDSClient, DescribeDBClustersCommand } from "@aws-sdk/client-rds";
-import { generateSummary, printSummary } from "../../utils/string-utils";
-import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "../../types";
+import { generateSummary, printSummary } from "../../utils/string-utils.js";
+import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "../../types.js";
 
 async function checkRdsClusterMultiAz(region: string = "us-east-1"): Promise<ComplianceReport> {
 	const client = new RDSClient({ region });
@@ -61,7 +61,7 @@ async function checkRdsClusterMultiAz(region: string = "us-east-1"): Promise<Com
 	return results;
 }
 
-if (require.main === module) {
+if (import.meta.main) {
 	const region = process.env.AWS_REGION;
 	const results = await checkRdsClusterMultiAz(region);
 	printSummary(generateSummary(results));

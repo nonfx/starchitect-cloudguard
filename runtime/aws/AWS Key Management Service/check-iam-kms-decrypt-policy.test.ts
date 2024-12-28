@@ -2,7 +2,7 @@
 //@ts-nocheck
 import { IAMClient, ListPoliciesCommand, GetPolicyVersionCommand } from "@aws-sdk/client-iam";
 import { mockClient } from "aws-sdk-client-mock";
-import { ComplianceStatus } from "../../types";
+import { ComplianceStatus } from "../../types.js";
 import checkIamKmsDecryptPolicy from "./check-iam-kms-decrypt-policy";
 
 const mockIAMClient = mockClient(IAMClient);

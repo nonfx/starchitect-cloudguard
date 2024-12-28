@@ -6,7 +6,7 @@ import {
 } from "@aws-sdk/client-config-service";
 import { mockClient } from "aws-sdk-client-mock";
 import checkSecurityHubEnabled from "./check-security-hub";
-import { ComplianceStatus } from "../../types";
+import { ComplianceStatus } from "../../types.js";
 
 const mockConfigServiceClient = mockClient(ConfigServiceClient);
 

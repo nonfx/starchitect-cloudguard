@@ -4,8 +4,8 @@ import {
 	DescribeDBInstancesCommand
 } from "@aws-sdk/client-rds";
 import { EC2Client, DescribeSecurityGroupsCommand } from "@aws-sdk/client-ec2";
-import { generateSummary, printSummary } from "../../utils/string-utils";
-import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "../../types";
+import { generateSummary, printSummary } from "../../utils/string-utils.js";
+import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "../../types.js";
 
 async function checkRdsSecurityGroups(region: string = "us-east-1"): Promise<ComplianceReport> {
 	const rdsClient = new RDSClient({ region });
@@ -168,7 +168,7 @@ async function checkRdsSecurityGroups(region: string = "us-east-1"): Promise<Com
 	return results;
 }
 
-if (require.main === module) {
+if (import.meta.main) {
 	const region = process.env.AWS_REGION;
 	const results = await checkRdsSecurityGroups(region);
 	printSummary(generateSummary(results));

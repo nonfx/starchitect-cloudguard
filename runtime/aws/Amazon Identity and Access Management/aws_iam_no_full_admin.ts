@@ -1,7 +1,7 @@
 import { IAMClient, ListPoliciesCommand, GetPolicyVersionCommand } from "@aws-sdk/client-iam";
-import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "../../types";
+import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "../../types.js";
 
-import { printSummary, generateSummary } from "../../utils/string-utils";
+import { printSummary, generateSummary } from "../../utils/string-utils.js";
 
 interface PolicyStatement {
 	Effect: string;

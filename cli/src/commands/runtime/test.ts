@@ -2,11 +2,11 @@ import { Command, Flags } from "@oclif/core";
 import * as cliProgress from "cli-progress";
 import inquirer from "inquirer";
 import PQueue from "p-queue";
-import { AWSProvider } from "../../lib/cloud/aws";
-import { CloudProvider } from "../../lib/cloud/base";
-import { ConsoleReporter, JSONReporter } from "../../lib/reporters";
-import { TestRunner } from "../../lib/test-runner";
-import { ComplianceStatus, type TestResult } from "../../types";
+import { AWSProvider } from "../../lib/cloud/aws.js";
+import { CloudProvider } from "../../lib/cloud/base.js";
+import { ConsoleReporter, JSONReporter } from "../../lib/reporters/index.js";
+import { TestRunner } from "../../lib/test-runner/index.js";
+import { ComplianceStatus, type TestResult } from "../../types.js";
 
 const SUPPORTED_CLOUDS = ["aws", "azure", "gcp"];
 

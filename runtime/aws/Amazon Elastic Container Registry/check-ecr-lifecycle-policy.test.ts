@@ -6,7 +6,7 @@ import {
 	GetLifecyclePolicyCommand
 } from "@aws-sdk/client-ecr";
 import { mockClient } from "aws-sdk-client-mock";
-import { ComplianceStatus } from "../../types";
+import { ComplianceStatus } from "../../types.js";
 import checkEcrLifecyclePolicyCompliance from "./check-ecr-lifecycle-policy";
 
 const mockEcrClient = mockClient(ECRClient);

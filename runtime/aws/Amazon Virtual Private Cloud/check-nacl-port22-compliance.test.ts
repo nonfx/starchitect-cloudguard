@@ -2,7 +2,7 @@
 //@ts-nocheck
 import { EC2Client, DescribeNetworkAclsCommand } from "@aws-sdk/client-ec2";
 import { mockClient } from "aws-sdk-client-mock";
-import { ComplianceStatus } from "../../types";
+import { ComplianceStatus } from "../../types.js";
 import checkNaclPort22Compliance from "./check-nacl-port22-compliance";
 
 const mockEC2Client = mockClient(EC2Client);

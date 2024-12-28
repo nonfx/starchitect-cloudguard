@@ -3,7 +3,7 @@
 import { S3Client, GetBucketPolicyCommand, ListBucketsCommand } from "@aws-sdk/client-s3";
 import { STSClient, GetCallerIdentityCommand } from "@aws-sdk/client-sts";
 import { mockClient } from "aws-sdk-client-mock";
-import { ComplianceStatus } from "../../types";
+import { ComplianceStatus } from "../../types.js";
 import checkS3BucketExternalAccess from "./check-s3-bucket-external-access";
 
 const mockS3Client = mockClient(S3Client);

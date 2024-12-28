@@ -1,6 +1,6 @@
 import { RDSClient, DescribeDBInstancesCommand } from "@aws-sdk/client-rds";
-import { generateSummary, printSummary } from "../../utils/string-utils";
-import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "../../types";
+import { generateSummary, printSummary } from "../../utils/string-utils.js";
+import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "../../types.js";
 
 // Valid monitoring intervals in seconds
 const VALID_INTERVALS = new Set([1, 5, 10, 15, 30, 60]);
@@ -98,7 +98,7 @@ async function checkRdsEnhancedMonitoring(region: string = "us-east-1"): Promise
 	return results;
 }
 
-if (require.main === module) {
+if (import.meta.main) {
 	const region = process.env.AWS_REGION;
 	const results = await checkRdsEnhancedMonitoring(region);
 	printSummary(generateSummary(results));

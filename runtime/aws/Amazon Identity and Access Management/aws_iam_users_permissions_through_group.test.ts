@@ -8,7 +8,7 @@ import {
 	ListGroupsForUserCommand
 } from "@aws-sdk/client-iam";
 import { mockClient } from "aws-sdk-client-mock";
-import { ComplianceStatus } from "../../types";
+import { ComplianceStatus } from "../../types.js";
 import checkIamUserPermissionsThroughGroups from "./aws_iam_users_permissions_through_group";
 
 const mockIAMClient = mockClient(IAMClient);

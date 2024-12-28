@@ -6,3 +6,5 @@ dist/
 # These files are auto-generated and should not be linted
 cli/README.md
 runtime/aws/index.ts
+cli/tmp
+package-lock.json

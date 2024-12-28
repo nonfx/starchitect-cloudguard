@@ -7,7 +7,7 @@ import {
 } from "@aws-sdk/client-macie2";
 import { S3Client, ListBucketsCommand } from "@aws-sdk/client-s3";
 import { mockClient } from "aws-sdk-client-mock";
-import { ComplianceStatus } from "../../types";
+import { ComplianceStatus } from "../../types.js";
 import checkS3DataDiscoveryCompliance from "./check-s3-data-discovery-compliance";
 
 const mockMacieClient = mockClient(Macie2Client);

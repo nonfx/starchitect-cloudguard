@@ -1,6 +1,6 @@
-import type { ComplianceReport, ComplianceStatus, RuntimeTest } from "../../../runtime/types";
+import type { ComplianceReport, ComplianceStatus, RuntimeTest } from "../../runtime/types.js";
 
-export * from "../../../runtime/types";
+export * from "../../runtime/types.js";
 
 export interface TestResult {
 	// name: string;

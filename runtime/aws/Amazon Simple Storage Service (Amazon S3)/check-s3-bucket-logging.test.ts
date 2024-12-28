@@ -2,7 +2,7 @@
 //@ts-nocheck
 import { S3Client, ListBucketsCommand, GetBucketLoggingCommand } from "@aws-sdk/client-s3";
 import { mockClient } from "aws-sdk-client-mock";
-import { ComplianceStatus } from "../../types";
+import { ComplianceStatus } from "../../types.js";
 import checkS3BucketLogging from "./check-s3-bucket-logging";
 
 const mockS3Client = mockClient(S3Client);

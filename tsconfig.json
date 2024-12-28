@@ -3,8 +3,8 @@
 	"compilerOptions": {
 		// Module Configuration
 		// Controls how modules are resolved and handled
-		"module": "ESNext", // Use ESNext module system
-		"moduleResolution": "node", // Use bundler-style module resolution
+		"module": "Node16", // Use ESNext module system
+		"moduleResolution": "node16", // Use bundler-style module resolution
 		"moduleDetection": "force", // Force modules for all files
 		"resolveJsonModule": true, // Allow importing .json files
 		"allowImportingTsExtensions": false, // Allow imports with .ts extensions
@@ -57,5 +57,5 @@
 		],
 		"types": ["node", "bun"] // Type definitions to include
 	},
-	"exclude": ["node_modules", "dist"]
+	"exclude": ["node_modules", "dist", "tmp"]
 }

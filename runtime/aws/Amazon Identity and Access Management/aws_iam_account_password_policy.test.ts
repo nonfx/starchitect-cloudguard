@@ -2,7 +2,7 @@
 //@ts-nocheck
 import { IAMClient, GetAccountPasswordPolicyCommand } from "@aws-sdk/client-iam";
 import { mockClient } from "aws-sdk-client-mock";
-import { ComplianceStatus } from "../../types";
+import { ComplianceStatus } from "../../types.js";
 import checkPasswordPolicyLength from "./aws_iam_account_password_policy";
 
 const mockIAMClient = mockClient(IAMClient);

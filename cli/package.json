@@ -25,7 +25,7 @@
     "typescript": "^5.7.2"
   },
   "engines": {
-    "node": ">=18.0.0"
+    "node": ">=23.5.0"
   },
   "files": [
     "/bin",
@@ -54,9 +54,9 @@
     "build": "shx rm -rf dist && tsc -b --incremental",
     "dev": "npm run build && ./bin/dev.js",
     "postpack": "shx rm -f oclif.manifest.json",
-    "prepack": "bunx oclif manifest && bunx oclif readme",
+    "prepack": "oclif manifest && oclif readme",
     "test": "bun test",
-    "version": "bunx oclif readme && git add README.md"
+    "version": "oclif readme && git add README.md"
   },
   "types": "dist/index.d.ts"
 }

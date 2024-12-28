@@ -10,7 +10,7 @@ import {
 	ListAttachedRolePoliciesCommand
 } from "@aws-sdk/client-iam";
 import { mockClient } from "aws-sdk-client-mock";
-import { ComplianceStatus } from "../../types";
+import { ComplianceStatus } from "../../types.js";
 import checkCloudShellAccess from "./aws_iam_cloudshell_access";
 
 const mockIAMClient = mockClient(IAMClient);

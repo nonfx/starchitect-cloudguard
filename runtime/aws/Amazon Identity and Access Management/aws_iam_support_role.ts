@@ -1,8 +1,8 @@
 import { IAMClient, ListRolesCommand, ListAttachedRolePoliciesCommand } from "@aws-sdk/client-iam";
 
-import { printSummary, generateSummary } from "../../utils/string-utils";
+import { printSummary, generateSummary } from "../../utils/string-utils.js";
 
-import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "../../types";
+import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "../../types.js";
 
 async function checkIamSupportRole(region: string = "us-east-1"): Promise<ComplianceReport> {
 	const client = new IAMClient({ region });

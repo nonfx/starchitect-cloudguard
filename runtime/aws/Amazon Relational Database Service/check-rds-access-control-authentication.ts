@@ -1,6 +1,6 @@
 import { RDSClient, DescribeDBInstancesCommand } from "@aws-sdk/client-rds";
-import { generateSummary, printSummary } from "../../utils/string-utils";
-import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "../../types";
+import { generateSummary, printSummary } from "../../utils/string-utils.js";
+import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "../../types.js";
 
 async function checkRdsAccessControlAuthentication(
 	region: string = "us-east-1"
@@ -62,7 +62,7 @@ async function checkRdsAccessControlAuthentication(
 	return results;
 }
 
-if (require.main === module) {
+if (import.meta.main) {
 	const region = process.env.AWS_REGION || "ap-southeast-1";
 	const results = await checkRdsAccessControlAuthentication(region);
 	printSummary(generateSummary(results));

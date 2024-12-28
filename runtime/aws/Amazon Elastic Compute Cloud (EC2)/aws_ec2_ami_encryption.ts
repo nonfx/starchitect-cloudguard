@@ -1,7 +1,7 @@
 import { EC2Client, DescribeImagesCommand } from "@aws-sdk/client-ec2";
 
-import { printSummary, generateSummary } from "../../utils/string-utils";
-import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "../../types";
+import { printSummary, generateSummary } from "../../utils/string-utils.js";
+import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "../../types.js";
 
 async function checkAmiEncryption(region: string = "us-east-1"): Promise<ComplianceReport> {
 	const client = new EC2Client({ region });

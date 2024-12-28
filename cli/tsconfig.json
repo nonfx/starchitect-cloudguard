@@ -4,5 +4,6 @@
 		"noEmit": false,
 		"outDir": "dist",
 		"declaration": true
-	}
+	},
+	"exclude": ["node_modules", "dist", "tmp"]
 }

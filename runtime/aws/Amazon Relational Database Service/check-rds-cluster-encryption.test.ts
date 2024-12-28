@@ -1,7 +1,7 @@
 //@ts-nocheck
 import { RDSClient, DescribeDBClustersCommand, type DBCluster } from "@aws-sdk/client-rds";
 import { mockClient } from "aws-sdk-client-mock";
-import { ComplianceStatus } from "../../types";
+import { ComplianceStatus } from "../../types.js";
 import { test, describe, expect, beforeEach } from "bun:test";
 import checkRdsClusterEncryption from "./check-rds-cluster-encryption";
 

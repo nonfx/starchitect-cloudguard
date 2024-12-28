@@ -3,7 +3,7 @@
 import { EC2Client, DescribeInstancesCommand } from "@aws-sdk/client-ec2";
 import { IAMClient, GetInstanceProfileCommand } from "@aws-sdk/client-iam";
 import { mockClient } from "aws-sdk-client-mock";
-import { ComplianceStatus } from "../../types";
+import { ComplianceStatus } from "../../types.js";
 import checkEc2SystemsManagerCompliance from "./aws_ec2_systems_manager";
 
 const mockEC2Client = mockClient(EC2Client);

@@ -1,4 +1,4 @@
-import pino from "pino";
+import { pino } from "pino";
 
 // @todo - remove logger and rely on base class from oclif
 export const logger = pino({

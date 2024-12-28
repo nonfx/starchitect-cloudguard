@@ -2,7 +2,7 @@
 //@ts-nocheck
 import { EC2Client, DescribeInstancesCommand } from "@aws-sdk/client-ec2";
 import { mockClient } from "aws-sdk-client-mock";
-import { ComplianceStatus } from "../../types";
+import { ComplianceStatus } from "../../types.js";
 import checkEc2ImdsV2Compliance from "./aws_ec2_imdsv2";
 
 const mockEC2Client = mockClient(EC2Client);

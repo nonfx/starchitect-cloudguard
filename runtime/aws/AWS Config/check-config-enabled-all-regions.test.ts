@@ -6,7 +6,7 @@ import {
 } from "@aws-sdk/client-config-service";
 import { mockClient } from "aws-sdk-client-mock";
 import checkConfigEnabledAllRegions from "./check-config-enabled-all-regions";
-import { ComplianceStatus } from "../../types";
+import { ComplianceStatus } from "../../types.js";
 
 const mockConfigClient = mockClient(ConfigServiceClient);
 

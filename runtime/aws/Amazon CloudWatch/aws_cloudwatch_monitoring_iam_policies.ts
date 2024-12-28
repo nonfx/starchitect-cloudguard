@@ -6,9 +6,9 @@ import {
 	DescribeMetricFiltersCommand
 } from "@aws-sdk/client-cloudwatch-logs";
 
-import { generateSummary, printSummary } from "../../utils/string-utils";
+import { generateSummary, printSummary } from "../../utils/string-utils.js";
 
-import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "../../types";
+import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "../../types.js";
 
 const REQUIRED_PATTERN =
 	"{($.eventName=DeleteGroupPolicy)||($.eventName=DeleteRolePolicy)||($.eventName=DeleteUserPolicy)||($.eventName=PutGroupPolicy)||($.eventName=PutRolePolicy)||($.eventName=PutUserPolicy)||($.eventName=CreatePolicy)||($.eventName=DeletePolicy)||($.eventName=CreatePolicyVersion)||($.eventName=DeletePolicyVersion)||($.eventName=AttachRolePolicy)||($.eventName=DetachRolePolicy)||($.eventName=AttachUserPolicy)||($.eventName=DetachUserPolicy)||($.eventName=AttachGroupPolicy)||($.eventName=DetachGroupPolicy)}";

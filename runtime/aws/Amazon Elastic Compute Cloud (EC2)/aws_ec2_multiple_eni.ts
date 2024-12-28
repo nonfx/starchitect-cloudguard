@@ -4,8 +4,8 @@ import {
 	DescribeNetworkInterfacesCommand
 } from "@aws-sdk/client-ec2";
 
-import { printSummary, generateSummary } from "../../utils/string-utils";
-import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "../../types";
+import { printSummary, generateSummary } from "../../utils/string-utils.js";
+import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "../../types.js";
 
 async function checkEc2MultipleEniCompliance(
 	region: string = "us-east-1"

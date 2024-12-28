@@ -7,7 +7,7 @@ import {
 	ListAccessKeysCommand
 } from "@aws-sdk/client-iam";
 import { mockClient } from "aws-sdk-client-mock";
-import { ComplianceStatus } from "../../types";
+import { ComplianceStatus } from "../../types.js";
 import checkInitialAccessKeys from "./aws_iam_no_initial_access_keys";
 
 const mockIAMClient = mockClient(IAMClient);

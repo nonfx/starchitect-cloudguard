@@ -5,9 +5,9 @@ import {
 	DescribeMetricFiltersCommand
 } from "@aws-sdk/client-cloudwatch-logs";
 
-import { printSummary, generateSummary } from "../../utils/string-utils";
+import { printSummary, generateSummary } from "../../utils/string-utils.js";
 
-import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "../../types";
+import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "../../types.js";
 
 const REQUIRED_PATTERN =
 	"{ ($.eventName = CreateVpc) || ($.eventName = DeleteVpc) || ($.eventName = ModifyVpcAttribute) || ($.eventName = AcceptVpcPeeringConnection) || ($.eventName = CreateVpcPeeringConnection) || ($.eventName = DeleteVpcPeeringConnection) || ($.eventName = RejectVpcPeeringConnection) || ($.eventName = AttachClassicLinkVpc) || ($.eventName = DetachClassicLinkVpc) || ($.eventName = DisableVpcClassicLink) || ($.eventName = EnableVpcClassicLink) }";

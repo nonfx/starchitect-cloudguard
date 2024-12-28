@@ -3,7 +3,7 @@
 import { AutoScalingClient, DescribeAutoScalingGroupsCommand } from "@aws-sdk/client-auto-scaling";
 import { mockClient } from "aws-sdk-client-mock";
 import checkAutoScalingMultipleInstanceTypes from "./aws_autoscaling_multiple_instance_types";
-import { ComplianceStatus } from "../../types";
+import { ComplianceStatus } from "../../types.js";
 
 const mockAutoScalingClient = mockClient(AutoScalingClient);
 

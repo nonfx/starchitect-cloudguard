@@ -1,6 +1,6 @@
 import { RDSClient, DescribeEventSubscriptionsCommand } from "@aws-sdk/client-rds";
 import { mockClient } from "aws-sdk-client-mock";
-import { ComplianceStatus } from "../../types";
+import { ComplianceStatus } from "../../types.js";
 import checkRdsEventNotifications from "./check-rds-event-notifications";
 
 const mockRdsClient = mockClient(RDSClient);

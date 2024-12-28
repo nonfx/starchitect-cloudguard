@@ -6,7 +6,7 @@ import {
 	GetBucketOwnershipControlsCommand
 } from "@aws-sdk/client-s3";
 import { mockClient } from "aws-sdk-client-mock";
-import { ComplianceStatus } from "../../types";
+import { ComplianceStatus } from "../../types.js";
 import checkS3BucketAclCompliance from "./check-s3-bucket-acl-compliance";
 
 const mockS3Client = mockClient(S3Client);

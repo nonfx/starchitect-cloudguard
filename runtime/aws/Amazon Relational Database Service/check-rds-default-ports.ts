@@ -1,6 +1,6 @@
 import { RDSClient, DescribeDBInstancesCommand } from "@aws-sdk/client-rds";
-import { generateSummary, printSummary } from "../../utils/string-utils";
-import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "../../types";
+import { generateSummary, printSummary } from "../../utils/string-utils.js";
+import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "../../types.js";
 
 // Default ports for different database engines
 const DEFAULT_PORTS: { [key: string]: number } = {
@@ -91,7 +91,7 @@ async function checkRdsDefaultPorts(region: string = "us-east-1"): Promise<Compl
 	return results;
 }
 
-if (require.main === module) {
+if (import.meta.main) {
 	const region = process.env.AWS_REGION;
 	const results = await checkRdsDefaultPorts(region);
 	printSummary(generateSummary(results));

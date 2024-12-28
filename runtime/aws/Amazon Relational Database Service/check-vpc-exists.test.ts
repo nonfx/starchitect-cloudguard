@@ -1,7 +1,7 @@
 //@ts-nocheck
 import { EC2Client, DescribeVpcsCommand, type Vpc } from "@aws-sdk/client-ec2";
 import { mockClient } from "aws-sdk-client-mock";
-import { ComplianceStatus } from "../../types";
+import { ComplianceStatus } from "../../types.js";
 import { test, describe, expect, beforeEach } from "bun:test";
 import checkVpcExists from "./check-vpc-exists";
 

@@ -7,7 +7,7 @@ import {
 	DescribeLogGroupsCommand
 } from "@aws-sdk/client-cloudwatch-logs";
 import { mockClient } from "aws-sdk-client-mock";
-import { ComplianceStatus } from "../../types";
+import { ComplianceStatus } from "../../types.js";
 import checkIamPolicyMonitoring from "./aws_cloudwatch_monitoring_iam_policies";
 
 const mockCloudWatchClient = mockClient(CloudWatchClient);

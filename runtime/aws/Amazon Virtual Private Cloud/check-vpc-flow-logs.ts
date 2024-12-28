@@ -1,6 +1,6 @@
 import { DescribeFlowLogsCommand, DescribeVpcsCommand, EC2Client } from "@aws-sdk/client-ec2";
-import { generateSummary, printSummary } from "../../utils/string-utils";
-import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "../../types";
+import { generateSummary, printSummary } from "../../utils/string-utils.js";
+import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "../../types.js";
 
 async function checkVpcFlowLogsCompliance(region: string = "us-east-1"): Promise<ComplianceReport> {
 	const client = new EC2Client({ region });

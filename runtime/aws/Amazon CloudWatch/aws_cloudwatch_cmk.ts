@@ -5,9 +5,9 @@ import {
 	DescribeMetricFiltersCommand
 } from "@aws-sdk/client-cloudwatch-logs";
 
-import { generateSummary, printSummary } from "../../utils/string-utils";
+import { generateSummary, printSummary } from "../../utils/string-utils.js";
 
-import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "../../types";
+import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "../../types.js";
 
 const REQUIRED_PATTERN =
 	"{($.eventSource = kms.amazonaws.com) && (($.eventName=DisableKey)||($.eventName=ScheduleKeyDeletion)) }";

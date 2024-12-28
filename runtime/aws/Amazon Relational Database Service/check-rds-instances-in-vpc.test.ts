@@ -1,7 +1,7 @@
 //@ts-nocheck
 import { RDSClient, DescribeDBInstancesCommand, type DBInstance } from "@aws-sdk/client-rds";
 import { mockClient } from "aws-sdk-client-mock";
-import { ComplianceStatus } from "../../types";
+import { ComplianceStatus } from "../../types.js";
 import { test, describe, expect, beforeEach } from "bun:test";
 import checkRdsInstancesInVpc from "./check-rds-instances-in-vpc";
 

@@ -5,7 +5,7 @@ import {
 	DescribeLaunchConfigurationsCommand
 } from "@aws-sdk/client-auto-scaling";
 import { mockClient } from "aws-sdk-client-mock";
-import { ComplianceStatus } from "../../types";
+import { ComplianceStatus } from "../../types.js";
 import checkAutoScalingPublicIp from "./aws_autoscaling_no_public_ip";
 
 const mockAutoScalingClient = mockClient(AutoScalingClient);

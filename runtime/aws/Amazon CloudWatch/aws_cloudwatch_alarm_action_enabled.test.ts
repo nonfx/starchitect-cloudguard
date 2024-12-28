@@ -2,7 +2,7 @@
 //@ts-nocheck
 import { CloudWatchClient, DescribeAlarmsCommand } from "@aws-sdk/client-cloudwatch";
 import { mockClient } from "aws-sdk-client-mock";
-import { ComplianceStatus } from "../../types";
+import { ComplianceStatus } from "../../types.js";
 import checkCloudWatchAlarmActionsEnabled from "./aws_cloudwatch_alarm_action_enabled";
 
 const mockCloudWatchClient = mockClient(CloudWatchClient);

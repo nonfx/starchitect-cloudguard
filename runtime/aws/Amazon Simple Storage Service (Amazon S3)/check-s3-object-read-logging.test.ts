@@ -8,7 +8,7 @@ import {
 } from "@aws-sdk/client-cloudtrail";
 import { S3Client, ListBucketsCommand } from "@aws-sdk/client-s3";
 import { mockClient } from "aws-sdk-client-mock";
-import { ComplianceStatus } from "../../types";
+import { ComplianceStatus } from "../../types.js";
 import checkS3ObjectReadLogging from "./check-s3-object-read-logging";
 
 const mockCloudTrailClient = mockClient(CloudTrailClient);

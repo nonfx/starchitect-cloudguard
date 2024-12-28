@@ -7,7 +7,7 @@ import {
 } from "@aws-sdk/client-s3-control";
 import { STSClient, GetCallerIdentityCommand } from "@aws-sdk/client-sts";
 import { mockClient } from "aws-sdk-client-mock";
-import { ComplianceStatus } from "../../types";
+import { ComplianceStatus } from "../../types.js";
 import checkS3AccessPointBlockPublicAccess from "./check-s3-access-point-block-public-access";
 
 const mockS3ControlClient = mockClient(S3Control);

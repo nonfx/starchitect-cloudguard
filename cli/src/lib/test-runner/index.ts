@@ -3,9 +3,9 @@ import {
 	type RuntimeTest,
 	type RuntimeTestMeta,
 	type TestResult
-} from "../../types";
-import type { CloudProvider } from "../cloud/base";
-import { logger } from "../logger";
+} from "../../types.js";
+import type { CloudProvider } from "../cloud/base.js";
+import { logger } from "../logger.js";
 
 export class TestRunner {
 	async runSingleTest(test: RuntimeTest, provider: CloudProvider): Promise<TestResult> {

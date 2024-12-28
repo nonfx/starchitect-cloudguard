@@ -6,7 +6,7 @@ import {
 	DescribeNetworkInterfacesCommand
 } from "@aws-sdk/client-ec2";
 import { mockClient } from "aws-sdk-client-mock";
-import { ComplianceStatus } from "../../types";
+import { ComplianceStatus } from "../../types.js";
 import checkEc2MultipleEniCompliance from "./aws_ec2_multiple_eni";
 
 const mockEC2Client = mockClient(EC2Client);

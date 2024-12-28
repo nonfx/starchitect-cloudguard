@@ -6,7 +6,7 @@ import {
 	DescribeVpcPeeringConnectionsCommand
 } from "@aws-sdk/client-ec2";
 import { mockClient } from "aws-sdk-client-mock";
-import { ComplianceStatus } from "../../types";
+import { ComplianceStatus } from "../../types.js";
 import checkVpcPeeringRoutingCompliance from "./check-vpc-peering-routing-compliance";
 
 const mockEC2Client = mockClient(EC2Client);
