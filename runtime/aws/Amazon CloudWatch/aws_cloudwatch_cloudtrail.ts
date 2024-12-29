@@ -1,7 +1,6 @@
 import { CloudWatchClient, DescribeAlarmsForMetricCommand } from "@aws-sdk/client-cloudwatch";
 import {
 	CloudWatchLogsClient,
-	DescribeLogGroupsCommand,
 	DescribeMetricFiltersCommand
 } from "@aws-sdk/client-cloudwatch-logs";
 import {
