@@ -1,50 +1,32 @@
-import {
-	ConfigServiceClient,
-	GetResourceConfigHistoryCommand
-} from "@aws-sdk/client-config-service";
+import { SecurityHubClient, GetEnabledStandardsCommand } from "@aws-sdk/client-securityhub";
 import { generateSummary, printSummary } from "../../utils/string-utils.js";
 import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "../../types.js";
 
 async function checkSecurityHubEnabled(region: string = "us-east-1"): Promise<ComplianceReport> {
-	const client = new ConfigServiceClient({ region });
+	const client = new SecurityHubClient({ region });
 	const results: ComplianceReport = {
 		checks: []
 	};
 
 	try {
-		// Check Security Hub configuration through AWS Config
-		const response = await client.send(
-			new GetResourceConfigHistoryCommand({
-				//@ts-expect-error @todo - to be fixed, temporary fix for CLI unblock
-				resourceType: "AWS::SecurityHub::Hub",
-				resourceId: "default",
-				limit: 1
-			})
-		);
+		// Check if Security Hub is enabled by retrieving enabled standards
+		const command = new GetEnabledStandardsCommand({});
+		const response = await client.send(command);
 
-		if (response.configurationItems && response.configurationItems.length > 0) {
-			const config = response.configurationItems[0];
-			//@ts-expect-error @todo - to be fixed, temporary fix for CLI unblock
-			if (config.configurationStateId === "Active") {
-				results.checks.push({
-					resourceName: "SecurityHub",
-					//@ts-expect-error @todo - to be fixed, temporary fix for CLI unblock
-					resourceArn: config.arn,
-					status: ComplianceStatus.PASS,
-					message: "Security Hub is enabled"
-				});
-			} else {
-				results.checks.push({
-					resourceName: "SecurityHub",
-					status: ComplianceStatus.FAIL,
-					message: "Security Hub is disabled"
-				});
-			}
+		// Check if any standards are enabled
+		if (response.StandardsSubscriptions && response.StandardsSubscriptions.length > 0) {
+			const standardArn = response.StandardsSubscriptions[0]?.StandardsArn;
+			results.checks.push({
+				resourceName: "SecurityHub",
+				...(standardArn && { resourceArn: standardArn }),
+				status: ComplianceStatus.PASS,
+				message: "Security Hub is enabled"
+			});
 		} else {
 			results.checks.push({
 				resourceName: "SecurityHub",
 				status: ComplianceStatus.FAIL,
-				message: "Security Hub is not configured in this region"
+				message: "Security Hub is not enabled in this region"
 			});
 		}
 	} catch (error: any) {

@@ -3,7 +3,7 @@ import {
 	DescribeInstancesCommand,
 	DescribeNetworkInterfacesCommand
 } from "@aws-sdk/client-ec2";
-
+import { GetCallerIdentityCommand, STSClient } from "@aws-sdk/client-sts";
 import { printSummary, generateSummary } from "../../utils/string-utils.js";
 import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "../../types.js";
 
@@ -11,6 +11,13 @@ async function checkEc2MultipleEniCompliance(
 	region: string = "us-east-1"
 ): Promise<ComplianceReport> {
 	const client = new EC2Client({ region });
+	const stsClient = new STSClient({ region });
+	// Get account ID
+	const callerIdentity = await stsClient.send(new GetCallerIdentityCommand({}));
+	const accountId = callerIdentity.Account;
+	if (!accountId) {
+		throw new Error("Failed to get AWS account ID");
+	}
 	const results: ComplianceReport = {
 		checks: []
 	};
@@ -61,8 +68,8 @@ async function checkEc2MultipleEniCompliance(
 
 					results.checks.push({
 						resourceName: instance.InstanceId,
-						//@ts-expect-error @todo - to be fixed, temporary fix for CLI unblock
-						resourceArn: `arn:aws:ec2:${region}:${instance.OwnerId}:instance/${instance.InstanceId}`,
+
+						resourceArn: `arn:aws:ec2:${region}:${accountId}:instance/${instance.InstanceId}`,
 						status: eniCount <= 1 ? ComplianceStatus.PASS : ComplianceStatus.FAIL,
 						message:
 							eniCount > 1

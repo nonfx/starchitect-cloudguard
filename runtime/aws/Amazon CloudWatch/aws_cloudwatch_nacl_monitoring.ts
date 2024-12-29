@@ -1,10 +1,14 @@
-import { CloudWatchClient, DescribeAlarmsCommand } from "@aws-sdk/client-cloudwatch";
-
+import { CloudWatchClient, DescribeAlarmsForMetricCommand } from "@aws-sdk/client-cloudwatch";
 import {
 	CloudWatchLogsClient,
 	DescribeLogGroupsCommand,
 	DescribeMetricFiltersCommand
 } from "@aws-sdk/client-cloudwatch-logs";
+import {
+	CloudTrailClient,
+	DescribeTrailsCommand,
+	GetTrailStatusCommand
+} from "@aws-sdk/client-cloudtrail";
 
 import { generateSummary, printSummary } from "../../utils/string-utils.js";
 
@@ -18,81 +22,118 @@ async function checkNaclMonitoringCompliance(
 ): Promise<ComplianceReport> {
 	const cwClient = new CloudWatchClient({ region });
 	const cwLogsClient = new CloudWatchLogsClient({ region });
+	const cloudTrailClient = new CloudTrailClient({ region });
 
 	const results: ComplianceReport = {
 		checks: []
 	};
 
 	try {
-		// Get all log groups
-		const logGroups = await cwLogsClient.send(new DescribeLogGroupsCommand({}));
+		const trails = await cloudTrailClient.send(new DescribeTrailsCommand({}));
 
-		if (!logGroups.logGroups || logGroups.logGroups.length === 0) {
+		if (!trails.trailList || trails.trailList.length === 0) {
 			results.checks.push({
-				resourceName: "CloudWatch Logs",
+				resourceName: "CloudTrail",
 				status: ComplianceStatus.FAIL,
-				message: "No CloudWatch Log Groups found"
+				message: "No CloudTrail trails found"
 			});
 			return results;
 		}
 
-		// Check each log group for required metric filters
-		for (const logGroup of logGroups.logGroups) {
-			if (!logGroup.logGroupName) continue;
+		const trailWithCloudWatchLogs = trails.trailList.find(trail => trail.CloudWatchLogsLogGroupArn);
 
-			const metricFilters = await cwLogsClient.send(
-				new DescribeMetricFiltersCommand({
-					logGroupName: logGroup.logGroupName
-				})
-			);
+		if (!trailWithCloudWatchLogs) {
+			results.checks.push({
+				resourceName: "CloudTrail",
+				status: ComplianceStatus.FAIL,
+				message: "No CloudTrail trails found with CloudWatch Logs enabled"
+			});
+			return results;
+		}
 
-			const naclFilter = metricFilters.metricFilters?.find(
-				filter => filter.filterPattern === REQUIRED_PATTERN
-			);
+		const trailStatus = await cloudTrailClient.send(
+			new GetTrailStatusCommand({ Name: trailWithCloudWatchLogs.TrailARN })
+		);
 
-			if (!naclFilter) {
-				results.checks.push({
-					resourceName: logGroup.logGroupName,
-					resourceArn: logGroup.arn,
-					status: ComplianceStatus.FAIL,
-					message: "Log group does not have required NACL changes metric filter"
-				});
-				continue;
-			}
+		if (!trailStatus.IsLogging) {
+			results.checks.push({
+				resourceName: trailWithCloudWatchLogs.Name || "CloudTrail",
+				resourceArn: trailWithCloudWatchLogs.TrailARN,
+				status: ComplianceStatus.FAIL,
+				message: "CloudTrail logging is not enabled"
+			});
+			return results;
+		}
 
-			// Check for alarms associated with the metric filter
-			const metricName = naclFilter.metricTransformations?.[0]?.metricName;
-			if (!metricName) {
-				results.checks.push({
-					resourceName: logGroup.logGroupName,
-					resourceArn: logGroup.arn,
-					status: ComplianceStatus.FAIL,
-					message: "Metric filter does not have a metric transformation"
-				});
-				continue;
-			}
+		const logGroupArn = trailWithCloudWatchLogs.CloudWatchLogsLogGroupArn;
+		const logGroupParts = logGroupArn?.split(":log-group:");
+		const logGroupName = logGroupParts?.[1]?.split(":")[0];
 
-			const alarms = await cwClient.send(
-				new DescribeAlarmsCommand({
-					//@ts-expect-error @todo - to be fixed, temporary fix for CLI unblock
-					MetricName: metricName
-				})
-			);
+		if (!logGroupName) {
+			results.checks.push({
+				resourceName: trailWithCloudWatchLogs.Name || "CloudTrail",
+				resourceArn: trailWithCloudWatchLogs.TrailARN,
+				status: ComplianceStatus.FAIL,
+				message: "Invalid CloudWatch Logs configuration"
+			});
+			return results;
+		}
 
-			if (!alarms.MetricAlarms || alarms.MetricAlarms.length === 0) {
-				results.checks.push({
-					resourceName: logGroup.logGroupName,
-					resourceArn: logGroup.arn,
-					status: ComplianceStatus.FAIL,
-					message: "No alarms configured for NACL changes metric"
-				});
-			} else {
-				results.checks.push({
-					resourceName: logGroup.logGroupName,
-					resourceArn: logGroup.arn,
-					status: ComplianceStatus.PASS
-				});
-			}
+		const metricFilters = await cwLogsClient.send(
+			new DescribeMetricFiltersCommand({
+				logGroupName: logGroupName
+			})
+		);
+
+		const matchingFilter = metricFilters.metricFilters?.find(
+			filter =>
+				filter.filterPattern &&
+				filter.filterPattern.replace(/\s+/g, " ").trim() ===
+					REQUIRED_PATTERN.replace(/\s+/g, " ").trim()
+		);
+
+		if (!matchingFilter) {
+			results.checks.push({
+				resourceName: logGroupName,
+				resourceArn: logGroupArn,
+				status: ComplianceStatus.FAIL,
+				message: "CloudTrail log group does not have required NACL changes metric filter"
+			});
+			return results;
+		}
+
+		const metricTransformation = matchingFilter.metricTransformations?.[0];
+		if (!metricTransformation?.metricName) {
+			results.checks.push({
+				resourceName: logGroupName,
+				resourceArn: logGroupArn,
+				status: ComplianceStatus.FAIL,
+				message: "Metric filter does not have a valid metric transformation"
+			});
+			return results;
+		}
+
+		const alarms = await cwClient.send(
+			new DescribeAlarmsForMetricCommand({
+				MetricName: metricTransformation.metricName,
+				Namespace: metricTransformation.metricNamespace || "CloudWatchLogs"
+			})
+		);
+
+		if (!alarms.MetricAlarms || alarms.MetricAlarms.length === 0) {
+			results.checks.push({
+				resourceName: logGroupName,
+				resourceArn: logGroupArn,
+				status: ComplianceStatus.FAIL,
+				message: "No alarms configured for NACL changes metric"
+			});
+		} else {
+			results.checks.push({
+				resourceName: logGroupName,
+				resourceArn: logGroupArn,
+				status: ComplianceStatus.PASS,
+				message: undefined
+			});
 		}
 	} catch (error) {
 		results.checks.push({
