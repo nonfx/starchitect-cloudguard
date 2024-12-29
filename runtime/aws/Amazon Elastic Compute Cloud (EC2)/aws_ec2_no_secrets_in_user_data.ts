@@ -30,7 +30,7 @@ async function checkEc2UserDataSecrets(region: string = "us-east-1"): Promise<Co
 
 	try {
 		// First get all instance IDs
-		let instanceIds: string[] = [];
+		const instanceIds: string[] = [];
 		let nextToken: string | undefined;
 
 		do {
