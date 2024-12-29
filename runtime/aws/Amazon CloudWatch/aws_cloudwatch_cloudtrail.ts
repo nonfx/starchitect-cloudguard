@@ -1,10 +1,14 @@
+import { CloudWatchClient, DescribeAlarmsForMetricCommand } from "@aws-sdk/client-cloudwatch";
 import {
 	CloudWatchLogsClient,
 	DescribeLogGroupsCommand,
 	DescribeMetricFiltersCommand
 } from "@aws-sdk/client-cloudwatch-logs";
-
-import { CloudWatchClient, DescribeAlarmsCommand } from "@aws-sdk/client-cloudwatch";
+import {
+	CloudTrailClient,
+	DescribeTrailsCommand,
+	GetTrailStatusCommand
+} from "@aws-sdk/client-cloudtrail";
 
 import { printSummary, generateSummary } from "../../utils/string-utils.js";
 import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "../../types.js";
@@ -15,80 +19,118 @@ const REQUIRED_PATTERN =
 async function checkCloudTrailConfigurationMonitoring(
 	region: string = "us-east-1"
 ): Promise<ComplianceReport> {
-	const logsClient = new CloudWatchLogsClient({ region });
-	const cloudWatchClient = new CloudWatchClient({ region });
+	const cwClient = new CloudWatchClient({ region });
+	const cwLogsClient = new CloudWatchLogsClient({ region });
+	const cloudTrailClient = new CloudTrailClient({ region });
 
 	const results: ComplianceReport = {
 		checks: []
 	};
 
 	try {
-		// Get all log groups
-		const logGroups = await logsClient.send(new DescribeLogGroupsCommand({}));
+		const trails = await cloudTrailClient.send(new DescribeTrailsCommand({}));
 
-		if (!logGroups.logGroups || logGroups.logGroups.length === 0) {
+		if (!trails.trailList || trails.trailList.length === 0) {
 			results.checks.push({
-				resourceName: "CloudWatch Logs",
+				resourceName: "CloudTrail",
 				status: ComplianceStatus.FAIL,
-				message: "No CloudWatch Log Groups found"
+				message: "No CloudTrail trails found"
 			});
 			return results;
 		}
 
-		for (const logGroup of logGroups.logGroups) {
-			if (!logGroup.logGroupName) continue;
+		const trailWithCloudWatchLogs = trails.trailList.find(trail => trail.CloudWatchLogsLogGroupArn);
 
-			// Check metric filters for each log group
-			const metricFilters = await logsClient.send(
-				new DescribeMetricFiltersCommand({
-					logGroupName: logGroup.logGroupName
-				})
-			);
+		if (!trailWithCloudWatchLogs) {
+			results.checks.push({
+				resourceName: "CloudTrail",
+				status: ComplianceStatus.FAIL,
+				message: "No CloudTrail trails found with CloudWatch Logs enabled"
+			});
+			return results;
+		}
 
-			const hasRequiredFilter = metricFilters.metricFilters?.some(
-				filter => filter.filterPattern === REQUIRED_PATTERN
-			);
+		const trailStatus = await cloudTrailClient.send(
+			new GetTrailStatusCommand({ Name: trailWithCloudWatchLogs.TrailARN })
+		);
 
-			if (!hasRequiredFilter) {
-				results.checks.push({
-					resourceName: logGroup.logGroupName,
-					resourceArn: logGroup.arn,
-					status: ComplianceStatus.FAIL,
-					message:
-						"Log group does not have required metric filter for CloudTrail configuration changes"
-				});
-				continue;
-			}
+		if (!trailStatus.IsLogging) {
+			results.checks.push({
+				resourceName: trailWithCloudWatchLogs.Name || "CloudTrail",
+				resourceArn: trailWithCloudWatchLogs.TrailARN,
+				status: ComplianceStatus.FAIL,
+				message: "CloudTrail logging is not enabled"
+			});
+			return results;
+		}
 
-			// Check if metric filter has associated alarm
-			const matchingFilter = metricFilters.metricFilters?.find(
-				filter => filter.filterPattern === REQUIRED_PATTERN
-			);
+		const logGroupArn = trailWithCloudWatchLogs.CloudWatchLogsLogGroupArn;
+		const logGroupParts = logGroupArn?.split(":log-group:");
+		const logGroupName = logGroupParts?.[1]?.split(":")[0];
 
-			if (matchingFilter?.metricTransformations?.[0]?.metricName) {
-				const alarms = await cloudWatchClient.send(
-					new DescribeAlarmsCommand({
-						//@ts-expect-error @todo - to be fixed, temporary fix for CLI unblock
-						MetricName: matchingFilter.metricTransformations[0].metricName
-					})
-				);
+		if (!logGroupName) {
+			results.checks.push({
+				resourceName: trailWithCloudWatchLogs.Name || "CloudTrail",
+				resourceArn: trailWithCloudWatchLogs.TrailARN,
+				status: ComplianceStatus.FAIL,
+				message: "Invalid CloudWatch Logs configuration"
+			});
+			return results;
+		}
 
-				if (!alarms.MetricAlarms || alarms.MetricAlarms.length === 0) {
-					results.checks.push({
-						resourceName: logGroup.logGroupName,
-						resourceArn: logGroup.arn,
-						status: ComplianceStatus.FAIL,
-						message: "No alarm configured for CloudTrail configuration changes metric filter"
-					});
-				} else {
-					results.checks.push({
-						resourceName: logGroup.logGroupName,
-						resourceArn: logGroup.arn,
-						status: ComplianceStatus.PASS,
-						message: undefined
-					});
-				}
-			}
+		const metricFilters = await cwLogsClient.send(
+			new DescribeMetricFiltersCommand({
+				logGroupName: logGroupName
+			})
+		);
+
+		const matchingFilter = metricFilters.metricFilters?.find(
+			filter => filter.filterPattern && filter.filterPattern === REQUIRED_PATTERN
+		);
+
+		if (!matchingFilter) {
+			results.checks.push({
+				resourceName: logGroupName,
+				resourceArn: logGroupArn,
+				status: ComplianceStatus.FAIL,
+				message:
+					"CloudTrail log group does not have required CloudTrail configuration changes metric filter"
+			});
+			return results;
+		}
+
+		const metricTransformation = matchingFilter.metricTransformations?.[0];
+		if (!metricTransformation?.metricName) {
+			results.checks.push({
+				resourceName: logGroupName,
+				resourceArn: logGroupArn,
+				status: ComplianceStatus.FAIL,
+				message: "Metric filter does not have a valid metric transformation"
+			});
+			return results;
+		}
+
+		const alarms = await cwClient.send(
+			new DescribeAlarmsForMetricCommand({
+				MetricName: metricTransformation.metricName,
+				Namespace: metricTransformation.metricNamespace || "CloudWatchLogs"
+			})
+		);
+
+		if (!alarms.MetricAlarms || alarms.MetricAlarms.length === 0) {
+			results.checks.push({
+				resourceName: logGroupName,
+				resourceArn: logGroupArn,
+				status: ComplianceStatus.FAIL,
+				message: "No alarm configured for CloudTrail configuration changes metric filter"
+			});
+		} else {
+			results.checks.push({
+				resourceName: logGroupName,
+				resourceArn: logGroupArn,
+				status: ComplianceStatus.PASS,
+				message: undefined
+			});
 		}
 	} catch (error) {
 		results.checks.push({

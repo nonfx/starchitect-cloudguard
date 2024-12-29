@@ -1,4 +1,8 @@
-import { DescribeInstancesCommand, EC2Client } from "@aws-sdk/client-ec2";
+import {
+	DescribeInstancesCommand,
+	DescribeInstanceAttributeCommand,
+	EC2Client
+} from "@aws-sdk/client-ec2";
 
 import { generateSummary, printSummary } from "../../utils/string-utils.js";
 import { ComplianceStatus, type ComplianceReport } from "../../types.js";
@@ -25,6 +29,8 @@ async function checkEc2UserDataSecrets(region: string = "us-east-1"): Promise<Co
 	};
 
 	try {
+		// First get all instance IDs
+		let instanceIds: string[] = [];
 		let nextToken: string | undefined;
 
 		do {
@@ -49,47 +55,58 @@ async function checkEc2UserDataSecrets(region: string = "us-east-1"): Promise<Co
 				if (!reservation.Instances) continue;
 
 				for (const instance of reservation.Instances) {
-					if (!instance.InstanceId) {
-						results.checks.push({
-							resourceName: "Unknown Instance",
-							status: ComplianceStatus.ERROR,
-							message: "Instance found without ID"
-						});
-						continue;
-					}
-
-					//@ts-expect-error @todo - to be fixed, temporary fix for CLI unblock
-					if (!instance.UserData) {
-						results.checks.push({
-							resourceName: instance.InstanceId,
-							status: ComplianceStatus.PASS,
-							message: "No user data configured"
-						});
-						continue;
-					}
-
-					try {
-						//@ts-expect-error @todo - to be fixed, temporary fix for CLI unblock
-						const decodedUserData = Buffer.from(instance.UserData, "base64").toString("utf-8");
-						const hasSensitiveData = containsSensitiveData(decodedUserData);
-
-						results.checks.push({
-							resourceName: instance.InstanceId,
-							status: hasSensitiveData ? ComplianceStatus.FAIL : ComplianceStatus.PASS,
-							message: hasSensitiveData ? "User data contains sensitive information" : undefined
-						});
-					} catch (error) {
-						results.checks.push({
-							resourceName: instance.InstanceId,
-							status: ComplianceStatus.ERROR,
-							message: `Error decoding user data: ${error instanceof Error ? error.message : String(error)}`
-						});
+					if (instance.InstanceId) {
+						instanceIds.push(instance.InstanceId);
 					}
 				}
 			}
 
 			nextToken = response.NextToken;
 		} while (nextToken);
+
+		// Check user data for each instance
+		for (const instanceId of instanceIds) {
+			try {
+				const command = new DescribeInstanceAttributeCommand({
+					InstanceId: instanceId,
+					Attribute: "userData"
+				});
+
+				const response = await client.send(command);
+
+				if (!response.UserData?.Value) {
+					results.checks.push({
+						resourceName: instanceId,
+						status: ComplianceStatus.PASS,
+						message: "No user data configured"
+					});
+					continue;
+				}
+
+				try {
+					const decodedUserData = Buffer.from(response.UserData.Value, "base64").toString("utf-8");
+					const hasSensitiveData = containsSensitiveData(decodedUserData);
+
+					results.checks.push({
+						resourceName: instanceId,
+						status: hasSensitiveData ? ComplianceStatus.FAIL : ComplianceStatus.PASS,
+						message: hasSensitiveData ? "User data contains sensitive information" : undefined
+					});
+				} catch (error) {
+					results.checks.push({
+						resourceName: instanceId,
+						status: ComplianceStatus.ERROR,
+						message: `Error decoding user data: ${error instanceof Error ? error.message : String(error)}`
+					});
+				}
+			} catch (error) {
+				results.checks.push({
+					resourceName: instanceId,
+					status: ComplianceStatus.ERROR,
+					message: `Error retrieving user data: ${error instanceof Error ? error.message : String(error)}`
+				});
+			}
+		}
 	} catch (error) {
 		results.checks = [
 			{
