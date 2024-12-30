@@ -2,7 +2,7 @@
 import { RDSClient, DescribeDBClustersCommand, type DBCluster } from "@aws-sdk/client-rds";
 import { mockClient } from "aws-sdk-client-mock";
 import { ComplianceStatus } from "../../types.js";
-import { test, describe, expect, beforeEach } from "bun:test";
+
 import checkRdsClusterDeletionProtection from "./check-rds-cluster-deletion-protection";
 
 const mockRDSClient = mockClient(RDSClient);

@@ -20,4 +20,8 @@ jobs:
           cache: npm
       - run: npm install
       - run: npm run build
-      - run: npm run test
+
+      - uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: latest
+      - run: bun test
