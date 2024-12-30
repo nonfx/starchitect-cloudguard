@@ -38,10 +38,11 @@ async function checkS3PolicyMonitoring(region: string = "us-east-1"): Promise<Co
 			return results;
 		}
 
-		// Find a trail that has CloudWatch Logs enabled
-		const trailWithCloudWatchLogs = trails.trailList.find(trail => trail.CloudWatchLogsLogGroupArn);
+		const trailsWithCloudWatchLogs = trails.trailList.filter(
+			trail => trail.CloudWatchLogsLogGroupArn
+		);
 
-		if (!trailWithCloudWatchLogs) {
+		if (trailsWithCloudWatchLogs.length === 0) {
 			results.checks.push({
 				resourceName: "CloudTrail",
 				status: ComplianceStatus.FAIL,
@@ -50,67 +51,74 @@ async function checkS3PolicyMonitoring(region: string = "us-east-1"): Promise<Co
 			return results;
 		}
 
-		// Check if the trail is enabled
-		const trailStatus = await cloudTrailClient.send(
-			new GetTrailStatusCommand({ Name: trailWithCloudWatchLogs.TrailARN })
-		);
+		for (const trail of trailsWithCloudWatchLogs) {
+			const trailStatus = await cloudTrailClient.send(
+				new GetTrailStatusCommand({ Name: trail.TrailARN })
+			);
 
-		if (!trailStatus.IsLogging) {
-			results.checks.push({
-				resourceName: trailWithCloudWatchLogs.Name || "CloudTrail",
-				resourceArn: trailWithCloudWatchLogs.TrailARN,
-				status: ComplianceStatus.FAIL,
-				message: "CloudTrail logging is not enabled"
-			});
-			return results;
-		}
+			if (!trailStatus.IsLogging) {
+				results.checks.push({
+					resourceName: trail.Name || "CloudTrail",
+					resourceArn: trail.TrailARN,
+					status: ComplianceStatus.FAIL,
+					message: "CloudTrail logging is not enabled"
+				});
+				continue;
+			}
 
-		// Extract log group name from ARN (e.g. "arn:aws:logs:ap-southeast-1:891377036258:log-group:test:*")
-		const logGroupArn = trailWithCloudWatchLogs.CloudWatchLogsLogGroupArn;
-		const logGroupParts = logGroupArn?.split(":log-group:");
-		const logGroupName = logGroupParts?.[1]?.split(":")[0];
+			const logGroupArn = trail.CloudWatchLogsLogGroupArn;
+			const logGroupParts = logGroupArn?.split(":log-group:");
+			const logGroupName = logGroupParts?.[1]?.split(":")[0];
 
-		if (!logGroupName) {
-			results.checks.push({
-				resourceName: trailWithCloudWatchLogs.Name || "CloudTrail",
-				resourceArn: trailWithCloudWatchLogs.TrailARN,
-				status: ComplianceStatus.FAIL,
-				message: "Invalid CloudWatch Logs configuration"
-			});
-			return results;
-		}
+			if (!logGroupName) {
+				results.checks.push({
+					resourceName: trail.Name || "CloudTrail",
+					resourceArn: trail.TrailARN,
+					status: ComplianceStatus.FAIL,
+					message: "Invalid CloudWatch Logs configuration"
+				});
+				continue;
+			}
 
-		// Check for metric filter in the CloudTrail log group
-		const metricFilters = await cwLogsClient.send(
-			new DescribeMetricFiltersCommand({
-				logGroupName: logGroupName
-			})
-		);
+			const metricFilters = await cwLogsClient.send(
+				new DescribeMetricFiltersCommand({
+					logGroupName: logGroupName
+				})
+			);
 
-		const matchingFilter = metricFilters.metricFilters?.find(
-			filter =>
-				filter.filterPattern &&
-				filter.filterPattern.replace(/\s+/g, " ").trim() ===
-					REQUIRED_PATTERN.replace(/\s+/g, " ").trim()
-		);
+			const matchingFilter = metricFilters.metricFilters?.find(
+				filter =>
+					filter.filterPattern &&
+					filter.filterPattern.replace(/\s+/g, " ").trim() ===
+						REQUIRED_PATTERN.replace(/\s+/g, " ").trim()
+			);
 
-		if (!matchingFilter) {
-			results.checks.push({
-				resourceName: logGroupName,
-				resourceArn: logGroupArn,
-				status: ComplianceStatus.FAIL,
-				message:
-					"CloudTrail log group does not have required S3 bucket policy changes metric filter"
-			});
-			return results;
-		}
+			if (!matchingFilter) {
+				results.checks.push({
+					resourceName: logGroupName,
+					resourceArn: logGroupArn,
+					status: ComplianceStatus.FAIL,
+					message:
+						"CloudTrail log group does not have required S3 bucket policy changes metric filter"
+				});
+				continue;
+			}
 
-		// Check if metric filter has an alarm
-		if (matchingFilter.metricTransformations?.[0]?.metricName) {
+			const metricTransformation = matchingFilter.metricTransformations?.[0];
+			if (!metricTransformation?.metricName) {
+				results.checks.push({
+					resourceName: logGroupName,
+					resourceArn: logGroupArn,
+					status: ComplianceStatus.FAIL,
+					message: "Metric filter does not have a valid metric transformation"
+				});
+				continue;
+			}
+
 			const alarms = await cwClient.send(
 				new DescribeAlarmsForMetricCommand({
-					MetricName: matchingFilter.metricTransformations[0].metricName,
-					Namespace: matchingFilter.metricTransformations[0].metricNamespace || "CloudWatchLogs"
+					MetricName: metricTransformation.metricName,
+					Namespace: metricTransformation.metricNamespace || "CloudWatchLogs"
 				})
 			);
 
@@ -128,6 +136,7 @@ async function checkS3PolicyMonitoring(region: string = "us-east-1"): Promise<Co
 					status: ComplianceStatus.PASS,
 					message: undefined
 				});
+				break;
 			}
 		}
 	} catch (error) {

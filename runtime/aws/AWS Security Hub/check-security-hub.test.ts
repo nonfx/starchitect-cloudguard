@@ -1,27 +1,23 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 //@ts-nocheck
-import {
-	ConfigServiceClient,
-	GetResourceConfigHistoryCommand
-} from "@aws-sdk/client-config-service";
+import { SecurityHubClient, GetEnabledStandardsCommand } from "@aws-sdk/client-securityhub";
 import { mockClient } from "aws-sdk-client-mock";
 import checkSecurityHubEnabled from "./check-security-hub";
 import { ComplianceStatus } from "../../types.js";
 
-const mockConfigServiceClient = mockClient(ConfigServiceClient);
+const mockSecurityHubClient = mockClient(SecurityHubClient);
 
 describe("checkSecurityHubEnabled", () => {
 	beforeEach(() => {
-		mockConfigServiceClient.reset();
+		mockSecurityHubClient.reset();
 	});
 
 	describe("Compliant Resources", () => {
 		it("should return PASS when Security Hub is enabled and active", async () => {
-			mockConfigServiceClient.on(GetResourceConfigHistoryCommand).resolves({
-				configurationItems: [
+			mockSecurityHubClient.on(GetEnabledStandardsCommand).resolves({
+				StandardsSubscriptions: [
 					{
-						configurationStateId: "Active",
-						arn: "arn:aws:securityhub:us-east-1:123456789012:hub/default"
+						StandardsArn: "arn:aws:securityhub:us-east-1:123456789012:security-control/v1.0.0/IAM.1"
 					}
 				]
 			});
@@ -36,34 +32,29 @@ describe("checkSecurityHubEnabled", () => {
 
 	describe("Non-Compliant Resources", () => {
 		it("should return FAIL when Security Hub is disabled", async () => {
-			mockConfigServiceClient.on(GetResourceConfigHistoryCommand).resolves({
-				configurationItems: [
-					{
-						configurationStateId: "Inactive",
-						arn: "arn:aws:securityhub:us-east-1:123456789012:hub/default"
-					}
-				]
+			mockSecurityHubClient.on(GetEnabledStandardsCommand).resolves({
+				StandardsSubscriptions: []
 			});
 
 			const result = await checkSecurityHubEnabled.execute("us-east-1");
 			expect(result.checks).toHaveLength(1);
 			expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
-			expect(result.checks[0].message).toBe("Security Hub is disabled");
+			expect(result.checks[0].message).toBe("Security Hub is not enabled in this region");
 		});
 
 		it("should return FAIL when Security Hub is not configured", async () => {
-			mockConfigServiceClient.on(GetResourceConfigHistoryCommand).resolves({
-				configurationItems: []
+			mockSecurityHubClient.on(GetEnabledStandardsCommand).resolves({
+				StandardsSubscriptions: []
 			});
 
 			const result = await checkSecurityHubEnabled.execute("us-east-1");
 			expect(result.checks).toHaveLength(1);
 			expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
-			expect(result.checks[0].message).toBe("Security Hub is not configured in this region");
+			expect(result.checks[0].message).toBe("Security Hub is not enabled in this region");
 		});
 
 		it("should return FAIL when Security Hub resource is not found", async () => {
-			mockConfigServiceClient.on(GetResourceConfigHistoryCommand).rejects({
+			mockSecurityHubClient.on(GetEnabledStandardsCommand).rejects({
 				name: "ResourceNotFoundException",
 				message: "Resource not found"
 			});
@@ -77,8 +68,8 @@ describe("checkSecurityHubEnabled", () => {
 
 	describe("Error Handling", () => {
 		it("should return ERROR when API call fails with unknown error", async () => {
-			mockConfigServiceClient
-				.on(GetResourceConfigHistoryCommand)
+			mockSecurityHubClient
+				.on(GetEnabledStandardsCommand)
 				.rejects(new Error("Internal Server Error"));
 
 			const result = await checkSecurityHubEnabled.execute("us-east-1");
@@ -88,7 +79,7 @@ describe("checkSecurityHubEnabled", () => {
 		});
 
 		it("should handle non-Error objects in error case", async () => {
-			mockConfigServiceClient.on(GetResourceConfigHistoryCommand).rejects("String error");
+			mockSecurityHubClient.on(GetEnabledStandardsCommand).rejects("String error");
 
 			const result = await checkSecurityHubEnabled.execute("us-east-1");
 			expect(result.checks).toHaveLength(1);
@@ -99,8 +90,8 @@ describe("checkSecurityHubEnabled", () => {
 
 	describe("Metadata", () => {
 		it("should include correct metadata in results", async () => {
-			mockConfigServiceClient.on(GetResourceConfigHistoryCommand).resolves({
-				configurationItems: []
+			mockSecurityHubClient.on(GetEnabledStandardsCommand).resolves({
+				StandardsSubscriptions: []
 			});
 
 			expect(checkSecurityHubEnabled.title).toBe("Ensure AWS Security Hub is enabled");

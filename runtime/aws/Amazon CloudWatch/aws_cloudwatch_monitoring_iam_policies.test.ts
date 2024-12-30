@@ -1,135 +1,185 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 //@ts-nocheck
-import { CloudWatchClient, DescribeAlarmsCommand } from "@aws-sdk/client-cloudwatch";
+import { CloudWatchClient, DescribeAlarmsForMetricCommand } from "@aws-sdk/client-cloudwatch";
 import {
 	CloudWatchLogsClient,
-	DescribeMetricFiltersCommand,
-	DescribeLogGroupsCommand
+	DescribeMetricFiltersCommand
 } from "@aws-sdk/client-cloudwatch-logs";
+import {
+	CloudTrailClient,
+	DescribeTrailsCommand,
+	GetTrailStatusCommand
+} from "@aws-sdk/client-cloudtrail";
 import { mockClient } from "aws-sdk-client-mock";
 import { ComplianceStatus } from "../../types.js";
 import checkIamPolicyMonitoring from "./aws_cloudwatch_monitoring_iam_policies";
 
 const mockCloudWatchClient = mockClient(CloudWatchClient);
 const mockCloudWatchLogsClient = mockClient(CloudWatchLogsClient);
+const mockCloudTrailClient = mockClient(CloudTrailClient);
 
-const mockLogGroup = {
-	logGroupName: "test-log-group",
-	arn: "arn:aws:logs:us-east-1:123456789012:log-group:test-log-group:*"
-};
-
-const mockMetricFilter = {
-	filterPattern:
-		"{($.eventName=DeleteGroupPolicy)||($.eventName=DeleteRolePolicy)||($.eventName=DeleteUserPolicy)||($.eventName=PutGroupPolicy)||($.eventName=PutRolePolicy)||($.eventName=PutUserPolicy)||($.eventName=CreatePolicy)||($.eventName=DeletePolicy)||($.eventName=CreatePolicyVersion)||($.eventName=DeletePolicyVersion)||($.eventName=AttachRolePolicy)||($.eventName=DetachRolePolicy)||($.eventName=AttachUserPolicy)||($.eventName=DetachUserPolicy)||($.eventName=AttachGroupPolicy)||($.eventName=DetachGroupPolicy)}",
-	metricTransformations: [
-		{
-			metricName: "IAMPolicyChanges",
-			metricNamespace: "CloudTrailMetrics"
-		}
-	]
-};
+const REQUIRED_PATTERN =
+	"{($.eventName=DeleteGroupPolicy)||($.eventName=DeleteRolePolicy)||($.eventName=DeleteUserPolicy)||($.eventName=PutGroupPolicy)||($.eventName=PutRolePolicy)||($.eventName=PutUserPolicy)||($.eventName=CreatePolicy)||($.eventName=DeletePolicy)||($.eventName=CreatePolicyVersion)||($.eventName=DeletePolicyVersion)||($.eventName=AttachRolePolicy)||($.eventName=DetachRolePolicy)||($.eventName=AttachUserPolicy)||($.eventName=DetachUserPolicy)||($.eventName=AttachGroupPolicy)||($.eventName=DetachGroupPolicy)}";
 
 describe("checkIamPolicyMonitoring", () => {
 	beforeEach(() => {
 		mockCloudWatchClient.reset();
 		mockCloudWatchLogsClient.reset();
+		mockCloudTrailClient.reset();
 	});
 
 	describe("Compliant Resources", () => {
 		it("should return PASS when log group has required metric filter and alarm", async () => {
-			mockCloudWatchLogsClient.on(DescribeLogGroupsCommand).resolves({ logGroups: [mockLogGroup] });
+			mockCloudTrailClient.on(DescribeTrailsCommand).resolves({
+				trailList: [
+					{
+						Name: "test-trail",
+						TrailARN: "arn:aws:cloudtrail:us-east-1:123456789012:trail/test-trail",
+						CloudWatchLogsLogGroupArn:
+							"arn:aws:logs:us-east-1:123456789012:log-group:test-log-group"
+					}
+				]
+			});
 
-			mockCloudWatchLogsClient
-				.on(DescribeMetricFiltersCommand)
-				.resolves({ metricFilters: [mockMetricFilter] });
+			mockCloudTrailClient.on(GetTrailStatusCommand).resolves({
+				IsLogging: true
+			});
 
-			mockCloudWatchClient
-				.on(DescribeAlarmsCommand)
-				.resolves({ MetricAlarms: [{ AlarmName: "IAMPolicyChangeAlarm" }] });
+			mockCloudWatchLogsClient.on(DescribeMetricFiltersCommand).resolves({
+				metricFilters: [
+					{
+						filterPattern: REQUIRED_PATTERN,
+						metricTransformations: [
+							{
+								metricName: "IAMPolicyChanges",
+								metricNamespace: "CloudTrail"
+							}
+						]
+					}
+				]
+			});
+
+			mockCloudWatchClient.on(DescribeAlarmsForMetricCommand).resolves({
+				MetricAlarms: [
+					{
+						AlarmName: "IAMPolicyChangeAlarm"
+					}
+				]
+			});
 
 			const result = await checkIamPolicyMonitoring.execute("us-east-1");
 			expect(result.checks[0].status).toBe(ComplianceStatus.PASS);
-			expect(result.checks[0].resourceName).toBe(mockLogGroup.logGroupName);
-		});
-
-		it("should handle multiple compliant log groups", async () => {
-			const multipleLogGroups = [
-				{ ...mockLogGroup, logGroupName: "log-group-1" },
-				{ ...mockLogGroup, logGroupName: "log-group-2" }
-			];
-
-			mockCloudWatchLogsClient
-				.on(DescribeLogGroupsCommand)
-				.resolves({ logGroups: multipleLogGroups });
-
-			mockCloudWatchLogsClient
-				.on(DescribeMetricFiltersCommand)
-				.resolves({ metricFilters: [mockMetricFilter] });
-
-			mockCloudWatchClient
-				.on(DescribeAlarmsCommand)
-				.resolves({ MetricAlarms: [{ AlarmName: "IAMPolicyChangeAlarm" }] });
-
-			const result = await checkIamPolicyMonitoring.execute("us-east-1");
-			expect(result.checks).toHaveLength(2);
-			expect(result.checks.every(check => check.status === ComplianceStatus.PASS)).toBe(true);
+			expect(result.checks[0].resourceName).toBe("test-log-group");
 		});
 	});
 
 	describe("Non-Compliant Resources", () => {
-		it("should return FAIL when no log groups exist", async () => {
-			mockCloudWatchLogsClient.on(DescribeLogGroupsCommand).resolves({ logGroups: [] });
+		it("should return FAIL when no CloudTrail trails exist", async () => {
+			mockCloudTrailClient.on(DescribeTrailsCommand).resolves({
+				trailList: []
+			});
 
 			const result = await checkIamPolicyMonitoring.execute("us-east-1");
 			expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
-			expect(result.checks[0].message).toBe("No CloudWatch log groups found");
+			expect(result.checks[0].message).toBe("No CloudTrail trails found");
 		});
 
 		it("should return FAIL when metric filter is missing", async () => {
-			mockCloudWatchLogsClient.on(DescribeLogGroupsCommand).resolves({ logGroups: [mockLogGroup] });
+			mockCloudTrailClient.on(DescribeTrailsCommand).resolves({
+				trailList: [
+					{
+						Name: "test-trail",
+						TrailARN: "arn:aws:cloudtrail:us-east-1:123456789012:trail/test-trail",
+						CloudWatchLogsLogGroupArn:
+							"arn:aws:logs:us-east-1:123456789012:log-group:test-log-group"
+					}
+				]
+			});
 
-			mockCloudWatchLogsClient.on(DescribeMetricFiltersCommand).resolves({ metricFilters: [] });
+			mockCloudTrailClient.on(GetTrailStatusCommand).resolves({
+				IsLogging: true
+			});
+
+			mockCloudWatchLogsClient.on(DescribeMetricFiltersCommand).resolves({
+				metricFilters: []
+			});
 
 			const result = await checkIamPolicyMonitoring.execute("us-east-1");
 			expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
-			expect(result.checks[0].message).toContain(
-				"does not have required IAM policy change metric filter"
+			expect(result.checks[0].message).toBe(
+				"CloudTrail log group does not have required IAM policy changes metric filter"
 			);
 		});
 
-		it("should return FAIL when alarm is missing", async () => {
-			mockCloudWatchLogsClient.on(DescribeLogGroupsCommand).resolves({ logGroups: [mockLogGroup] });
+		it("should return FAIL when no alarm is configured", async () => {
+			mockCloudTrailClient.on(DescribeTrailsCommand).resolves({
+				trailList: [
+					{
+						Name: "test-trail",
+						TrailARN: "arn:aws:cloudtrail:us-east-1:123456789012:trail/test-trail",
+						CloudWatchLogsLogGroupArn:
+							"arn:aws:logs:us-east-1:123456789012:log-group:test-log-group"
+					}
+				]
+			});
 
-			mockCloudWatchLogsClient
-				.on(DescribeMetricFiltersCommand)
-				.resolves({ metricFilters: [mockMetricFilter] });
+			mockCloudTrailClient.on(GetTrailStatusCommand).resolves({
+				IsLogging: true
+			});
 
-			mockCloudWatchClient.on(DescribeAlarmsCommand).resolves({ MetricAlarms: [] });
+			mockCloudWatchLogsClient.on(DescribeMetricFiltersCommand).resolves({
+				metricFilters: [
+					{
+						filterPattern: REQUIRED_PATTERN,
+						metricTransformations: [
+							{
+								metricName: "IAMPolicyChanges",
+								metricNamespace: "CloudTrail"
+							}
+						]
+					}
+				]
+			});
+
+			mockCloudWatchClient.on(DescribeAlarmsForMetricCommand).resolves({
+				MetricAlarms: []
+			});
 
 			const result = await checkIamPolicyMonitoring.execute("us-east-1");
 			expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
-			expect(result.checks[0].message).toContain("No alarm configured");
+			expect(result.checks[0].message).toBe(
+				"No alarm configured for IAM policy changes metric filter"
+			);
 		});
 	});
 
 	describe("Error Handling", () => {
 		it("should return ERROR when API calls fail", async () => {
-			mockCloudWatchLogsClient.on(DescribeLogGroupsCommand).rejects(new Error("API Error"));
+			mockCloudTrailClient.on(DescribeTrailsCommand).rejects(new Error("API Error"));
 
 			const result = await checkIamPolicyMonitoring.execute("us-east-1");
 			expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
 			expect(result.checks[0].message).toContain("Error checking CloudWatch configuration");
 		});
 
-		it("should handle metric filter API errors", async () => {
-			mockCloudWatchLogsClient.on(DescribeLogGroupsCommand).resolves({ logGroups: [mockLogGroup] });
+		it("should handle invalid CloudWatch Logs configuration", async () => {
+			mockCloudTrailClient.on(DescribeTrailsCommand).resolves({
+				trailList: [
+					{
+						Name: "test-trail",
+						TrailARN: "arn:aws:cloudtrail:us-east-1:123456789012:trail/test-trail",
+						CloudWatchLogsLogGroupArn: "invalid-arn" // Invalid ARN format
+					}
+				]
+			});
 
-			mockCloudWatchLogsClient
-				.on(DescribeMetricFiltersCommand)
-				.rejects(new Error("Metric Filter API Error"));
+			mockCloudTrailClient.on(GetTrailStatusCommand).resolves({
+				IsLogging: true
+			});
 
 			const result = await checkIamPolicyMonitoring.execute("us-east-1");
-			expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
+			expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
+			expect(result.checks[0].message).toBe("Invalid CloudWatch Logs configuration");
 		});
 	});
 });

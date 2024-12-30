@@ -1,17 +1,22 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 //@ts-nocheck
-import { CloudWatchClient, DescribeAlarmsCommand } from "@aws-sdk/client-cloudwatch";
+import { CloudWatchClient, DescribeAlarmsForMetricCommand } from "@aws-sdk/client-cloudwatch";
 import {
 	CloudWatchLogsClient,
-	DescribeLogGroupsCommand,
 	DescribeMetricFiltersCommand
 } from "@aws-sdk/client-cloudwatch-logs";
+import {
+	CloudTrailClient,
+	DescribeTrailsCommand,
+	GetTrailStatusCommand
+} from "@aws-sdk/client-cloudtrail";
 import { mockClient } from "aws-sdk-client-mock";
 import { ComplianceStatus } from "../../types.js";
 import checkCmkMonitoringCompliance from "./aws_cloudwatch_cmk";
 
 const mockCloudWatchClient = mockClient(CloudWatchClient);
 const mockCloudWatchLogsClient = mockClient(CloudWatchLogsClient);
+const mockCloudTrailClient = mockClient(CloudTrailClient);
 
 const REQUIRED_PATTERN =
 	"{($.eventSource = kms.amazonaws.com) && (($.eventName=DisableKey)||($.eventName=ScheduleKeyDeletion)) }";
@@ -20,17 +25,24 @@ describe("checkCmkMonitoringCompliance", () => {
 	beforeEach(() => {
 		mockCloudWatchClient.reset();
 		mockCloudWatchLogsClient.reset();
+		mockCloudTrailClient.reset();
 	});
 
 	describe("Compliant Resources", () => {
 		it("should return PASS when log group has required metric filter and alarm", async () => {
-			mockCloudWatchLogsClient.on(DescribeLogGroupsCommand).resolves({
-				logGroups: [
+			mockCloudTrailClient.on(DescribeTrailsCommand).resolves({
+				trailList: [
 					{
-						logGroupName: "test-log-group",
-						arn: "arn:aws:logs:us-east-1:123456789012:log-group:test-log-group"
+						Name: "test-trail",
+						TrailARN: "arn:aws:cloudtrail:us-east-1:123456789012:trail/test-trail",
+						CloudWatchLogsLogGroupArn:
+							"arn:aws:logs:us-east-1:123456789012:log-group:test-log-group"
 					}
 				]
+			});
+
+			mockCloudTrailClient.on(GetTrailStatusCommand).resolves({
+				IsLogging: true
 			});
 
 			mockCloudWatchLogsClient.on(DescribeMetricFiltersCommand).resolves({
@@ -39,14 +51,15 @@ describe("checkCmkMonitoringCompliance", () => {
 						filterPattern: REQUIRED_PATTERN,
 						metricTransformations: [
 							{
-								metricName: "CMKChanges"
+								metricName: "CMKChanges",
+								metricNamespace: "CloudTrail"
 							}
 						]
 					}
 				]
 			});
 
-			mockCloudWatchClient.on(DescribeAlarmsCommand).resolves({
+			mockCloudWatchClient.on(DescribeAlarmsForMetricCommand).resolves({
 				MetricAlarms: [
 					{
 						AlarmName: "CMKChangesAlarm"
@@ -61,24 +74,30 @@ describe("checkCmkMonitoringCompliance", () => {
 	});
 
 	describe("Non-Compliant Resources", () => {
-		it("should return FAIL when no log groups exist", async () => {
-			mockCloudWatchLogsClient.on(DescribeLogGroupsCommand).resolves({
-				logGroups: []
+		it("should return FAIL when no CloudTrail trails exist", async () => {
+			mockCloudTrailClient.on(DescribeTrailsCommand).resolves({
+				trailList: []
 			});
 
 			const result = await checkCmkMonitoringCompliance.execute("us-east-1");
 			expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
-			expect(result.checks[0].message).toBe("No CloudWatch Log Groups found");
+			expect(result.checks[0].message).toBe("No CloudTrail trails found");
 		});
 
 		it("should return FAIL when metric filter is missing", async () => {
-			mockCloudWatchLogsClient.on(DescribeLogGroupsCommand).resolves({
-				logGroups: [
+			mockCloudTrailClient.on(DescribeTrailsCommand).resolves({
+				trailList: [
 					{
-						logGroupName: "test-log-group",
-						arn: "arn:aws:logs:us-east-1:123456789012:log-group:test-log-group"
+						Name: "test-trail",
+						TrailARN: "arn:aws:cloudtrail:us-east-1:123456789012:trail/test-trail",
+						CloudWatchLogsLogGroupArn:
+							"arn:aws:logs:us-east-1:123456789012:log-group:test-log-group"
 					}
 				]
+			});
+
+			mockCloudTrailClient.on(GetTrailStatusCommand).resolves({
+				IsLogging: true
 			});
 
 			mockCloudWatchLogsClient.on(DescribeMetricFiltersCommand).resolves({
@@ -87,17 +106,25 @@ describe("checkCmkMonitoringCompliance", () => {
 
 			const result = await checkCmkMonitoringCompliance.execute("us-east-1");
 			expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
-			expect(result.checks[0].message).toContain("does not have required metric filter");
+			expect(result.checks[0].message).toBe(
+				"CloudTrail log group does not have required CMK monitoring metric filter"
+			);
 		});
 
-		it("should return FAIL when alarm is missing", async () => {
-			mockCloudWatchLogsClient.on(DescribeLogGroupsCommand).resolves({
-				logGroups: [
+		it("should return FAIL when no alarm is configured", async () => {
+			mockCloudTrailClient.on(DescribeTrailsCommand).resolves({
+				trailList: [
 					{
-						logGroupName: "test-log-group",
-						arn: "arn:aws:logs:us-east-1:123456789012:log-group:test-log-group"
+						Name: "test-trail",
+						TrailARN: "arn:aws:cloudtrail:us-east-1:123456789012:trail/test-trail",
+						CloudWatchLogsLogGroupArn:
+							"arn:aws:logs:us-east-1:123456789012:log-group:test-log-group"
 					}
 				]
+			});
+
+			mockCloudTrailClient.on(GetTrailStatusCommand).resolves({
+				IsLogging: true
 			});
 
 			mockCloudWatchLogsClient.on(DescribeMetricFiltersCommand).resolves({
@@ -106,44 +133,83 @@ describe("checkCmkMonitoringCompliance", () => {
 						filterPattern: REQUIRED_PATTERN,
 						metricTransformations: [
 							{
-								metricName: "CMKChanges"
+								metricName: "CMKChanges",
+								metricNamespace: "CloudTrail"
 							}
 						]
 					}
 				]
 			});
 
-			mockCloudWatchClient.on(DescribeAlarmsCommand).resolves({
+			mockCloudWatchClient.on(DescribeAlarmsForMetricCommand).resolves({
 				MetricAlarms: []
 			});
 
 			const result = await checkCmkMonitoringCompliance.execute("us-east-1");
 			expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
-			expect(result.checks[0].message).toContain("No alarm configured");
+			expect(result.checks[0].message).toBe("No alarm configured for CMK monitoring metric filter");
 		});
 	});
 
 	describe("Error Handling", () => {
 		it("should return ERROR when API calls fail", async () => {
-			mockCloudWatchLogsClient.on(DescribeLogGroupsCommand).rejects(new Error("API Error"));
+			mockCloudTrailClient.on(DescribeTrailsCommand).rejects(new Error("API Error"));
 
 			const result = await checkCmkMonitoringCompliance.execute("us-east-1");
 			expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
 			expect(result.checks[0].message).toContain("Error checking CloudWatch configuration");
 		});
 
-		it("should handle missing or undefined values", async () => {
-			mockCloudWatchLogsClient.on(DescribeLogGroupsCommand).resolves({
-				logGroups: [
+		it("should handle invalid CloudWatch Logs configuration", async () => {
+			mockCloudTrailClient.on(DescribeTrailsCommand).resolves({
+				trailList: [
 					{
-						logGroupName: undefined,
-						arn: undefined
+						Name: "test-trail",
+						TrailARN: "arn:aws:cloudtrail:us-east-1:123456789012:trail/test-trail",
+						CloudWatchLogsLogGroupArn: "invalid-arn" // Invalid ARN format
+					}
+				]
+			});
+
+			mockCloudTrailClient.on(GetTrailStatusCommand).resolves({
+				IsLogging: true
+			});
+
+			const result = await checkCmkMonitoringCompliance.execute("us-east-1");
+			expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
+			expect(result.checks[0].message).toBe("Invalid CloudWatch Logs configuration");
+		});
+
+		it("should handle missing metric transformations", async () => {
+			mockCloudTrailClient.on(DescribeTrailsCommand).resolves({
+				trailList: [
+					{
+						Name: "test-trail",
+						TrailARN: "arn:aws:cloudtrail:us-east-1:123456789012:trail/test-trail",
+						CloudWatchLogsLogGroupArn:
+							"arn:aws:logs:us-east-1:123456789012:log-group:test-log-group"
+					}
+				]
+			});
+
+			mockCloudTrailClient.on(GetTrailStatusCommand).resolves({
+				IsLogging: true
+			});
+
+			mockCloudWatchLogsClient.on(DescribeMetricFiltersCommand).resolves({
+				metricFilters: [
+					{
+						filterPattern: REQUIRED_PATTERN,
+						metricTransformations: []
 					}
 				]
 			});
 
 			const result = await checkCmkMonitoringCompliance.execute("us-east-1");
 			expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
+			expect(result.checks[0].message).toBe(
+				"Metric filter does not have a valid metric transformation"
+			);
 		});
 	});
 });
