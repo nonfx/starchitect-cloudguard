@@ -3,7 +3,7 @@
   "type": "module",
   "scripts": {
     "build": "tsc -b --incremental",
-    "test": "bun test",
+    "test": "npm run test",
     "prepare": "husky",
     "prettier:lint": "prettier --config .prettierrc.cjs --cache --cache-location .cache/prettier --check .",
     "lint:files": "env TIMING=1 eslint --quiet",
