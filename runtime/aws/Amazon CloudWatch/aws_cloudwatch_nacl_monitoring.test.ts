@@ -18,11 +18,6 @@ const mockCloudWatchClient = mockClient(CloudWatchClient);
 const mockCloudWatchLogsClient = mockClient(CloudWatchLogsClient);
 const mockCloudTrailClient = mockClient(CloudTrailClient);
 
-const mockLogGroup = {
-	logGroupName: "test-log-group",
-	arn: "arn:aws:logs:us-east-1:123456789012:log-group:test-log-group"
-};
-
 const mockMetricFilter = {
 	filterPattern:
 		"{ ($.eventName = CreateNetworkAcl) || ($.eventName = CreateNetworkAclEntry) || ($.eventName = DeleteNetworkAcl) || ($.eventName = DeleteNetworkAclEntry) || ($.eventName = ReplaceNetworkAclEntry) || ($.eventName = ReplaceNetworkAclAssociation) }",
