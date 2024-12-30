@@ -168,5 +168,6 @@ export default {
 		}
 	],
 	severity: "MEDIUM",
-	execute: checkCloudWatchOrgChangesMonitored
+	execute: checkCloudWatchOrgChangesMonitored,
+	serviceName: "Amazon CloudWatch"
 } satisfies RuntimeTest;

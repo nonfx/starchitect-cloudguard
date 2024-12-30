@@ -112,5 +112,6 @@ export default {
 		}
 	],
 	severity: "MEDIUM",
-	execute: checkKmsKeysDeletionStatus
+	execute: checkKmsKeysDeletionStatus,
+	serviceName: "AWS Key Management Service"
 } satisfies RuntimeTest;

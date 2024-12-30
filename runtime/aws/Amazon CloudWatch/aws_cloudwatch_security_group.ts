@@ -170,5 +170,6 @@ export default {
 		}
 	],
 	severity: "MEDIUM",
-	execute: checkSecurityGroupMonitoring
+	execute: checkSecurityGroupMonitoring,
+	serviceName: "Amazon CloudWatch"
 } satisfies RuntimeTest;

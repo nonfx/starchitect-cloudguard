@@ -101,5 +101,6 @@ export default {
 		}
 	],
 	severity: "MEDIUM",
-	execute: checkEc2DetailedMonitoring
+	execute: checkEc2DetailedMonitoring,
+	serviceName: "Amazon Elastic Compute Cloud (EC2)"
 } satisfies RuntimeTest;

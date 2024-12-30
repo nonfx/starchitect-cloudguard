@@ -83,5 +83,6 @@ export default {
 		}
 	],
 	severity: "HIGH",
-	execute: checkAuroraBackupCompliance
+	execute: checkAuroraBackupCompliance,
+	serviceName: "Amazon Relational Database Service"
 } satisfies RuntimeTest;

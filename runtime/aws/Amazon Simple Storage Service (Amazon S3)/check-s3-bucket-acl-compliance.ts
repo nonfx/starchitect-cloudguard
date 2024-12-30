@@ -105,5 +105,6 @@ export default {
 		}
 	],
 	severity: "MEDIUM",
-	execute: checkS3BucketAclCompliance
+	execute: checkS3BucketAclCompliance,
+	serviceName: "Amazon Simple Storage Service (Amazon S3)"
 } satisfies RuntimeTest;

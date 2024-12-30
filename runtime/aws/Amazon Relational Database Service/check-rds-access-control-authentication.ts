@@ -79,5 +79,6 @@ export default {
 		}
 	],
 	severity: "HIGH",
-	execute: checkRdsAccessControlAuthentication
+	execute: checkRdsAccessControlAuthentication,
+	serviceName: "Amazon Relational Database Service"
 } satisfies RuntimeTest;

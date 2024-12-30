@@ -168,5 +168,6 @@ export default {
 		}
 	],
 	severity: "MEDIUM",
-	execute: checkNetworkGatewayMonitoring
+	execute: checkNetworkGatewayMonitoring,
+	serviceName: "Amazon CloudWatch"
 } satisfies RuntimeTest;

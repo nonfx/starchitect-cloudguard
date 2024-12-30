@@ -107,5 +107,6 @@ export default {
 		}
 	],
 	severity: "MEDIUM",
-	execute: checkEc2PublicIpCompliance
+	execute: checkEc2PublicIpCompliance,
+	serviceName: "Amazon Elastic Compute Cloud (EC2)"
 } satisfies RuntimeTest;

@@ -170,5 +170,6 @@ export default {
 		}
 	],
 	severity: "MEDIUM",
-	execute: checkRootAccountMonitoring
+	execute: checkRootAccountMonitoring,
+	serviceName: "Amazon CloudWatch"
 } satisfies RuntimeTest;

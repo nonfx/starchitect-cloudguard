@@ -94,5 +94,6 @@ export default {
 		}
 	],
 	severity: "HIGH",
-	execute: checkRdsAutomatedBackups
+	execute: checkRdsAutomatedBackups,
+	serviceName: "Amazon Relational Database Service"
 } satisfies RuntimeTest;

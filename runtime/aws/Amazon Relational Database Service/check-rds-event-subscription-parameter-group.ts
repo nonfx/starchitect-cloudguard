@@ -102,5 +102,6 @@ export default {
 		}
 	],
 	severity: "HIGH",
-	execute: checkRdsEventSubscriptionParameterGroup
+	execute: checkRdsEventSubscriptionParameterGroup,
+	serviceName: "Amazon Relational Database Service"
 } satisfies RuntimeTest;

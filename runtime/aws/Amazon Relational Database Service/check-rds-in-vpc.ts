@@ -126,5 +126,6 @@ export default {
 		}
 	],
 	severity: "HIGH",
-	execute: checkRdsInVpcCompliance
+	execute: checkRdsInVpcCompliance,
+	serviceName: "Amazon Relational Database Service"
 } satisfies RuntimeTest;

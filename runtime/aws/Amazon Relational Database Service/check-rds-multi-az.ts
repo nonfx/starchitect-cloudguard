@@ -89,5 +89,6 @@ export default {
 		}
 	],
 	severity: "HIGH",
-	execute: checkRdsMultiAzCompliance
+	execute: checkRdsMultiAzCompliance,
+	serviceName: "Amazon Relational Database Service"
 } satisfies RuntimeTest;

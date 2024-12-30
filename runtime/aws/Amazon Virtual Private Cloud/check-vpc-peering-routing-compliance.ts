@@ -170,5 +170,6 @@ export default {
 		}
 	],
 	severity: "MEDIUM",
-	execute: checkVpcPeeringRoutingCompliance
+	execute: checkVpcPeeringRoutingCompliance,
+	serviceName: "Amazon Virtual Private Cloud"
 } satisfies RuntimeTest;

@@ -186,5 +186,6 @@ export default {
 		}
 	],
 	severity: "MEDIUM",
-	execute: checkS3ObjectLevelLogging
+	execute: checkS3ObjectLevelLogging,
+	serviceName: "Amazon Simple Storage Service (Amazon S3)"
 } satisfies RuntimeTest;

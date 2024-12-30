@@ -126,5 +126,6 @@ export default {
 		}
 	],
 	severity: "MEDIUM",
-	execute: checkDefaultSecurityGroupCompliance
+	execute: checkDefaultSecurityGroupCompliance,
+	serviceName: "Amazon Virtual Private Cloud"
 } satisfies RuntimeTest;

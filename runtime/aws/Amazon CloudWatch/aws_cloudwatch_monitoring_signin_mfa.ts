@@ -167,5 +167,6 @@ export default {
 		}
 	],
 	severity: "MEDIUM",
-	execute: checkMfaMonitoringCompliance
+	execute: checkMfaMonitoringCompliance,
+	serviceName: "Amazon CloudWatch"
 } satisfies RuntimeTest;

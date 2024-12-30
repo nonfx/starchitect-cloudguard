@@ -107,5 +107,6 @@ export default {
 		}
 	],
 	severity: "MEDIUM",
-	execute: checkS3BlockPublicAccess
+	execute: checkS3BlockPublicAccess,
+	serviceName: "Amazon Simple Storage Service (Amazon S3)"
 } satisfies RuntimeTest;

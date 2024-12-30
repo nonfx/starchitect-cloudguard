@@ -99,5 +99,6 @@ export default {
 		}
 	],
 	severity: "HIGH",
-	execute: checkRdsPostgresCloudWatchLogs
+	execute: checkRdsPostgresCloudWatchLogs,
+	serviceName: "Amazon Relational Database Service"
 } satisfies RuntimeTest;

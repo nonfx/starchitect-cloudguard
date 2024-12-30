@@ -131,5 +131,6 @@ export default {
 		}
 	],
 	severity: "HIGH",
-	execute: checkRdsDeletionProtection
+	execute: checkRdsDeletionProtection,
+	serviceName: "Amazon Relational Database Service"
 } satisfies RuntimeTest;

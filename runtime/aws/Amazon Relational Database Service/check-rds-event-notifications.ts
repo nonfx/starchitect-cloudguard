@@ -146,5 +146,6 @@ export default {
 		}
 	],
 	severity: "HIGH",
-	execute: checkRdsEventNotifications
+	execute: checkRdsEventNotifications,
+	serviceName: "Amazon Relational Database Service"
 } satisfies RuntimeTest;

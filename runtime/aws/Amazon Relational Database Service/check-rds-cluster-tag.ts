@@ -78,5 +78,6 @@ export default {
 		}
 	],
 	severity: "HIGH",
-	execute: checkRdsClusterTagCopyCompliance
+	execute: checkRdsClusterTagCopyCompliance,
+	serviceName: "Amazon Relational Database Service"
 } satisfies RuntimeTest;

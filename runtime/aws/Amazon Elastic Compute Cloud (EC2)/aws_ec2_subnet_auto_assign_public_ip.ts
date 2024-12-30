@@ -79,5 +79,6 @@ export default {
 		}
 	],
 	severity: "MEDIUM",
-	execute: checkSubnetAutoAssignPublicIp
+	execute: checkSubnetAutoAssignPublicIp,
+	serviceName: "Amazon Elastic Compute Cloud (EC2)"
 } satisfies RuntimeTest;

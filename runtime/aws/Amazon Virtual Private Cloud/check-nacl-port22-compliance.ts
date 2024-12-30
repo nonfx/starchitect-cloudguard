@@ -117,5 +117,6 @@ export default {
 		}
 	],
 	severity: "MEDIUM",
-	execute: checkNaclPort22Compliance
+	execute: checkNaclPort22Compliance,
+	serviceName: "Amazon Virtual Private Cloud"
 } satisfies RuntimeTest;

@@ -213,5 +213,6 @@ export default {
 		}
 	],
 	severity: "MEDIUM",
-	execute: checkInlinePolicyKmsDecrypt
+	execute: checkInlinePolicyKmsDecrypt,
+	serviceName: "AWS Key Management Service"
 } satisfies RuntimeTest;

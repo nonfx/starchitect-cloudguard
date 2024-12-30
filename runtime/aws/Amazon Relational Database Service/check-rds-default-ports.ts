@@ -108,5 +108,6 @@ export default {
 		}
 	],
 	severity: "HIGH",
-	execute: checkRdsDefaultPorts
+	execute: checkRdsDefaultPorts,
+	serviceName: "Amazon Relational Database Service"
 } satisfies RuntimeTest;

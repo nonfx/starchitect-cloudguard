@@ -80,5 +80,6 @@ export default {
 		}
 	],
 	severity: "HIGH",
-	execute: checkNeptuneCopyTagsToSnapshot
+	execute: checkNeptuneCopyTagsToSnapshot,
+	serviceName: "Amazon Relational Database Service"
 } satisfies RuntimeTest;

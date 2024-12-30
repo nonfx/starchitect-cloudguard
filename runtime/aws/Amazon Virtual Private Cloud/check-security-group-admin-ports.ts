@@ -109,5 +109,6 @@ export default {
 		}
 	],
 	severity: "MEDIUM",
-	execute: checkSecurityGroupAdminPorts
+	execute: checkSecurityGroupAdminPorts,
+	serviceName: "Amazon Virtual Private Cloud"
 } satisfies RuntimeTest;

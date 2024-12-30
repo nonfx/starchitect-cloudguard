@@ -89,5 +89,6 @@ export default {
 		}
 	],
 	severity: "MEDIUM",
-	execute: checkRdsTagCopyCompliance
+	execute: checkRdsTagCopyCompliance,
+	serviceName: "Amazon Relational Database Service"
 } satisfies RuntimeTest;

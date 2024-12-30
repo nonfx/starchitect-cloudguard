@@ -167,5 +167,6 @@ export default {
 		}
 	],
 	severity: "MEDIUM",
-	execute: checkNaclMonitoringCompliance
+	execute: checkNaclMonitoringCompliance,
+	serviceName: "Amazon CloudWatch"
 } satisfies RuntimeTest;

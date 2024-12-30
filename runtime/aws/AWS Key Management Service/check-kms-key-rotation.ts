@@ -129,5 +129,6 @@ export default {
 		}
 	],
 	severity: "MEDIUM",
-	execute: checkKmsKeyRotation
+	execute: checkKmsKeyRotation,
+	serviceName: "AWS Key Management Service"
 } satisfies RuntimeTest;

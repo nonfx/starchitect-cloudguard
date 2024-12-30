@@ -113,5 +113,6 @@ export default {
 		}
 	],
 	severity: "MEDIUM",
-	execute: checkS3DataDiscoveryCompliance
+	execute: checkS3DataDiscoveryCompliance,
+	serviceName: "Amazon Simple Storage Service (Amazon S3)"
 } satisfies RuntimeTest;

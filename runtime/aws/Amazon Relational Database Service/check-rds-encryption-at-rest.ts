@@ -92,5 +92,6 @@ export default {
 		}
 	],
 	severity: "HIGH",
-	execute: checkRdsEncryptionAtRest
+	execute: checkRdsEncryptionAtRest,
+	serviceName: "Amazon Relational Database Service"
 } satisfies RuntimeTest;

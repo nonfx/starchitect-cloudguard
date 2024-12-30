@@ -77,5 +77,6 @@ export default {
 		}
 	],
 	severity: "HIGH",
-	execute: checkRdsClusterIamAuth
+	execute: checkRdsClusterIamAuth,
+	serviceName: "Amazon Relational Database Service"
 } satisfies RuntimeTest;

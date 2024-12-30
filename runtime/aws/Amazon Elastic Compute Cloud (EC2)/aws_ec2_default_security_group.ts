@@ -100,5 +100,6 @@ export default {
 		}
 	],
 	severity: "MEDIUM",
-	execute: checkDefaultSecurityGroupUsage
+	execute: checkDefaultSecurityGroupUsage,
+	serviceName: "Amazon Elastic Compute Cloud (EC2)"
 } satisfies RuntimeTest;

@@ -76,5 +76,6 @@ export default {
 		}
 	],
 	severity: "MEDIUM",
-	execute: checkPasswordReusePreventionCompliance
+	execute: checkPasswordReusePreventionCompliance,
+	serviceName: "Amazon Identity and Access Management"
 } satisfies RuntimeTest;

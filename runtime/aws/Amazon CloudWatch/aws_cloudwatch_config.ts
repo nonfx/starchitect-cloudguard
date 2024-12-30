@@ -168,5 +168,6 @@ export default {
 		}
 	],
 	severity: "MEDIUM",
-	execute: checkConfigChangeMonitoring
+	execute: checkConfigChangeMonitoring,
+	serviceName: "Amazon CloudWatch"
 } satisfies RuntimeTest;

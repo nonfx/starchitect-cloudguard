@@ -150,5 +150,6 @@ export default {
 		}
 	],
 	severity: "HIGH",
-	execute: checkAuroraIamRolesAndPolicies
+	execute: checkAuroraIamRolesAndPolicies,
+	serviceName: "Amazon Relational Database Service"
 } satisfies RuntimeTest;

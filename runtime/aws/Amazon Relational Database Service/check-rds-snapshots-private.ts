@@ -129,5 +129,6 @@ export default {
 		}
 	],
 	severity: "HIGH",
-	execute: checkRdsSnapshotsPrivate
+	execute: checkRdsSnapshotsPrivate,
+	serviceName: "Amazon Relational Database Service"
 } satisfies RuntimeTest;

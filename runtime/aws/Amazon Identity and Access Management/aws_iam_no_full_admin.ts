@@ -190,5 +190,6 @@ export default {
 		}
 	],
 	severity: "MEDIUM",
-	execute: checkIamFullAdminPrivileges
+	execute: checkIamFullAdminPrivileges,
+	serviceName: "Amazon Identity and Access Management"
 } satisfies RuntimeTest;

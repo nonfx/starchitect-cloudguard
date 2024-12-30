@@ -57,5 +57,5 @@
 		],
 		"types": ["node", "bun"] // Type definitions to include
 	},
-	"exclude": ["node_modules", "dist", "tmp"]
+	"exclude": ["**/node_modules", "**/dist", "**/tmp"]
 }

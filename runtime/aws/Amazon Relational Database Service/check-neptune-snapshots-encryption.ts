@@ -78,5 +78,6 @@ export default {
 		}
 	],
 	severity: "HIGH",
-	execute: checkNeptuneSnapshotsEncryption
+	execute: checkNeptuneSnapshotsEncryption,
+	serviceName: "Amazon Relational Database Service"
 } satisfies RuntimeTest;

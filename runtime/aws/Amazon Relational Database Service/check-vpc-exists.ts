@@ -62,5 +62,6 @@ export default {
 		}
 	],
 	severity: "HIGH",
-	execute: checkVpcExists
+	execute: checkVpcExists,
+	serviceName: "Amazon Relational Database Service"
 } satisfies RuntimeTest;

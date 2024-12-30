@@ -134,5 +134,6 @@ export default {
 		}
 	],
 	severity: "HIGH",
-	execute: checkRdsCloudWatchLogsEnabled
+	execute: checkRdsCloudWatchLogsEnabled,
+	serviceName: "Amazon Relational Database Service"
 } satisfies RuntimeTest;

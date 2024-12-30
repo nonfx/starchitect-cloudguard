@@ -70,5 +70,6 @@ export default {
 		}
 	],
 	severity: "MEDIUM",
-	execute: checkPasswordPolicyLength
+	execute: checkPasswordPolicyLength,
+	serviceName: "Amazon Identity and Access Management"
 } satisfies RuntimeTest;

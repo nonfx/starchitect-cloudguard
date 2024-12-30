@@ -80,5 +80,6 @@ export default {
 		}
 	],
 	severity: "HIGH",
-	execute: checkNeptuneIamAuthCompliance
+	execute: checkNeptuneIamAuthCompliance,
+	serviceName: "Amazon Relational Database Service"
 } satisfies RuntimeTest;

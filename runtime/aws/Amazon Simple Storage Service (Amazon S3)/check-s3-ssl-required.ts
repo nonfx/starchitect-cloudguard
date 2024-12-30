@@ -125,5 +125,6 @@ export default {
 		}
 	],
 	severity: "MEDIUM",
-	execute: checkS3SSLRequired
+	execute: checkS3SSLRequired,
+	serviceName: "Amazon Simple Storage Service (Amazon S3)"
 } satisfies RuntimeTest;

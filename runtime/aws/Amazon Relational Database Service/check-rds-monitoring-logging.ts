@@ -91,5 +91,6 @@ export default {
 		}
 	],
 	severity: "HIGH",
-	execute: checkRdsMonitoringAndLoggingCompliance
+	execute: checkRdsMonitoringAndLoggingCompliance,
+	serviceName: "Amazon Relational Database Service"
 } satisfies RuntimeTest;

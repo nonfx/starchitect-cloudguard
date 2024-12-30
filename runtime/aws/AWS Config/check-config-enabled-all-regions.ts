@@ -82,5 +82,6 @@ export default {
 		}
 	],
 	severity: "MEDIUM",
-	execute: checkConfigEnabledAllRegions
+	execute: checkConfigEnabledAllRegions,
+	serviceName: "AWS Config"
 } satisfies RuntimeTest;

@@ -164,5 +164,6 @@ export default {
 		}
 	],
 	severity: "MEDIUM",
-	execute: checkCmkMonitoringCompliance
+	execute: checkCmkMonitoringCompliance,
+	serviceName: "Amazon CloudWatch"
 } satisfies RuntimeTest;

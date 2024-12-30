@@ -123,5 +123,6 @@ export default {
 		}
 	],
 	severity: "MEDIUM",
-	execute: checkIamUserPermissionsThroughGroups
+	execute: checkIamUserPermissionsThroughGroups,
+	serviceName: "Amazon Identity and Access Management"
 } satisfies RuntimeTest;

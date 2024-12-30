@@ -106,5 +106,6 @@ export default {
 		}
 	],
 	severity: "MEDIUM",
-	execute: checkS3BucketLifecycleConfiguration
+	execute: checkS3BucketLifecycleConfiguration,
+	serviceName: "Amazon Simple Storage Service (Amazon S3)"
 } satisfies RuntimeTest;

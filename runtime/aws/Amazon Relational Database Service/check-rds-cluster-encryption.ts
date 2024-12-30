@@ -72,5 +72,6 @@ export default {
 		}
 	],
 	severity: "HIGH",
-	execute: checkRdsClusterEncryption
+	execute: checkRdsClusterEncryption,
+	serviceName: "Amazon Relational Database Service"
 } satisfies RuntimeTest;

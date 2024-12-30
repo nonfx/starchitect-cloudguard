@@ -76,5 +76,6 @@ export default {
 		}
 	],
 	severity: "MEDIUM",
-	execute: checkEcrImageScanningCompliance
+	execute: checkEcrImageScanningCompliance,
+	serviceName: "Amazon Elastic Container Registry"
 } satisfies RuntimeTest;

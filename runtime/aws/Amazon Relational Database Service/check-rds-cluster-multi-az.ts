@@ -78,5 +78,6 @@ export default {
 		}
 	],
 	severity: "HIGH",
-	execute: checkRdsClusterMultiAz
+	execute: checkRdsClusterMultiAz,
+	serviceName: "Amazon Relational Database Service"
 } satisfies RuntimeTest;

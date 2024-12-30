@@ -78,5 +78,6 @@ export default {
 		}
 	],
 	severity: "MEDIUM",
-	execute: checkPublicAMIs
+	execute: checkPublicAMIs,
+	serviceName: "Amazon Elastic Compute Cloud (EC2)"
 } satisfies RuntimeTest;

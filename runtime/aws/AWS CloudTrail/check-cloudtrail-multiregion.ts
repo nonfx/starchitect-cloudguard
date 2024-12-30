@@ -126,5 +126,6 @@ export default {
 		}
 	],
 	severity: "MEDIUM",
-	execute: checkCloudTrailMultiRegionEnabled
+	execute: checkCloudTrailMultiRegionEnabled,
+	serviceName: "AWS CloudTrail"
 } satisfies RuntimeTest;

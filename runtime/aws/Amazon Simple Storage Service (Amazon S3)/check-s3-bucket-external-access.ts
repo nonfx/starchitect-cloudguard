@@ -193,5 +193,6 @@ export default {
 		}
 	],
 	severity: "MEDIUM",
-	execute: checkS3BucketExternalAccess
+	execute: checkS3BucketExternalAccess,
+	serviceName: "Amazon Simple Storage Service (Amazon S3)"
 } satisfies RuntimeTest;

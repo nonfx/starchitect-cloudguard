@@ -114,5 +114,6 @@ export default {
 		}
 	],
 	severity: "MEDIUM",
-	execute: checkEcrLifecyclePolicyCompliance
+	execute: checkEcrLifecyclePolicyCompliance,
+	serviceName: "Amazon Elastic Container Registry"
 } satisfies RuntimeTest;

@@ -115,5 +115,6 @@ export default {
 		}
 	],
 	severity: "HIGH",
-	execute: checkRdsEnhancedMonitoring
+	execute: checkRdsEnhancedMonitoring,
+	serviceName: "Amazon Relational Database Service"
 } satisfies RuntimeTest;

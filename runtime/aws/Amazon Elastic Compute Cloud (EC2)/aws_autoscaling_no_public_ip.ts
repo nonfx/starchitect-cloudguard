@@ -93,5 +93,6 @@ export default {
 		}
 	],
 	severity: "MEDIUM",
-	execute: checkAutoScalingPublicIp
+	execute: checkAutoScalingPublicIp,
+	serviceName: "Amazon Elastic Compute Cloud (EC2)"
 } satisfies RuntimeTest;

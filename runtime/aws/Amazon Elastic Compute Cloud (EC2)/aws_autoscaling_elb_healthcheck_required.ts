@@ -100,5 +100,6 @@ export default {
 		}
 	],
 	severity: "MEDIUM",
-	execute: checkAutoScalingELBHealthCheck
+	execute: checkAutoScalingELBHealthCheck,
+	serviceName: "Amazon Elastic Compute Cloud (EC2)"
 } satisfies RuntimeTest;

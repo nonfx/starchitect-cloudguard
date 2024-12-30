@@ -80,5 +80,6 @@ export default {
 		}
 	],
 	severity: "MEDIUM",
-	execute: checkCloudTrailLogValidation
+	execute: checkCloudTrailLogValidation,
+	serviceName: "AWS CloudTrail"
 } satisfies RuntimeTest;

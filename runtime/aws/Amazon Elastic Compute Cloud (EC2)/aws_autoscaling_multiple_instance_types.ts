@@ -112,5 +112,6 @@ export default {
 		}
 	],
 	severity: "MEDIUM",
-	execute: checkAutoScalingMultipleInstanceTypes
+	execute: checkAutoScalingMultipleInstanceTypes,
+	serviceName: "Amazon Elastic Compute Cloud (EC2)"
 } satisfies RuntimeTest;

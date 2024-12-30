@@ -146,5 +146,6 @@ export default {
 		}
 	],
 	severity: "MEDIUM",
-	execute: checkS3DenyHttpAccess
+	execute: checkS3DenyHttpAccess,
+	serviceName: "Amazon Simple Storage Service (Amazon S3)"
 } satisfies RuntimeTest;

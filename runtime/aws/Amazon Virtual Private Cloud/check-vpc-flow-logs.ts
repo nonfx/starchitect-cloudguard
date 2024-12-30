@@ -106,5 +106,6 @@ export default {
 		}
 	],
 	severity: "MEDIUM",
-	execute: checkVpcFlowLogsCompliance
+	execute: checkVpcFlowLogsCompliance,
+	serviceName: "Amazon Virtual Private Cloud"
 } satisfies RuntimeTest;

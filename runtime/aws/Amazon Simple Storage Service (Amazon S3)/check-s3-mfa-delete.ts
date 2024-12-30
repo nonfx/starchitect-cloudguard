@@ -81,5 +81,6 @@ export default {
 		}
 	],
 	severity: "MEDIUM",
-	execute: checkS3MfaDelete
+	execute: checkS3MfaDelete,
+	serviceName: "Amazon Simple Storage Service (Amazon S3)"
 } satisfies RuntimeTest;

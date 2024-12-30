@@ -114,5 +114,6 @@ export default {
 		}
 	],
 	severity: "MEDIUM",
-	execute: checkEcsContainerReadonlyRoot
+	execute: checkEcsContainerReadonlyRoot,
+	serviceName: "Amazon Elastic Container Registry"
 } satisfies RuntimeTest;

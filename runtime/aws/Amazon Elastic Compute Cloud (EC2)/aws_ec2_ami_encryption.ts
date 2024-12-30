@@ -86,5 +86,6 @@ export default {
 		}
 	],
 	severity: "MEDIUM",
-	execute: checkAmiEncryption
+	execute: checkAmiEncryption,
+	serviceName: "Amazon Elastic Compute Cloud (EC2)"
 } satisfies RuntimeTest;

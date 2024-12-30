@@ -168,5 +168,6 @@ export default {
 		}
 	],
 	severity: "MEDIUM",
-	execute: checkCloudWatchApiMonitoring
+	execute: checkCloudWatchApiMonitoring,
+	serviceName: "Amazon CloudWatch"
 } satisfies RuntimeTest;

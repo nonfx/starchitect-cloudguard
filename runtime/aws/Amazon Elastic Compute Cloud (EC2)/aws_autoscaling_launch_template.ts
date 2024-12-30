@@ -86,5 +86,6 @@ export default {
 		}
 	],
 	severity: "MEDIUM",
-	execute: checkAutoScalingLaunchTemplate
+	execute: checkAutoScalingLaunchTemplate,
+	serviceName: "Amazon Elastic Compute Cloud (EC2)"
 } satisfies RuntimeTest;

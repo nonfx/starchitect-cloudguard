@@ -80,5 +80,6 @@ export default {
 		}
 	],
 	severity: "MEDIUM",
-	execute: checkTransitGatewayAutoAccept
+	execute: checkTransitGatewayAutoAccept,
+	serviceName: "Amazon Elastic Compute Cloud (EC2)"
 } satisfies RuntimeTest;

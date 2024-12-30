@@ -166,5 +166,6 @@ export default {
 		}
 	],
 	severity: "MEDIUM",
-	execute: checkRouteTableMonitoring
+	execute: checkRouteTableMonitoring,
+	serviceName: "Amazon CloudWatch"
 } satisfies RuntimeTest;

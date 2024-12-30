@@ -78,5 +78,6 @@ export default {
 		}
 	],
 	severity: "HIGH",
-	execute: checkNeptuneDeletionProtection
+	execute: checkNeptuneDeletionProtection,
+	serviceName: "Amazon Relational Database Service"
 } satisfies RuntimeTest;

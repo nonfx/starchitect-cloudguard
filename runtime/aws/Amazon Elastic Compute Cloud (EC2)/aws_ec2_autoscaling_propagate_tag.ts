@@ -93,5 +93,6 @@ export default {
 		}
 	],
 	severity: "MEDIUM",
-	execute: checkAutoScalingTagPropagation
+	execute: checkAutoScalingTagPropagation,
+	serviceName: "Amazon Elastic Compute Cloud (EC2)"
 } satisfies RuntimeTest;

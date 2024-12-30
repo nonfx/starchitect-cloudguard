@@ -79,5 +79,6 @@ export default {
 		}
 	],
 	severity: "MEDIUM",
-	execute: checkIamCentralizedManagement
+	execute: checkIamCentralizedManagement,
+	serviceName: "Amazon Identity and Access Management"
 } satisfies RuntimeTest;

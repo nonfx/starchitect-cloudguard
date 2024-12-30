@@ -144,5 +144,6 @@ export default {
 		}
 	],
 	severity: "HIGH",
-	execute: checkAuroraEncryptionInTransit
+	execute: checkAuroraEncryptionInTransit,
+	serviceName: "Amazon Relational Database Service"
 } satisfies RuntimeTest;

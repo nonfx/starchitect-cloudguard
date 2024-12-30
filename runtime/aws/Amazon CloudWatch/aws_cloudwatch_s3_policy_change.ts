@@ -167,5 +167,6 @@ export default {
 		}
 	],
 	severity: "MEDIUM",
-	execute: checkS3PolicyMonitoring
+	execute: checkS3PolicyMonitoring,
+	serviceName: "Amazon CloudWatch"
 } satisfies RuntimeTest;

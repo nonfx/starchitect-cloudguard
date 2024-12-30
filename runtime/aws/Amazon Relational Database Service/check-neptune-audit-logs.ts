@@ -80,5 +80,6 @@ export default {
 		}
 	],
 	severity: "HIGH",
-	execute: checkNeptuneAuditLogsEnabled
+	execute: checkNeptuneAuditLogsEnabled,
+	serviceName: "Amazon Relational Database Service"
 } satisfies RuntimeTest;

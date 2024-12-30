@@ -133,5 +133,6 @@ export default {
 		}
 	],
 	severity: "HIGH",
-	execute: checkRdsSecurityGroupsConfigured
+	execute: checkRdsSecurityGroupsConfigured,
+	serviceName: "Amazon Relational Database Service"
 } satisfies RuntimeTest;

@@ -12,6 +12,7 @@ export type RuntimeTestMeta = {
 	controls: ComplianceControl[];
 	severity: "HIGH" | "MEDIUM" | "LOW";
 	category?: string;
+	serviceName: string;
 };
 
 export type RuntimeTest = RuntimeTestMeta & {

@@ -101,5 +101,6 @@ export default {
 		}
 	],
 	severity: "HIGH",
-	execute: checkRdsAutoMinorVersionUpgrade
+	execute: checkRdsAutoMinorVersionUpgrade,
+	serviceName: "Amazon Relational Database Service"
 } satisfies RuntimeTest;

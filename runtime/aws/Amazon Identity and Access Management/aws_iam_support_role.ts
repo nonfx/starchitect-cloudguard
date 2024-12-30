@@ -112,5 +112,6 @@ export default {
 		}
 	],
 	severity: "MEDIUM",
-	execute: checkIamSupportRole
+	execute: checkIamSupportRole,
+	serviceName: "Amazon Identity and Access Management"
 } satisfies RuntimeTest;

@@ -103,5 +103,6 @@ export default {
 		}
 	],
 	severity: "MEDIUM",
-	execute: checkSecurityGroupAuthorizedPorts
+	execute: checkSecurityGroupAuthorizedPorts,
+	serviceName: "Amazon Elastic Compute Cloud (EC2)"
 } satisfies RuntimeTest;

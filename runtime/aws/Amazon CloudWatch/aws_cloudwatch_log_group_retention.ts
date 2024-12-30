@@ -116,5 +116,6 @@ export default {
 		}
 	],
 	severity: "MEDIUM",
-	execute: checkCloudWatchLogGroupRetention
+	execute: checkCloudWatchLogGroupRetention,
+	serviceName: "Amazon CloudWatch"
 } satisfies RuntimeTest;

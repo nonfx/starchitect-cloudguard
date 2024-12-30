@@ -72,5 +72,6 @@ export default {
 		}
 	],
 	severity: "MEDIUM",
-	execute: checkAccessAnalyzerEnabled
+	execute: checkAccessAnalyzerEnabled,
+	serviceName: "Amazon Identity and Access Management"
 } satisfies RuntimeTest;

@@ -98,5 +98,6 @@ export default {
 		}
 	],
 	severity: "MEDIUM",
-	execute: checkEc2VpcEndpointCompliance
+	execute: checkEc2VpcEndpointCompliance,
+	serviceName: "Amazon Elastic Compute Cloud (EC2)"
 } satisfies RuntimeTest;

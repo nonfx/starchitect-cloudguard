@@ -81,5 +81,6 @@ export default {
 		}
 	],
 	severity: "HIGH",
-	execute: checkNeptuneAutomatedBackups
+	execute: checkNeptuneAutomatedBackups,
+	serviceName: "Amazon Relational Database Service"
 } satisfies RuntimeTest;

@@ -137,5 +137,6 @@ export default {
 		}
 	],
 	severity: "MEDIUM",
-	execute: checkCloudShellAccess
+	execute: checkCloudShellAccess,
+	serviceName: "Amazon Identity and Access Management"
 } satisfies RuntimeTest;

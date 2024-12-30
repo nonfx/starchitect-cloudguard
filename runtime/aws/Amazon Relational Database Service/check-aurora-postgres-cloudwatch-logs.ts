@@ -94,5 +94,6 @@ export default {
 		}
 	],
 	severity: "HIGH",
-	execute: checkAuroraPostgresCloudWatchLogs
+	execute: checkAuroraPostgresCloudWatchLogs,
+	serviceName: "Amazon Relational Database Service"
 } satisfies RuntimeTest;
