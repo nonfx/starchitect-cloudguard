@@ -8,7 +8,7 @@ import {
 } from "@aws-sdk/client-ec2";
 import { mockClient } from "aws-sdk-client-mock";
 import { ComplianceStatus } from "../../types.js";
-import { test, describe, expect, beforeEach } from "bun:test";
+
 import checkRdsSecurityGroupsConfigured from "./check-rds-security-groups-configured";
 
 const mockRdsClient = mockClient(RDSClient);
