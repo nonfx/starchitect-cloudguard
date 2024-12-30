@@ -1,11 +1,13 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 //@ts-nocheck
 import { EC2Client, DescribeInstancesCommand } from "@aws-sdk/client-ec2";
+import { STSClient, GetCallerIdentityCommand } from "@aws-sdk/client-sts";
 import { mockClient } from "aws-sdk-client-mock";
 import { ComplianceStatus } from "../../types.js";
 import checkEc2DetailedMonitoring from "./aws_ec2_detailed_monitoring";
 
 const mockEC2Client = mockClient(EC2Client);
+const mockSTSClient = mockClient(STSClient);
 
 const mockInstance = (id: string, monitoringState: string, ownerId: string = "123456789012") => ({
 	InstanceId: id,
@@ -17,6 +19,11 @@ const mockInstance = (id: string, monitoringState: string, ownerId: string = "12
 describe("checkEc2DetailedMonitoring", () => {
 	beforeEach(() => {
 		mockEC2Client.reset();
+		mockSTSClient.reset();
+		// Mock STS GetCallerIdentity to return test account ID
+		mockSTSClient.on(GetCallerIdentityCommand).resolves({
+			Account: "123456789012"
+		});
 	});
 
 	describe("Compliant Resources", () => {

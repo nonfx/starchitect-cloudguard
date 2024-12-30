@@ -9,10 +9,25 @@ async function checkEcrTagImmutability(region: string = "us-east-1"): Promise<Co
 	};
 
 	try {
-		// Get all ECR repositories
-		const repositories = await client.send(new DescribeRepositoriesCommand({}));
+		// Get all ECR repositories with pagination
+		let nextToken: string | undefined;
+		let allRepositories: any[] = [];
 
-		if (!repositories.repositories || repositories.repositories.length === 0) {
+		do {
+			const response = await client.send(
+				new DescribeRepositoriesCommand({
+					nextToken
+				})
+			);
+
+			if (response.repositories) {
+				allRepositories = allRepositories.concat(response.repositories);
+			}
+
+			nextToken = response.nextToken;
+		} while (nextToken);
+
+		if (allRepositories.length === 0) {
 			results.checks = [
 				{
 					resourceName: "No ECR Repositories",
@@ -24,7 +39,7 @@ async function checkEcrTagImmutability(region: string = "us-east-1"): Promise<Co
 		}
 
 		// Check each repository for tag immutability
-		for (const repo of repositories.repositories) {
+		for (const repo of allRepositories) {
 			if (!repo.repositoryName || !repo.repositoryArn) {
 				results.checks.push({
 					resourceName: "Unknown Repository",

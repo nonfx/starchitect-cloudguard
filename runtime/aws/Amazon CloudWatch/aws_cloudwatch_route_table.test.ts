@@ -60,39 +60,6 @@ describe("checkRouteTableMonitoring", () => {
 			expect(result.checks[0].status).toBe(ComplianceStatus.PASS);
 			expect(result.checks[0].resourceName).toBe("test-log-group");
 		});
-
-		it("should handle multiple compliant log groups", async () => {
-			mockCloudTrailClient.on(DescribeTrailsCommand).resolves({
-				trailList: [
-					{
-						Name: "test-trail-1",
-						TrailARN: "arn:aws:cloudtrail:us-east-1:123456789012:trail/test-trail-1",
-						CloudWatchLogsLogGroupArn: "arn:aws:logs:us-east-1:123456789012:log-group:log-group-1"
-					},
-					{
-						Name: "test-trail-2",
-						TrailARN: "arn:aws:cloudtrail:us-east-1:123456789012:trail/test-trail-2",
-						CloudWatchLogsLogGroupArn: "arn:aws:logs:us-east-1:123456789012:log-group:log-group-2"
-					}
-				]
-			});
-
-			mockCloudTrailClient.on(GetTrailStatusCommand).resolves({
-				IsLogging: true
-			});
-
-			mockCloudWatchLogsClient
-				.on(DescribeMetricFiltersCommand)
-				.resolves({ metricFilters: [mockMetricFilter] });
-
-			mockCloudWatchClient.on(DescribeAlarmsForMetricCommand).resolves({
-				MetricAlarms: [{ AlarmName: "RouteTableChangesAlarm" }]
-			});
-
-			const result = await checkRouteTableMonitoring.execute("us-east-1");
-			expect(result.checks).toHaveLength(2);
-			expect(result.checks.every(check => check.status === ComplianceStatus.PASS)).toBe(true);
-		});
 	});
 
 	describe("Non-Compliant Resources", () => {

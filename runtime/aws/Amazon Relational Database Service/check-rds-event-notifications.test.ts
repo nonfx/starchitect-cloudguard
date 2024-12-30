@@ -1,26 +1,41 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 //@ts-nocheck
-import { RDSClient, DescribeEventSubscriptionsCommand } from "@aws-sdk/client-rds";
+import {
+	RDSClient,
+	DescribeEventSubscriptionsCommand,
+	DescribeDBInstancesCommand
+} from "@aws-sdk/client-rds";
 import { mockClient } from "aws-sdk-client-mock";
 import { ComplianceStatus } from "../../types.js";
 import checkRdsEventNotifications from "./check-rds-event-notifications";
 
 const mockRdsClient = mockClient(RDSClient);
 
-const mockCompliantSubscription = {
-	CustSubscriptionId: "test-subscription-1",
-	EventSubscriptionArn: "arn:aws:rds:us-east-1:123456789012:es:test-subscription-1",
+const mockCompliantInstanceSubscription = {
+	CustSubscriptionId: "test-instance-sub",
 	SourceType: "db-instance",
 	Enabled: true,
-	EventCategoriesList: ["maintenance", "configuration change", "failure"]
+	EventCategoriesList: ["maintenance", "configuration change", "failure"],
+	SourceIdsList: ["test-db-1"]
 };
 
-const mockNonCompliantSubscription = {
-	CustSubscriptionId: "test-subscription-2",
-	EventSubscriptionArn: "arn:aws:rds:us-east-1:123456789012:es:test-subscription-2",
-	SourceType: "db-instance",
+const mockCompliantClusterSubscription = {
+	CustSubscriptionId: "test-cluster-sub",
+	SourceType: "db-cluster",
 	Enabled: true,
-	EventCategoriesList: ["maintenance", "failure"] // missing configuration change
+	EventCategoriesList: ["maintenance", "configuration change", "failure"],
+	SourceIdsList: ["test-cluster-1"]
+};
+
+const mockDbInstance = {
+	DBInstanceIdentifier: "test-db-1",
+	DBInstanceArn: "arn:aws:rds:us-east-1:123456789012:db:test-db-1"
+};
+
+const mockClusterDbInstance = {
+	DBInstanceIdentifier: "test-db-2",
+	DBInstanceArn: "arn:aws:rds:us-east-1:123456789012:db:test-db-2",
+	DBClusterIdentifier: "test-cluster-1"
 };
 
 describe("checkRdsEventNotifications", () => {
@@ -29,25 +44,30 @@ describe("checkRdsEventNotifications", () => {
 	});
 
 	describe("Compliant Resources", () => {
-		it("should return PASS when subscription has all required categories", async () => {
+		it("should return PASS for instance with compliant instance-level subscription", async () => {
 			mockRdsClient.on(DescribeEventSubscriptionsCommand).resolves({
-				EventSubscriptionsList: [mockCompliantSubscription]
+				EventSubscriptionsList: [mockCompliantInstanceSubscription]
+			});
+			mockRdsClient.on(DescribeDBInstancesCommand).resolves({
+				DBInstances: [mockDbInstance]
 			});
 
-			const result = await checkRdsEventNotifications("us-east-1");
+			const result = await checkRdsEventNotifications.execute("us-east-1");
 			expect(result.checks[0].status).toBe(ComplianceStatus.PASS);
-			expect(result.checks[0].resourceName).toBe("test-subscription-1");
-			expect(result.checks[0].resourceArn).toBe(mockCompliantSubscription.EventSubscriptionArn);
+			expect(result.checks[0].resourceName).toBe("test-db-1");
 		});
 
-		it("should handle multiple compliant subscriptions", async () => {
+		it("should return PASS for instance with compliant cluster-level subscription", async () => {
 			mockRdsClient.on(DescribeEventSubscriptionsCommand).resolves({
-				EventSubscriptionsList: [mockCompliantSubscription, mockCompliantSubscription]
+				EventSubscriptionsList: [mockCompliantClusterSubscription]
+			});
+			mockRdsClient.on(DescribeDBInstancesCommand).resolves({
+				DBInstances: [mockClusterDbInstance]
 			});
 
-			const result = await checkRdsEventNotifications("us-east-1");
-			expect(result.checks).toHaveLength(2);
-			expect(result.checks.every(check => check.status === ComplianceStatus.PASS)).toBe(true);
+			const result = await checkRdsEventNotifications.execute("us-east-1");
+			expect(result.checks[0].status).toBe(ComplianceStatus.PASS);
+			expect(result.checks[0].resourceName).toBe("test-db-2");
 		});
 	});
 
@@ -57,73 +77,89 @@ describe("checkRdsEventNotifications", () => {
 				EventSubscriptionsList: []
 			});
 
-			const result = await checkRdsEventNotifications("us-east-1");
+			const result = await checkRdsEventNotifications.execute("us-east-1");
 			expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
 			expect(result.checks[0].message).toBe("No RDS event subscriptions found");
 		});
 
-		it("should return FAIL when missing required categories", async () => {
+		it("should return FAIL for instance without matching subscription", async () => {
 			mockRdsClient.on(DescribeEventSubscriptionsCommand).resolves({
-				EventSubscriptionsList: [mockNonCompliantSubscription]
+				EventSubscriptionsList: [mockCompliantInstanceSubscription]
 			});
-
-			const result = await checkRdsEventNotifications("us-east-1");
-			expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
-			expect(result.checks[0].message).toContain("missing required event categories");
-		});
-
-		it("should return FAIL when subscription is disabled", async () => {
-			mockRdsClient.on(DescribeEventSubscriptionsCommand).resolves({
-				EventSubscriptionsList: [
+			mockRdsClient.on(DescribeDBInstancesCommand).resolves({
+				DBInstances: [
 					{
-						...mockCompliantSubscription,
-						Enabled: false
+						...mockDbInstance,
+						DBInstanceIdentifier: "unmonitored-db"
 					}
 				]
 			});
 
-			const result = await checkRdsEventNotifications("us-east-1");
+			const result = await checkRdsEventNotifications.execute("us-east-1");
 			expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
-			expect(result.checks[0].message).toContain("subscription not enabled");
+			expect(result.checks[0].message).toContain(
+				"No compliant instance-level event subscription found"
+			);
 		});
 
-		it("should return FAIL when source type is incorrect", async () => {
+		it("should return FAIL for cluster instance without matching subscription", async () => {
 			mockRdsClient.on(DescribeEventSubscriptionsCommand).resolves({
-				EventSubscriptionsList: [
+				EventSubscriptionsList: [mockCompliantClusterSubscription]
+			});
+			mockRdsClient.on(DescribeDBInstancesCommand).resolves({
+				DBInstances: [
 					{
-						...mockCompliantSubscription,
-						SourceType: "db-cluster"
+						...mockClusterDbInstance,
+						DBClusterIdentifier: "unmonitored-cluster"
 					}
 				]
 			});
 
-			const result = await checkRdsEventNotifications("us-east-1");
+			const result = await checkRdsEventNotifications.execute("us-east-1");
 			expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
-			expect(result.checks[0].message).toContain("incorrect source type");
+			expect(result.checks[0].message).toContain(
+				"No compliant cluster-level event subscription found"
+			);
 		});
 	});
 
 	describe("Error Handling", () => {
-		it("should return ERROR when API call fails", async () => {
+		it("should return ERROR when event subscriptions API call fails", async () => {
 			mockRdsClient.on(DescribeEventSubscriptionsCommand).rejects(new Error("API Error"));
 
-			const result = await checkRdsEventNotifications("us-east-1");
+			const result = await checkRdsEventNotifications.execute("us-east-1");
 			expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
-			expect(result.checks[0].message).toContain("Error checking RDS event subscriptions");
+			expect(result.checks[0].message).toBe("Error checking RDS event subscriptions: API Error");
+		});
+
+		it("should return ERROR when DB instances API call fails", async () => {
+			mockRdsClient.on(DescribeEventSubscriptionsCommand).resolves({
+				EventSubscriptionsList: [mockCompliantInstanceSubscription]
+			});
+			mockRdsClient.on(DescribeDBInstancesCommand).resolves({
+				DBInstances: undefined
+			});
+
+			const result = await checkRdsEventNotifications.execute("us-east-1");
+			expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
+			expect(result.checks[0].message).toBe("Unable to retrieve RDS instances");
 		});
 
 		it("should handle subscriptions without CustSubscriptionId", async () => {
 			mockRdsClient.on(DescribeEventSubscriptionsCommand).resolves({
 				EventSubscriptionsList: [
 					{
-						...mockCompliantSubscription,
+						...mockCompliantInstanceSubscription,
 						CustSubscriptionId: undefined
 					}
 				]
 			});
+			mockRdsClient.on(DescribeDBInstancesCommand).resolves({
+				DBInstances: [mockDbInstance]
+			});
 
-			const result = await checkRdsEventNotifications("us-east-1");
-			expect(result.checks).toHaveLength(0);
+			const result = await checkRdsEventNotifications.execute("us-east-1");
+			expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
 		});
 	});
 });
