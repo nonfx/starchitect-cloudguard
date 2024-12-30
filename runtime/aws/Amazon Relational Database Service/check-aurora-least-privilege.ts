@@ -28,19 +28,19 @@ async function checkAuroraLeastPrivilegeCompliance(
 	};
 
 	try {
-		// Get Aurora DB instances
-		const dbInstances = await rdsClient.send(
-			new DescribeDBInstancesCommand({
-				Filters: [
-					{
-						Name: "engine",
-						Values: ["aurora", "aurora-mysql", "aurora-postgresql"]
-					}
-				]
-			})
-		);
+		// Get all DB instances
+		const dbInstances = await rdsClient.send(new DescribeDBInstancesCommand({}));
 
-		if (!dbInstances.DBInstances || dbInstances.DBInstances.length === 0) {
+		// Filter Aurora instances
+		const auroraInstances =
+			dbInstances.DBInstances?.filter(
+				instance =>
+					instance.Engine === "aurora" ||
+					instance.Engine === "aurora-mysql" ||
+					instance.Engine === "aurora-postgresql"
+			) || [];
+
+		if (auroraInstances.length === 0) {
 			results.checks.push({
 				resourceName: "Aurora Instances",
 				status: ComplianceStatus.NOTAPPLICABLE,
@@ -49,7 +49,7 @@ async function checkAuroraLeastPrivilegeCompliance(
 			return results;
 		}
 
-		for (const instance of dbInstances.DBInstances) {
+		for (const instance of auroraInstances) {
 			if (!instance.DBInstanceArn || !instance.DBInstanceIdentifier) continue;
 
 			// Check associated IAM roles
@@ -57,18 +57,19 @@ async function checkAuroraLeastPrivilegeCompliance(
 				for (const role of instance.AssociatedRoles) {
 					if (!role.RoleArn) continue;
 
+					const roleName = role.RoleArn.split("/").pop();
+					if (!roleName) continue;
+
 					try {
 						// Check inline policies
 						const inlinePolicies = await iamClient.send(
-							new ListRolePoliciesCommand({
-								RoleName: role.RoleArn.split("/").pop()
-							})
+							new ListRolePoliciesCommand({ RoleName: roleName })
 						);
 
 						for (const policyName of inlinePolicies.PolicyNames || []) {
 							const policyDetails = await iamClient.send(
 								new GetRolePolicyCommand({
-									RoleName: role.RoleArn.split("/").pop(),
+									RoleName: roleName,
 									PolicyName: policyName
 								})
 							);
@@ -87,9 +88,7 @@ async function checkAuroraLeastPrivilegeCompliance(
 
 						// Check attached policies
 						const attachedPolicies = await iamClient.send(
-							new ListAttachedRolePoliciesCommand({
-								RoleName: role.RoleArn.split("/").pop()
-							})
+							new ListAttachedRolePoliciesCommand({ RoleName: roleName })
 						);
 
 						for (const policy of attachedPolicies.AttachedPolicies || []) {
@@ -118,6 +117,7 @@ async function checkAuroraLeastPrivilegeCompliance(
 							}
 						}
 
+						// If we get here, all policies are compliant
 						results.checks.push({
 							resourceName: instance.DBInstanceIdentifier,
 							resourceArn: instance.DBInstanceArn,
@@ -133,6 +133,13 @@ async function checkAuroraLeastPrivilegeCompliance(
 						});
 					}
 				}
+			} else {
+				results.checks.push({
+					resourceName: instance.DBInstanceIdentifier,
+					resourceArn: instance.DBInstanceArn,
+					status: ComplianceStatus.PASS,
+					message: "No IAM roles associated with this instance"
+				});
 			}
 		}
 	} catch (error) {
@@ -170,8 +177,8 @@ function checkPolicyPrivileges(policyDocument: string | undefined): boolean {
 	}
 }
 
-if (require.main === module) {
-	const region = process.env.AWS_REGION;
+if (import.meta.main) {
+	const region = process.env.AWS_REGION ?? "ap-southeast-1";
 	const results = await checkAuroraLeastPrivilegeCompliance(region);
 	printSummary(generateSummary(results));
 }
