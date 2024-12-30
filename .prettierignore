@@ -8,3 +8,4 @@ cli/README.md
 runtime/aws/index.ts
 cli/tmp
 package-lock.json
+LICENSE
