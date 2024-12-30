@@ -2,6 +2,8 @@
   "name": "@nonfx/starchitect-cloudguard",
   "type": "module",
   "scripts": {
+    "build": "tsc -b --incremental",
+    "test": "bun test",
     "prepare": "husky",
     "prettier:lint": "prettier --config .prettierrc.cjs --cache --cache-location .cache/prettier --check .",
     "lint:files": "env TIMING=1 eslint --quiet",
@@ -25,6 +27,7 @@
     "@aws-sdk/client-iam": "^3.716.0",
     "@aws-sdk/client-kms": "^3.716.0",
     "@aws-sdk/client-macie2": "^3.717.0",
+    "@aws-sdk/client-neptune": "^3.716.0",
     "@aws-sdk/client-organizations": "^3.716.0",
     "@aws-sdk/client-rds": "^3.716.0",
     "@aws-sdk/client-s3": "^3.717.0",
