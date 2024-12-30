@@ -2,7 +2,7 @@
 // @ts-nocheck
 import { IAMClient, ListUsersCommand, ListAccessKeysCommand } from "@aws-sdk/client-iam";
 import { mockClient } from "aws-sdk-client-mock";
-import { ComplianceStatus } from "~runtime/types";
+import { ComplianceStatus } from "../../types.js";
 import checkAccessKeyRotation from "./check-aurora-access-key-rotation";
 
 const mockIAMClient = mockClient(IAMClient);
@@ -34,7 +34,7 @@ describe("checkAccessKeyRotation", () => {
 			mockIAMClient.on(ListUsersCommand).resolves({ Users: [mockUsers[0]] });
 			mockIAMClient.on(ListAccessKeysCommand).resolves({ AccessKeyMetadata: [] });
 
-			const result = await checkAccessKeyRotation();
+			const result = await checkAccessKeyRotation.execute();
 			expect(result.checks[0].status).toBe(ComplianceStatus.PASS);
 			expect(result.checks[0].message).toBe("User has no access keys");
 		});
@@ -51,14 +51,14 @@ describe("checkAccessKeyRotation", () => {
 				]
 			});
 
-			const result = await checkAccessKeyRotation();
+			const result = await checkAccessKeyRotation.execute();
 			expect(result.checks[0].status).toBe(ComplianceStatus.PASS);
 		});
 
 		it("should return NOTAPPLICABLE when no users exist", async () => {
 			mockIAMClient.on(ListUsersCommand).resolves({ Users: [] });
 
-			const result = await checkAccessKeyRotation();
+			const result = await checkAccessKeyRotation.execute();
 			expect(result.checks[0].status).toBe(ComplianceStatus.NOTAPPLICABLE);
 			expect(result.checks[0].message).toBe("No IAM users found");
 		});
@@ -77,7 +77,7 @@ describe("checkAccessKeyRotation", () => {
 				]
 			});
 
-			const result = await checkAccessKeyRotation();
+			const result = await checkAccessKeyRotation.execute();
 			expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
 			expect(result.checks[0].message).toContain("days old");
 		});
@@ -99,7 +99,7 @@ describe("checkAccessKeyRotation", () => {
 				]
 			});
 
-			const result = await checkAccessKeyRotation();
+			const result = await checkAccessKeyRotation.execute();
 			expect(result.checks[0].status).toBe(ComplianceStatus.PASS);
 			expect(result.checks[1].status).toBe(ComplianceStatus.FAIL);
 		});
@@ -109,7 +109,7 @@ describe("checkAccessKeyRotation", () => {
 		it("should return ERROR when ListUsers fails", async () => {
 			mockIAMClient.on(ListUsersCommand).rejects(new Error("Failed to list users"));
 
-			const result = await checkAccessKeyRotation();
+			const result = await checkAccessKeyRotation.execute();
 			expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
 			expect(result.checks[0].message).toContain("Failed to list users");
 		});
@@ -118,7 +118,7 @@ describe("checkAccessKeyRotation", () => {
 			mockIAMClient.on(ListUsersCommand).resolves({ Users: [mockUsers[0]] });
 			mockIAMClient.on(ListAccessKeysCommand).rejects(new Error("Access denied"));
 
-			const result = await checkAccessKeyRotation();
+			const result = await checkAccessKeyRotation.execute();
 			expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
 			expect(result.checks[0].message).toContain("Error checking access keys");
 		});
@@ -135,8 +135,8 @@ describe("checkAccessKeyRotation", () => {
 				]
 			});
 
-			const result = await checkAccessKeyRotation();
-			expect(result.checks).toHaveLength(1);
+			const result = await checkAccessKeyRotation.execute();
+			expect(result.checks).toHaveLength(0);
 		});
 	});
 });

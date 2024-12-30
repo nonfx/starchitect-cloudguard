@@ -167,5 +167,57 @@ describe("checkRootAccountMonitoring", () => {
 				"Error checking root account monitoring: Metric Filter Error"
 			);
 		});
+
+		mockCloudTrailClient.on(GetTrailStatusCommand).resolves({
+			IsLogging: false
+		});
+
+		const result = await checkRootAccountMonitoring.execute("us-east-1");
+		expect(result.checks?.[0]?.status).toBe(ComplianceStatus.FAIL);
+		expect(result.checks?.[0]?.message).toBe("CloudTrail logging is not enabled");
+	});
+
+	it("should return FAIL when metric filter pattern doesn't match", async () => {
+		mockCloudTrailClient.on(DescribeTrailsCommand).resolves({
+			trailList: [
+				{
+					Name: "test-trail",
+					TrailARN: "arn:aws:cloudtrail:test-trail",
+					CloudWatchLogsLogGroupArn: "arn:aws:logs:us-east-1:123456789012:log-group:test-group:*",
+					CloudWatchLogsRoleArn: "arn:aws:iam::123456789012:role/CloudTrailRole"
+				}
+			]
+		});
+
+		mockCloudTrailClient.on(GetTrailStatusCommand).resolves({
+			IsLogging: true
+		});
+
+		mockCloudWatchLogsClient.on(DescribeMetricFiltersCommand).resolves({
+			metricFilters: [
+				{
+					filterPattern: "wrong pattern",
+					metricTransformations: [
+						{
+							metricName: "RootAccountUsage"
+						}
+					]
+				}
+			]
+		});
+
+		const result = await checkRootAccountMonitoring.execute("us-east-1");
+		expect(result.checks?.[0]?.status).toBe(ComplianceStatus.FAIL);
+		expect(result.checks?.[0]?.message).toContain(
+			"does not have required root account activity metric filter"
+		);
+	});
+
+	it("should return ERROR on API failure", async () => {
+		mockCloudTrailClient.on(DescribeTrailsCommand).rejects(new Error("API Error"));
+
+		const result = await checkRootAccountMonitoring.execute("us-east-1");
+		expect(result.checks?.[0]?.status).toBe(ComplianceStatus.ERROR);
+		expect(result.checks?.[0]?.message).toContain("Error checking root account monitoring");
 	});
 });

@@ -1,3 +1,4 @@
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 //@ts-nocheck
 import {
 	RDSClient,
@@ -5,7 +6,7 @@ import {
 	DescribeDBClustersCommand
 } from "@aws-sdk/client-rds";
 import { mockClient } from "aws-sdk-client-mock";
-import { ComplianceStatus } from "~runtime/types";
+import { ComplianceStatus } from "../../types.js";
 import checkDatabaseSecurity from "./check-rds-database-security";
 
 const mockRDSClient = mockClient(RDSClient);
