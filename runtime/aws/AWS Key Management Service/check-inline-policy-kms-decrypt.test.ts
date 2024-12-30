@@ -170,6 +170,10 @@ describe("checkInlinePolicyKmsDecrypt", () => {
 						{ UserName: "violating-user", Arn: "arn:aws:iam::123456789012:user/violating-user" }
 					]
 				})
+				.on(ListRolesCommand)
+				.resolves({ Roles: [] })
+				.on(ListGroupsCommand)
+				.resolves({ Groups: [] })
 				.on(ListUserPoliciesCommand)
 				.resolves({ PolicyNames: ["test-policy"] })
 				.on(GetUserPolicyCommand, { UserName: "compliant-user" })

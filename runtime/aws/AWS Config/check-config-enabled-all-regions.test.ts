@@ -23,7 +23,7 @@ describe("checkConfigEnabledAllRegions", () => {
 						ConfigurationAggregatorName: "test-aggregator",
 						AccountAggregationSources: [
 							{
-								AllRegions: true,
+								AllAwsRegions: true,
 								AccountIds: ["123456789012"]
 							}
 						]
@@ -45,7 +45,7 @@ describe("checkConfigEnabledAllRegions", () => {
 					{
 						ConfigurationAggregatorName: "org-aggregator",
 						OrganizationAggregationSource: {
-							AllRegions: true,
+							AllAwsRegions: true,
 							RoleArn: "arn:aws:iam::123456789012:role/service-role/config-role"
 						}
 					}
@@ -62,11 +62,11 @@ describe("checkConfigEnabledAllRegions", () => {
 				ConfigurationAggregators: [
 					{
 						ConfigurationAggregatorName: "account-aggregator",
-						AccountAggregationSources: [{ AllRegions: true }]
+						AccountAggregationSources: [{ AllAwsRegions: true }]
 					},
 					{
 						ConfigurationAggregatorName: "org-aggregator",
-						OrganizationAggregationSource: { AllRegions: true }
+						OrganizationAggregationSource: { AllAwsRegions: true }
 					}
 				]
 			});
@@ -97,7 +97,7 @@ describe("checkConfigEnabledAllRegions", () => {
 						ConfigurationAggregatorName: "partial-aggregator",
 						AccountAggregationSources: [
 							{
-								AllRegions: false,
+								AllAwsRegions: false,
 								Regions: ["us-east-1", "us-west-2"]
 							}
 						]
@@ -117,11 +117,11 @@ describe("checkConfigEnabledAllRegions", () => {
 				ConfigurationAggregators: [
 					{
 						ConfigurationAggregatorName: "compliant-aggregator",
-						AccountAggregationSources: [{ AllRegions: true }]
+						AccountAggregationSources: [{ AllAwsRegions: true }]
 					},
 					{
 						ConfigurationAggregatorName: "non-compliant-aggregator",
-						AccountAggregationSources: [{ AllRegions: false }]
+						AccountAggregationSources: [{ AllAwsRegions: false }]
 					}
 				]
 			});
@@ -146,7 +146,7 @@ describe("checkConfigEnabledAllRegions", () => {
 			mockConfigClient.on(DescribeConfigurationAggregatorsCommand).resolves({
 				ConfigurationAggregators: [
 					{
-						AccountAggregationSources: [{ AllRegions: true }]
+						AccountAggregationSources: [{ AllAwsRegions: true }]
 					}
 				]
 			});

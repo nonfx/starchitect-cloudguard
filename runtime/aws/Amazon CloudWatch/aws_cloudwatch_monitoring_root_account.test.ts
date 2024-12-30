@@ -1,22 +1,22 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 //@ts-nocheck
-import { CloudWatchClient, DescribeAlarmsCommand } from "@aws-sdk/client-cloudwatch";
+import { CloudWatchClient, DescribeAlarmsForMetricCommand } from "@aws-sdk/client-cloudwatch";
 import {
 	CloudWatchLogsClient,
-	DescribeLogGroupsCommand,
 	DescribeMetricFiltersCommand
 } from "@aws-sdk/client-cloudwatch-logs";
+import {
+	CloudTrailClient,
+	DescribeTrailsCommand,
+	GetTrailStatusCommand
+} from "@aws-sdk/client-cloudtrail";
 import { mockClient } from "aws-sdk-client-mock";
 import { ComplianceStatus } from "../../types.js";
 import checkRootAccountMonitoring from "./aws_cloudwatch_monitoring_root_account";
 
 const mockCloudWatchClient = mockClient(CloudWatchClient);
 const mockCloudWatchLogsClient = mockClient(CloudWatchLogsClient);
-
-const mockLogGroup = {
-	logGroupName: "test-log-group",
-	arn: "arn:aws:logs:us-east-1:123456789012:log-group:test-log-group"
-};
+const mockCloudTrailClient = mockClient(CloudTrailClient);
 
 const mockMetricFilter = {
 	filterPattern:
@@ -28,94 +28,134 @@ describe("checkRootAccountMonitoring", () => {
 	beforeEach(() => {
 		mockCloudWatchClient.reset();
 		mockCloudWatchLogsClient.reset();
+		mockCloudTrailClient.reset();
 	});
 
 	describe("Compliant Resources", () => {
 		it("should return PASS when proper monitoring is configured", async () => {
-			mockCloudWatchLogsClient.on(DescribeLogGroupsCommand).resolves({ logGroups: [mockLogGroup] });
+			mockCloudTrailClient.on(DescribeTrailsCommand).resolves({
+				trailList: [
+					{
+						Name: "test-trail",
+						TrailARN: "arn:aws:cloudtrail:us-east-1:123456789012:trail/test-trail",
+						CloudWatchLogsLogGroupArn:
+							"arn:aws:logs:us-east-1:123456789012:log-group:test-log-group"
+					}
+				]
+			});
+
+			mockCloudTrailClient.on(GetTrailStatusCommand).resolves({
+				IsLogging: true
+			});
 
 			mockCloudWatchLogsClient
 				.on(DescribeMetricFiltersCommand)
 				.resolves({ metricFilters: [mockMetricFilter] });
 
-			mockCloudWatchClient
-				.on(DescribeAlarmsCommand)
-				.resolves({ MetricAlarms: [{ AlarmName: "RootAccountUsageAlarm" }] });
+			mockCloudWatchClient.on(DescribeAlarmsForMetricCommand).resolves({
+				MetricAlarms: [{ AlarmName: "RootAccountUsageAlarm" }]
+			});
 
 			const result = await checkRootAccountMonitoring.execute("us-east-1");
 			expect(result.checks[0].status).toBe(ComplianceStatus.PASS);
 			expect(result.checks[0].resourceName).toBe("test-log-group");
 		});
-
-		it("should handle multiple log groups with proper configuration", async () => {
-			const multipleLogGroups = [
-				{ ...mockLogGroup, logGroupName: "log-group-1" },
-				{ ...mockLogGroup, logGroupName: "log-group-2" }
-			];
-
-			mockCloudWatchLogsClient
-				.on(DescribeLogGroupsCommand)
-				.resolves({ logGroups: multipleLogGroups });
-
-			mockCloudWatchLogsClient
-				.on(DescribeMetricFiltersCommand)
-				.resolves({ metricFilters: [mockMetricFilter] });
-
-			mockCloudWatchClient
-				.on(DescribeAlarmsCommand)
-				.resolves({ MetricAlarms: [{ AlarmName: "RootAccountUsageAlarm" }] });
-
-			const result = await checkRootAccountMonitoring.execute("us-east-1");
-			expect(result.checks).toHaveLength(2);
-			expect(result.checks.every(check => check.status === ComplianceStatus.PASS)).toBe(true);
-		});
 	});
 
 	describe("Non-Compliant Resources", () => {
-		it("should return FAIL when no log groups exist", async () => {
-			mockCloudWatchLogsClient.on(DescribeLogGroupsCommand).resolves({ logGroups: [] });
+		it("should return FAIL when no CloudTrail trails exist", async () => {
+			mockCloudTrailClient.on(DescribeTrailsCommand).resolves({
+				trailList: []
+			});
 
 			const result = await checkRootAccountMonitoring.execute("us-east-1");
 			expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
-			expect(result.checks[0].message).toBe("No CloudWatch Log Groups found");
+			expect(result.checks[0].message).toBe("No CloudTrail trails found");
 		});
 
 		it("should return FAIL when metric filter is missing", async () => {
-			mockCloudWatchLogsClient.on(DescribeLogGroupsCommand).resolves({ logGroups: [mockLogGroup] });
+			mockCloudTrailClient.on(DescribeTrailsCommand).resolves({
+				trailList: [
+					{
+						Name: "test-trail",
+						TrailARN: "arn:aws:cloudtrail:us-east-1:123456789012:trail/test-trail",
+						CloudWatchLogsLogGroupArn:
+							"arn:aws:logs:us-east-1:123456789012:log-group:test-log-group"
+					}
+				]
+			});
 
-			mockCloudWatchLogsClient.on(DescribeMetricFiltersCommand).resolves({ metricFilters: [] });
+			mockCloudTrailClient.on(GetTrailStatusCommand).resolves({
+				IsLogging: true
+			});
+
+			mockCloudWatchLogsClient.on(DescribeMetricFiltersCommand).resolves({
+				metricFilters: []
+			});
 
 			const result = await checkRootAccountMonitoring.execute("us-east-1");
 			expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
-			expect(result.checks[0].message).toContain("does not have required metric filter");
+			expect(result.checks[0].message).toBe(
+				"CloudTrail log group does not have required root account activity metric filter"
+			);
 		});
 
 		it("should return FAIL when alarm is missing", async () => {
-			mockCloudWatchLogsClient.on(DescribeLogGroupsCommand).resolves({ logGroups: [mockLogGroup] });
+			mockCloudTrailClient.on(DescribeTrailsCommand).resolves({
+				trailList: [
+					{
+						Name: "test-trail",
+						TrailARN: "arn:aws:cloudtrail:us-east-1:123456789012:trail/test-trail",
+						CloudWatchLogsLogGroupArn:
+							"arn:aws:logs:us-east-1:123456789012:log-group:test-log-group"
+					}
+				]
+			});
+
+			mockCloudTrailClient.on(GetTrailStatusCommand).resolves({
+				IsLogging: true
+			});
 
 			mockCloudWatchLogsClient
 				.on(DescribeMetricFiltersCommand)
 				.resolves({ metricFilters: [mockMetricFilter] });
 
-			mockCloudWatchClient.on(DescribeAlarmsCommand).resolves({ MetricAlarms: [] });
+			mockCloudWatchClient.on(DescribeAlarmsForMetricCommand).resolves({
+				MetricAlarms: []
+			});
 
 			const result = await checkRootAccountMonitoring.execute("us-east-1");
 			expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
-			expect(result.checks[0].message).toContain("No alarms configured");
+			expect(result.checks[0].message).toBe(
+				"No alarms configured for root account activity metric"
+			);
 		});
 	});
 
 	describe("Error Handling", () => {
-		it("should return ERROR when CloudWatch Logs API fails", async () => {
-			mockCloudWatchLogsClient.on(DescribeLogGroupsCommand).rejects(new Error("API Error"));
+		it("should return ERROR when API calls fail", async () => {
+			mockCloudTrailClient.on(DescribeTrailsCommand).rejects(new Error("API Error"));
 
 			const result = await checkRootAccountMonitoring.execute("us-east-1");
 			expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
-			expect(result.checks[0].message).toContain("Error checking root account monitoring");
+			expect(result.checks[0].message).toBe("Error checking root account monitoring: API Error");
 		});
 
-		it("should return ERROR when metric filter check fails", async () => {
-			mockCloudWatchLogsClient.on(DescribeLogGroupsCommand).resolves({ logGroups: [mockLogGroup] });
+		it("should handle metric filter API errors", async () => {
+			mockCloudTrailClient.on(DescribeTrailsCommand).resolves({
+				trailList: [
+					{
+						Name: "test-trail",
+						TrailARN: "arn:aws:cloudtrail:us-east-1:123456789012:trail/test-trail",
+						CloudWatchLogsLogGroupArn:
+							"arn:aws:logs:us-east-1:123456789012:log-group:test-log-group"
+					}
+				]
+			});
+
+			mockCloudTrailClient.on(GetTrailStatusCommand).resolves({
+				IsLogging: true
+			});
 
 			mockCloudWatchLogsClient
 				.on(DescribeMetricFiltersCommand)
@@ -123,7 +163,9 @@ describe("checkRootAccountMonitoring", () => {
 
 			const result = await checkRootAccountMonitoring.execute("us-east-1");
 			expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
-			expect(result.checks[0].message).toContain("Error checking metric filters");
+			expect(result.checks[0].message).toBe(
+				"Error checking root account monitoring: Metric Filter Error"
+			);
 		});
 	});
 });

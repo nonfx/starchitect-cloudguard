@@ -28,7 +28,7 @@ async function checkRdsDeletionProtection(region: string = "us-east-1"): Promise
 			});
 
 			const response = await client.send(command);
-			if (response.DBInstances) {
+			if (response.DBInstances?.length) {
 				instances = instances.concat(response.DBInstances);
 				instanceFound = true;
 			}
