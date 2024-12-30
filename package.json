@@ -3,7 +3,7 @@
   "type": "module",
   "scripts": {
     "build": "tsc -b --incremental",
-    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js runtime/",
+    "test": "bun test",
     "prepare": "husky",
     "prettier:lint": "prettier --config .prettierrc.cjs --cache --cache-location .cache/prettier --check .",
     "lint:files": "env TIMING=1 eslint --quiet",
@@ -46,12 +46,7 @@
     "typescript-eslint": "^8.18.2"
   },
   "devDependencies": {
-    "@babel/preset-env": "^7.26.0",
-    "@babel/preset-typescript": "^7.26.0",
-    "@types/jest": "^29.5.14",
-    "jest": "^29.7.0",
-    "prettier": "^3.4.2",
-    "ts-jest": "^29.2.5"
+    "prettier": "^3.4.2"
   },
   "workspaces": [
     "cli/"
