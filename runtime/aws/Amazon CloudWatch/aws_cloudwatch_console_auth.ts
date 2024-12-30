@@ -163,6 +163,10 @@ export default {
 		{
 			id: "CIS-AWS-Foundations-Benchmark_v3.0.0_4.6",
 			document: "CIS-AWS-Foundations-Benchmark_v3.0.0"
+		},
+		{
+			id: "AWS-Foundational-Security-Best-Practices_v1.0.0_CloudWatch.6",
+			document: "AWS-Foundational-Security-Best-Practices_v1.0.0"
 		}
 	],
 	severity: "MEDIUM",
