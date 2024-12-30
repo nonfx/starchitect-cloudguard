@@ -167,5 +167,6 @@ export default {
 	],
 	severity: "MEDIUM",
 	execute: checkConsoleAuthMonitoring,
-	serviceName: "Amazon CloudWatch"
+	serviceName: "Amazon CloudWatch",
+	shortServiceName: "cloudwatch"
 } satisfies RuntimeTest;

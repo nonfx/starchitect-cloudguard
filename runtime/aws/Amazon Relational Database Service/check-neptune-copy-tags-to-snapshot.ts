@@ -81,5 +81,6 @@ export default {
 	],
 	severity: "HIGH",
 	execute: checkNeptuneCopyTagsToSnapshot,
-	serviceName: "Amazon Relational Database Service"
+	serviceName: "Amazon Relational Database Service",
+	shortServiceName: "rds"
 } satisfies RuntimeTest;

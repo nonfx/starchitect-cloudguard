@@ -12,6 +12,7 @@
     "@oclif/plugin-help": "^6.2.20",
     "@oclif/plugin-plugins": "^5.4.23",
     "@types/cli-progress": "^3.11.6",
+    "chalk": "^5.4.1",
     "cli-progress": "^3.12.0",
     "esbuild": "^0.24.2",
     "inquirer": "^12.3.0",
@@ -44,9 +45,16 @@
     "dirname": "starchitect-cloudguard",
     "commands": "./dist/cli/src/commands",
     "plugins": [
-      "@oclif/plugin-help",
-      "@oclif/plugin-plugins"
+      "@oclif/plugin-help"
     ],
+    "topics": {
+      "runtime": {
+        "description": "Run security tests against cloud runtime environments"
+      },
+      "iac": {
+        "description": "Run security tests against Infrastructure as Code (coming soon)"
+      }
+    },
     "topicSeparator": " "
   },
   "repository": "nonfx/starchitect-cloudguard",

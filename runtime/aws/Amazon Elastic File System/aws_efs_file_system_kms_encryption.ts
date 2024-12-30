@@ -75,5 +75,6 @@ export default {
 	],
 	severity: "MEDIUM",
 	execute: checkEfsEncryption,
-	serviceName: "Amazon Elastic File System"
+	serviceName: "Amazon Elastic File System",
+	shortServiceName: "efs"
 } satisfies RuntimeTest;

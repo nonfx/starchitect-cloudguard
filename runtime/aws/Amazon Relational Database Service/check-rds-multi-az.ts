@@ -90,5 +90,6 @@ export default {
 	],
 	severity: "HIGH",
 	execute: checkRdsMultiAzCompliance,
-	serviceName: "Amazon Relational Database Service"
+	serviceName: "Amazon Relational Database Service",
+	shortServiceName: "rds"
 } satisfies RuntimeTest;

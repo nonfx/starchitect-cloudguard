@@ -5,7 +5,7 @@ import {
 } from "@aws-sdk/client-ec2";
 
 import { generateSummary, printSummary } from "../../utils/string-utils.js";
-import { ComplianceStatus, type ComplianceReport } from "../../types.js";
+import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "../../types.js";
 
 function containsSensitiveData(userData: string): boolean {
 	// Common patterns for sensitive data
@@ -138,5 +138,7 @@ export default {
 		}
 	],
 	severity: "MEDIUM",
-	execute: checkEc2UserDataSecrets
-};
+	execute: checkEc2UserDataSecrets,
+	serviceName: "Amazon Elastic Compute Cloud (EC2)",
+	shortServiceName: "ec2"
+} satisfies RuntimeTest;

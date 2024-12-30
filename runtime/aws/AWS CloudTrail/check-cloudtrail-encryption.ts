@@ -75,5 +75,6 @@ export default {
 	],
 	severity: "MEDIUM",
 	execute: checkCloudTrailEncryption,
-	serviceName: "AWS CloudTrail"
+	serviceName: "AWS CloudTrail",
+	shortServiceName: "cloudtrail"
 } satisfies RuntimeTest;

@@ -3,7 +3,8 @@ import { ComplianceStatus, type RuntimeTest, type TestResult } from "../../types
 import * as cliProgress from "cli-progress";
 import PQueue from "p-queue";
 import { TestRunner } from "../test-runner/index.js";
-import { ConsoleReporter, JSONReporter } from "../reporters/index.js";
+import { ConsoleReporter } from "../reporters/console.js";
+import { JSONReporter } from "../reporters/json.js";
 
 export abstract class CloudProvider extends Command {
 	public static enableJsonFlag = true;
@@ -20,7 +21,7 @@ export abstract class CloudProvider extends Command {
 		}),
 		format: Flags.string({
 			description: "Output format",
-			options: ["json", "stdout", "html"],
+			options: ["json", "stdout"],
 			default: "stdout"
 		})
 	};
@@ -48,6 +49,8 @@ export abstract class CloudProvider extends Command {
 			cliProgress.Presets.shades_grey
 		);
 
+		let testPassed = true;
+
 		try {
 			const runner = new TestRunner();
 			const tests = await this.getTests();
@@ -74,15 +77,22 @@ export abstract class CloudProvider extends Command {
 			if (
 				results.some(r => r.status === ComplianceStatus.FAIL || r.status === ComplianceStatus.ERROR)
 			) {
-				this.exit(1);
+				testPassed = false;
 			}
 		} catch (error) {
 			progressBar.stop();
-			console.error(error);
+			this.debug(error);
+			await this.onTestCompletion(false);
 			this.error(
 				"Test execution failed. Please log an issue at https://github.com/nonfx/starchitect-cloudguard/issues/new",
 				{ exit: 1 }
 			);
+		}
+
+		await this.onTestCompletion(!testPassed);
+
+		if (!testPassed && flags.format !== "json") {
+			this.error("Some tests failed.", { exit: 1 });
 		}
 	}
 
@@ -92,4 +102,9 @@ export abstract class CloudProvider extends Command {
 	abstract getTests(): Promise<RuntimeTest[]>;
 	abstract getTestArguments(): Promise<unknown[]>;
 	abstract gatherTestArguments(): Promise<void>;
+
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	async onTestCompletion(_status: boolean): Promise<void> {
+		// do nothing
+	}
 }

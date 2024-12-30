@@ -110,5 +110,6 @@ export default {
 	],
 	severity: "MEDIUM",
 	execute: checkIamUserPolicies,
-	serviceName: "Amazon Identity and Access Management"
+	serviceName: "Amazon Identity and Access Management",
+	shortServiceName: "iam"
 } satisfies RuntimeTest;

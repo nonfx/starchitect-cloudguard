@@ -101,5 +101,6 @@ export default {
 	],
 	severity: "MEDIUM",
 	execute: checkEfsMountTargetsPublicSubnets,
-	serviceName: "Amazon Elastic File System"
+	serviceName: "Amazon Elastic File System",
+	shortServiceName: "efs"
 } satisfies RuntimeTest;

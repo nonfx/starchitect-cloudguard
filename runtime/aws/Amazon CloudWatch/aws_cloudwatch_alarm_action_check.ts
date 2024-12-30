@@ -94,5 +94,6 @@ export default {
 	],
 	severity: "MEDIUM",
 	execute: checkCloudWatchAlarmActions,
-	serviceName: "Amazon CloudWatch"
+	serviceName: "Amazon CloudWatch",
+	shortServiceName: "cloudwatch"
 } satisfies RuntimeTest;

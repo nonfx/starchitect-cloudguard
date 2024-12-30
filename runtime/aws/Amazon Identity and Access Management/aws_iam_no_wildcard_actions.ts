@@ -178,5 +178,6 @@ export default {
 	],
 	severity: "HIGH",
 	execute: checkIamWildcardActions,
-	serviceName: "Amazon Identity and Access Management"
+	serviceName: "Amazon Identity and Access Management",
+	shortServiceName: "iam"
 } satisfies RuntimeTest;

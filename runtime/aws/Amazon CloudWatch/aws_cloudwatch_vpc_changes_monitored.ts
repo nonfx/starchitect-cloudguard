@@ -169,5 +169,6 @@ export default {
 	],
 	severity: "MEDIUM",
 	execute: checkVpcChangesMonitored,
-	serviceName: "Amazon CloudWatch"
+	serviceName: "Amazon CloudWatch",
+	shortServiceName: "cloudwatch"
 } satisfies RuntimeTest;

@@ -78,5 +78,6 @@ export default {
 	],
 	severity: "HIGH",
 	execute: checkRdsBackupEnabled,
-	serviceName: "Amazon Relational Database Service"
+	serviceName: "Amazon Relational Database Service",
+	shortServiceName: "rds"
 } satisfies RuntimeTest;

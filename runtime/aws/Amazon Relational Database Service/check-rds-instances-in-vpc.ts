@@ -92,5 +92,6 @@ export default {
 	],
 	severity: "HIGH",
 	execute: checkRdsInstancesInVpc,
-	serviceName: "Amazon Relational Database Service"
+	serviceName: "Amazon Relational Database Service",
+	shortServiceName: "rds"
 } satisfies RuntimeTest;

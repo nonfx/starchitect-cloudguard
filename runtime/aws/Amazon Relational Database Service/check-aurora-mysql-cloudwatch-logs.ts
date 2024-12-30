@@ -87,5 +87,6 @@ export default {
 	],
 	severity: "HIGH",
 	execute: checkAuroraMysqlCloudWatchLogs,
-	serviceName: "Amazon Relational Database Service"
+	serviceName: "Amazon Relational Database Service",
+	shortServiceName: "rds"
 } satisfies RuntimeTest;

@@ -105,5 +105,6 @@ export default {
 	],
 	severity: "HIGH",
 	execute: checkRdsCustomAdminUsername,
-	serviceName: "Amazon Relational Database Service"
+	serviceName: "Amazon Relational Database Service",
+	shortServiceName: "rds"
 } satisfies RuntimeTest;

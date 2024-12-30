@@ -89,5 +89,6 @@ export default {
 	],
 	severity: "MEDIUM",
 	execute: checkEcsContainerInsights,
-	serviceName: "Amazon Elastic Container Registry"
+	serviceName: "Amazon Elastic Container Registry",
+	shortServiceName: "ecs"
 } satisfies RuntimeTest;

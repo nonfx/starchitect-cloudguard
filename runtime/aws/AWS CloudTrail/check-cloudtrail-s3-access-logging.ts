@@ -113,5 +113,6 @@ export default {
 	],
 	severity: "MEDIUM",
 	execute: checkCloudTrailS3AccessLogging,
-	serviceName: "AWS CloudTrail"
+	serviceName: "AWS CloudTrail",
+	shortServiceName: "cloudtrail"
 } satisfies RuntimeTest;

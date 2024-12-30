@@ -82,5 +82,6 @@ export default {
 	],
 	severity: "MEDIUM",
 	execute: checkEfsAccessPointUserIdentity,
-	serviceName: "Amazon Elastic File System"
+	serviceName: "Amazon Elastic File System",
+	shortServiceName: "efs"
 } satisfies RuntimeTest;

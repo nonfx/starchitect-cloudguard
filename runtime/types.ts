@@ -13,6 +13,7 @@ export type RuntimeTestMeta = {
 	severity: "HIGH" | "MEDIUM" | "LOW";
 	category?: string;
 	serviceName: string;
+	shortServiceName: string;
 };
 
 export type RuntimeTest = RuntimeTestMeta & {

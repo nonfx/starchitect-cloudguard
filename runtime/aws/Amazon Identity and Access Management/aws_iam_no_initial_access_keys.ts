@@ -104,5 +104,6 @@ export default {
 	],
 	severity: "MEDIUM",
 	execute: checkInitialAccessKeys,
-	serviceName: "Amazon Identity and Access Management"
+	serviceName: "Amazon Identity and Access Management",
+	shortServiceName: "iam"
 } satisfies RuntimeTest;

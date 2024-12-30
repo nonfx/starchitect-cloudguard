@@ -88,5 +88,6 @@ export default {
 	],
 	severity: "MEDIUM",
 	execute: checkEcrTagImmutability,
-	serviceName: "Amazon Elastic Container Registry"
+	serviceName: "Amazon Elastic Container Registry",
+	shortServiceName: "ecs"
 } satisfies RuntimeTest;

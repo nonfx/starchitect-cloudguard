@@ -95,5 +95,6 @@ export default {
 	],
 	severity: "MEDIUM",
 	execute: checkEfsAccessPointsRootDirectory,
-	serviceName: "Amazon Elastic File System"
+	serviceName: "Amazon Elastic File System",
+	shortServiceName: "efs"
 } satisfies RuntimeTest;

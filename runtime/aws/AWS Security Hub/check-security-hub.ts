@@ -66,5 +66,6 @@ export default {
 	],
 	severity: "MEDIUM",
 	execute: checkSecurityHubEnabled,
-	serviceName: "AWS Security Hub"
+	serviceName: "AWS Security Hub",
+	shortServiceName: "securityhub"
 } satisfies RuntimeTest;

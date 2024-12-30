@@ -89,5 +89,6 @@ export default {
 	],
 	severity: "MEDIUM",
 	execute: checkS3BucketLogging,
-	serviceName: "Amazon Simple Storage Service (Amazon S3)"
+	serviceName: "Amazon Simple Storage Service (Amazon S3)",
+	shortServiceName: "s3"
 } satisfies RuntimeTest;

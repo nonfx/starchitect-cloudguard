@@ -75,5 +75,6 @@ export default {
 	],
 	severity: "HIGH",
 	execute: checkRdsPublicAccess,
-	serviceName: "Amazon Relational Database Service"
+	serviceName: "Amazon Relational Database Service",
+	shortServiceName: "rds"
 } satisfies RuntimeTest;

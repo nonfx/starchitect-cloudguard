@@ -115,5 +115,6 @@ export default {
 	],
 	severity: "MEDIUM",
 	execute: checkKmsPublicAccess,
-	serviceName: "AWS Key Management Service"
+	serviceName: "AWS Key Management Service",
+	shortServiceName: "kms"
 } satisfies RuntimeTest;

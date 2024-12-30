@@ -114,5 +114,6 @@ export default {
 	],
 	severity: "HIGH",
 	execute: checkRdsIamAuthCompliance,
-	serviceName: "Amazon Relational Database Service"
+	serviceName: "Amazon Relational Database Service",
+	shortServiceName: "rds"
 } satisfies RuntimeTest;
