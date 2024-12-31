@@ -49,4 +49,7 @@ oclif.manifest.json
 .cache/
 cli/tmp
 
+# Oclif doesn't support monorepos
+cli/package-lock.json
+
 tsconfig.tsbuildinfo

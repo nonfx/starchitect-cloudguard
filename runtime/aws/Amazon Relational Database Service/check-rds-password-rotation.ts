@@ -140,7 +140,7 @@ async function checkPasswordRotationCompliance(
 	return results;
 }
 
-if (require.main === module) {
+if (import.meta.main) {
 	const region = process.env.AWS_REGION;
 	const results = await checkPasswordRotationCompliance(region);
 	printSummary(generateSummary(results));

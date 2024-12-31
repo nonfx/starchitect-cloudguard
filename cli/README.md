@@ -34,6 +34,7 @@ USAGE
 * [`starkit help [COMMAND]`](#starkit-help-command)
 * [`starkit iac`](#starkit-iac)
 * [`starkit runtime aws`](#starkit-runtime-aws)
+* [`starkit update [CHANNEL]`](#starkit-update-channel)
 
 ## `starkit help [COMMAND]`
 
@@ -104,4 +105,42 @@ DESCRIPTION
 ```
 
 _See code: [src/commands/runtime/aws.ts](https://github.com/nonfx/starchitect-cloudguard/blob/v1.0.0/src/commands/runtime/aws.ts)_
+
+## `starkit update [CHANNEL]`
+
+update the starkit CLI
+
+```
+USAGE
+  $ starkit update [CHANNEL] [--force |  | [-a | -v <value> | -i]] [-b ]
+
+FLAGS
+  -a, --available        See available versions.
+  -b, --verbose          Show more details about the available versions.
+  -i, --interactive      Interactively select version to install. This is ignored if a channel is provided.
+  -v, --version=<value>  Install a specific version.
+      --force            Force a re-download of the requested version.
+
+DESCRIPTION
+  update the starkit CLI
+
+EXAMPLES
+  Update to the stable channel:
+
+    $ starkit update stable
+
+  Update to a specific version:
+
+    $ starkit update --version 1.0.0
+
+  Interactively select version:
+
+    $ starkit update --interactive
+
+  See available versions:
+
+    $ starkit update --available
+```
+
+_See code: [@oclif/plugin-update](https://github.com/oclif/plugin-update/blob/v4.6.21/src/commands/update.ts)_
 <!-- commandsstop -->

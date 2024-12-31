@@ -90,7 +90,7 @@ async function checkAccessKeyRotation(region: string = "us-east-1"): Promise<Com
 	return results;
 }
 
-if (require.main === module) {
+if (import.meta.main) {
 	const region = process.env.AWS_REGION;
 	const results = await checkAccessKeyRotation(region);
 	printSummary(generateSummary(results));

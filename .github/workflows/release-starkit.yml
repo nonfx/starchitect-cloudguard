@@ -1,0 +1,185 @@
+name: Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version number (e.g., 1.0.0)"
+        required: true
+        type: string
+
+defaults:
+  run:
+    working-directory: cli
+
+env:
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  AWS_REGION: ${{ vars.AWS_REGION }}
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "23.x"
+          registry-url: "https://registry.npmjs.org"
+
+      - name: Install dependencies
+        run: cd .. && npm ci && cd cli && cp ../package-lock.json .
+
+      - name: Update version
+        run: |
+          npm version ${{ github.event.inputs.version }} --no-git-tag-version
+          npm run prepublishOnly
+
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add .
+
+          git commit -m "chore: bump version to ${{ github.event.inputs.version }} and update READNE and scripts"
+          git tag "v${{ github.event.inputs.version }}"
+          git push
+          git push --tags
+
+      - name: Publish to npm
+        run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+  build-packages:
+    needs: release
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-latest
+            target: deb
+            path: "dist/*.deb"
+          - os: macos-latest
+            target: macos
+            path: "dist/macos/*.pkg"
+
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: v${{ github.event.inputs.version }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "23.x"
+
+      - name: Install dependencies
+        run: cd .. && npm ci && cd cli && cp ../package-lock.json .
+
+      - name: Build starkit
+        run: npm run prepublishOnly
+
+      - name: Build OCLIF package
+        run: npx -y oclif pack ${{ matrix.target }}
+
+      - name: Upload package artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.target }}-package
+          path: ${{ matrix.path }}
+
+  build-tarballs:
+    needs: release
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: v${{ github.event.inputs.version }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "23.x"
+
+      - name: Install dependencies
+        run: cd .. && npm ci && cd cli && cp ../package-lock.json .
+
+      - name: Build starkit
+        run: npm run prepublishOnly
+
+      - name: Build OCLIF tarballs
+        run: npx -y oclif pack tarballs --parallel --targets=linux-x64,linux-arm64,win32-x64,darwin-x64,darwin-arm64
+
+      - name: Push OCLIF tarballs to S3
+        run: npx -y oclif upload tarballs --targets=linux-x64,linux-arm64,win32-x64,darwin-x64,darwin-arm64
+
+  build-windows:
+    needs: release
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: v${{ github.event.inputs.version }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "23.x"
+
+      - name: Install dependencies
+        run: cd .. && npm ci && cd cli && cp ../package-lock.json .
+
+      - name: Build starkit
+        run: npm run prepublishOnly
+
+      - name: Install NSIS and 7zip
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y nsis p7zip
+
+      - name: Build Windows installer
+        run: npx -y oclif pack win
+
+      - name: Upload Windows artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-package
+          path: dist/*.exe
+
+  create-release:
+    needs: [build-packages, build-windows]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: v${{ github.event.inputs.version }}
+
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: v${{ github.event.inputs.version }}
+          name: Release v${{ github.event.inputs.version }}
+          draft: false
+          prerelease: false
+          files: artifacts/**/*
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  # @todo - @pranaySinghDev - Uncomment this block if you want to update Homebrew formula
+  # update-homebrew:
+  #   needs: create-release
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Update Homebrew formula
+  #       uses: dawidd6/action-homebrew-bump-formula@v3
+  #       with:
+  #         token: ${{ secrets.HOMEBREW_TAP_TOKEN }}
+  #         formula: your-cli-name # Replace with your CLI's formula name

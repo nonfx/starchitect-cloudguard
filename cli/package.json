@@ -33,6 +33,7 @@
     "@oclif/core": "^4.2.0",
     "@oclif/plugin-help": "^6.2.20",
     "@oclif/plugin-plugins": "^5.4.23",
+    "@oclif/plugin-update": "^4.6.21",
     "@types/cli-progress": "^3.11.6",
     "chalk": "^5.4.1",
     "cli-progress": "^3.12.0",
@@ -44,8 +45,8 @@
   "devDependencies": {
     "@oclif/test": "^4.1.4",
     "oclif": "^4.17.4",
-    "typescript": "^5.7.2",
-    "shx": "^0.3.4"
+    "shx": "^0.3.4",
+    "typescript": "^5.7.2"
   },
   "engines": {
     "node": ">=23.5.0"
@@ -72,7 +73,8 @@
     "dirname": "starkit",
     "commands": "./dist/cli/src/commands",
     "plugins": [
-      "@oclif/plugin-help"
+      "@oclif/plugin-help",
+      "@oclif/plugin-update"
     ],
     "topics": {
       "runtime": {
@@ -82,7 +84,16 @@
         "description": "Run security tests against Infrastructure as Code (coming soon)"
       }
     },
-    "topicSeparator": " "
+    "topicSeparator": " ",
+    "macos": {
+      "identifier": "com.nonfx.starkit"
+    },
+    "update": {
+      "s3": {
+        "host": "https://s3.console.aws.amazon.com/",
+        "bucket": "nonfx-public-access"
+      }
+    }
   },
   "repository": "https://github.com/nonfx/starchitect-cloudguard/tree/main/cli",
   "scripts": {
