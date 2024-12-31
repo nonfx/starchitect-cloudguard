@@ -85,8 +85,8 @@ async function checkEc2InstanceAge(region: string = "us-east-1"): Promise<Compli
 	return results;
 }
 
-if (require.main === module) {
-	const region = process.env.AWS_REGION;
+if (import.meta.main) {
+	const region = process.env.AWS_REGION ?? "ap-southeast-1";
 	const results = await checkEc2InstanceAge(region);
 	printSummary(generateSummary(results));
 }
