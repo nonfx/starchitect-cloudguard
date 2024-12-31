@@ -1,11 +1,11 @@
 [![Starchitect](./assets/starchitect.png)](https://starchitect.ai)
-[Join our community!](https://discord.gg/r48ZahhA)
+[Join our community!](https://discord.gg/kDTtfpgFFq)
 # Starchitect-CloudGuard
 
 
 [![Regula Tests](https://github.com/nonfx/starchitect-cloudguard/actions/workflows/regula-test.yml/badge.svg)](https://github.com/nonfx/starchitect-cloudguard/actions/workflows/regula-test.yml) 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE) 
-[![Discord](https://img.shields.io/discord/1306489507499216897)](https://discord.gg/r48ZahhA)
+[![Discord](https://img.shields.io/discord/1306489507499216897)](https://discord.gg/kDTtfpgFFq)
 
 ---
 
@@ -40,4 +40,4 @@ We welcome contributions from the community! To contribute to Starchitect-CloudG
 
 For more details, refer to the [Contributing Guide](CONTRIBUTING.md).
 
-The Starchitect-CloudGuard community is vibrant and collaborative. Join us on our [Discord server](https://discord.gg/r48ZahhA) to connect, ask questions, share insights, and contribute to the project.
+The Starchitect-CloudGuard community is vibrant and collaborative. Join us on our [Discord server](https://discord.gg/kDTtfpgFFq) to connect, ask questions, share insights, and contribute to the project.
