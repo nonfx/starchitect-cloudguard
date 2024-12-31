@@ -84,7 +84,7 @@ ${chalk.cyan.bold("2. Using AWS CLI (Recommended)")}
 
 ${chalk.cyan.bold("Need Help?")}
 • Create access keys: ${chalk.blue.underline("https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html")}
-• AWS CLI setup guide: ${chalk.blue.underline("https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-quickstart.html")}
+• AWS CLI setup guide: ${chalk.blue.underline("https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-configure.html")}
 `;
 
 		this.log(message);
