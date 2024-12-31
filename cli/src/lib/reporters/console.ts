@@ -29,7 +29,7 @@ export class ConsoleReporter implements Reporter {
 		}
 
 		// Errored Tests Section
-		if (groupedResults.failed.length > 0) {
+		if (groupedResults.error.length > 0) {
 			console.log("\n" + chalk.red.bold("Errored Tests"));
 			console.log(chalk.gray("-".repeat(30)));
 			this.printResultGroup(groupedResults.error);
