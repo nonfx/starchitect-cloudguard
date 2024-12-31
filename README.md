@@ -9,9 +9,69 @@
 
 ---
 
-Starchitect-CloudGuard is an open-source repository that writes tests for cloud infrastructure across various formats, including Terraform, Pulumi, Bicep, and CloudFormation. Cutting-edge AI-powered test-writing agents craft these tests with a well-defined understanding of cloud security. Each test undergoes meticulous human review by the experienced team at [The Non-Functionional Co.](https://nonfx.com), ensuring high-quality and reliable compliance validation.
+Starchitect-CloudGuard is an open-source repository that provides security tests for cloud infrastructure in two ways:
 
-This framework is designed to be flexible and extensible, allowing users to write and manage tests in their preferred formats. While Terraform is the primary focus, support for additional use cases and formats is constantly growing. If you have specific requirements, open a GitHub issue; our team will be happy to assist.
+1. Runtime Tests (`/runtime`): Direct security checks against your live cloud accounts (currently supporting AWS)
+2. Infrastructure as Code Tests (`/terraform`): Static analysis of your infrastructure-as-code files in Terraform format, supporting both AWS and GCP security benchmarks
+
+Cutting-edge AI-powered test-writing agents craft these tests with a well-defined understanding of cloud security. Each test undergoes meticulous human review by the experienced team at [The Non-Functionional Co.](https://nonfx.com), ensuring high-quality and reliable compliance validation.
+
+This framework is designed to be flexible and extensible. While we currently focus on AWS runtime checks and Terraform static analysis, support for additional cloud providers (like GCP, Azure) and IaC formats (like Pulumi, Bicep, CloudFormation) is constantly growing. If you have specific requirements, open a GitHub issue; our team will be happy to assist.
+
+## Installation
+
+You can install the Starchitect CLI in several ways:
+
+### Using Homebrew
+
+```bash
+brew tap nonfx/starkit
+brew install starkit
+```
+
+### Using npm
+
+```bash
+npm install starkit
+```
+
+For additional installation platforms and options, check our [releases section](https://github.com/nonfx/starchitect-cloudguard/releases).
+
+## Running Benchmark Tests
+
+You can run all benchmark tests on your live AWS environment using our CLI:
+
+```bash
+starkit runtime aws
+```
+
+### AWS Credentials Configuration
+
+Before running the tests, you'll need to configure your AWS credentials. Here are two ways to do this:
+
+1. Using Environment Variables
+   Export these variables in your terminal:
+
+   ```bash
+   export AWS_ACCESS_KEY_ID=<your-access-key>
+   export AWS_SECRET_ACCESS_KEY=<your-secret-key>
+   ```
+
+2. Using AWS CLI (Recommended)
+   First, install the AWS CLI from: https://aws.amazon.com/cli/
+   Then, run:
+   ```bash
+   aws configure
+   AWS Access Key ID: [your-access-key]
+   AWS Secret Access Key: [your-secret-key]
+   Default region name: [your-region]
+   Default output format: [json]
+   ```
+
+Ref:
+
+- Create access keys: https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html
+- AWS CLI setup guide: https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-configure.html
 
 ## Security Benchmark Coverage
 
