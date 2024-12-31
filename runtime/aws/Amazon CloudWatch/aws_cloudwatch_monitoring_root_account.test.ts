@@ -130,6 +130,63 @@ describe("checkRootAccountMonitoring", () => {
 				"No alarms configured for root account activity metric"
 			);
 		});
+
+		it("should return FAIL when CloudTrail logging is disabled", async () => {
+			mockCloudTrailClient.on(DescribeTrailsCommand).resolves({
+				trailList: [
+					{
+						Name: "test-trail",
+						TrailARN: "arn:aws:cloudtrail:us-east-1:123456789012:trail/test-trail",
+						CloudWatchLogsLogGroupArn:
+							"arn:aws:logs:us-east-1:123456789012:log-group:test-log-group"
+					}
+				]
+			});
+
+			mockCloudTrailClient.on(GetTrailStatusCommand).resolves({
+				IsLogging: false
+			});
+
+			const result = await checkRootAccountMonitoring.execute("us-east-1");
+			expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
+			expect(result.checks[0].message).toBe("CloudTrail logging is not enabled");
+		});
+
+		it("should return FAIL when metric filter pattern doesn't match", async () => {
+			mockCloudTrailClient.on(DescribeTrailsCommand).resolves({
+				trailList: [
+					{
+						Name: "test-trail",
+						TrailARN: "arn:aws:cloudtrail:test-trail",
+						CloudWatchLogsLogGroupArn: "arn:aws:logs:us-east-1:123456789012:log-group:test-group:*",
+						CloudWatchLogsRoleArn: "arn:aws:iam::123456789012:role/CloudTrailRole"
+					}
+				]
+			});
+
+			mockCloudTrailClient.on(GetTrailStatusCommand).resolves({
+				IsLogging: true
+			});
+
+			mockCloudWatchLogsClient.on(DescribeMetricFiltersCommand).resolves({
+				metricFilters: [
+					{
+						filterPattern: "wrong pattern",
+						metricTransformations: [
+							{
+								metricName: "RootAccountUsage"
+							}
+						]
+					}
+				]
+			});
+
+			const result = await checkRootAccountMonitoring.execute("us-east-1");
+			expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
+			expect(result.checks[0].message).toContain(
+				"does not have required root account activity metric filter"
+			);
+		});
 	});
 
 	describe("Error Handling", () => {
