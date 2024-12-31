@@ -157,5 +157,7 @@ export default {
 		}
 	],
 	severity: "HIGH",
-	execute: checkPasswordRotationCompliance
+	execute: checkPasswordRotationCompliance,
+	serviceName: "Amazon Relational Database Service",
+	shortServiceName: "rds"
 } satisfies RuntimeTest;

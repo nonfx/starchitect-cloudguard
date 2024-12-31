@@ -127,5 +127,7 @@ export default {
 		}
 	],
 	severity: "MEDIUM",
-	execute: checkStoppedInstances
+	execute: checkStoppedInstances,
+	serviceName: "Amazon Elastic Compute Cloud (EC2)",
+	shortServiceName: "ec2"
 } satisfies RuntimeTest;

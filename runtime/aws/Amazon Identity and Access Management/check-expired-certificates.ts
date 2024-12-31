@@ -78,5 +78,7 @@ export default {
 		}
 	],
 	severity: "MEDIUM",
-	execute: checkExpiredCertificates
+	execute: checkExpiredCertificates,
+	serviceName: "Amazon Identity and Access Management (IAM)",
+	shortServiceName: "iam"
 } satisfies RuntimeTest;

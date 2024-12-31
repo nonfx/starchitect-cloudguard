@@ -129,5 +129,7 @@ export default {
 		}
 	],
 	severity: "HIGH",
-	execute: checkIamUsersMfaCompliance
+	execute: checkIamUsersMfaCompliance,
+	serviceName: "Amazon Identity and Access Management",
+	shortServiceName: "iam"
 } satisfies RuntimeTest;

@@ -136,5 +136,7 @@ export default {
 		}
 	],
 	severity: "HIGH",
-	execute: checkCloudTrailBucketAccess
+	execute: checkCloudTrailBucketAccess,
+	serviceName: "Amazon CloudTrail",
+	shortServiceName: "cloudtrail"
 } satisfies RuntimeTest;

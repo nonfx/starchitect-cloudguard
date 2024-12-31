@@ -96,5 +96,7 @@ export default {
 		}
 	],
 	severity: "MEDIUM",
-	execute: checkAccessKeyRotation
+	execute: checkAccessKeyRotation,
+	serviceName: "Amazon Identity and Access Management",
+	shortServiceName: "iam"
 } satisfies RuntimeTest;

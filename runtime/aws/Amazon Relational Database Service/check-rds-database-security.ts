@@ -122,5 +122,7 @@ export default {
 		}
 	],
 	severity: "HIGH",
-	execute: checkDatabaseSecurityConfiguration
+	execute: checkDatabaseSecurityConfiguration,
+	serviceName: "Amazon Relational Database Service (RDS)",
+	shortServiceName: "rds"
 } satisfies RuntimeTest;

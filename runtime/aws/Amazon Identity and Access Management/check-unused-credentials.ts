@@ -154,5 +154,7 @@ export default {
 		}
 	],
 	severity: "MEDIUM",
-	execute: checkUnusedCredentials
+	execute: checkUnusedCredentials,
+	serviceName: "Amazon Identity and Access Management",
+	shortServiceName: "iam"
 } satisfies RuntimeTest;

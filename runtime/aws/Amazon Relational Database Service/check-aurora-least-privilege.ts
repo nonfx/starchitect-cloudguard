@@ -194,5 +194,7 @@ export default {
 		}
 	],
 	severity: "HIGH",
-	execute: checkAuroraLeastPrivilegeCompliance
+	execute: checkAuroraLeastPrivilegeCompliance,
+	serviceName: "Amazon Relational Database Service (RDS)",
+	shortServiceName: "rds"
 } satisfies RuntimeTest;

@@ -102,5 +102,7 @@ export default {
 		"Regularly rotating your Aurora Access Keys is critical to access management, contributing to maintaining system security",
 	severity: "HIGH",
 	controls: [],
-	execute: checkAccessKeyRotation
+	execute: checkAccessKeyRotation,
+	serviceName: "Amazon Relational Database Service",
+	shortServiceName: "rds"
 } satisfies RuntimeTest;

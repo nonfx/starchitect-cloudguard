@@ -67,5 +67,7 @@ export default {
 		}
 	],
 	severity: "LOW",
-	execute: checkUnusedENIs
+	execute: checkUnusedENIs,
+	serviceName: "Amazon Elastic Compute Cloud (EC2)",
+	shortServiceName: "ec2"
 } satisfies RuntimeTest;
