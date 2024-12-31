@@ -6,6 +6,7 @@ import { Flags } from "@oclif/core";
 import { CloudProvider } from "../../lib/cloud/base.js";
 import type { RuntimeTest } from "../../types.js";
 import { generatePrefilledCommand } from "../../lib/utils.js";
+import chalk from "chalk";
 
 const allServices = Object.values(
 	(allTests as RuntimeTest[]).reduce(
@@ -45,17 +46,48 @@ export class AWSProvider extends CloudProvider {
 			const sts = new STSClient();
 			const identity = await sts.send(new GetCallerIdentityCommand({}));
 
-			// @todo - Provide a more helpful message on how to ensure AWS credentials are set up
-			// Either using env variables, or profiles or aws sso CLI
-			// Use inquirer to give the users an option to choose then restart the CLI
 			if (!identity.UserId) {
-				this.error("AWS credentials not found or invalid", { exit: 1 });
+				this.showCredentialsHelp();
+				this.exit(1);
 			}
 			return true;
 		} catch (error) {
 			this.debug(error);
-			this.error("AWS credentials not found or invalid", { exit: 1 });
+			this.showCredentialsHelp();
+			this.exit(1);
 		}
+	}
+
+	private showCredentialsHelp(): void {
+		const message = `
+${chalk.red.bold("✗ AWS Credentials Not Found")}
+${chalk.gray("=")}${chalk.gray("=".repeat(40))}
+
+${chalk.yellow("CloudGuard needs valid AWS credentials to run security tests.")}
+Here are two ways to configure your AWS credentials:
+
+${chalk.cyan.bold("1. Using Environment Variables")}
+   Export these variables in your terminal:
+
+   ${chalk.gray("export")} ${chalk.green("AWS_ACCESS_KEY_ID")}=${chalk.yellow("<your-access-key>")}
+   ${chalk.gray("export")} ${chalk.green("AWS_SECRET_ACCESS_KEY")}=${chalk.yellow("<your-secret-key>")}
+
+${chalk.cyan.bold("2. Using AWS CLI (Recommended)")}
+   First, install the AWS CLI from: ${chalk.blue.underline("https://aws.amazon.com/cli/")}
+   Then, run:
+
+   ${chalk.gray("$")} ${chalk.white("aws configure")}
+   ${chalk.dim("AWS Access Key ID:")} ${chalk.yellow("[your-access-key]")}
+   ${chalk.dim("AWS Secret Access Key:")} ${chalk.yellow("[your-secret-key]")}
+   ${chalk.dim("Default region name:")} ${chalk.yellow("[your-region]")}
+   ${chalk.dim("Default output format:")} ${chalk.yellow("[json]")}
+
+${chalk.cyan.bold("Need Help?")}
+• Create access keys: ${chalk.blue.underline("https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html")}
+• AWS CLI setup guide: ${chalk.blue.underline("https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-quickstart.html")}
+`;
+
+		this.log(message);
 	}
 
 	async validateCredentials(): Promise<boolean> {
