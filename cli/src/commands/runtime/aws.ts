@@ -157,12 +157,16 @@ ${chalk.cyan.bold("Need Help?")}
 						message: "Select services:",
 						choices: allServices.map(service => ({
 							value: service.name,
-							checked: true
+							checked: false
 						}))
 					}
 				]);
 
 				const selectedServices = userSelectedServices.value as string[];
+
+				if (selectedServices.length === 0) {
+					this.error("No services selected", { exit: 1 });
+				}
 
 				this.services = allServices
 					.filter(service => selectedServices.includes(service.name))
