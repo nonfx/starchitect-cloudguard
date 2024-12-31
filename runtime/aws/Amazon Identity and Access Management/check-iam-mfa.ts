@@ -111,8 +111,8 @@ async function checkIamUsersMfaCompliance(region: string = "us-east-1"): Promise
 	return results;
 }
 
-if (require.main === module) {
-	const region = process.env.AWS_REGION;
+if (import.meta.main) {
+	const region = process.env.AWS_REGION ?? "ap-southeast-1";
 	const results = await checkIamUsersMfaCompliance(region);
 	printSummary(generateSummary(results));
 }
