@@ -1,5 +1,6 @@
 {
   "name": "@nonfx/starchitect-cloudguard",
+  "private": true,
   "type": "module",
   "scripts": {
     "build": "tsc -b --incremental",
@@ -34,7 +35,9 @@
     "@aws-sdk/client-s3-control": "^3.716.0",
     "@aws-sdk/client-securityhub": "^3.719.0",
     "@aws-sdk/client-sts": "^3.716.0",
-    "@aws-sdk/credential-providers": "^3.716.0",
+    "@aws-sdk/credential-providers": "^3.716.0"
+  },
+  "devDependencies": {
     "@types/bun": "^1.1.14",
     "@types/node": "^22",
     "aws-sdk-client-mock": "^4.1.0",
@@ -42,10 +45,7 @@
     "eslint-config-prettier": "^9.1.0",
     "husky": "^9.1.7",
     "lint-staged": "^15.2.11",
-    "shx": "^0.3.4",
-    "typescript-eslint": "^8.18.2"
-  },
-  "devDependencies": {
+    "typescript-eslint": "^8.18.2",
     "prettier": "^3.4.2"
   },
   "workspaces": [

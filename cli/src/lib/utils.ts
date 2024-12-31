@@ -12,7 +12,7 @@ export function generatePrefilledCommand(
 		return `--${flagName}=${flagValue}`;
 	});
 
-	const command = `starchitect-cloudguard ${baseCommandName} ${flagStrings.join(" ")}`;
+	const command = `starkit ${baseCommandName} ${flagStrings.join(" ")}`;
 
 	if (process.env.CI) {
 		return command;
