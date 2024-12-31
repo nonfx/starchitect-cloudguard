@@ -1,5 +1,5 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-nocheck
+//@ts-nocheck
 import { EC2Client, DescribeInstancesCommand } from "@aws-sdk/client-ec2";
 import { mockClient } from "aws-sdk-client-mock";
 import { ComplianceStatus } from "../../types.js";
@@ -66,7 +66,9 @@ describe("checkStoppedInstances", () => {
 
 			const result = await checkStoppedInstances.execute();
 			expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
-			expect(result.checks[0].message).toContain("Instance has been stopped for more than 90 days");
+			expect(result.checks[0].message).toBe(
+				"Instance has been stopped for 100 days (maximum allowed: 90 days)"
+			);
 		});
 
 		it("should handle multiple instances with mixed compliance", async () => {
@@ -110,7 +112,6 @@ describe("checkStoppedInstances", () => {
 						Instances: [
 							{
 								InstanceId: "i-incomplete"
-								// Missing StateTransitionReason
 							}
 						]
 					}
@@ -119,7 +120,7 @@ describe("checkStoppedInstances", () => {
 
 			const result = await checkStoppedInstances.execute();
 			expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
-			expect(result.checks[0].message).toBe("Instance missing required information");
+			expect(result.checks[0].message).toBe("Instance missing state transition information");
 		});
 
 		it("should handle invalid state transition reason format", async () => {

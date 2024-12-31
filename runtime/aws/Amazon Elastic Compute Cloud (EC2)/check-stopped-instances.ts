@@ -4,6 +4,14 @@ import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "../..
 
 const NINETY_DAYS_MS = 90 * 24 * 60 * 60 * 1000;
 
+function parseStopTime(stateTransitionReason: string): Date | null {
+	const stopTimeMatch = stateTransitionReason.match(/\((.*?)\)/);
+	if (!stopTimeMatch || !stopTimeMatch[1]) return null;
+
+	const parsedDate = new Date(stopTimeMatch[1]);
+	return isNaN(parsedDate.getTime()) ? null : parsedDate;
+}
+
 async function checkStoppedInstances(region: string = "us-east-1"): Promise<ComplianceReport> {
 	const client = new EC2Client({ region });
 	const results: ComplianceReport = {
@@ -27,7 +35,7 @@ async function checkStoppedInstances(region: string = "us-east-1"): Promise<Comp
 
 			const response = await client.send(command);
 
-			if (!response.Reservations || response.Reservations.length === 0) {
+			if (!response.Reservations?.length) {
 				if (!instanceFound) {
 					results.checks = [
 						{
@@ -46,37 +54,42 @@ async function checkStoppedInstances(region: string = "us-east-1"): Promise<Comp
 
 				for (const instance of reservation.Instances) {
 					instanceFound = true;
-					if (!instance.InstanceId || !instance.StateTransitionReason) {
+					const instanceId = instance.InstanceId || "Unknown Instance";
+
+					if (!instance.StateTransitionReason) {
 						results.checks.push({
-							resourceName: instance.InstanceId || "Unknown Instance",
+							resourceName: instanceId,
 							status: ComplianceStatus.ERROR,
-							message: "Instance missing required information"
+							message: "Instance missing state transition information"
 						});
 						continue;
 					}
 
-					// Extract stop time from StateTransitionReason
-					const stopTimeMatch = instance.StateTransitionReason.match(/\((.*?)\)/);
-					if (!stopTimeMatch) {
+					const stopTime = parseStopTime(instance.StateTransitionReason);
+					if (!stopTime) {
 						results.checks.push({
-							resourceName: instance.InstanceId,
+							resourceName: instanceId,
 							status: ComplianceStatus.ERROR,
 							message: "Unable to determine instance stop time"
 						});
 						continue;
 					}
 
-					const stopTime = new Date(stopTimeMatch[1]).getTime();
 					const currentTime = new Date().getTime();
-					const stoppedDuration = currentTime - stopTime;
+					const stoppedDuration = currentTime - stopTime.getTime();
+					const stoppedDays = Math.floor(stoppedDuration / (24 * 60 * 60 * 1000));
 
 					results.checks.push({
-						resourceName: instance.InstanceId,
+						resourceName: instanceId,
+						resourceArn:
+							instanceId !== "Unknown Instance"
+								? `arn:aws:ec2:${region}:${process.env.AWS_ACCOUNT_ID || ""}:instance/${instanceId}`
+								: undefined,
 						status:
 							stoppedDuration > NINETY_DAYS_MS ? ComplianceStatus.FAIL : ComplianceStatus.PASS,
 						message:
 							stoppedDuration > NINETY_DAYS_MS
-								? `Instance has been stopped for more than 90 days (${Math.floor(stoppedDuration / (24 * 60 * 60 * 1000))} days)`
+								? `Instance has been stopped for ${stoppedDays} days (maximum allowed: 90 days)`
 								: undefined
 					});
 				}
@@ -92,14 +105,13 @@ async function checkStoppedInstances(region: string = "us-east-1"): Promise<Comp
 				message: `Error checking EC2 instances: ${error instanceof Error ? error.message : String(error)}`
 			}
 		];
-		return results;
 	}
 
 	return results;
 }
 
-if (require.main === module) {
-	const region = process.env.AWS_REGION;
+if (import.meta.main) {
+	const region = process.env.AWS_REGION ?? "ap-southeast-1";
 	const results = await checkStoppedInstances(region);
 	printSummary(generateSummary(results));
 }
