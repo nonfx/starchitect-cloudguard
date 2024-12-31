@@ -141,7 +141,7 @@ async function checkPasswordRotationCompliance(
 }
 
 if (import.meta.main) {
-	const region = process.env.AWS_REGION;
+	const region = process.env.AWS_REGION ?? "ap-southeast-1";
 	const results = await checkPasswordRotationCompliance(region);
 	printSummary(generateSummary(results));
 }

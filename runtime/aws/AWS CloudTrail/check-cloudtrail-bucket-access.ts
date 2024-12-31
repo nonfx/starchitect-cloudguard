@@ -120,7 +120,7 @@ async function checkCloudTrailBucketAccess(
 }
 
 if (import.meta.main) {
-	const region = process.env.AWS_REGION;
+	const region = process.env.AWS_REGION ?? "ap-southeast-1";
 	const results = await checkCloudTrailBucketAccess(region);
 	printSummary(generateSummary(results));
 }

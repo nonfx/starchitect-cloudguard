@@ -106,7 +106,7 @@ async function checkDatabaseSecurityConfiguration(
 }
 
 if (import.meta.main) {
-	const region = process.env.AWS_REGION;
+	const region = process.env.AWS_REGION ?? "ap-southeast-1";
 	const results = await checkDatabaseSecurityConfiguration(region);
 	printSummary(generateSummary(results));
 }

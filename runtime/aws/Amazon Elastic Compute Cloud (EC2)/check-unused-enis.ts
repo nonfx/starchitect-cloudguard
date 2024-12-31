@@ -51,7 +51,7 @@ async function checkUnusedENIs(region: string = "us-east-1"): Promise<Compliance
 }
 
 if (import.meta.main) {
-	const region = process.env.AWS_REGION;
+	const region = process.env.AWS_REGION ?? "ap-southeast-1";
 	const results = await checkUnusedENIs(region);
 	printSummary(generateSummary(results));
 }

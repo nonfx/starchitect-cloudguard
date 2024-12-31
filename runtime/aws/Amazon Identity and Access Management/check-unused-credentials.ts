@@ -138,7 +138,7 @@ async function checkUnusedCredentials(region: string = "us-east-1"): Promise<Com
 }
 
 if (import.meta.main) {
-	const region = process.env.AWS_REGION;
+	const region = process.env.AWS_REGION ?? "ap-southeast-1";
 	const results = await checkUnusedCredentials(region);
 	printSummary(generateSummary(results));
 }
