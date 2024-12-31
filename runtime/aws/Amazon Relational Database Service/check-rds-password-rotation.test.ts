@@ -144,7 +144,7 @@ describe("checkPasswordRotation", () => {
 			});
 
 			const result = await checkPasswordRotation.execute("us-east-1");
-			expect(result.checks.find(c => c.status === ComplianceStatus.INFO)).toBeTruthy();
+			expect(result.checks.find(c => c.status === ComplianceStatus.PASS)).toBeTruthy();
 		});
 	});
 
