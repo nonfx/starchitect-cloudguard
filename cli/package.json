@@ -1,0 +1,108 @@
+{
+  "name": "starkit",
+  "description": "Starkit is a CLI to run tests against your Cloud accounts or your IAC files.",
+  "version": "1.0.0",
+  "author": "The Non-Functional Company",
+  "bin": {
+    "starkit": "./bin/run.js"
+  },
+  "bugs": "https://github.com/nonfx/starchitect-cloudguard/issues",
+  "dependencies": {
+    "@aws-sdk/client-accessanalyzer": "^3.716.0",
+    "@aws-sdk/client-auto-scaling": "^3.716.0",
+    "@aws-sdk/client-cloudtrail": "^3.716.0",
+    "@aws-sdk/client-cloudwatch": "^3.716.0",
+    "@aws-sdk/client-cloudwatch-logs": "^3.716.0",
+    "@aws-sdk/client-config-service": "^3.716.0",
+    "@aws-sdk/client-dynamodb": "^3.716.0",
+    "@aws-sdk/client-ec2": "^3.716.0",
+    "@aws-sdk/client-ecr": "^3.718.0",
+    "@aws-sdk/client-ecs": "^3.716.0",
+    "@aws-sdk/client-efs": "^3.716.0",
+    "@aws-sdk/client-iam": "^3.716.0",
+    "@aws-sdk/client-kms": "^3.716.0",
+    "@aws-sdk/client-macie2": "^3.717.0",
+    "@aws-sdk/client-neptune": "^3.716.0",
+    "@aws-sdk/client-organizations": "^3.716.0",
+    "@aws-sdk/client-rds": "^3.716.0",
+    "@aws-sdk/client-s3": "^3.717.0",
+    "@aws-sdk/client-s3-control": "^3.716.0",
+    "@aws-sdk/client-securityhub": "^3.719.0",
+    "@aws-sdk/client-sts": "^3.716.0",
+    "@aws-sdk/credential-providers": "^3.716.0",
+    "@oclif/core": "^4.2.0",
+    "@oclif/plugin-help": "^6.2.20",
+    "@oclif/plugin-plugins": "^5.4.23",
+    "@oclif/plugin-update": "^4.6.21",
+    "@types/cli-progress": "^3.11.6",
+    "chalk": "^5.4.1",
+    "cli-progress": "^3.12.0",
+    "inquirer": "^12.3.0",
+    "p-queue": "^8.0.1",
+    "pino": "^9.6.0",
+    "pino-pretty": "^13.0.0"
+  },
+  "devDependencies": {
+    "@oclif/test": "^4.1.4",
+    "oclif": "^4.17.4",
+    "shx": "^0.3.4",
+    "typescript": "^5.7.2"
+  },
+  "engines": {
+    "node": ">=23.5.0"
+  },
+  "files": [
+    "/bin",
+    "/dist",
+    "/oclif.manifest.json",
+    "/README.md"
+  ],
+  "homepage": "https://github.com/nonfx/starchitect-cloudguard",
+  "keywords": [
+    "starkit",
+    "security",
+    "cloud tests",
+    "iac test",
+    "regula",
+    "terraform"
+  ],
+  "license": "Commons Clause",
+  "type": "module",
+  "oclif": {
+    "bin": "starkit",
+    "dirname": "starkit",
+    "commands": "./dist/cli/src/commands",
+    "plugins": [
+      "@oclif/plugin-help",
+      "@oclif/plugin-update"
+    ],
+    "topics": {
+      "runtime": {
+        "description": "Run security tests against cloud runtime environments"
+      },
+      "iac": {
+        "description": "Run security tests against Infrastructure as Code (coming soon)"
+      }
+    },
+    "topicSeparator": " ",
+    "macos": {
+      "identifier": "com.nonfx.starkit"
+    },
+    "update": {
+      "s3": {
+        "host": "https://s3.console.aws.amazon.com/",
+        "bucket": "nonfx-public-access"
+      }
+    }
+  },
+  "repository": "https://github.com/nonfx/starchitect-cloudguard/tree/main/cli",
+  "scripts": {
+    "build": "cd .. && npm run generate-runtime-index && cd cli && shx rm -rf dist tsconfig.tsbuildinfo && tsc -b",
+    "dev": "tsc -b && ./bin/dev.js",
+    "postpack": "shx rm -f oclif.manifest.json",
+    "prepack": "oclif manifest && oclif readme",
+    "test": "bun test",
+    "version": "oclif readme && git add README.md",
+    "prepublishOnly": "npm run build && npm run prepack"
+  }
+}

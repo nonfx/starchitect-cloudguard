@@ -1,0 +1,54 @@
+{
+  "name": "@nonfx/starchitect-cloudguard",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "tsc -b --incremental",
+    "test": "bun test",
+    "prepare": "husky",
+    "prettier:lint": "prettier --config .prettierrc.cjs --cache --cache-location .cache/prettier --check .",
+    "lint:files": "env TIMING=1 eslint --quiet",
+    "lint:fix": "env TIMING=1 eslint --fix .",
+    "lint": "npm run lint:files",
+    "prettify": "prettier --config .prettierrc.cjs --cache --cache-location .cache/prettier --write .",
+    "generate-runtime-index": "bun ./.scripts/generate-runtime-index.ts"
+  },
+  "dependencies": {
+    "@aws-sdk/client-accessanalyzer": "^3.716.0",
+    "@aws-sdk/client-auto-scaling": "^3.716.0",
+    "@aws-sdk/client-cloudtrail": "^3.716.0",
+    "@aws-sdk/client-cloudwatch": "^3.716.0",
+    "@aws-sdk/client-cloudwatch-logs": "^3.716.0",
+    "@aws-sdk/client-config-service": "^3.716.0",
+    "@aws-sdk/client-dynamodb": "^3.716.0",
+    "@aws-sdk/client-ec2": "^3.716.0",
+    "@aws-sdk/client-ecr": "^3.718.0",
+    "@aws-sdk/client-ecs": "^3.716.0",
+    "@aws-sdk/client-efs": "^3.716.0",
+    "@aws-sdk/client-iam": "^3.716.0",
+    "@aws-sdk/client-kms": "^3.716.0",
+    "@aws-sdk/client-macie2": "^3.717.0",
+    "@aws-sdk/client-neptune": "^3.716.0",
+    "@aws-sdk/client-organizations": "^3.716.0",
+    "@aws-sdk/client-rds": "^3.716.0",
+    "@aws-sdk/client-s3": "^3.717.0",
+    "@aws-sdk/client-s3-control": "^3.716.0",
+    "@aws-sdk/client-securityhub": "^3.719.0",
+    "@aws-sdk/client-sts": "^3.716.0",
+    "@aws-sdk/credential-providers": "^3.716.0"
+  },
+  "devDependencies": {
+    "@types/bun": "^1.1.14",
+    "@types/node": "^22",
+    "aws-sdk-client-mock": "^4.1.0",
+    "eslint": "^9",
+    "eslint-config-prettier": "^9.1.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^15.2.11",
+    "typescript-eslint": "^8.18.2",
+    "prettier": "^3.4.2"
+  },
+  "workspaces": [
+    "cli/"
+  ]
+}

@@ -1,0 +1,14 @@
+{
+	"files.trimTrailingWhitespace": true,
+	"diffEditor.ignoreTrimWhitespace": true,
+	"editor.defaultFormatter": "esbenp.prettier-vscode",
+	"editor.formatOnSave": true,
+	"editor.codeActionsOnSave": {
+		"source.fixAll.eslint": "always"
+	},
+	"search.exclude": {
+		"**/node_modules": true,
+		"**/dist": true,
+		"**/tmp": true
+	}
+}

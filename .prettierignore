@@ -1,0 +1,11 @@
+terraform/
+node_modules/
+dist/
+.cache/
+
+# These files are auto-generated and should not be linted
+cli/README.md
+runtime/aws/index.ts
+cli/tmp
+package-lock.json
+LICENSE
