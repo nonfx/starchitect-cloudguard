@@ -46,17 +46,39 @@ jobs:
 
       - name: Update version
         run: |
-          npm version ${{ github.event.inputs.version }} --no-git-tag-version
+          VERSION=${{ github.event.inputs.version }}
+          BRANCH="release/v${VERSION}"
+
+          # Create and checkout new branch
+          git checkout -b $BRANCH
+
+          # Update version and generate files
+          npm version $VERSION --no-git-tag-version
           npm run generate
 
+          # Configure git
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
-          git add .
 
-          git commit -m "chore: bump version to ${{ github.event.inputs.version }} and update READNE and scripts"
-          git tag "v${{ github.event.inputs.version }}"
-          git push
-          git push --tags
+          # Commit changes
+          git add .
+          git commit -m "chore: bump version to ${VERSION}"
+
+          # Push branch
+          git push origin $BRANCH
+
+          # Create pull request
+          gh pr create \
+            --title "Release v${VERSION}" \
+            --body "This PR bumps the version to ${VERSION}" \
+            --base main \
+            --head $BRANCH
+
+          # Create and push tag
+          git tag "v${VERSION}"
+          git push origin "v${VERSION}"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Publish to npm
         run: npm publish
