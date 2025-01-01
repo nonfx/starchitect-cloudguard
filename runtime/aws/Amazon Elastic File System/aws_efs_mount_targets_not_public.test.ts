@@ -1,6 +1,10 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 //@ts-nocheck
-import { EFSClient, DescribeMountTargetsCommand } from "@aws-sdk/client-efs";
+import {
+	EFSClient,
+	DescribeMountTargetsCommand,
+	DescribeFileSystemsCommand
+} from "@aws-sdk/client-efs";
 import { EC2Client, DescribeSubnetsCommand } from "@aws-sdk/client-ec2";
 import { mockClient } from "aws-sdk-client-mock";
 import { ComplianceStatus } from "../../types.js";
@@ -8,6 +12,12 @@ import checkEfsMountTargetsPublicSubnets from "./aws_efs_mount_targets_not_publi
 
 const mockEfsClient = mockClient(EFSClient);
 const mockEc2Client = mockClient(EC2Client);
+
+const mockFileSystem = {
+	FileSystemId: "fs-12345678",
+	CreationToken: "token",
+	LifeCycleState: "available"
+};
 
 const mockMountTarget = {
 	MountTargetId: "fsmt-12345678",
@@ -35,6 +45,9 @@ describe("checkEfsMountTargetsPublicSubnets", () => {
 
 	describe("Compliant Resources", () => {
 		it("should return PASS when mount target is in private subnet", async () => {
+			mockEfsClient.on(DescribeFileSystemsCommand).resolves({
+				FileSystems: [mockFileSystem]
+			});
 			mockEfsClient.on(DescribeMountTargetsCommand).resolves({
 				MountTargets: [mockMountTarget]
 			});
@@ -47,19 +60,22 @@ describe("checkEfsMountTargetsPublicSubnets", () => {
 			expect(result.checks[0].resourceName).toBe(mockMountTarget.MountTargetId);
 		});
 
-		it("should return NOTAPPLICABLE when no mount targets exist", async () => {
-			mockEfsClient.on(DescribeMountTargetsCommand).resolves({
-				MountTargets: []
+		it("should return NOTAPPLICABLE when no file systems exist", async () => {
+			mockEfsClient.on(DescribeFileSystemsCommand).resolves({
+				FileSystems: []
 			});
 
 			const result = await checkEfsMountTargetsPublicSubnets.execute("us-east-1");
 			expect(result.checks[0].status).toBe(ComplianceStatus.NOTAPPLICABLE);
-			expect(result.checks[0].message).toBe("No EFS mount targets found in the region");
+			expect(result.checks[0].message).toBe("No EFS file systems found in the region");
 		});
 	});
 
 	describe("Non-Compliant Resources", () => {
 		it("should return FAIL when mount target is in public subnet", async () => {
+			mockEfsClient.on(DescribeFileSystemsCommand).resolves({
+				FileSystems: [mockFileSystem]
+			});
 			mockEfsClient.on(DescribeMountTargetsCommand).resolves({
 				MountTargets: [mockMountTarget]
 			});
@@ -73,6 +89,9 @@ describe("checkEfsMountTargetsPublicSubnets", () => {
 		});
 
 		it("should handle mount targets without subnet IDs", async () => {
+			mockEfsClient.on(DescribeFileSystemsCommand).resolves({
+				FileSystems: [mockFileSystem]
+			});
 			mockEfsClient.on(DescribeMountTargetsCommand).resolves({
 				MountTargets: [{ MountTargetId: "fsmt-12345678" }]
 			});
@@ -85,16 +104,22 @@ describe("checkEfsMountTargetsPublicSubnets", () => {
 
 	describe("Error Handling", () => {
 		it("should return ERROR when EFS API call fails", async () => {
+			mockEfsClient.on(DescribeFileSystemsCommand).resolves({
+				FileSystems: [mockFileSystem]
+			});
 			mockEfsClient
 				.on(DescribeMountTargetsCommand)
 				.rejects(new Error("Failed to describe mount targets"));
 
 			const result = await checkEfsMountTargetsPublicSubnets.execute("us-east-1");
 			expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
-			expect(result.checks[0].message).toContain("Error checking EFS mount targets");
+			expect(result.checks[0].message).toContain("Error checking mount targets");
 		});
 
 		it("should return ERROR when EC2 API call fails", async () => {
+			mockEfsClient.on(DescribeFileSystemsCommand).resolves({
+				FileSystems: [mockFileSystem]
+			});
 			mockEfsClient.on(DescribeMountTargetsCommand).resolves({
 				MountTargets: [mockMountTarget]
 			});
@@ -106,6 +131,9 @@ describe("checkEfsMountTargetsPublicSubnets", () => {
 		});
 
 		it("should return ERROR when subnet is not found", async () => {
+			mockEfsClient.on(DescribeFileSystemsCommand).resolves({
+				FileSystems: [mockFileSystem]
+			});
 			mockEfsClient.on(DescribeMountTargetsCommand).resolves({
 				MountTargets: [mockMountTarget]
 			});
@@ -122,6 +150,9 @@ describe("checkEfsMountTargetsPublicSubnets", () => {
 
 	describe("Multiple Resources", () => {
 		it("should handle multiple mount targets with mixed compliance", async () => {
+			mockEfsClient.on(DescribeFileSystemsCommand).resolves({
+				FileSystems: [mockFileSystem]
+			});
 			mockEfsClient.on(DescribeMountTargetsCommand).resolves({
 				MountTargets: [
 					{ ...mockMountTarget, MountTargetId: "fsmt-1", SubnetId: "subnet-1" },
