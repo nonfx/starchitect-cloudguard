@@ -1,4 +1,8 @@
-import { EFSClient, DescribeMountTargetsCommand } from "@aws-sdk/client-efs";
+import {
+	EFSClient,
+	DescribeMountTargetsCommand,
+	DescribeFileSystemsCommand
+} from "@aws-sdk/client-efs";
 import { EC2Client, DescribeSubnetsCommand } from "@aws-sdk/client-ec2";
 import { printSummary, generateSummary } from "../../utils/string-utils.js";
 import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "../../types.js";
@@ -13,62 +17,88 @@ async function checkEfsMountTargetsPublicSubnets(
 	};
 
 	try {
-		// Get all mount targets
-		const mountTargetsResponse = await efsClient.send(new DescribeMountTargetsCommand({}));
+		// Get all file systems
+		const fileSystemsResponse = await efsClient.send(new DescribeFileSystemsCommand({}));
 
-		if (!mountTargetsResponse.MountTargets || mountTargetsResponse.MountTargets.length === 0) {
+		if (!fileSystemsResponse.FileSystems || fileSystemsResponse.FileSystems.length === 0) {
 			results.checks.push({
-				resourceName: "No EFS Mount Targets",
+				resourceName: "No EFS File Systems",
 				status: ComplianceStatus.NOTAPPLICABLE,
-				message: "No EFS mount targets found in the region"
+				message: "No EFS file systems found in the region"
 			});
 			return results;
 		}
 
-		// Get subnet information for all mount targets
-		for (const mountTarget of mountTargetsResponse.MountTargets) {
-			if (!mountTarget.SubnetId || !mountTarget.MountTargetId) {
-				results.checks.push({
-					resourceName: "Unknown Mount Target",
-					status: ComplianceStatus.ERROR,
-					message: "Mount target found without subnet ID or mount target ID"
-				});
-				continue;
-			}
-
+		// For each file system, get its mount targets
+		for (const fileSystem of fileSystemsResponse.FileSystems) {
 			try {
-				// Get subnet details
-				const subnetResponse = await ec2Client.send(
-					new DescribeSubnetsCommand({
-						SubnetIds: [mountTarget.SubnetId]
+				const mountTargetsResponse = await efsClient.send(
+					new DescribeMountTargetsCommand({
+						FileSystemId: fileSystem.FileSystemId
 					})
 				);
 
-				const subnet = subnetResponse.Subnets?.[0];
-				if (!subnet) {
+				if (!mountTargetsResponse.MountTargets || mountTargetsResponse.MountTargets.length === 0) {
 					results.checks.push({
-						resourceName: mountTarget.MountTargetId,
-						status: ComplianceStatus.ERROR,
-						message: `Subnet ${mountTarget.SubnetId} not found`
+						resourceName: fileSystem.FileSystemId || "Unknown File System",
+						status: ComplianceStatus.NOTAPPLICABLE,
+						message: "No mount targets found for this file system"
 					});
 					continue;
 				}
 
-				// Check if subnet is public (has MapPublicIpOnLaunch enabled)
-				const isPublic = subnet.MapPublicIpOnLaunch === true;
+				// Get subnet information for all mount targets
+				for (const mountTarget of mountTargetsResponse.MountTargets) {
+					if (!mountTarget.SubnetId || !mountTarget.MountTargetId) {
+						results.checks.push({
+							resourceName: "Unknown Mount Target",
+							status: ComplianceStatus.ERROR,
+							message: "Mount target found without subnet ID or mount target ID"
+						});
+						continue;
+					}
 
-				results.checks.push({
-					resourceName: mountTarget.MountTargetId,
-					status: isPublic ? ComplianceStatus.FAIL : ComplianceStatus.PASS,
-					message: isPublic
-						? `Mount target is associated with public subnet ${mountTarget.SubnetId}`
-						: undefined
-				});
+					try {
+						// Get subnet details
+						const subnetResponse = await ec2Client.send(
+							new DescribeSubnetsCommand({
+								SubnetIds: [mountTarget.SubnetId]
+							})
+						);
+
+						const subnet = subnetResponse.Subnets?.[0];
+						if (!subnet) {
+							results.checks.push({
+								resourceName: mountTarget.MountTargetId,
+								status: ComplianceStatus.ERROR,
+								message: `Subnet ${mountTarget.SubnetId} not found`
+							});
+							continue;
+						}
+
+						// Check if subnet is public (has MapPublicIpOnLaunch enabled)
+						const isPublic = subnet.MapPublicIpOnLaunch === true;
+
+						results.checks.push({
+							resourceName: mountTarget.MountTargetId,
+							status: isPublic ? ComplianceStatus.FAIL : ComplianceStatus.PASS,
+							message: isPublic
+								? `Mount target is associated with public subnet ${mountTarget.SubnetId}`
+								: undefined
+						});
+					} catch (error) {
+						results.checks.push({
+							resourceName: mountTarget.MountTargetId,
+							status: ComplianceStatus.ERROR,
+							message: `Error checking subnet: ${error instanceof Error ? error.message : String(error)}`
+						});
+					}
+				}
 			} catch (error) {
 				results.checks.push({
-					resourceName: mountTarget.MountTargetId,
+					resourceName: fileSystem.FileSystemId || "Unknown File System",
 					status: ComplianceStatus.ERROR,
-					message: `Error checking subnet: ${error instanceof Error ? error.message : String(error)}`
+					message: `Error checking mount targets: ${error instanceof Error ? error.message : String(error)}`
 				});
 			}
 		}
