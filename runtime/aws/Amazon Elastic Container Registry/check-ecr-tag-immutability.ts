@@ -71,7 +71,7 @@ async function checkEcrTagImmutability(region: string = "us-east-1"): Promise<Co
 }
 
 if (import.meta.main) {
-	const region = process.env.AWS_REGION ?? "ap-southeast-1";
+	const region = process.env.AWS_REGION;
 	const results = await checkEcrTagImmutability(region);
 	printSummary(generateSummary(results));
 }

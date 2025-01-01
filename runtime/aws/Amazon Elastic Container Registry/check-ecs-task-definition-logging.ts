@@ -22,10 +22,23 @@ async function checkEcsTaskDefinitionLogging(
 	};
 
 	try {
-		// Get all task definition ARNs
-		const taskDefinitions = await client.send(new ListTaskDefinitionsCommand({}));
+		let nextToken: string | undefined;
+		let taskDefinitionArns: string[] = [];
 
-		if (!taskDefinitions.taskDefinitionArns || taskDefinitions.taskDefinitionArns.length === 0) {
+		do {
+			// List all task definitions
+			const listCommand = new ListTaskDefinitionsCommand({
+				nextToken
+			});
+			const response = await client.send(listCommand);
+
+			if (response.taskDefinitionArns) {
+				taskDefinitionArns = taskDefinitionArns.concat(response.taskDefinitionArns);
+			}
+			nextToken = response.nextToken;
+		} while (nextToken);
+
+		if (taskDefinitionArns.length === 0) {
 			results.checks = [
 				{
 					resourceName: "No Task Definitions",
@@ -37,7 +50,7 @@ async function checkEcsTaskDefinitionLogging(
 		}
 
 		// Check each task definition
-		for (const taskDefArn of taskDefinitions.taskDefinitionArns) {
+		for (const taskDefArn of taskDefinitionArns) {
 			try {
 				const taskDef = await client.send(
 					new DescribeTaskDefinitionCommand({

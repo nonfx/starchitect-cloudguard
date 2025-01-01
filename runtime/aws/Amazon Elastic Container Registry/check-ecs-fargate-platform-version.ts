@@ -23,62 +23,69 @@ async function checkEcsFargatePlatformVersion(
 	};
 
 	try {
-		// List all clusters first (empty array means default cluster)
-		const clusters = ["default"];
+		let nextToken: string | undefined;
+		let allServiceArns: string[] = [];
 
-		for (const cluster of clusters) {
-			// List services in the cluster
-			const listServicesCommand = new ListServicesCommand({
-				cluster: cluster
+		// Paginate through all ECS services in the region
+		do {
+			const listServicesResponse = await client.send(
+				new ListServicesCommand({
+					nextToken
+				})
+			);
+
+			if (listServicesResponse.serviceArns) {
+				allServiceArns = allServiceArns.concat(listServicesResponse.serviceArns);
+			}
+
+			nextToken = listServicesResponse.nextToken;
+		} while (nextToken);
+
+		if (allServiceArns.length === 0) {
+			results.checks.push({
+				resourceName: "No ECS Services",
+				status: ComplianceStatus.NOTAPPLICABLE,
+				message: "No ECS services found in the region"
 			});
+			return results;
+		}
 
-			try {
-				const servicesResponse = await client.send(listServicesCommand);
-				const serviceArns = servicesResponse.serviceArns || [];
+		// Check services in batches of 10 (AWS API limit for DescribeServicesCommand)
+		for (let i = 0; i < allServiceArns.length; i += 10) {
+			const batch = allServiceArns.slice(i, i + 10);
 
-				if (serviceArns.length === 0) {
+			const describeServicesResponse = await client.send(
+				new DescribeServicesCommand({
+					services: batch
+				})
+			);
+
+			if (!describeServicesResponse.services) continue;
+
+			for (const service of describeServicesResponse.services) {
+				if (!service.serviceName || !service.serviceArn) {
 					results.checks.push({
-						resourceName: `Cluster: ${cluster}`,
-						status: ComplianceStatus.NOTAPPLICABLE,
-						message: "No ECS services found in the cluster"
+						resourceName: "Unknown Service",
+						status: ComplianceStatus.ERROR,
+						message: "Service found without name or ARN"
 					});
 					continue;
 				}
 
-				// Get service details
-				const describeServicesCommand = new DescribeServicesCommand({
-					cluster: cluster,
-					services: serviceArns
-				});
-
-				const servicesDetails = await client.send(describeServicesCommand);
-
-				if (!servicesDetails.services) {
+				if (service.launchType !== "FARGATE") {
 					continue;
 				}
 
-				for (const service of servicesDetails.services) {
-					if (service.launchType !== "FARGATE") {
-						continue;
-					}
+				const platformVersion = service.platformVersion || "";
+				const isCompliant = isLatestVersion(platformVersion);
 
-					const platformVersion = service.platformVersion || "";
-					const isCompliant = isLatestVersion(platformVersion);
-
-					results.checks.push({
-						resourceName: service.serviceName || "Unknown Service",
-						resourceArn: service.serviceArn,
-						status: isCompliant ? ComplianceStatus.PASS : ComplianceStatus.FAIL,
-						message: isCompliant
-							? undefined
-							: `Service is not running on the latest Fargate platform version. Current version: ${platformVersion}`
-					});
-				}
-			} catch (error) {
 				results.checks.push({
-					resourceName: `Cluster: ${cluster}`,
-					status: ComplianceStatus.ERROR,
-					message: `Error checking services: ${error instanceof Error ? error.message : String(error)}`
+					resourceName: service.serviceName || service.serviceArn || "Unknown Service",
+					resourceArn: service.serviceArn,
+					status: isCompliant ? ComplianceStatus.PASS : ComplianceStatus.FAIL,
+					message: isCompliant
+						? undefined
+						: `Service is not running on the latest Fargate platform version. Current version: ${platformVersion}`
 				});
 			}
 		}

@@ -34,21 +34,35 @@ async function checkEcsTaskDefinitionSecurity(
 	};
 
 	try {
-		// Get all task definition ARNs
-		const listCommand = new ListTaskDefinitionsCommand({});
-		const taskDefinitions = await client.send(listCommand);
+		let nextToken: string | undefined;
+		let taskDefinitionArns: string[] = [];
 
-		if (!taskDefinitions.taskDefinitionArns || taskDefinitions.taskDefinitionArns.length === 0) {
-			results.checks.push({
-				resourceName: "No Task Definitions",
-				status: ComplianceStatus.NOTAPPLICABLE,
-				message: "No ECS task definitions found in the region"
+		do {
+			// List all task definitions
+			const listCommand = new ListTaskDefinitionsCommand({
+				nextToken
 			});
+			const response = await client.send(listCommand);
+
+			if (response.taskDefinitionArns) {
+				taskDefinitionArns = taskDefinitionArns.concat(response.taskDefinitionArns);
+			}
+			nextToken = response.nextToken;
+		} while (nextToken);
+
+		if (taskDefinitionArns.length === 0) {
+			results.checks = [
+				{
+					resourceName: "No Task Definitions",
+					status: ComplianceStatus.NOTAPPLICABLE,
+					message: "No ECS task definitions found in the region"
+				}
+			];
 			return results;
 		}
 
 		// Check each task definition
-		for (const taskDefArn of taskDefinitions.taskDefinitionArns) {
+		for (const taskDefArn of taskDefinitionArns) {
 			try {
 				const describeCommand = new DescribeTaskDefinitionCommand({
 					taskDefinition: taskDefArn

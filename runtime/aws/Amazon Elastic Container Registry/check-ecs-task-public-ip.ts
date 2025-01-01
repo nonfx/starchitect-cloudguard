@@ -16,82 +16,72 @@ async function checkEcsTaskPublicIpCompliance(
 	};
 
 	try {
-		// Get all ECS clusters
-		const clusterResponse = await client.send(new ListClustersCommand({}));
-		const clusterArns = clusterResponse.clusterArns || [];
+		let nextToken: string | undefined;
+		let allServiceArns: string[] = [];
 
-		if (clusterArns.length === 0) {
+		// Paginate through all ECS services
+		do {
+			const listServicesResponse = await client.send(
+				new ListServicesCommand({
+					nextToken
+				})
+			);
+
+			if (listServicesResponse.serviceArns) {
+				allServiceArns = allServiceArns.concat(listServicesResponse.serviceArns);
+			}
+
+			nextToken = listServicesResponse.nextToken;
+		} while (nextToken);
+
+		if (allServiceArns.length === 0) {
 			results.checks.push({
-				resourceName: "No ECS Clusters",
+				resourceName: "No ECS Services",
 				status: ComplianceStatus.NOTAPPLICABLE,
-				message: "No ECS clusters found in the region"
+				message: "No ECS services found in the region"
 			});
 			return results;
 		}
 
-		// Check each cluster
-		for (const clusterArn of clusterArns) {
-			// Get services in the cluster
-			const servicesResponse = await client.send(
-				new ListServicesCommand({
-					cluster: clusterArn
+		// Get service details in batches of 10 (AWS API limit)
+		for (let i = 0; i < allServiceArns.length; i += 10) {
+			const batch = allServiceArns.slice(i, i + 10);
+			const servicesDetails = await client.send(
+				new DescribeServicesCommand({
+					services: batch
 				})
 			);
 
-			const serviceArns = servicesResponse.serviceArns || [];
+			for (const service of servicesDetails.services || []) {
+				if (!service.serviceName || !service.serviceArn) {
+					results.checks.push({
+						resourceName: "Unknown Service",
+						status: ComplianceStatus.ERROR,
+						message: "Service found without name or ARN"
+					});
+					continue;
+				}
 
-			if (serviceArns.length === 0) {
-				results.checks.push({
-					resourceName: clusterArn,
-					status: ComplianceStatus.NOTAPPLICABLE,
-					message: "No ECS services found in the cluster"
-				});
-				continue;
-			}
-
-			// Get service details in batches of 10 (AWS API limit)
-			for (let i = 0; i < serviceArns.length; i += 10) {
-				const batch = serviceArns.slice(i, i + 10);
-				const servicesDetails = await client.send(
-					new DescribeServicesCommand({
-						cluster: clusterArn,
-						services: batch
-					})
-				);
-
-				for (const service of servicesDetails.services || []) {
-					if (!service.serviceName || !service.serviceArn) {
-						results.checks.push({
-							resourceName: "Unknown Service",
-							status: ComplianceStatus.ERROR,
-							message: "Service found without name or ARN"
-						});
-						continue;
-					}
-
-					// Check network configuration
-					const networkConfig = service.networkConfiguration?.awsvpcConfiguration;
-					if (!networkConfig) {
-						results.checks.push({
-							resourceName: service.serviceName,
-							resourceArn: service.serviceArn,
-							status: ComplianceStatus.NOTAPPLICABLE,
-							message: "Service does not use awsvpc network mode"
-						});
-						continue;
-					}
-
-					const assignsPublicIp = networkConfig.assignPublicIp === "ENABLED";
-
+				// Check network configuration
+				const networkConfig = service.networkConfiguration?.awsvpcConfiguration;
+				if (!networkConfig) {
 					results.checks.push({
 						resourceName: service.serviceName,
 						resourceArn: service.serviceArn,
-						status: assignsPublicIp ? ComplianceStatus.FAIL : ComplianceStatus.PASS,
-						message: assignsPublicIp
-							? "Service automatically assigns public IP addresses"
-							: undefined
+						status: ComplianceStatus.NOTAPPLICABLE,
+						message: "Service does not use awsvpc network mode"
 					});
+					continue;
 				}
+
+				const assignsPublicIp = networkConfig.assignPublicIp === "ENABLED";
+
+				results.checks.push({
+					resourceName: service.serviceName,
+					resourceArn: service.serviceArn,
+					status: assignsPublicIp ? ComplianceStatus.FAIL : ComplianceStatus.PASS,
+					message: assignsPublicIp ? "Service automatically assigns public IP addresses" : undefined
+				});
 			}
 		}
 	} catch (error) {

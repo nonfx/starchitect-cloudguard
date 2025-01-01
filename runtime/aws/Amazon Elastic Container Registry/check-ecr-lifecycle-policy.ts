@@ -35,10 +35,25 @@ async function checkEcrLifecyclePolicyCompliance(
 	};
 
 	try {
-		// Get all ECR repositories
-		const repositories = await client.send(new DescribeRepositoriesCommand({}));
+		// Get all ECR repositories with pagination
+		let nextToken: string | undefined;
+		let repositories: any[] = [];
 
-		if (!repositories.repositories || repositories.repositories.length === 0) {
+		do {
+			const response = await client.send(
+				new DescribeRepositoriesCommand({
+					nextToken
+				})
+			);
+
+			if (response.repositories) {
+				repositories = repositories.concat(response.repositories);
+			}
+
+			nextToken = response.nextToken;
+		} while (nextToken);
+
+		if (repositories.length === 0) {
 			results.checks = [
 				{
 					resourceName: "No ECR Repositories",
@@ -50,7 +65,7 @@ async function checkEcrLifecyclePolicyCompliance(
 		}
 
 		// Check each repository for lifecycle policy
-		for (const repo of repositories.repositories) {
+		for (const repo of repositories) {
 			if (!repo.repositoryName || !repo.repositoryArn) {
 				results.checks.push({
 					resourceName: "Unknown Repository",
@@ -98,7 +113,7 @@ async function checkEcrLifecyclePolicyCompliance(
 }
 
 if (import.meta.main) {
-	const region = process.env.AWS_REGION ?? "ap-southeast-1";
+	const region = process.env.AWS_REGION;
 	const results = await checkEcrLifecyclePolicyCompliance(region);
 	printSummary(generateSummary(results));
 }

@@ -7,7 +7,7 @@ import { printSummary, generateSummary } from "../../utils/string-utils.js";
 import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "../../types.js";
 
 interface ContainerDefinition {
-	name: string;
+	name?: string | undefined;
 	privileged?: boolean;
 }
 
@@ -21,7 +21,7 @@ async function checkEcsContainerPrivileges(
 
 	try {
 		let nextToken: string | undefined;
-		let taskDefinitionsFound = false;
+		let taskDefinitionArns: string[] = [];
 
 		do {
 			// List all task definitions
@@ -30,63 +30,60 @@ async function checkEcsContainerPrivileges(
 			});
 			const response = await client.send(listCommand);
 
-			if (!response.taskDefinitionArns || response.taskDefinitionArns.length === 0) {
-				if (!taskDefinitionsFound) {
-					results.checks = [
-						{
-							resourceName: "No Task Definitions",
-							status: ComplianceStatus.NOTAPPLICABLE,
-							message: "No ECS task definitions found in the region"
-						}
-					];
-					return results;
-				}
-				break;
+			if (response.taskDefinitionArns) {
+				taskDefinitionArns = taskDefinitionArns.concat(response.taskDefinitionArns);
 			}
+			nextToken = response.nextToken;
+		} while (nextToken);
 
-			taskDefinitionsFound = true;
+		if (taskDefinitionArns.length === 0) {
+			results.checks = [
+				{
+					resourceName: "No Task Definitions",
+					status: ComplianceStatus.NOTAPPLICABLE,
+					message: "No ECS task definitions found in the region"
+				}
+			];
+			return results;
+		}
 
-			// Check each task definition
-			for (const taskDefArn of response.taskDefinitionArns) {
-				try {
-					const describeCommand = new DescribeTaskDefinitionCommand({
-						taskDefinition: taskDefArn
-					});
-					const taskDef = await client.send(describeCommand);
+		// Check each task definition
+		for (const taskDefArn of taskDefinitionArns) {
+			try {
+				const describeCommand = new DescribeTaskDefinitionCommand({
+					taskDefinition: taskDefArn
+				});
+				const taskDef = await client.send(describeCommand);
 
-					if (!taskDef.taskDefinition?.containerDefinitions) {
-						results.checks.push({
-							resourceName: taskDefArn,
-							status: ComplianceStatus.ERROR,
-							message: "Task definition has no container definitions"
-						});
-						continue;
-					}
-
-					const privilegedContainers = taskDef.taskDefinition.containerDefinitions
-						.filter((container: ContainerDefinition) => container.privileged === true)
-						.map((container: ContainerDefinition) => container.name);
-
-					results.checks.push({
-						resourceName: taskDefArn,
-						status:
-							privilegedContainers.length === 0 ? ComplianceStatus.PASS : ComplianceStatus.FAIL,
-						message:
-							privilegedContainers.length > 0
-								? `Containers running in privileged mode: ${privilegedContainers.join(", ")}`
-								: undefined
-					});
-				} catch (error) {
+				if (!taskDef.taskDefinition?.containerDefinitions) {
 					results.checks.push({
 						resourceName: taskDefArn,
 						status: ComplianceStatus.ERROR,
-						message: `Error checking task definition: ${error instanceof Error ? error.message : String(error)}`
+						message: "Task definition has no container definitions"
 					});
+					continue;
 				}
-			}
 
-			nextToken = response.nextToken;
-		} while (nextToken);
+				const privilegedContainers = taskDef.taskDefinition.containerDefinitions
+					.filter((container: ContainerDefinition) => container.privileged === true)
+					.map((container: ContainerDefinition) => container.name!);
+
+				results.checks.push({
+					resourceName: taskDefArn,
+					status: privilegedContainers.length === 0 ? ComplianceStatus.PASS : ComplianceStatus.FAIL,
+					message:
+						privilegedContainers.length > 0
+							? `Containers running in privileged mode: ${privilegedContainers.join(", ")}`
+							: undefined
+				});
+			} catch (error) {
+				results.checks.push({
+					resourceName: taskDefArn,
+					status: ComplianceStatus.ERROR,
+					message: `Error checking task definition: ${error instanceof Error ? error.message : String(error)}`
+				});
+			}
+		}
 	} catch (error) {
 		results.checks = [
 			{

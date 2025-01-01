@@ -9,10 +9,25 @@ async function checkEcsPublicIpCompliance(region: string = "us-east-1"): Promise
 	};
 
 	try {
-		// Get all ECS clusters first
-		const listServicesResponse = await client.send(new ListServicesCommand({}));
+		let nextToken: string | undefined;
+		let allServiceArns: string[] = [];
 
-		if (!listServicesResponse.serviceArns || listServicesResponse.serviceArns.length === 0) {
+		// Paginate through all ECS services
+		do {
+			const listServicesResponse = await client.send(
+				new ListServicesCommand({
+					nextToken
+				})
+			);
+
+			if (listServicesResponse.serviceArns) {
+				allServiceArns = allServiceArns.concat(listServicesResponse.serviceArns);
+			}
+
+			nextToken = listServicesResponse.nextToken;
+		} while (nextToken);
+
+		if (allServiceArns.length === 0) {
 			results.checks.push({
 				resourceName: "No ECS Services",
 				status: ComplianceStatus.NOTAPPLICABLE,
@@ -21,9 +36,9 @@ async function checkEcsPublicIpCompliance(region: string = "us-east-1"): Promise
 			return results;
 		}
 
-		// Check services in batches of 10 (AWS API limit)
-		for (let i = 0; i < listServicesResponse.serviceArns.length; i += 10) {
-			const batch = listServicesResponse.serviceArns.slice(i, i + 10);
+		// Check services in batches of 10 (AWS API limit for DescribeServicesCommand)
+		for (let i = 0; i < allServiceArns.length; i += 10) {
+			const batch = allServiceArns.slice(i, i + 10);
 
 			const describeServicesResponse = await client.send(
 				new DescribeServicesCommand({

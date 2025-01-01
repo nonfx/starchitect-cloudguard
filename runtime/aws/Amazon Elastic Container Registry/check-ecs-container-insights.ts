@@ -9,11 +9,22 @@ async function checkEcsContainerInsights(region: string = "us-east-1"): Promise<
 	};
 
 	try {
-		// Get all cluster ARNs
-		const listCommand = new ListClustersCommand({});
-		const listResponse = await client.send(listCommand);
+		let nextToken: string | undefined;
+		let allClusterArns: string[] = [];
 
-		if (!listResponse.clusterArns || listResponse.clusterArns.length === 0) {
+		// Paginate through all cluster ARNs
+		do {
+			const listCommand = new ListClustersCommand({ nextToken });
+			const listResponse = await client.send(listCommand);
+
+			if (listResponse.clusterArns) {
+				allClusterArns = allClusterArns.concat(listResponse.clusterArns);
+			}
+
+			nextToken = listResponse.nextToken;
+		} while (nextToken);
+
+		if (allClusterArns.length === 0) {
 			results.checks = [
 				{
 					resourceName: "No ECS Clusters",
@@ -26,7 +37,7 @@ async function checkEcsContainerInsights(region: string = "us-east-1"): Promise<
 
 		// Get detailed information for each cluster
 		const describeCommand = new DescribeClustersCommand({
-			clusters: listResponse.clusterArns
+			clusters: allClusterArns
 		});
 		const describeResponse = await client.send(describeCommand);
 
@@ -72,7 +83,7 @@ async function checkEcsContainerInsights(region: string = "us-east-1"): Promise<
 }
 
 if (import.meta.main) {
-	const region = process.env.AWS_REGION ?? "ap-southeast-1";
+	const region = process.env.AWS_REGION;
 	const results = await checkEcsContainerInsights(region);
 	printSummary(generateSummary(results));
 }
