@@ -89,8 +89,11 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Check publish_npm_package value
+        run: echo "publish_npm_package ${{ github.event.inputs.publish_npm_package }}"
+
       - name: Publish to npm
-        if: ${{ github.event.inputs.publish_npm_package }}
+        if: ${{ github.event.inputs.publish_npm_package == true }}
         run: npm publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
