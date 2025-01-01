@@ -59,6 +59,7 @@ jobs:
 
           # Update version and generate files
           npm version $VERSION --no-git-tag-version
+          npm run build
           npm run generate
 
           # Configure git
