@@ -64,4 +64,4 @@ Use GitHub Issues to report bugs or suggest improvements. Include:
 
 ## Getting Help
 
-Join our [Discord community](https://discord.gg/r48ZahhA) for questions and discussions.
+Join our [Discord community](https://discord.gg/kDTtfpgFFq) for questions and discussions.
