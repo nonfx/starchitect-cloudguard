@@ -25,6 +25,10 @@ jobs:
         with:
           fetch-depth: 0
 
+      - uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: latest
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
@@ -37,7 +41,7 @@ jobs:
       - name: Update version
         run: |
           npm version ${{ github.event.inputs.version }} --no-git-tag-version
-          npm run prepublishOnly
+          npm run generate
 
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
@@ -60,7 +64,7 @@ jobs:
         include:
           - os: ubuntu-latest
             target: deb
-            path: "dist/*.deb"
+            path: "dist/deb/*.deb"
           - os: macos-latest
             target: macos
             path: "dist/macos/*.pkg"
@@ -71,16 +75,25 @@ jobs:
         with:
           ref: v${{ github.event.inputs.version }}
 
+      - uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: latest
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: "23.x"
 
+      - name: Install NSIS and 7zip
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y nsis p7zip-full apt-utils
+
       - name: Install dependencies
         run: cd .. && npm ci && cd cli && cp ../package-lock.json .
 
       - name: Build starkit
-        run: npm run prepublishOnly
+        run: npm run build
 
       - name: Build OCLIF package
         run: npx -y oclif pack ${{ matrix.target }}
@@ -99,22 +112,37 @@ jobs:
         with:
           ref: v${{ github.event.inputs.version }}
 
+      - uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: latest
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: "23.x"
 
+      - name: Install NSIS and 7zip
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y nsis p7zip-full
+
       - name: Install dependencies
         run: cd .. && npm ci && cd cli && cp ../package-lock.json .
 
       - name: Build starkit
-        run: npm run prepublishOnly
+        run: npm run build
 
       - name: Build OCLIF tarballs
         run: npx -y oclif pack tarballs --parallel --targets=linux-x64,linux-arm64,win32-x64,darwin-x64,darwin-arm64
 
       - name: Push OCLIF tarballs to S3
         run: npx -y oclif upload tarballs --targets=linux-x64,linux-arm64,win32-x64,darwin-x64,darwin-arm64
+
+      - name: Push OCLIF tarballs to Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: tarballs
+          path: dist/*.xz
 
   build-windows:
     needs: release
@@ -124,30 +152,34 @@ jobs:
         with:
           ref: v${{ github.event.inputs.version }}
 
+      - uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: latest
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: "23.x"
 
+      - name: Install NSIS and 7zip
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y nsis p7zip-full
+
       - name: Install dependencies
         run: cd .. && npm ci && cd cli && cp ../package-lock.json .
 
       - name: Build starkit
-        run: npm run prepublishOnly
-
-      - name: Install NSIS and 7zip
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y nsis p7zip
+        run: npm run build
 
       - name: Build Windows installer
-        run: npx -y oclif pack win
+        run: npx -y oclif pack win --targets=win32-x64
 
       - name: Upload Windows artifacts
         uses: actions/upload-artifact@v4
         with:
           name: windows-package
-          path: dist/*.exe
+          path: dist/win32/*.exe
 
   create-release:
     needs: [build-packages, build-windows]

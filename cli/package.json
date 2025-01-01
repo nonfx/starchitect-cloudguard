@@ -97,12 +97,12 @@
   },
   "repository": "https://github.com/nonfx/starchitect-cloudguard/tree/main/cli",
   "scripts": {
-    "build": "cd .. && npm run generate-runtime-index && cd cli && shx rm -rf dist tsconfig.tsbuildinfo && tsc -b",
+    "generate": "cd .. && npm run generate-runtime-index && cd cli && npm run prepack",
+    "build": "shx rm -rf dist tsconfig.tsbuildinfo && tsc -b",
     "dev": "tsc -b && ./bin/dev.js",
     "postpack": "shx rm -f oclif.manifest.json",
     "prepack": "oclif manifest && oclif readme",
     "test": "bun test",
-    "version": "oclif readme && git add README.md",
-    "prepublishOnly": "npm run build && npm run prepack"
+    "prepublishOnly": "npm run build"
   }
 }
