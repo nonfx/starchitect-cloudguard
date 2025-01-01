@@ -20,6 +20,16 @@ This framework is designed to be flexible and extensible. While we currently foc
 
 ## Installation
 
+The fastest way to get started with the CLI is through a Node.js runtime, but we also provide Homebrew taps, deb/rpm packages, and standalone binaries for major platforms.
+
+```bash
+# If you have npm
+npx -y starkit
+
+# If you have bun
+bunx starkit
+```
+
 You can install the Starchitect CLI in several ways:
 
 ### Using Homebrew
@@ -32,7 +42,7 @@ brew install starkit
 ### Using npm
 
 ```bash
-npm install starkit
+npm install -g starkit
 ```
 
 For additional installation platforms and options, check our [releases section](https://github.com/nonfx/starchitect-cloudguard/releases).

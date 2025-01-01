@@ -137,7 +137,10 @@ ${chalk.cyan.bold("Need Help?")}
 				this.region = String(userSelectedRegion.value);
 			} catch (error) {
 				this.debug(error);
-				this.error("Failed to fetch AWS regions.", { exit: 1 });
+				this.error(
+					"Failed to fetch AWS regions. Please check if you have enough permissions. For detailed error message run this command with DEBUG='*' environment variable.",
+					{ exit: 1 }
+				);
 			}
 		}
 

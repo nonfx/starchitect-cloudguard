@@ -13,6 +13,11 @@ on:
         description: "Version number (e.g., 1.0.0)"
         required: true
         type: string
+      publish_npm_package:
+        description: "Publish npm package"
+        required: true
+        default: true
+        type: boolean
 
 defaults:
   run:
@@ -85,6 +90,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Publish to npm
+        if: ${{ github.event.inputs.publish_npm_package }}
         run: npm publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
@@ -116,10 +122,21 @@ jobs:
         with:
           node-version: "23.x"
 
-      - name: Install NSIS and 7zip
+      - name: Install NSIS and 7zip (for deb package)
+        if: matrix.target == 'deb'
         run: |
           sudo apt-get update
           sudo apt-get install -y nsis p7zip-full apt-utils
+
+      - name: Set up Homebrew
+        if: matrix.target == 'macos'
+        id: set-up-homebrew
+        uses: Homebrew/actions/setup-homebrew@master
+
+      - name: Install NSIS and 7zip (for macos)
+        if: matrix.target == 'macos'
+        run: |
+          brew install p7zip nsis
 
       - name: Install dependencies
         run: cd .. && npm ci && cd cli && cp ../package-lock.json .
