@@ -237,7 +237,7 @@ jobs:
           if-no-files-found: error
 
   create-release:
-    needs: [build-packages, build-windows]
+    needs: [build-packages, build-windows, build-tarballs]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
