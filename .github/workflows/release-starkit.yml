@@ -79,7 +79,7 @@ jobs:
           fi
 
           # Create and push tag
-          git tag "v${VERSION}"
+          git tag "v${VERSION}" --force
           git push origin tag "v${VERSION}" --force
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
