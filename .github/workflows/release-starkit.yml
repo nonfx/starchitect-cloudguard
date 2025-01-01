@@ -65,7 +65,7 @@ jobs:
           git commit -m "chore: bump version to ${VERSION}"
 
           # Push branch
-          git push origin $BRANCH
+          git push origin $BRANCH --force
 
           # Create pull request
           gh pr create \
@@ -76,7 +76,8 @@ jobs:
 
           # Create and push tag
           git tag "v${VERSION}"
-          git push origin "v${VERSION}"
+          git push origin tag "v${VERSION}"
+          git push origin "v${VERSION}" --force
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
