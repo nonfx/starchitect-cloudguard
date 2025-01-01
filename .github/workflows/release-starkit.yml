@@ -67,17 +67,20 @@ jobs:
           # Push branch
           git push origin $BRANCH --force
 
-          # Create pull request
-          gh pr create \
-            --title "Release v${VERSION}" \
-            --body "This PR bumps the version to ${VERSION}" \
-            --base main \
-            --head $BRANCH
+          PR_URL="$(gh pr list --head "${BRANCH}" --state open --json url --jq .[].url)"
+
+          # Only create a PR if one doesn't already exist
+          if [ -z "$PR_URL" ]; then
+            gh pr create \
+              --title "Release v${VERSION}" \
+              --body "This PR bumps the version to ${VERSION}" \
+              --base main \
+              --head $BRANCH
+          fi
 
           # Create and push tag
           git tag "v${VERSION}"
           git push origin tag "v${VERSION}"
-          git push origin "v${VERSION}" --force
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
