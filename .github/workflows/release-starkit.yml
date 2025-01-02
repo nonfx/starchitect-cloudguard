@@ -95,7 +95,7 @@ jobs:
         run: echo "publish_npm_package ${{ github.event.inputs.publish_npm_package }}"
 
       - name: Publish to npm
-        if: ${{ github.event.inputs.publish_npm_package == true }}
+        if: github.event.inputs.publish_npm_package == 'true'
         run: npm publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
