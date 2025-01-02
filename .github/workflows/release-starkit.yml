@@ -153,7 +153,7 @@ jobs:
         run: npx -y oclif pack ${{ matrix.target }}
 
       - name: Upload OCLIF package
-        run: npx -y oclif upload ${{ matrix.target }} --targets=${{ matrix.target }}
+        run: npx -y oclif upload ${{ matrix.target }}
 
       - name: Promote OCLIF package
         run: npx -y oclif promote --ignore-missing --sha="git rev-parse --short HEAD" --version="${{ github.event.inputs.version }}" --${{ matrix.target }}
