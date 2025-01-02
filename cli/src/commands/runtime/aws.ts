@@ -3,7 +3,7 @@ import { EC2Client, DescribeRegionsCommand } from "@aws-sdk/client-ec2";
 import allTests from "../../../../runtime/aws/index.js";
 import inquirer from "inquirer";
 import { Flags } from "@oclif/core";
-import { CloudProvider } from "../../lib/cloud/base.js";
+import { CloudRuntimeProvider } from "../../lib/cloud/runtime-provider.js";
 import type { RuntimeTest } from "../../types.js";
 import { generatePrefilledCommand } from "../../lib/utils.js";
 import chalk from "chalk";
@@ -18,16 +18,17 @@ const allServices = Object.values(
 	)
 );
 
-export class AWSProvider extends CloudProvider {
+export class AWSProvider extends CloudRuntimeProvider {
 	static description = "Run security tests against your AWS runtime environment";
 
 	static flags = {
-		...CloudProvider.flags,
+		...CloudRuntimeProvider.flags,
 		services: Flags.string({
-			description: "Comma separated list of cloud services to test"
-		}),
-		profile: Flags.string({
-			description: "Cloud provider profile to use"
+			description:
+				"Comma separated list of cloud services to test. Pass 'all' to test all services",
+			multiple: true,
+			delimiter: ",",
+			options: ["all", ...allServices.map(service => service.shortName)]
 		}),
 		region: Flags.string({
 			description: "Region to test"
@@ -37,7 +38,7 @@ export class AWSProvider extends CloudProvider {
 	region?: string;
 	services?: string[];
 
-	getConstructor(): typeof CloudProvider {
+	getConstructor(): typeof CloudRuntimeProvider {
 		return AWSProvider;
 	}
 
@@ -63,7 +64,7 @@ export class AWSProvider extends CloudProvider {
 ${chalk.red.bold("✗ AWS Credentials Not Found")}
 ${chalk.gray("=")}${chalk.gray("=".repeat(40))}
 
-${chalk.yellow("CloudGuard needs valid AWS credentials to run security tests.")}
+${chalk.yellow("starkit needs valid AWS credentials to run security tests.")}
 Here are two ways to configure your AWS credentials:
 
 ${chalk.cyan.bold("1. Using Environment Variables")}
@@ -95,6 +96,10 @@ ${chalk.cyan.bold("Need Help?")}
 	}
 
 	async getTests() {
+		if (this.services?.includes("all")) {
+			return allTests as RuntimeTest[];
+		}
+
 		return (allTests as RuntimeTest[]).filter(test =>
 			this.services?.includes(test.shortServiceName)
 		);
@@ -145,7 +150,7 @@ ${chalk.cyan.bold("Need Help?")}
 		}
 
 		if (flags.services) {
-			this.services = flags.services.split(",").map(service => service.trim());
+			this.services = flags.services.map(service => service.trim());
 		}
 
 		// If no services are provided and the process is running in a CI environment, assume we are running it for all
@@ -191,7 +196,7 @@ ${chalk.cyan.bold("Need Help?")}
 		}
 
 		flags.region = this.region;
-		flags.services = this.services?.join(",") || "";
+		flags.services = this.services || [];
 
 		const command = generatePrefilledCommand("runtime aws", flags);
 

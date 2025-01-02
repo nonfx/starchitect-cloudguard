@@ -103,11 +103,9 @@ describe("checkLambdaCodeSigning", () => {
 				.resolvesOnce({
 					Functions: [mockFunction2]
 				});
-			mockLambdaClient
-				.on(GetFunctionCodeSigningConfigCommand)
-				.resolves({
-					CodeSigningConfigArn: "arn:aws:lambda:us-east-1:123456789012:code-signing-config:csc-1"
-				});
+			mockLambdaClient.on(GetFunctionCodeSigningConfigCommand).resolves({
+				CodeSigningConfigArn: "arn:aws:lambda:us-east-1:123456789012:code-signing-config:csc-1"
+			});
 
 			const result = await checkLambdaCodeSigning.execute("us-east-1");
 			expect(result.checks).toHaveLength(2);

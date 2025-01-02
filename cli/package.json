@@ -30,7 +30,6 @@
     "@aws-sdk/client-rds": "^3.716.0",
     "@aws-sdk/client-s3": "^3.717.0",
     "@aws-sdk/client-s3-control": "^3.716.0",
-    "@aws-sdk/client-secrets-manager": "^3.716.0",
     "@aws-sdk/client-securityhub": "^3.719.0",
     "@aws-sdk/client-sts": "^3.716.0",
     "@aws-sdk/credential-providers": "^3.716.0",
@@ -95,9 +94,12 @@
     },
     "update": {
       "s3": {
-        "host": "https://s3.console.aws.amazon.com/",
+        "host": "https://nonfx-public-access.s3.ap-southeast-1.amazonaws.com",
         "bucket": "nonfx-public-access"
       }
+    },
+    "hooks": {
+      "init": "./dist/cli/src/hooks/init/add-description"
     }
   },
   "repository": "https://github.com/nonfx/starchitect-cloudguard/tree/main/cli",

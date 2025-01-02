@@ -46,9 +46,6 @@ jobs:
           node-version: "23.x"
           registry-url: "https://registry.npmjs.org"
 
-      - name: Install dependencies
-        run: cd .. && npm ci && cd cli && cp ../package-lock.json .
-
       - name: Update version
         run: |
           VERSION=${{ github.event.inputs.version }}
@@ -59,6 +56,10 @@ jobs:
 
           # Update version and generate files
           npm version $VERSION --no-git-tag-version
+
+          # Update monorepo package-lock
+          cd .. && npm i && cd cli && cp ../package-lock.json .
+
           npm run build
           npm run generate
 
@@ -149,7 +150,9 @@ jobs:
         run: npm run build
 
       - name: Build OCLIF package
-        run: npx -y oclif pack ${{ matrix.target }}
+        run: |
+          npx -y oclif pack ${{ matrix.target }}
+          npx -y oclif promote --ignore-missing --sha="git rev-parse --short HEAD" --version="${{ github.event.inputs.version }}" --${{ matrix.target }}
 
       - name: Upload package artifacts
         uses: actions/upload-artifact@v4
@@ -192,6 +195,9 @@ jobs:
       - name: Push OCLIF tarballs to S3
         run: npx -y oclif upload tarballs --targets=linux-x64,linux-arm64,win32-x64,darwin-x64,darwin-arm64
 
+      - name: Promote OCLIF tarballs to S3
+        run: npx -y oclif promote --ignore-missing --sha="git rev-parse --short HEAD" --version="${{ github.event.inputs.version }}" --targets=linux-x64,linux-arm64,win32-x64,darwin-x64,darwin-arm64
+
       - name: Push OCLIF tarballs to Artifacts
         uses: actions/upload-artifact@v4
         with:
@@ -229,6 +235,9 @@ jobs:
 
       - name: Build Windows installer
         run: npx -y oclif pack win --targets=win32-x64
+
+      - name: Promote Windows installer
+        run: npx -y oclif promote --ignore-missing --sha="git rev-parse --short HEAD" --version="${{ github.event.inputs.version }}" --win
 
       - name: Upload Windows artifacts
         uses: actions/upload-artifact@v4
