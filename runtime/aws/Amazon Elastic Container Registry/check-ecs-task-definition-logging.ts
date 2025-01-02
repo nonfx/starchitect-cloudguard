@@ -1,17 +1,19 @@
 import {
-	DescribeTaskDefinitionCommand,
 	ECSClient,
+	DescribeTaskDefinitionCommand,
 	ListTaskDefinitionsCommand
 } from "@aws-sdk/client-ecs";
-import { generateSummary, printSummary } from "../../utils/string-utils.js";
+import { printSummary, generateSummary } from "../../utils/string-utils.js";
 import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "../../types.js";
 
 interface ContainerDefinition {
 	name: string;
-	readonlyRootFilesystem?: boolean;
+	logConfiguration?: {
+		logDriver?: string;
+	};
 }
 
-async function checkEcsContainerReadonlyRoot(
+async function checkEcsTaskDefinitionLogging(
 	region: string = "us-east-1"
 ): Promise<ComplianceReport> {
 	const client = new ECSClient({ region });
@@ -50,46 +52,36 @@ async function checkEcsContainerReadonlyRoot(
 		// Check each task definition
 		for (const taskDefArn of taskDefinitionArns) {
 			try {
-				const describeCommand = new DescribeTaskDefinitionCommand({
-					taskDefinition: taskDefArn
-				});
-				const taskDef = await client.send(describeCommand);
+				const taskDef = await client.send(
+					new DescribeTaskDefinitionCommand({
+						taskDefinition: taskDefArn
+					})
+				);
 
-				if (!taskDef.taskDefinition?.containerDefinitions) {
+				if (!taskDef.taskDefinition) {
 					results.checks.push({
 						resourceName: taskDefArn,
-						resourceArn: taskDefArn,
 						status: ComplianceStatus.ERROR,
-						message: "Task definition missing container definitions"
+						message: "Unable to retrieve task definition details"
 					});
 					continue;
 				}
 
-				const containers = taskDef.taskDefinition.containerDefinitions as ContainerDefinition[];
-				const nonCompliantContainers = containers.filter(
-					container => !container.readonlyRootFilesystem
+				const containerDefs = taskDef.taskDefinition.containerDefinitions as ContainerDefinition[];
+				const allContainersHaveLogging = containerDefs.every(
+					container => container.logConfiguration?.logDriver !== undefined
 				);
 
-				if (nonCompliantContainers.length > 0) {
-					results.checks.push({
-						resourceName: taskDefArn,
-						resourceArn: taskDefArn,
-						status: ComplianceStatus.FAIL,
-						message: `Containers without read-only root filesystem: ${nonCompliantContainers
-							.map(c => c.name)
-							.join(", ")}`
-					});
-				} else {
-					results.checks.push({
-						resourceName: taskDefArn,
-						resourceArn: taskDefArn,
-						status: ComplianceStatus.PASS
-					});
-				}
+				results.checks.push({
+					resourceName: taskDefArn,
+					status: allContainersHaveLogging ? ComplianceStatus.PASS : ComplianceStatus.FAIL,
+					message: allContainersHaveLogging
+						? undefined
+						: "One or more containers in the task definition do not have logging configuration"
+				});
 			} catch (error) {
 				results.checks.push({
 					resourceName: taskDefArn,
-					resourceArn: taskDefArn,
 					status: ComplianceStatus.ERROR,
 					message: `Error checking task definition: ${error instanceof Error ? error.message : String(error)}`
 				});
@@ -100,7 +92,7 @@ async function checkEcsContainerReadonlyRoot(
 			{
 				resourceName: "Region Check",
 				status: ComplianceStatus.ERROR,
-				message: `Error checking ECS task definitions: ${error instanceof Error ? error.message : String(error)}`
+				message: `Error listing task definitions: ${error instanceof Error ? error.message : String(error)}`
 			}
 		];
 		return results;
@@ -111,22 +103,22 @@ async function checkEcsContainerReadonlyRoot(
 
 if (import.meta.main) {
 	const region = process.env.AWS_REGION;
-	const results = await checkEcsContainerReadonlyRoot(region);
+	const results = await checkEcsTaskDefinitionLogging(region);
 	printSummary(generateSummary(results));
 }
 
 export default {
-	title: "ECS containers should be limited to read-only access to root filesystems",
+	title: "ECS task definitions should have a logging configuration",
 	description:
-		"This control checks if ECS containers are configured with read-only root filesystem access to prevent unauthorized modifications and enhance security.",
+		"ECS task definitions must include logging configuration to maintain visibility and debugging capabilities for container applications.",
 	controls: [
 		{
-			id: "AWS-Foundational-Security-Best-Practices_v1.0.0_ECS.5",
+			id: "AWS-Foundational-Security-Best-Practices_v1.0.0_ECS.9",
 			document: "AWS-Foundational-Security-Best-Practices_v1.0.0"
 		}
 	],
-	severity: "MEDIUM",
-	execute: checkEcsContainerReadonlyRoot,
+	severity: "HIGH",
+	execute: checkEcsTaskDefinitionLogging,
 	serviceName: "Amazon Elastic Container Registry",
 	shortServiceName: "ecr"
 } satisfies RuntimeTest;

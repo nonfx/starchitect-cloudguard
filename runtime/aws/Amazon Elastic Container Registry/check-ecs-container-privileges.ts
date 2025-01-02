@@ -1,17 +1,17 @@
 import {
-	DescribeTaskDefinitionCommand,
 	ECSClient,
-	ListTaskDefinitionsCommand
+	ListTaskDefinitionsCommand,
+	DescribeTaskDefinitionCommand
 } from "@aws-sdk/client-ecs";
-import { generateSummary, printSummary } from "../../utils/string-utils.js";
+import { printSummary, generateSummary } from "../../utils/string-utils.js";
 import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "../../types.js";
 
 interface ContainerDefinition {
-	name: string;
-	readonlyRootFilesystem?: boolean;
+	name?: string | undefined;
+	privileged?: boolean;
 }
 
-async function checkEcsContainerReadonlyRoot(
+async function checkEcsContainerPrivileges(
 	region: string = "us-east-1"
 ): Promise<ComplianceReport> {
 	const client = new ECSClient({ region });
@@ -58,38 +58,27 @@ async function checkEcsContainerReadonlyRoot(
 				if (!taskDef.taskDefinition?.containerDefinitions) {
 					results.checks.push({
 						resourceName: taskDefArn,
-						resourceArn: taskDefArn,
 						status: ComplianceStatus.ERROR,
-						message: "Task definition missing container definitions"
+						message: "Task definition has no container definitions"
 					});
 					continue;
 				}
 
-				const containers = taskDef.taskDefinition.containerDefinitions as ContainerDefinition[];
-				const nonCompliantContainers = containers.filter(
-					container => !container.readonlyRootFilesystem
-				);
+				const privilegedContainers = taskDef.taskDefinition.containerDefinitions
+					.filter((container: ContainerDefinition) => container.privileged === true)
+					.map((container: ContainerDefinition) => container.name!);
 
-				if (nonCompliantContainers.length > 0) {
-					results.checks.push({
-						resourceName: taskDefArn,
-						resourceArn: taskDefArn,
-						status: ComplianceStatus.FAIL,
-						message: `Containers without read-only root filesystem: ${nonCompliantContainers
-							.map(c => c.name)
-							.join(", ")}`
-					});
-				} else {
-					results.checks.push({
-						resourceName: taskDefArn,
-						resourceArn: taskDefArn,
-						status: ComplianceStatus.PASS
-					});
-				}
+				results.checks.push({
+					resourceName: taskDefArn,
+					status: privilegedContainers.length === 0 ? ComplianceStatus.PASS : ComplianceStatus.FAIL,
+					message:
+						privilegedContainers.length > 0
+							? `Containers running in privileged mode: ${privilegedContainers.join(", ")}`
+							: undefined
+				});
 			} catch (error) {
 				results.checks.push({
 					resourceName: taskDefArn,
-					resourceArn: taskDefArn,
 					status: ComplianceStatus.ERROR,
 					message: `Error checking task definition: ${error instanceof Error ? error.message : String(error)}`
 				});
@@ -98,7 +87,7 @@ async function checkEcsContainerReadonlyRoot(
 	} catch (error) {
 		results.checks = [
 			{
-				resourceName: "Region Check",
+				resourceName: "ECS Check",
 				status: ComplianceStatus.ERROR,
 				message: `Error checking ECS task definitions: ${error instanceof Error ? error.message : String(error)}`
 			}
@@ -111,22 +100,22 @@ async function checkEcsContainerReadonlyRoot(
 
 if (import.meta.main) {
 	const region = process.env.AWS_REGION;
-	const results = await checkEcsContainerReadonlyRoot(region);
+	const results = await checkEcsContainerPrivileges(region);
 	printSummary(generateSummary(results));
 }
 
 export default {
-	title: "ECS containers should be limited to read-only access to root filesystems",
+	title: "ECS containers should run as non-privileged",
 	description:
-		"This control checks if ECS containers are configured with read-only root filesystem access to prevent unauthorized modifications and enhance security.",
+		"This control checks if ECS containers are running with privileged access. Containers should not have privileged access to ensure proper security isolation.",
 	controls: [
 		{
-			id: "AWS-Foundational-Security-Best-Practices_v1.0.0_ECS.5",
+			id: "AWS-Foundational-Security-Best-Practices_v1.0.0_ECS.4",
 			document: "AWS-Foundational-Security-Best-Practices_v1.0.0"
 		}
 	],
-	severity: "MEDIUM",
-	execute: checkEcsContainerReadonlyRoot,
+	severity: "HIGH",
+	execute: checkEcsContainerPrivileges,
 	serviceName: "Amazon Elastic Container Registry",
 	shortServiceName: "ecr"
 } satisfies RuntimeTest;

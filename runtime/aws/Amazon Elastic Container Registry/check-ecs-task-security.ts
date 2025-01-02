@@ -1,17 +1,31 @@
 import {
-	DescribeTaskDefinitionCommand,
 	ECSClient,
-	ListTaskDefinitionsCommand
+	ListTaskDefinitionsCommand,
+	DescribeTaskDefinitionCommand
 } from "@aws-sdk/client-ecs";
-import { generateSummary, printSummary } from "../../utils/string-utils.js";
+import { printSummary, generateSummary } from "../../utils/string-utils.js";
 import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "../../types.js";
 
 interface ContainerDefinition {
-	name: string;
-	readonlyRootFilesystem?: boolean;
+	user?: string;
+	privileged?: boolean;
 }
 
-async function checkEcsContainerReadonlyRoot(
+function isSecureContainer(containerDef: ContainerDefinition): boolean {
+	// Check for non-root user
+	if (!containerDef.user || containerDef.user === "" || containerDef.user === "root") {
+		return false;
+	}
+
+	// Check privileged mode is explicitly false
+	if (containerDef.privileged !== false) {
+		return false;
+	}
+
+	return true;
+}
+
+async function checkEcsTaskDefinitionSecurity(
 	region: string = "us-east-1"
 ): Promise<ComplianceReport> {
 	const client = new ECSClient({ region });
@@ -55,55 +69,52 @@ async function checkEcsContainerReadonlyRoot(
 				});
 				const taskDef = await client.send(describeCommand);
 
-				if (!taskDef.taskDefinition?.containerDefinitions) {
+				if (!taskDef.taskDefinition) {
 					results.checks.push({
 						resourceName: taskDefArn,
-						resourceArn: taskDefArn,
 						status: ComplianceStatus.ERROR,
-						message: "Task definition missing container definitions"
+						message: "Unable to retrieve task definition details"
 					});
 					continue;
 				}
 
-				const containers = taskDef.taskDefinition.containerDefinitions as ContainerDefinition[];
-				const nonCompliantContainers = containers.filter(
-					container => !container.readonlyRootFilesystem
-				);
+				const networkMode = taskDef.taskDefinition.networkMode;
+				const containerDefs = taskDef.taskDefinition.containerDefinitions || [];
 
-				if (nonCompliantContainers.length > 0) {
+				// Check security requirements only for host network mode
+				if (networkMode === "host") {
+					const secureContainers = containerDefs.every(container =>
+						isSecureContainer(container as ContainerDefinition)
+					);
+
 					results.checks.push({
 						resourceName: taskDefArn,
-						resourceArn: taskDefArn,
-						status: ComplianceStatus.FAIL,
-						message: `Containers without read-only root filesystem: ${nonCompliantContainers
-							.map(c => c.name)
-							.join(", ")}`
+						status: secureContainers ? ComplianceStatus.PASS : ComplianceStatus.FAIL,
+						message: secureContainers
+							? undefined
+							: "Task definition using host network mode must use non-root users and explicitly set privileged=false"
 					});
 				} else {
+					// Other network modes are considered secure
 					results.checks.push({
 						resourceName: taskDefArn,
-						resourceArn: taskDefArn,
 						status: ComplianceStatus.PASS
 					});
 				}
 			} catch (error) {
 				results.checks.push({
 					resourceName: taskDefArn,
-					resourceArn: taskDefArn,
 					status: ComplianceStatus.ERROR,
 					message: `Error checking task definition: ${error instanceof Error ? error.message : String(error)}`
 				});
 			}
 		}
 	} catch (error) {
-		results.checks = [
-			{
-				resourceName: "Region Check",
-				status: ComplianceStatus.ERROR,
-				message: `Error checking ECS task definitions: ${error instanceof Error ? error.message : String(error)}`
-			}
-		];
-		return results;
+		results.checks.push({
+			resourceName: "ECS Check",
+			status: ComplianceStatus.ERROR,
+			message: `Error checking ECS task definitions: ${error instanceof Error ? error.message : String(error)}`
+		});
 	}
 
 	return results;
@@ -111,22 +122,22 @@ async function checkEcsContainerReadonlyRoot(
 
 if (import.meta.main) {
 	const region = process.env.AWS_REGION;
-	const results = await checkEcsContainerReadonlyRoot(region);
+	const results = await checkEcsTaskDefinitionSecurity(region);
 	printSummary(generateSummary(results));
 }
 
 export default {
-	title: "ECS containers should be limited to read-only access to root filesystems",
+	title: "Amazon ECS task definitions should have secure networking modes and user definitions",
 	description:
-		"This control checks if ECS containers are configured with read-only root filesystem access to prevent unauthorized modifications and enhance security.",
+		"This control checks if ECS task definitions use secure networking modes and user definitions to prevent privilege escalation and unauthorized access.",
 	controls: [
 		{
-			id: "AWS-Foundational-Security-Best-Practices_v1.0.0_ECS.5",
+			id: "AWS-Foundational-Security-Best-Practices_v1.0.0_ECS.1",
 			document: "AWS-Foundational-Security-Best-Practices_v1.0.0"
 		}
 	],
-	severity: "MEDIUM",
-	execute: checkEcsContainerReadonlyRoot,
+	severity: "HIGH",
+	execute: checkEcsTaskDefinitionSecurity,
 	serviceName: "Amazon Elastic Container Registry",
 	shortServiceName: "ecr"
 } satisfies RuntimeTest;
