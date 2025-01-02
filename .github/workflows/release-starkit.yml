@@ -68,7 +68,7 @@ jobs:
           git config --local user.name "github-actions[bot]"
 
           # Commit changes
-          git add .
+          git add ..
           git commit -m "chore: bump version to ${VERSION}"
 
           # Push branch
@@ -150,9 +150,13 @@ jobs:
         run: npm run build
 
       - name: Build OCLIF package
-        run: |
-          npx -y oclif pack ${{ matrix.target }}
-          npx -y oclif promote --ignore-missing --sha="git rev-parse --short HEAD" --version="${{ github.event.inputs.version }}" --${{ matrix.target }}
+        run: npx -y oclif pack ${{ matrix.target }}
+
+      - name: Upload OCLIF package
+        run: npx -y oclif upload ${{ matrix.target }} --targets=${{ matrix.target }}
+
+      - name: Promote OCLIF package
+        run: npx -y oclif promote --ignore-missing --sha="git rev-parse --short HEAD" --version="${{ github.event.inputs.version }}" --${{ matrix.target }}
 
       - name: Upload package artifacts
         uses: actions/upload-artifact@v4
@@ -235,6 +239,9 @@ jobs:
 
       - name: Build Windows installer
         run: npx -y oclif pack win --targets=win32-x64
+
+      - name: Upload Windows installer
+        run: npx -y oclif upload win --targets=win32-x64
 
       - name: Promote Windows installer
         run: npx -y oclif promote --ignore-missing --sha="git rev-parse --short HEAD" --version="${{ github.event.inputs.version }}" --win

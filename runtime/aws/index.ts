@@ -17,146 +17,170 @@ import import10 from "./AWS Key Management Service/check-inline-policy-kms-decry
 import import11 from "./AWS Key Management Service/check-kms-key-rotation.js";
 import import12 from "./AWS Key Management Service/check-kms-keys-deletion-status.js";
 import import13 from "./AWS Key Management Service/check-kms-public-access.js";
-import import14 from "./AWS Security Hub/check-security-hub.js";
-import import15 from "./Amazon CloudWatch/aws_cloudwatch_alarm_action_check.js";
-import import16 from "./Amazon CloudWatch/aws_cloudwatch_alarm_action_enabled.js";
-import import17 from "./Amazon CloudWatch/aws_cloudwatch_cloudtrail.js";
-import import18 from "./Amazon CloudWatch/aws_cloudwatch_cmk.js";
-import import19 from "./Amazon CloudWatch/aws_cloudwatch_config.js";
-import import20 from "./Amazon CloudWatch/aws_cloudwatch_console_auth.js";
-import import21 from "./Amazon CloudWatch/aws_cloudwatch_log_group_retention.js";
-import import22 from "./Amazon CloudWatch/aws_cloudwatch_monitoring_iam_policies.js";
-import import23 from "./Amazon CloudWatch/aws_cloudwatch_monitoring_root_account.js";
-import import24 from "./Amazon CloudWatch/aws_cloudwatch_monitoring_signin_mfa.js";
-import import25 from "./Amazon CloudWatch/aws_cloudwatch_monitoring_unauthorized_api_calls.js";
-import import26 from "./Amazon CloudWatch/aws_cloudwatch_nacl_monitoring.js";
-import import27 from "./Amazon CloudWatch/aws_cloudwatch_network_gateway.js";
-import import28 from "./Amazon CloudWatch/aws_cloudwatch_org_changes_monitored.js";
-import import29 from "./Amazon CloudWatch/aws_cloudwatch_route_table.js";
-import import30 from "./Amazon CloudWatch/aws_cloudwatch_s3_policy_change.js";
-import import31 from "./Amazon CloudWatch/aws_cloudwatch_security_group.js";
-import import32 from "./Amazon CloudWatch/aws_cloudwatch_vpc_changes_monitored.js";
-import import33 from "./Amazon Elastic Compute Cloud (EC2)/aws_autoscaling_elb_healthcheck_required.js";
-import import34 from "./Amazon Elastic Compute Cloud (EC2)/aws_autoscaling_launch_template.js";
-import import35 from "./Amazon Elastic Compute Cloud (EC2)/aws_autoscaling_multiple_instance_types.js";
-import import36 from "./Amazon Elastic Compute Cloud (EC2)/aws_autoscaling_no_public_ip.js";
-import import37 from "./Amazon Elastic Compute Cloud (EC2)/aws_ec2_ami_encryption.js";
-import import38 from "./Amazon Elastic Compute Cloud (EC2)/aws_ec2_ami_public_acees.js";
-import import39 from "./Amazon Elastic Compute Cloud (EC2)/aws_ec2_autoscaling_propagate_tag.js";
-import import40 from "./Amazon Elastic Compute Cloud (EC2)/aws_ec2_default_security_group.js";
-import import41 from "./Amazon Elastic Compute Cloud (EC2)/aws_ec2_detailed_monitoring.js";
-import import42 from "./Amazon Elastic Compute Cloud (EC2)/aws_ec2_imdsv2.js";
-import import43 from "./Amazon Elastic Compute Cloud (EC2)/aws_ec2_launch_template_imdsv2.js";
-import import44 from "./Amazon Elastic Compute Cloud (EC2)/aws_ec2_launch_template_public_ip.js";
-import import45 from "./Amazon Elastic Compute Cloud (EC2)/aws_ec2_multiple_eni.js";
-import import46 from "./Amazon Elastic Compute Cloud (EC2)/aws_ec2_no_public_ip.js";
-import import47 from "./Amazon Elastic Compute Cloud (EC2)/aws_ec2_no_secrets_in_user_data.js";
-import import48 from "./Amazon Elastic Compute Cloud (EC2)/aws_ec2_subnet_auto_assign_public_ip.js";
-import import49 from "./Amazon Elastic Compute Cloud (EC2)/aws_ec2_systems_manager.js";
-import import50 from "./Amazon Elastic Compute Cloud (EC2)/aws_ec2_vpc_endpoint.js";
-import import51 from "./Amazon Elastic Compute Cloud (EC2)/aws_security_group_authorized_ports.js";
-import import52 from "./Amazon Elastic Compute Cloud (EC2)/aws_security_group_high_risk_ports.js";
-import import53 from "./Amazon Elastic Compute Cloud (EC2)/aws_transit_gateway_auto_accept_disabled.js";
-import import54 from "./Amazon Elastic Compute Cloud (EC2)/check-ec2-instance-age.js";
-import import55 from "./Amazon Elastic Compute Cloud (EC2)/check-stopped-instances.js";
-import import56 from "./Amazon Elastic Compute Cloud (EC2)/check-unused-enis.js";
-import import57 from "./Amazon Elastic Container Registry/check-ecr-image-scanning.js";
-import import58 from "./Amazon Elastic Container Registry/check-ecr-lifecycle-policy.js";
-import import59 from "./Amazon Elastic Container Registry/check-ecr-tag-immutability.js";
-import import60 from "./Amazon Elastic Container Registry/check-ecs-container-insights.js";
-import import61 from "./Amazon Elastic Container Registry/check-ecs-container-readonly-root.js";
-import import62 from "./Amazon Elastic File System/aws_efs_access_points_enforce_root_directory.js";
-import import63 from "./Amazon Elastic File System/aws_efs_access_points_enforce_user_identity.js";
-import import64 from "./Amazon Elastic File System/aws_efs_file_system_kms_encryption.js";
-import import65 from "./Amazon Elastic File System/aws_efs_mount_targets_not_public.js";
-import import66 from "./Amazon Identity and Access Management/aws_iam_access_analyzer.js";
-import import67 from "./Amazon Identity and Access Management/aws_iam_account_password_policy.js";
-import import68 from "./Amazon Identity and Access Management/aws_iam_centralized_management.js";
-import import69 from "./Amazon Identity and Access Management/aws_iam_cloudshell_access.js";
-import import70 from "./Amazon Identity and Access Management/aws_iam_instance_roles.js";
-import import71 from "./Amazon Identity and Access Management/aws_iam_no_full_admin.js";
-import import72 from "./Amazon Identity and Access Management/aws_iam_no_initial_access_keys.js";
-import import73 from "./Amazon Identity and Access Management/aws_iam_no_wildcard_actions.js";
-import import74 from "./Amazon Identity and Access Management/aws_iam_password_reuse_prevention.js";
-import import75 from "./Amazon Identity and Access Management/aws_iam_support_role.js";
-import import76 from "./Amazon Identity and Access Management/aws_iam_users_no_direct_policies.js";
-import import77 from "./Amazon Identity and Access Management/aws_iam_users_permissions_through_group.js";
-import import78 from "./Amazon Identity and Access Management/check-access-key-rotation.js";
-import import79 from "./Amazon Identity and Access Management/check-expired-certificates.js";
-import import80 from "./Amazon Identity and Access Management/check-iam-access-keys.js";
-import import81 from "./Amazon Identity and Access Management/check-iam-mfa.js";
-import import82 from "./Amazon Identity and Access Management/check-unused-credentials.js";
-import import83 from "./Amazon Relational Database Service/check-aurora-access-key-rotation.js";
-import import84 from "./Amazon Relational Database Service/check-aurora-audit-logging.js";
-import import85 from "./Amazon Relational Database Service/check-aurora-backtracking.js";
-import import86 from "./Amazon Relational Database Service/check-aurora-backup-compliance.js";
-import import87 from "./Amazon Relational Database Service/check-aurora-encryption-in-transit.js";
-import import88 from "./Amazon Relational Database Service/check-aurora-encryption.js";
-import import89 from "./Amazon Relational Database Service/check-aurora-iam-roles-and-policies.js";
-import import90 from "./Amazon Relational Database Service/check-aurora-least-privilege.js";
-import import91 from "./Amazon Relational Database Service/check-aurora-mysql-cloudwatch-logs.js";
-import import92 from "./Amazon Relational Database Service/check-aurora-postgres-cloudwatch-logs.js";
-import import93 from "./Amazon Relational Database Service/check-neptune-audit-logs.js";
-import import94 from "./Amazon Relational Database Service/check-neptune-automated-backups.js";
-import import95 from "./Amazon Relational Database Service/check-neptune-cluster-encryption.js";
-import import96 from "./Amazon Relational Database Service/check-neptune-copy-tags-to-snapshot.js";
-import import97 from "./Amazon Relational Database Service/check-neptune-deletion-protection.js";
-import import98 from "./Amazon Relational Database Service/check-neptune-iam-auth.js";
-import import99 from "./Amazon Relational Database Service/check-neptune-snapshots-encryption.js";
-import import100 from "./Amazon Relational Database Service/check-rds-access-control-authentication.js";
-import import101 from "./Amazon Relational Database Service/check-rds-auto-minor-version-upgrade.js";
-import import102 from "./Amazon Relational Database Service/check-rds-automated-backups.js";
-import import103 from "./Amazon Relational Database Service/check-rds-backup-enabled.js";
-import import104 from "./Amazon Relational Database Service/check-rds-cloudwatch-logs.js";
-import import105 from "./Amazon Relational Database Service/check-rds-cluster-deletion-protection.js";
-import import106 from "./Amazon Relational Database Service/check-rds-cluster-encryption.js";
-import import107 from "./Amazon Relational Database Service/check-rds-cluster-iam-auth.js";
-import import108 from "./Amazon Relational Database Service/check-rds-cluster-multi-az.js";
-import import109 from "./Amazon Relational Database Service/check-rds-cluster-tag.js";
-import import110 from "./Amazon Relational Database Service/check-rds-custom-admin-username.js";
-import import111 from "./Amazon Relational Database Service/check-rds-database-security.js";
-import import112 from "./Amazon Relational Database Service/check-rds-default-ports.js";
-import import113 from "./Amazon Relational Database Service/check-rds-deletion-protection.js";
-import import114 from "./Amazon Relational Database Service/check-rds-encryption-at-rest.js";
-import import115 from "./Amazon Relational Database Service/check-rds-encryption-in-transit.js";
-import import116 from "./Amazon Relational Database Service/check-rds-enhanced-monitoring.js";
-import import117 from "./Amazon Relational Database Service/check-rds-event-notifications.js";
-import import118 from "./Amazon Relational Database Service/check-rds-event-subscription-parameter-group.js";
-import import119 from "./Amazon Relational Database Service/check-rds-event-subscriptions.js";
-import import120 from "./Amazon Relational Database Service/check-rds-iam-auth.js";
-import import121 from "./Amazon Relational Database Service/check-rds-in-vpc.js";
-import import122 from "./Amazon Relational Database Service/check-rds-instances-in-vpc.js";
-import import123 from "./Amazon Relational Database Service/check-rds-monitoring-logging.js";
-import import124 from "./Amazon Relational Database Service/check-rds-multi-az.js";
-import import125 from "./Amazon Relational Database Service/check-rds-password-rotation.js";
-import import126 from "./Amazon Relational Database Service/check-rds-postgres-cloudwatch-logs.js";
-import import127 from "./Amazon Relational Database Service/check-rds-public-access.js";
-import import128 from "./Amazon Relational Database Service/check-rds-security-group-event-notifications.js";
-import import129 from "./Amazon Relational Database Service/check-rds-security-groups-configured.js";
-import import130 from "./Amazon Relational Database Service/check-rds-security-groups.js";
-import import131 from "./Amazon Relational Database Service/check-rds-snapshot-encryption.js";
-import import132 from "./Amazon Relational Database Service/check-rds-snapshots-private.js";
-import import133 from "./Amazon Relational Database Service/check-rds-tag-copy-compliance.js";
-import import134 from "./Amazon Relational Database Service/check-vpc-exists.js";
-import import135 from "./Amazon Simple Storage Service (Amazon S3)/aws_s3_http_access_deny.js";
-import import136 from "./Amazon Simple Storage Service (Amazon S3)/aws_s3_mfa_delete_enabled.js";
-import import137 from "./Amazon Simple Storage Service (Amazon S3)/check-s3-access-point-block-public-access.js";
-import import138 from "./Amazon Simple Storage Service (Amazon S3)/check-s3-block-public-access.js";
-import import139 from "./Amazon Simple Storage Service (Amazon S3)/check-s3-bucket-acl-compliance.js";
-import import140 from "./Amazon Simple Storage Service (Amazon S3)/check-s3-bucket-external-access.js";
-import import141 from "./Amazon Simple Storage Service (Amazon S3)/check-s3-bucket-lifecycle-configuration.js";
-import import142 from "./Amazon Simple Storage Service (Amazon S3)/check-s3-bucket-logging.js";
-import import143 from "./Amazon Simple Storage Service (Amazon S3)/check-s3-data-discovery-compliance.js";
-import import144 from "./Amazon Simple Storage Service (Amazon S3)/check-s3-deny-http-access.js";
-import import145 from "./Amazon Simple Storage Service (Amazon S3)/check-s3-mfa-delete.js";
-import import146 from "./Amazon Simple Storage Service (Amazon S3)/check-s3-object-level-logging.js";
-import import147 from "./Amazon Simple Storage Service (Amazon S3)/check-s3-object-read-logging.js";
-import import148 from "./Amazon Simple Storage Service (Amazon S3)/check-s3-ssl-required.js";
-import import149 from "./Amazon Virtual Private Cloud/check-default-security-group-compliance.js";
-import import150 from "./Amazon Virtual Private Cloud/check-nacl-port22-compliance.js";
-import import151 from "./Amazon Virtual Private Cloud/check-security-group-admin-ports.js";
-import import152 from "./Amazon Virtual Private Cloud/check-vpc-flow-logs.js";
-import import153 from "./Amazon Virtual Private Cloud/check-vpc-peering-routing-compliance.js";
+import import14 from "./AWS Lambda/check-aws-config-lambda.js";
+import import15 from "./AWS Lambda/check-lambda-code-signing.js";
+import import16 from "./AWS Lambda/check-lambda-execution-roles.js";
+import import17 from "./AWS Lambda/check-lambda-exposure.js";
+import import18 from "./AWS Lambda/check-lambda-insights.js";
+import import19 from "./AWS Lambda/check-lambda-least-privilege.js";
+import import20 from "./AWS Lambda/check-lambda-privileges.js";
+import import21 from "./AWS Lambda/check-lambda-public-access.js";
+import import22 from "./AWS Lambda/check-lambda-runtime-versions.js";
+import import23 from "./AWS Lambda/check-lambda-runtime.js";
+import import24 from "./AWS Lambda/check-lambda-secrets-manager.js";
+import import25 from "./AWS Lambda/check-lambda-unique-iam-roles.js";
+import import26 from "./AWS Lambda/check-lambda-vpc-multi-az.js";
+import import27 from "./AWS Security Hub/check-security-hub.js";
+import import28 from "./Amazon CloudWatch/aws_cloudwatch_alarm_action_check.js";
+import import29 from "./Amazon CloudWatch/aws_cloudwatch_alarm_action_enabled.js";
+import import30 from "./Amazon CloudWatch/aws_cloudwatch_cloudtrail.js";
+import import31 from "./Amazon CloudWatch/aws_cloudwatch_cmk.js";
+import import32 from "./Amazon CloudWatch/aws_cloudwatch_config.js";
+import import33 from "./Amazon CloudWatch/aws_cloudwatch_console_auth.js";
+import import34 from "./Amazon CloudWatch/aws_cloudwatch_log_group_retention.js";
+import import35 from "./Amazon CloudWatch/aws_cloudwatch_monitoring_iam_policies.js";
+import import36 from "./Amazon CloudWatch/aws_cloudwatch_monitoring_root_account.js";
+import import37 from "./Amazon CloudWatch/aws_cloudwatch_monitoring_signin_mfa.js";
+import import38 from "./Amazon CloudWatch/aws_cloudwatch_monitoring_unauthorized_api_calls.js";
+import import39 from "./Amazon CloudWatch/aws_cloudwatch_nacl_monitoring.js";
+import import40 from "./Amazon CloudWatch/aws_cloudwatch_network_gateway.js";
+import import41 from "./Amazon CloudWatch/aws_cloudwatch_org_changes_monitored.js";
+import import42 from "./Amazon CloudWatch/aws_cloudwatch_route_table.js";
+import import43 from "./Amazon CloudWatch/aws_cloudwatch_s3_policy_change.js";
+import import44 from "./Amazon CloudWatch/aws_cloudwatch_security_group.js";
+import import45 from "./Amazon CloudWatch/aws_cloudwatch_vpc_changes_monitored.js";
+import import46 from "./Amazon Elastic Block Store/check-ebs-delete-on-termination.js";
+import import47 from "./Amazon Elastic Block Store/check-ebs-snapshot-public-access.js";
+import import48 from "./Amazon Elastic Block Store/check-ebs-volume-encryption.js";
+import import49 from "./Amazon Elastic Compute Cloud (EC2)/aws_autoscaling_elb_healthcheck_required.js";
+import import50 from "./Amazon Elastic Compute Cloud (EC2)/aws_autoscaling_launch_template.js";
+import import51 from "./Amazon Elastic Compute Cloud (EC2)/aws_autoscaling_multiple_instance_types.js";
+import import52 from "./Amazon Elastic Compute Cloud (EC2)/aws_autoscaling_no_public_ip.js";
+import import53 from "./Amazon Elastic Compute Cloud (EC2)/aws_ec2_ami_encryption.js";
+import import54 from "./Amazon Elastic Compute Cloud (EC2)/aws_ec2_ami_public_acees.js";
+import import55 from "./Amazon Elastic Compute Cloud (EC2)/aws_ec2_autoscaling_propagate_tag.js";
+import import56 from "./Amazon Elastic Compute Cloud (EC2)/aws_ec2_default_security_group.js";
+import import57 from "./Amazon Elastic Compute Cloud (EC2)/aws_ec2_detailed_monitoring.js";
+import import58 from "./Amazon Elastic Compute Cloud (EC2)/aws_ec2_imdsv2.js";
+import import59 from "./Amazon Elastic Compute Cloud (EC2)/aws_ec2_launch_template_imdsv2.js";
+import import60 from "./Amazon Elastic Compute Cloud (EC2)/aws_ec2_launch_template_public_ip.js";
+import import61 from "./Amazon Elastic Compute Cloud (EC2)/aws_ec2_multiple_eni.js";
+import import62 from "./Amazon Elastic Compute Cloud (EC2)/aws_ec2_no_public_ip.js";
+import import63 from "./Amazon Elastic Compute Cloud (EC2)/aws_ec2_no_secrets_in_user_data.js";
+import import64 from "./Amazon Elastic Compute Cloud (EC2)/aws_ec2_subnet_auto_assign_public_ip.js";
+import import65 from "./Amazon Elastic Compute Cloud (EC2)/aws_ec2_systems_manager.js";
+import import66 from "./Amazon Elastic Compute Cloud (EC2)/aws_ec2_vpc_endpoint.js";
+import import67 from "./Amazon Elastic Compute Cloud (EC2)/aws_security_group_authorized_ports.js";
+import import68 from "./Amazon Elastic Compute Cloud (EC2)/aws_security_group_high_risk_ports.js";
+import import69 from "./Amazon Elastic Compute Cloud (EC2)/aws_transit_gateway_auto_accept_disabled.js";
+import import70 from "./Amazon Elastic Compute Cloud (EC2)/check-ec2-instance-age.js";
+import import71 from "./Amazon Elastic Compute Cloud (EC2)/check-stopped-instances.js";
+import import72 from "./Amazon Elastic Compute Cloud (EC2)/check-unused-enis.js";
+import import73 from "./Amazon Elastic Container Registry/check-ecr-image-scanning.js";
+import import74 from "./Amazon Elastic Container Registry/check-ecr-lifecycle-policy.js";
+import import75 from "./Amazon Elastic Container Registry/check-ecr-tag-immutability.js";
+import import76 from "./Amazon Elastic Container Registry/check-ecs-container-insights.js";
+import import77 from "./Amazon Elastic Container Registry/check-ecs-container-privileges.js";
+import import78 from "./Amazon Elastic Container Registry/check-ecs-container-readonly-root.js";
+import import79 from "./Amazon Elastic Container Registry/check-ecs-fargate-platform-version.js";
+import import80 from "./Amazon Elastic Container Registry/check-ecs-public-ip.js";
+import import81 from "./Amazon Elastic Container Registry/check-ecs-secret-env-vars.js";
+import import82 from "./Amazon Elastic Container Registry/check-ecs-task-definition-logging.js";
+import import83 from "./Amazon Elastic Container Registry/check-ecs-task-definition-pid-mode.js";
+import import84 from "./Amazon Elastic Container Registry/check-ecs-task-public-ip.js";
+import import85 from "./Amazon Elastic Container Registry/check-ecs-task-security.js";
+import import86 from "./Amazon Elastic File System/aws_efs_access_points_enforce_root_directory.js";
+import import87 from "./Amazon Elastic File System/aws_efs_access_points_enforce_user_identity.js";
+import import88 from "./Amazon Elastic File System/aws_efs_file_system_kms_encryption.js";
+import import89 from "./Amazon Elastic File System/aws_efs_mount_targets_not_public.js";
+import import90 from "./Amazon Identity and Access Management/aws_iam_access_analyzer.js";
+import import91 from "./Amazon Identity and Access Management/aws_iam_account_password_policy.js";
+import import92 from "./Amazon Identity and Access Management/aws_iam_centralized_management.js";
+import import93 from "./Amazon Identity and Access Management/aws_iam_cloudshell_access.js";
+import import94 from "./Amazon Identity and Access Management/aws_iam_instance_roles.js";
+import import95 from "./Amazon Identity and Access Management/aws_iam_no_full_admin.js";
+import import96 from "./Amazon Identity and Access Management/aws_iam_no_initial_access_keys.js";
+import import97 from "./Amazon Identity and Access Management/aws_iam_no_wildcard_actions.js";
+import import98 from "./Amazon Identity and Access Management/aws_iam_password_reuse_prevention.js";
+import import99 from "./Amazon Identity and Access Management/aws_iam_support_role.js";
+import import100 from "./Amazon Identity and Access Management/aws_iam_users_no_direct_policies.js";
+import import101 from "./Amazon Identity and Access Management/aws_iam_users_permissions_through_group.js";
+import import102 from "./Amazon Identity and Access Management/check-access-key-rotation.js";
+import import103 from "./Amazon Identity and Access Management/check-expired-certificates.js";
+import import104 from "./Amazon Identity and Access Management/check-iam-access-keys.js";
+import import105 from "./Amazon Identity and Access Management/check-iam-mfa.js";
+import import106 from "./Amazon Identity and Access Management/check-unused-credentials.js";
+import import107 from "./Amazon Relational Database Service/check-aurora-access-key-rotation.js";
+import import108 from "./Amazon Relational Database Service/check-aurora-audit-logging.js";
+import import109 from "./Amazon Relational Database Service/check-aurora-backtracking.js";
+import import110 from "./Amazon Relational Database Service/check-aurora-backup-compliance.js";
+import import111 from "./Amazon Relational Database Service/check-aurora-encryption-in-transit.js";
+import import112 from "./Amazon Relational Database Service/check-aurora-encryption.js";
+import import113 from "./Amazon Relational Database Service/check-aurora-iam-roles-and-policies.js";
+import import114 from "./Amazon Relational Database Service/check-aurora-least-privilege.js";
+import import115 from "./Amazon Relational Database Service/check-aurora-mysql-cloudwatch-logs.js";
+import import116 from "./Amazon Relational Database Service/check-aurora-postgres-cloudwatch-logs.js";
+import import117 from "./Amazon Relational Database Service/check-neptune-audit-logs.js";
+import import118 from "./Amazon Relational Database Service/check-neptune-automated-backups.js";
+import import119 from "./Amazon Relational Database Service/check-neptune-cluster-encryption.js";
+import import120 from "./Amazon Relational Database Service/check-neptune-copy-tags-to-snapshot.js";
+import import121 from "./Amazon Relational Database Service/check-neptune-deletion-protection.js";
+import import122 from "./Amazon Relational Database Service/check-neptune-iam-auth.js";
+import import123 from "./Amazon Relational Database Service/check-neptune-snapshots-encryption.js";
+import import124 from "./Amazon Relational Database Service/check-rds-access-control-authentication.js";
+import import125 from "./Amazon Relational Database Service/check-rds-auto-minor-version-upgrade.js";
+import import126 from "./Amazon Relational Database Service/check-rds-automated-backups.js";
+import import127 from "./Amazon Relational Database Service/check-rds-backup-enabled.js";
+import import128 from "./Amazon Relational Database Service/check-rds-cloudwatch-logs.js";
+import import129 from "./Amazon Relational Database Service/check-rds-cluster-deletion-protection.js";
+import import130 from "./Amazon Relational Database Service/check-rds-cluster-encryption.js";
+import import131 from "./Amazon Relational Database Service/check-rds-cluster-iam-auth.js";
+import import132 from "./Amazon Relational Database Service/check-rds-cluster-multi-az.js";
+import import133 from "./Amazon Relational Database Service/check-rds-cluster-tag.js";
+import import134 from "./Amazon Relational Database Service/check-rds-custom-admin-username.js";
+import import135 from "./Amazon Relational Database Service/check-rds-database-security.js";
+import import136 from "./Amazon Relational Database Service/check-rds-default-ports.js";
+import import137 from "./Amazon Relational Database Service/check-rds-deletion-protection.js";
+import import138 from "./Amazon Relational Database Service/check-rds-encryption-at-rest.js";
+import import139 from "./Amazon Relational Database Service/check-rds-encryption-in-transit.js";
+import import140 from "./Amazon Relational Database Service/check-rds-enhanced-monitoring.js";
+import import141 from "./Amazon Relational Database Service/check-rds-event-notifications.js";
+import import142 from "./Amazon Relational Database Service/check-rds-event-subscription-parameter-group.js";
+import import143 from "./Amazon Relational Database Service/check-rds-event-subscriptions.js";
+import import144 from "./Amazon Relational Database Service/check-rds-iam-auth.js";
+import import145 from "./Amazon Relational Database Service/check-rds-in-vpc.js";
+import import146 from "./Amazon Relational Database Service/check-rds-instances-in-vpc.js";
+import import147 from "./Amazon Relational Database Service/check-rds-monitoring-logging.js";
+import import148 from "./Amazon Relational Database Service/check-rds-multi-az.js";
+import import149 from "./Amazon Relational Database Service/check-rds-password-rotation.js";
+import import150 from "./Amazon Relational Database Service/check-rds-postgres-cloudwatch-logs.js";
+import import151 from "./Amazon Relational Database Service/check-rds-public-access.js";
+import import152 from "./Amazon Relational Database Service/check-rds-security-group-event-notifications.js";
+import import153 from "./Amazon Relational Database Service/check-rds-security-groups-configured.js";
+import import154 from "./Amazon Relational Database Service/check-rds-security-groups.js";
+import import155 from "./Amazon Relational Database Service/check-rds-snapshot-encryption.js";
+import import156 from "./Amazon Relational Database Service/check-rds-snapshots-private.js";
+import import157 from "./Amazon Relational Database Service/check-rds-tag-copy-compliance.js";
+import import158 from "./Amazon Relational Database Service/check-vpc-exists.js";
+import import159 from "./Amazon Simple Storage Service (Amazon S3)/aws_s3_http_access_deny.js";
+import import160 from "./Amazon Simple Storage Service (Amazon S3)/aws_s3_mfa_delete_enabled.js";
+import import161 from "./Amazon Simple Storage Service (Amazon S3)/check-s3-access-point-block-public-access.js";
+import import162 from "./Amazon Simple Storage Service (Amazon S3)/check-s3-block-public-access.js";
+import import163 from "./Amazon Simple Storage Service (Amazon S3)/check-s3-bucket-acl-compliance.js";
+import import164 from "./Amazon Simple Storage Service (Amazon S3)/check-s3-bucket-external-access.js";
+import import165 from "./Amazon Simple Storage Service (Amazon S3)/check-s3-bucket-lifecycle-configuration.js";
+import import166 from "./Amazon Simple Storage Service (Amazon S3)/check-s3-bucket-logging.js";
+import import167 from "./Amazon Simple Storage Service (Amazon S3)/check-s3-data-discovery-compliance.js";
+import import168 from "./Amazon Simple Storage Service (Amazon S3)/check-s3-deny-http-access.js";
+import import169 from "./Amazon Simple Storage Service (Amazon S3)/check-s3-mfa-delete.js";
+import import170 from "./Amazon Simple Storage Service (Amazon S3)/check-s3-object-level-logging.js";
+import import171 from "./Amazon Simple Storage Service (Amazon S3)/check-s3-object-read-logging.js";
+import import172 from "./Amazon Simple Storage Service (Amazon S3)/check-s3-ssl-required.js";
+import import173 from "./Amazon Virtual Private Cloud/check-default-security-group-compliance.js";
+import import174 from "./Amazon Virtual Private Cloud/check-nacl-port22-compliance.js";
+import import175 from "./Amazon Virtual Private Cloud/check-security-group-admin-ports.js";
+import import176 from "./Amazon Virtual Private Cloud/check-vpc-flow-logs.js";
+import import177 from "./Amazon Virtual Private Cloud/check-vpc-peering-routing-compliance.js";
 
 export default [
     import0,
@@ -312,5 +336,29 @@ export default [
     import150,
     import151,
     import152,
-    import153
+    import153,
+    import154,
+    import155,
+    import156,
+    import157,
+    import158,
+    import159,
+    import160,
+    import161,
+    import162,
+    import163,
+    import164,
+    import165,
+    import166,
+    import167,
+    import168,
+    import169,
+    import170,
+    import171,
+    import172,
+    import173,
+    import174,
+    import175,
+    import176,
+    import177
 ];

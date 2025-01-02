@@ -20,7 +20,7 @@ $ npm install -g starkit
 $ starkit COMMAND
 running command...
 $ starkit (--version)
-starkit/1.0.2 linux-x64 node-v23.5.0
+starkit/1.0.2 darwin-arm64 node-v23.5.0
 $ starkit --help [COMMAND]
 USAGE
   $ starkit COMMAND
@@ -85,7 +85,7 @@ Run security tests against your AWS runtime environment
 ```
 USAGE
   $ starkit runtime aws [--json] [--concurrency <value>] [--format json|stdout] [--services
-    all|cloudtrail|aws-config|kms|securityhub|cloudwatch|ec2|ecr|efs|iam|rds|s3|vpc...] [--region <value>]
+    all|cloudtrail|aws-config|kms|lambda|securityhub|cloudwatch|ebs|ec2|ecr|efs|iam|rds|s3|vpc...] [--region <value>]
 
 FLAGS
   --concurrency=<value>   [default: 5] Number of tests to run concurrently
@@ -93,7 +93,8 @@ FLAGS
                           <options: json|stdout>
   --region=<value>        Region to test
   --services=<option>...  Comma separated list of cloud services to test. Pass 'all' to test all services
-                          <options: all|cloudtrail|aws-config|kms|securityhub|cloudwatch|ec2|ecr|efs|iam|rds|s3|vpc>
+                          <options:
+                          all|cloudtrail|aws-config|kms|lambda|securityhub|cloudwatch|ebs|ec2|ecr|efs|iam|rds|s3|vpc>
 
 GLOBAL FLAGS
   --json  Format output as json.
