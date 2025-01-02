@@ -10,7 +10,7 @@ export type RuntimeTestMeta = {
 	title: string;
 	description: string;
 	controls: ComplianceControl[];
-	severity: "HIGH" | "MEDIUM" | "LOW";
+	severity: "CRITICAL" | "HIGH" | "MEDIUM" | "LOW";
 	category?: string;
 	serviceName: string;
 	shortServiceName: string;
