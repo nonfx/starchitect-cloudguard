@@ -156,7 +156,7 @@ jobs:
         run: npx -y oclif upload ${{ matrix.target }}
 
       - name: Promote OCLIF package
-        run: npx -y oclif promote --ignore-missing --sha="git rev-parse --short HEAD" --version="${{ github.event.inputs.version }}" --${{ matrix.target }}
+        run: npx -y oclif promote --ignore-missing --sha="$(git rev-parse --short HEAD)" --version="${{ github.event.inputs.version }}" --${{ matrix.target }}
 
       - name: Upload package artifacts
         uses: actions/upload-artifact@v4
@@ -200,7 +200,7 @@ jobs:
         run: npx -y oclif upload tarballs --targets=linux-x64,linux-arm64,win32-x64,darwin-x64,darwin-arm64
 
       - name: Promote OCLIF tarballs to S3
-        run: npx -y oclif promote --ignore-missing --sha="git rev-parse --short HEAD" --version="${{ github.event.inputs.version }}" --targets=linux-x64,linux-arm64,win32-x64,darwin-x64,darwin-arm64
+        run: npx -y oclif promote --ignore-missing --sha="$(git rev-parse --short HEAD)" --version="${{ github.event.inputs.version }}" --targets=linux-x64,linux-arm64,win32-x64,darwin-x64,darwin-arm64
 
       - name: Push OCLIF tarballs to Artifacts
         uses: actions/upload-artifact@v4
@@ -244,7 +244,7 @@ jobs:
         run: npx -y oclif upload win --targets=win32-x64
 
       - name: Promote Windows installer
-        run: npx -y oclif promote --ignore-missing --sha="git rev-parse --short HEAD" --version="${{ github.event.inputs.version }}" --win
+        run: npx -y oclif promote --ignore-missing --sha="$(git rev-parse --short HEAD)" --version="${{ github.event.inputs.version }}" --win
 
       - name: Upload Windows artifacts
         uses: actions/upload-artifact@v4
