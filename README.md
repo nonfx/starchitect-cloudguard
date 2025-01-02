@@ -109,8 +109,6 @@ We welcome contributions from the community! To contribute to Starchitect-CloudG
 
 For more details, refer to the [Contributing Guide](CONTRIBUTING.md).
 
-The Starchitect-CloudGuard community is vibrant and collaborative. Join us on our [Discord server](https://discord.gg/r48ZahhA) to connect, ask questions, share insights, and contribute to the project.
-
 The Starchitect-CloudGuard community is vibrant and collaborative. Join us on our [Discord server](https://discord.gg/kDTtfpgFFq) to connect, ask questions, share insights, and contribute to the project.
 
 ## FAQ

@@ -4,11 +4,11 @@ import {
 	type RuntimeTestMeta,
 	type TestResult
 } from "../../types.js";
-import type { CloudProvider } from "../cloud/base.js";
+import type { CloudRuntimeProvider } from "../cloud/runtime-provider.js";
 import { logger } from "../logger.js";
 
 export class TestRunner {
-	async runSingleTest(test: RuntimeTest, provider: CloudProvider): Promise<TestResult> {
+	async runSingleTest(test: RuntimeTest, provider: CloudRuntimeProvider): Promise<TestResult> {
 		const startTime = Date.now();
 
 		const testMeta = { ...test } as unknown as RuntimeTestMeta;

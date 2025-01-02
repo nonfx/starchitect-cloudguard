@@ -6,15 +6,11 @@ import { TestRunner } from "../test-runner/index.js";
 import { ConsoleReporter } from "../reporters/console.js";
 import { JSONReporter } from "../reporters/json.js";
 
-export abstract class CloudProvider extends Command {
+export abstract class CloudRuntimeProvider extends Command {
 	public static enableJsonFlag = true;
 	static description = "Run security tests against cloud runtime environments";
 
 	static flags = {
-		parallel: Flags.boolean({
-			description: "Run tests in parallel",
-			default: true
-		}),
 		concurrency: Flags.integer({
 			description: "Number of tests to run concurrently",
 			default: 5
@@ -54,6 +50,10 @@ export abstract class CloudProvider extends Command {
 		try {
 			const runner = new TestRunner();
 			const tests = await this.getTests();
+
+			if (tests.length === 0) {
+				this.error("No tests selected.", { exit: 1 });
+			}
 
 			progressBar.start(tests.length, 0);
 
@@ -96,7 +96,7 @@ export abstract class CloudProvider extends Command {
 		}
 	}
 
-	abstract getConstructor(): typeof CloudProvider;
+	abstract getConstructor(): typeof CloudRuntimeProvider;
 	abstract detectCredentials(): Promise<boolean>;
 	abstract validateCredentials(): Promise<boolean>;
 	abstract getTests(): Promise<RuntimeTest[]>;
