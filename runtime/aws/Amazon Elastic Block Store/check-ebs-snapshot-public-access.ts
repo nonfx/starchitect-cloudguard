@@ -1,8 +1,4 @@
-import {
-	EC2Client,
-	DescribeSnapshotsCommand,
-	GetEbsEncryptionByDefaultCommand
-} from "@aws-sdk/client-ec2";
+import { EC2Client, DescribeSnapshotsCommand } from "@aws-sdk/client-ec2";
 import { printSummary, generateSummary } from "../../utils/string-utils.js";
 import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "../../types.js";
 

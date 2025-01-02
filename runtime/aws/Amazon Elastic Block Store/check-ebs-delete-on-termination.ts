@@ -1,8 +1,6 @@
 import {
 	EC2Client,
 	DescribeInstancesCommand,
-	DescribeVolumesCommand,
-	type Instance,
 	type Reservation,
 	type BlockDeviceMapping
 } from "@aws-sdk/client-ec2";
