@@ -100,5 +100,7 @@ export default {
 		}
 	],
 	severity: "CRITICAL",
-	execute: checkCloudFrontS3OriginExists
+	execute: checkCloudFrontS3OriginExists,
+	serviceName: "Amazon CloudFront",
+	shortServiceName: "cloudfront"
 } satisfies RuntimeTest;

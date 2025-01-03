@@ -100,5 +100,7 @@ export default {
 		}
 	],
 	severity: "LOW",
-	execute: checkCloudFrontDistributionTags
+	execute: checkCloudFrontDistributionTags,
+	serviceName: "Amazon CloudFront",
+	shortServiceName: "cloudfront"
 } satisfies RuntimeTest;
