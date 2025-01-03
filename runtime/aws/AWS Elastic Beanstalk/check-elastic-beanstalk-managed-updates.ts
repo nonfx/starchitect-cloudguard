@@ -1,8 +1,8 @@
 import {
 	ElasticBeanstalkClient,
-	DescribeEnvironmentsCommand,
 	DescribeConfigurationSettingsCommand
 } from "@aws-sdk/client-elastic-beanstalk";
+import { getAllBeanstalkEnvironments } from "./elastic-beanstalk-utils.js";
 import { printSummary, generateSummary } from "../../utils/string-utils.js";
 import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "../../types.js";
 
@@ -15,10 +15,10 @@ async function checkManagedUpdatesCompliance(
 	};
 
 	try {
-		// Get all Elastic Beanstalk environments
-		const environments = await client.send(new DescribeEnvironmentsCommand({}));
+		// Get all Elastic Beanstalk environments using pagination
+		const environments = (await getAllBeanstalkEnvironments(client)) ?? [];
 
-		if (!environments.Environments || environments.Environments.length === 0) {
+		if (environments.length === 0) {
 			results.checks = [
 				{
 					resourceName: "No Elastic Beanstalk Environments",
@@ -30,7 +30,7 @@ async function checkManagedUpdatesCompliance(
 		}
 
 		// Check each environment for managed updates configuration
-		for (const env of environments.Environments) {
+		for (const env of environments) {
 			if (!env.EnvironmentName || !env.EnvironmentId) {
 				results.checks.push({
 					resourceName: "Unknown Environment",
