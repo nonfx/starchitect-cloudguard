@@ -73,5 +73,7 @@ export default {
 		}
 	],
 	severity: "MEDIUM",
-	execute: checkCloudFrontCustomSSLCertificate
+	execute: checkCloudFrontCustomSSLCertificate,
+	serviceName: "Amazon CloudFront",
+	shortServiceName: "cloudfront"
 } satisfies RuntimeTest;

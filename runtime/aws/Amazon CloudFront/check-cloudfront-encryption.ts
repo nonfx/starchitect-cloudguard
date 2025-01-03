@@ -104,5 +104,7 @@ export default {
 		}
 	],
 	severity: "MEDIUM",
-	execute: checkCloudFrontEncryption
+	execute: checkCloudFrontEncryption,
+	serviceName: "Amazon CloudFront",
+	shortServiceName: "cloudfront"
 } satisfies RuntimeTest;
