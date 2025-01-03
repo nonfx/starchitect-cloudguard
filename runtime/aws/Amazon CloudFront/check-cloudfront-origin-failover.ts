@@ -18,7 +18,7 @@ async function checkCloudFrontOriginFailover(
 		const listCommand = new ListDistributionsCommand({});
 		const response = await client.send(listCommand);
 
-		if (!response.DistributionList?.Items || response.DistributionList.Items.length === 0) {
+		if (!response.DistributionList?.Items?.length) {
 			results.checks.push({
 				resourceName: "No CloudFront Distributions",
 				status: ComplianceStatus.NOTAPPLICABLE,
@@ -42,8 +42,9 @@ async function checkCloudFrontOriginFailover(
 					Id: distribution.Id
 				});
 				const distDetails = await client.send(getCommand);
+				const config = distDetails.Distribution?.DistributionConfig;
 
-				if (!distDetails.Distribution?.DistributionConfig) {
+				if (!config) {
 					results.checks.push({
 						resourceName: distribution.Id,
 						status: ComplianceStatus.ERROR,
@@ -52,13 +53,12 @@ async function checkCloudFrontOriginFailover(
 					continue;
 				}
 
-				const config = distDetails.Distribution.DistributionConfig;
-				const hasOriginGroups = config.OriginGroups?.Items && config.OriginGroups.Items.length > 0;
-				const hasMultipleOrigins =
-					hasOriginGroups &&
-					config.OriginGroups.Items.some(
-						group => group.Members?.Items && group.Members.Items.length >= 2
-					);
+				// Safe check for origin groups and their items
+				const originGroups = config.OriginGroups?.Items || [];
+				const hasMultipleOrigins = originGroups.some(group => {
+					const memberCount = group.Members?.Items?.length || 0;
+					return memberCount >= 2;
+				});
 
 				results.checks.push({
 					resourceName: distribution.Id,
