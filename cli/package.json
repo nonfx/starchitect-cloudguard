@@ -99,7 +99,10 @@
       }
     },
     "hooks": {
-      "init": "./dist/cli/src/hooks/init/add-description"
+      "init": [
+        "./dist/cli/src/hooks/init/add-description",
+        "./dist/cli/src/hooks/init/setup-channel"
+      ]
     }
   },
   "repository": "https://github.com/nonfx/starchitect-cloudguard/tree/main/cli",
