@@ -9,12 +9,30 @@
 
 ---
 
-Starchitect-CloudGuard is an open-source repository that provides security tests for cloud infrastructure in two ways:
+![Starkit Demo](./assets/starkit.gif)
 
-1. Runtime Tests (`/runtime`): Direct security checks against your live cloud accounts (currently supporting AWS)
-2. Infrastructure as Code Tests (`/terraform`): Static analysis of your infrastructure-as-code files in Terraform format, supporting both AWS and GCP security benchmarks
+Starchitect-CloudGuard is an AI-powered comprehensive security testing framework with a powerful CLI that lets you run the same set of security tests across your entire development lifecycle - during local development, in CI/CD pipelines before deployment, and in your live cloud environment after deployment.
 
-Cutting-edge AI-powered test-writing agents craft these tests with a well-defined understanding of cloud security. Each test undergoes meticulous human review by the experienced team at [The Non-Functionional Co.](https://nonfx.com), ensuring high-quality and reliable compliance validation.
+## Key Features
+
+- **Runtime Security Checks**: Validate your live cloud infrastructure
+
+  - Direct security assessment of cloud environments
+  - Currently supports AWS (GCP, Azure coming soon)
+  - Multiple log formats: JSON, stdout (Integration to log buckets,eg:s3 coming soon)
+  - Parallel and concurrent test execution capabilities
+
+- **Static Analysis (SAST)**: Analyze your Infrastructure as Code before deployment
+
+  - Currently supports Terraform configurations for AWS and GCP
+  - Validates against established security benchmarks
+  - Integration with CI/CD pipelines
+  - Can be used as terraform provider [here](https://github.com/nonfx/terraform-provider-starchitect)
+
+- **AI-Powered Test Generation**: Automated creation of high-quality security tests
+  - Cutting-edge AI agents craft tests with deep cloud security understanding
+  - Meticulous human review by [The Non-Functionional Co.](https://nonfx.com) team
+  - Ensures reliable and comprehensive compliance validation
 
 This framework is designed to be flexible and extensible. While we currently focus on AWS runtime checks and Terraform static analysis, support for additional cloud providers (like GCP, Azure) and IaC formats (like Pulumi, Bicep, CloudFormation) is constantly growing. If you have specific requirements, open a GitHub issue; our team will be happy to assist.
 
@@ -93,9 +111,21 @@ Ref:
 | AWS Foundational Security Best Practices            | ✅     |
 | CIS Google Cloud Platform Security Foundations      | ✅     |
 
-> All tests are implemented using [Fugue Regula](https://github.com/fugue/regula) for Terraform configurations
+## Project Structure
 
-> CloudFormation, Pulumi, and Bicep tests are coming soon.
+The repository is organized into three main directories:
+
+- `/runtime` - Contains all runtime security tests written in JavaScript
+
+  - `/runtime/aws` - AWS service-specific tests (e.g., Lambda, CloudTrail, KMS)
+  - `/runtime/utils` - Shared utilities for runtime tests
+
+- `/terraform` - Contains static analysis tests using [Fugue Regula](https://github.com/fugue/regula)
+
+  - `/terraform/aws` - AWS service-specific Terraform configurations
+  - `/terraform/gcp` - GCP service-specific Terraform configurations
+
+- `/cli` - Command-line interface implementation
 
 ## Contributing
 
