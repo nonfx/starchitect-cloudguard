@@ -20,7 +20,7 @@ $ npm install -g starkit
 $ starkit COMMAND
 running command...
 $ starkit (--version)
-starkit/1.0.2 darwin-arm64 node-v23.5.0
+starkit/1.0.3 linux-x64 node-v23.5.0
 $ starkit --help [COMMAND]
 USAGE
   $ starkit COMMAND
@@ -76,7 +76,7 @@ DESCRIPTION
   Run security tests against Terraform code
 ```
 
-_See code: [src/commands/iac/terraform.ts](https://github.com/nonfx/starchitect-cloudguard/blob/v1.0.2/src/commands/iac/terraform.ts)_
+_See code: [src/commands/iac/terraform.ts](https://github.com/nonfx/starchitect-cloudguard/blob/v1.0.3/src/commands/iac/terraform.ts)_
 
 ## `starkit runtime aws`
 
@@ -103,7 +103,7 @@ DESCRIPTION
   Run security tests against your AWS runtime environment
 ```
 
-_See code: [src/commands/runtime/aws.ts](https://github.com/nonfx/starchitect-cloudguard/blob/v1.0.2/src/commands/runtime/aws.ts)_
+_See code: [src/commands/runtime/aws.ts](https://github.com/nonfx/starchitect-cloudguard/blob/v1.0.3/src/commands/runtime/aws.ts)_
 
 ## `starkit update [CHANNEL]`
 
