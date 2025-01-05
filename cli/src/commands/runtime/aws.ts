@@ -134,8 +134,9 @@ ${chalk.cyan.bold("Need Help?")}
 					{
 						type: "list",
 						name: "value",
-						message: "Select your AWS region:",
-						choices: regionsList
+						message: "Select your AWS region (Use your arrows keys to scroll):",
+						choices: regionsList,
+						pageSize: 10
 					}
 				]);
 
@@ -160,25 +161,39 @@ ${chalk.cyan.bold("Need Help?")}
 			} else {
 				const userSelectedServices = await inquirer.prompt([
 					{
+						type: "confirm",
+						message: "Do you want to scan all available services?",
+						name: "scanAll"
+					},
+					{
 						type: "checkbox",
-						name: "value",
+						name: "services",
 						message: "Select services:",
 						choices: allServices.map(service => ({
 							value: service.name,
 							checked: false
-						}))
+						})),
+						pageSize: 10,
+						required: true,
+						when(answers): boolean {
+							return !answers.scanAll;
+						}
 					}
 				]);
 
-				const selectedServices = userSelectedServices.value as string[];
+				if (userSelectedServices.scanAll) {
+					this.services = allServices.map(service => service.shortName);
+				} else {
+					const selectedServices = userSelectedServices.services as string[];
 
-				if (selectedServices.length === 0) {
-					this.error("No services selected", { exit: 1 });
+					if (selectedServices.length === 0) {
+						this.error("No services selected", { exit: 1 });
+					}
+
+					this.services = allServices
+						.filter(service => selectedServices.includes(service.name))
+						.map(service => service.shortName);
 				}
-
-				this.services = allServices
-					.filter(service => selectedServices.includes(service.name))
-					.map(service => service.shortName);
 			}
 		}
 	}
