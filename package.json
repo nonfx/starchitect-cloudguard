@@ -27,6 +27,7 @@
     "@aws-sdk/client-ecr": "^3.718.0",
     "@aws-sdk/client-ecs": "^3.716.0",
     "@aws-sdk/client-efs": "^3.716.0",
+    "@aws-sdk/client-elastic-beanstalk": "^3.721.0",
     "@aws-sdk/client-iam": "^3.716.0",
     "@aws-sdk/client-kms": "^3.716.0",
     "@aws-sdk/client-lambda": "^3.716.0",
@@ -39,8 +40,7 @@
     "@aws-sdk/client-secrets-manager": "^3.716.0",
     "@aws-sdk/client-securityhub": "^3.719.0",
     "@aws-sdk/client-sts": "^3.716.0",
-    "@aws-sdk/credential-providers": "^3.716.0",
-    "@aws-sdk/client-elastic-beanstalk": "^3.721.0"
+    "@aws-sdk/credential-providers": "^3.716.0"
   },
   "devDependencies": {
     "@types/bun": "^1.1.14",

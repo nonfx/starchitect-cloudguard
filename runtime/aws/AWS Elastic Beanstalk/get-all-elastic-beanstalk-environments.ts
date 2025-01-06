@@ -4,11 +4,6 @@ import {
 	type DescribeEnvironmentsCommandOutput
 } from "@aws-sdk/client-elastic-beanstalk";
 
-/**
- * Retrieves all Elastic Beanstalk environments using pagination
- * @param client ElasticBeanstalkClient instance
- * @returns Promise resolving to array of all environments
- */
 export const getAllBeanstalkEnvironments = async (
 	client: ElasticBeanstalkClient
 ): Promise<DescribeEnvironmentsCommandOutput["Environments"]> => {
