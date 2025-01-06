@@ -116,7 +116,7 @@ describe("checkIamKmsDecryptPolicy", () => {
 
 			const result = await checkIamKmsDecryptPolicy.execute();
 			expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
-			expect(result.checks[0].message).toContain("Error listing policies");
+			expect(result.checks[0].message).toContain("Error checking IAM policies");
 		});
 
 		it("should return ERROR when GetPolicyVersion fails", async () => {

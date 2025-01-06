@@ -1,4 +1,5 @@
-import { IAMClient, ListPoliciesCommand, GetPolicyVersionCommand } from "@aws-sdk/client-iam";
+import { IAMClient, GetPolicyVersionCommand } from "@aws-sdk/client-iam";
+import { getAllIAMPolicies } from "../Amazon Identity and Access Management/get-all-iam-policies.js";
 import { RDSClient, DescribeDBClustersCommand } from "@aws-sdk/client-rds";
 import { generateSummary, printSummary } from "../../utils/string-utils.js";
 import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "../../types.js";
@@ -72,30 +73,28 @@ async function checkAuroraIamRolesAndPolicies(
 		}
 
 		// Get all IAM policies
-		const policies = await iamClient.send(new ListPoliciesCommand({ Scope: "Local" }));
+		const policies = await getAllIAMPolicies(iamClient);
 		const policyDocuments: { [key: string]: PolicyDocument } = {};
 
 		// Fetch policy documents
-		if (policies.Policies) {
-			for (const policy of policies.Policies) {
-				if (!policy.Arn || !policy.DefaultVersionId) continue;
+		for (const policy of policies) {
+			if (!policy.Arn || !policy.DefaultVersionId) continue;
 
-				try {
-					const versionResponse = await iamClient.send(
-						new GetPolicyVersionCommand({
-							PolicyArn: policy.Arn,
-							VersionId: policy.DefaultVersionId
-						})
+			try {
+				const versionResponse = await iamClient.send(
+					new GetPolicyVersionCommand({
+						PolicyArn: policy.Arn,
+						VersionId: policy.DefaultVersionId
+					})
+				);
+
+				if (versionResponse.PolicyVersion?.Document) {
+					policyDocuments[policy.Arn] = JSON.parse(
+						decodeURIComponent(versionResponse.PolicyVersion.Document)
 					);
-
-					if (versionResponse.PolicyVersion?.Document) {
-						policyDocuments[policy.Arn] = JSON.parse(
-							decodeURIComponent(versionResponse.PolicyVersion.Document)
-						);
-					}
-				} catch (error) {
-					console.log(`Error fetching policy document for ${policy.Arn}:`, error);
 				}
+			} catch (error) {
+				console.log(`Error fetching policy document for ${policy.Arn}:`, error);
 			}
 		}
 

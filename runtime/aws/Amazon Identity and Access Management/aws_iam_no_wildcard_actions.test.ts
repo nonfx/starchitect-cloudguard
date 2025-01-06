@@ -123,7 +123,7 @@ describe("checkIamWildcardActions", () => {
 
 			const result = await checkIamWildcardActions.execute();
 			expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
-			expect(result.checks[0].message).toContain("Error listing policies: API Error");
+			expect(result.checks[0].message).toContain("Error checking IAM policies: API Error");
 		});
 
 		it("should handle GetPolicyVersion API errors", async () => {
