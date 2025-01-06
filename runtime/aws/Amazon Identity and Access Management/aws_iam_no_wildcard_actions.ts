@@ -1,4 +1,5 @@
-import { IAMClient, ListPoliciesCommand, GetPolicyVersionCommand } from "@aws-sdk/client-iam";
+import { IAMClient, GetPolicyVersionCommand } from "@aws-sdk/client-iam";
+import { getAllIAMPolicies } from "./get-all-iam-policies.js";
 
 import { printSummary, generateSummary } from "../../utils/string-utils.js";
 import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "../../types.js";
@@ -45,107 +46,81 @@ async function checkIamWildcardActions(region: string = "us-east-1"): Promise<Co
 	};
 
 	try {
-		let marker: string | undefined;
-		let policyFound = false;
+		const policies = await getAllIAMPolicies(client);
 
-		do {
+		if (policies.length === 0) {
+			results.checks = [
+				{
+					resourceName: "No IAM Policies",
+					status: ComplianceStatus.NOTAPPLICABLE,
+					message: "No customer managed policies found"
+				}
+			];
+			return results;
+		}
+
+		// Check each policy
+		for (const policy of policies) {
+			const policyName = policy.PolicyName || "Unknown Policy";
+
+			if (!policy.Arn || !policy.DefaultVersionId) {
+				results.checks.push({
+					resourceName: policyName,
+					status: ComplianceStatus.ERROR,
+					message: "Policy missing ARN or version ID"
+				});
+				continue;
+			}
+
 			try {
-				const listCommand = new ListPoliciesCommand({
-					Marker: marker,
-					Scope: "Local", // Only check customer managed policies
-					OnlyAttached: true
+				// Get policy version details
+				const versionCommand = new GetPolicyVersionCommand({
+					PolicyArn: policy.Arn,
+					VersionId: policy.DefaultVersionId
 				});
 
-				const response = await client.send(listCommand);
+				const versionResponse = await client.send(versionCommand);
 
-				if (!response.Policies || response.Policies.length === 0) {
-					if (!policyFound) {
-						results.checks = [
-							{
-								resourceName: "No IAM Policies",
-								status: ComplianceStatus.NOTAPPLICABLE,
-								message: "No customer managed policies found"
-							}
-						];
-						return results;
-					}
-					break;
+				if (!versionResponse.PolicyVersion?.Document) {
+					results.checks.push({
+						resourceName: policyName,
+						resourceArn: policy.Arn,
+						status: ComplianceStatus.ERROR,
+						message: "Policy version document is empty"
+					});
+					continue;
 				}
 
-				// Check each policy
-				for (const policy of response.Policies) {
-					policyFound = true;
-					const policyName = policy.PolicyName || "Unknown Policy";
+				try {
+					const policyDocument = parsePolicyDocument(
+						decodeURIComponent(versionResponse.PolicyVersion.Document)
+					);
 
-					if (!policy.Arn || !policy.DefaultVersionId) {
-						results.checks.push({
-							resourceName: policyName,
-							status: ComplianceStatus.ERROR,
-							message: "Policy missing ARN or version ID"
-						});
-						continue;
-					}
+					const hasWildcard = hasWildcardActions(policyDocument);
 
-					try {
-						// Get policy version details
-						const versionCommand = new GetPolicyVersionCommand({
-							PolicyArn: policy.Arn,
-							VersionId: policy.DefaultVersionId
-						});
-
-						const versionResponse = await client.send(versionCommand);
-
-						if (!versionResponse.PolicyVersion?.Document) {
-							results.checks.push({
-								resourceName: policyName,
-								resourceArn: policy.Arn,
-								status: ComplianceStatus.ERROR,
-								message: "Policy version document is empty"
-							});
-							continue;
-						}
-
-						try {
-							const policyDocument = parsePolicyDocument(
-								decodeURIComponent(versionResponse.PolicyVersion.Document)
-							);
-
-							const hasWildcard = hasWildcardActions(policyDocument);
-
-							results.checks.push({
-								resourceName: policyName,
-								resourceArn: policy.Arn,
-								status: hasWildcard ? ComplianceStatus.FAIL : ComplianceStatus.PASS,
-								message: hasWildcard ? "Policy contains wildcard actions for services" : undefined
-							});
-						} catch (error) {
-							results.checks.push({
-								resourceName: policyName,
-								resourceArn: policy.Arn,
-								status: ComplianceStatus.ERROR,
-								message: `Error parsing policy document: ${error instanceof Error ? error.message : String(error)}`
-							});
-						}
-					} catch (error) {
-						results.checks.push({
-							resourceName: policyName,
-							resourceArn: policy.Arn,
-							status: ComplianceStatus.ERROR,
-							message: `Error fetching policy version: ${error instanceof Error ? error.message : String(error)}`
-						});
-					}
+					results.checks.push({
+						resourceName: policyName,
+						resourceArn: policy.Arn,
+						status: hasWildcard ? ComplianceStatus.FAIL : ComplianceStatus.PASS,
+						message: hasWildcard ? "Policy contains wildcard actions for services" : undefined
+					});
+				} catch (error) {
+					results.checks.push({
+						resourceName: policyName,
+						resourceArn: policy.Arn,
+						status: ComplianceStatus.ERROR,
+						message: `Error parsing policy document: ${error instanceof Error ? error.message : String(error)}`
+					});
 				}
-
-				marker = response.Marker;
 			} catch (error) {
 				results.checks.push({
-					resourceName: "Policy List",
+					resourceName: policyName,
+					resourceArn: policy.Arn,
 					status: ComplianceStatus.ERROR,
-					message: `Error listing policies: ${error instanceof Error ? error.message : String(error)}`
+					message: `Error fetching policy version: ${error instanceof Error ? error.message : String(error)}`
 				});
-				break;
 			}
-		} while (marker);
+		}
 	} catch (error) {
 		results.checks = [
 			{

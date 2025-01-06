@@ -192,6 +192,6 @@ describe("checkIamFullAdminPrivileges", () => {
 
 		const result = await checkIamFullAdminPrivileges.execute();
 		expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
-		expect(result.checks[0].message).toContain("Error listing policies");
+		expect(result.checks[0].message).toContain("Error checking IAM policies");
 	});
 });
