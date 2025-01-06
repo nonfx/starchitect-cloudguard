@@ -1,4 +1,5 @@
-import { EC2Client, DescribeImagesCommand } from "@aws-sdk/client-ec2";
+import { EC2Client } from "@aws-sdk/client-ec2";
+import { getAllAmis } from "./get-all-amis.js";
 import { printSummary, generateSummary } from "../../utils/string-utils.js";
 import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "../../types.js";
 
@@ -18,14 +19,10 @@ async function checkApprovedAMIsCompliance(
 	};
 
 	try {
-		// Get all AMIs owned by the account
-		const command = new DescribeImagesCommand({
-			Owners: ["self"]
-		});
+		// Get all AMIs owned by the account using pagination
+		const images = (await getAllAmis(client, [{ Name: "owner-alias", Values: ["self"] }])) ?? [];
 
-		const response = await client.send(command);
-
-		if (!response.Images || response.Images.length === 0) {
+		if (images.length === 0) {
 			results.checks = [
 				{
 					resourceName: "No AMIs",
@@ -37,7 +34,7 @@ async function checkApprovedAMIsCompliance(
 		}
 
 		// Check each AMI against the approved list
-		for (const image of response.Images) {
+		for (const image of images) {
 			if (!image.ImageId) {
 				results.checks.push({
 					resourceName: "Unknown AMI",

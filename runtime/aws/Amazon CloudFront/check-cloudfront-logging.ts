@@ -1,8 +1,5 @@
-import {
-	CloudFrontClient,
-	ListDistributionsCommand,
-	GetDistributionCommand
-} from "@aws-sdk/client-cloudfront";
+import { CloudFrontClient, GetDistributionCommand } from "@aws-sdk/client-cloudfront";
+import { getAllCloudFrontDistributions } from "./get-all-cloudfront-distributions.js";
 import { printSummary, generateSummary } from "../../utils/string-utils.js";
 import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "../../types.js";
 
@@ -15,11 +12,10 @@ async function checkCloudFrontLoggingCompliance(
 	};
 
 	try {
-		// Get list of all CloudFront distributions
-		const listCommand = new ListDistributionsCommand({});
-		const response = await client.send(listCommand);
+		// Get all CloudFront distributions using pagination
+		const distributions = (await getAllCloudFrontDistributions(client)) ?? [];
 
-		if (!response.DistributionList?.Items || response.DistributionList.Items.length === 0) {
+		if (distributions.length === 0) {
 			results.checks = [
 				{
 					resourceName: "No CloudFront Distributions",
@@ -31,7 +27,7 @@ async function checkCloudFrontLoggingCompliance(
 		}
 
 		// Check each distribution for logging configuration
-		for (const distribution of response.DistributionList.Items) {
+		for (const distribution of distributions) {
 			if (!distribution.Id) {
 				results.checks.push({
 					resourceName: "Unknown Distribution",

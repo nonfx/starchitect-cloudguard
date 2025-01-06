@@ -1,4 +1,5 @@
-import { CloudFrontClient, ListDistributionsCommand } from "@aws-sdk/client-cloudfront";
+import { CloudFrontClient } from "@aws-sdk/client-cloudfront";
+import { getAllCloudFrontDistributions } from "./get-all-cloudfront-distributions.js";
 import { printSummary, generateSummary } from "../../utils/string-utils.js";
 import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "../../types.js";
 
@@ -11,10 +12,9 @@ async function checkCloudFrontCustomSSLCertificate(
 	};
 
 	try {
-		const command = new ListDistributionsCommand({});
-		const response = await client.send(command);
+		const distributions = (await getAllCloudFrontDistributions(client)) ?? [];
 
-		if (!response.DistributionList?.Items || response.DistributionList.Items.length === 0) {
+		if (distributions.length === 0) {
 			results.checks.push({
 				resourceName: "No CloudFront Distributions",
 				status: ComplianceStatus.NOTAPPLICABLE,
@@ -23,7 +23,7 @@ async function checkCloudFrontCustomSSLCertificate(
 			return results;
 		}
 
-		for (const distribution of response.DistributionList.Items) {
+		for (const distribution of distributions) {
 			if (!distribution.Id || !distribution.ARN) {
 				results.checks.push({
 					resourceName: "Unknown Distribution",

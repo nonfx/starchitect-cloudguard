@@ -1,8 +1,5 @@
-import {
-	CloudFrontClient,
-	ListDistributionsCommand,
-	GetDistributionCommand
-} from "@aws-sdk/client-cloudfront";
+import { CloudFrontClient, GetDistributionCommand } from "@aws-sdk/client-cloudfront";
+import { getAllCloudFrontDistributions } from "./get-all-cloudfront-distributions.js";
 import { printSummary, generateSummary } from "../../utils/string-utils.js";
 import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "../../types.js";
 
@@ -15,10 +12,9 @@ async function checkCloudFrontOriginFailover(
 	};
 
 	try {
-		const listCommand = new ListDistributionsCommand({});
-		const response = await client.send(listCommand);
+		const distributions = (await getAllCloudFrontDistributions(client)) ?? [];
 
-		if (!response.DistributionList?.Items?.length) {
+		if (distributions.length === 0) {
 			results.checks.push({
 				resourceName: "No CloudFront Distributions",
 				status: ComplianceStatus.NOTAPPLICABLE,
@@ -27,7 +23,7 @@ async function checkCloudFrontOriginFailover(
 			return results;
 		}
 
-		for (const distribution of response.DistributionList.Items) {
+		for (const distribution of distributions) {
 			if (!distribution.Id) {
 				results.checks.push({
 					resourceName: "Unknown Distribution",

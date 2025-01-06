@@ -1,8 +1,5 @@
-import {
-	CloudFrontClient,
-	ListDistributionsCommand,
-	ListTagsForResourceCommand
-} from "@aws-sdk/client-cloudfront";
+import { CloudFrontClient, ListTagsForResourceCommand } from "@aws-sdk/client-cloudfront";
+import { getAllCloudFrontDistributions } from "./get-all-cloudfront-distributions.js";
 import { printSummary, generateSummary } from "../../utils/string-utils.js";
 import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "../../types.js";
 
@@ -15,13 +12,10 @@ async function checkCloudFrontDistributionTags(
 	};
 
 	try {
-		// Get all CloudFront distributions
-		const distributions = await client.send(new ListDistributionsCommand({}));
+		// Get all CloudFront distributions using pagination
+		const distributions = (await getAllCloudFrontDistributions(client)) ?? [];
 
-		if (
-			!distributions.DistributionList?.Items ||
-			distributions.DistributionList.Items.length === 0
-		) {
+		if (distributions.length === 0) {
 			results.checks = [
 				{
 					resourceName: "No CloudFront Distributions",
@@ -33,7 +27,7 @@ async function checkCloudFrontDistributionTags(
 		}
 
 		// Check tags for each distribution
-		for (const distribution of distributions.DistributionList.Items) {
+		for (const distribution of distributions) {
 			if (!distribution.Id || !distribution.ARN) {
 				results.checks.push({
 					resourceName: "Unknown Distribution",

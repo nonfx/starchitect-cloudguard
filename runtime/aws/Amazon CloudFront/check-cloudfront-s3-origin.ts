@@ -1,8 +1,5 @@
-import {
-	CloudFrontClient,
-	ListDistributionsCommand,
-	GetDistributionCommand
-} from "@aws-sdk/client-cloudfront";
+import { CloudFrontClient, GetDistributionCommand } from "@aws-sdk/client-cloudfront";
+import { getAllCloudFrontDistributions } from "./get-all-cloudfront-distributions.js";
 import { S3Client, ListBucketsCommand } from "@aws-sdk/client-s3";
 import { printSummary, generateSummary } from "../../utils/string-utils.js";
 import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "../../types.js";
@@ -21,11 +18,10 @@ async function checkCloudFrontS3OriginExists(
 		const bucketsResponse = await s3Client.send(new ListBucketsCommand({}));
 		const existingBuckets = new Set(bucketsResponse.Buckets?.map(b => b.Name) || []);
 
-		// Get CloudFront distributions
-		const distributionsResponse = await cloudFrontClient.send(new ListDistributionsCommand({}));
-		const distributionList = distributionsResponse.DistributionList;
+		// Get CloudFront distributions using pagination
+		const distributions = (await getAllCloudFrontDistributions(cloudFrontClient)) ?? [];
 
-		if (!distributionList?.Items || distributionList.Items.length === 0) {
+		if (distributions.length === 0) {
 			results.checks.push({
 				resourceName: "No CloudFront Distributions",
 				status: ComplianceStatus.NOTAPPLICABLE,
@@ -34,7 +30,7 @@ async function checkCloudFrontS3OriginExists(
 			return results;
 		}
 
-		for (const distribution of distributionList.Items) {
+		for (const distribution of distributions) {
 			if (!distribution.Id) continue;
 
 			try {
