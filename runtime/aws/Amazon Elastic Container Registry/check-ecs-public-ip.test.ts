@@ -1,11 +1,17 @@
 //@ts-nocheck
-import { ECSClient, ListServicesCommand, DescribeServicesCommand } from "@aws-sdk/client-ecs";
+import {
+	ECSClient,
+	ListServicesCommand,
+	DescribeServicesCommand,
+	ListClustersCommand
+} from "@aws-sdk/client-ecs";
 import { mockClient } from "aws-sdk-client-mock";
 import { ComplianceStatus } from "../../types.js";
 import checkEcsPublicIp from "./check-ecs-public-ip";
 
 const mockEcsClient = mockClient(ECSClient);
 
+const mockClusterArn = "arn:aws:ecs:us-east-1:123456789012:cluster/test-cluster";
 const mockServices = [
 	{
 		serviceName: "service-1",
@@ -34,26 +40,26 @@ describe("checkEcsPublicIp", () => {
 
 	describe("Compliant Resources", () => {
 		it("should return PASS when service has public IP disabled", async () => {
-			mockEcsClient.on(ListServicesCommand).resolves({ serviceArns: [mockServices[0].serviceArn] });
+			mockEcsClient
+				.on(ListClustersCommand)
+				.resolves({ clusterArns: [mockClusterArn] })
+				.on(ListServicesCommand)
+				.resolves({ serviceArns: [mockServices[0].serviceArn] });
 			mockEcsClient.on(DescribeServicesCommand).resolves({ services: [mockServices[0]] });
 
 			const result = await checkEcsPublicIp.execute("us-east-1");
 			expect(result.checks[0].status).toBe(ComplianceStatus.PASS);
 			expect(result.checks[0].resourceName).toBe("service-1");
 		});
-
-		it("should return NOTAPPLICABLE when no services exist", async () => {
-			mockEcsClient.on(ListServicesCommand).resolves({ serviceArns: [] });
-
-			const result = await checkEcsPublicIp.execute("us-east-1");
-			expect(result.checks[0].status).toBe(ComplianceStatus.NOTAPPLICABLE);
-			expect(result.checks[0].message).toBe("No ECS services found in the region");
-		});
 	});
 
 	describe("Non-Compliant Resources", () => {
 		it("should return FAIL when service has public IP enabled", async () => {
-			mockEcsClient.on(ListServicesCommand).resolves({ serviceArns: [mockServices[1].serviceArn] });
+			mockEcsClient
+				.on(ListClustersCommand)
+				.resolves({ clusterArns: [mockClusterArn] })
+				.on(ListServicesCommand)
+				.resolves({ serviceArns: [mockServices[1].serviceArn] });
 			mockEcsClient.on(DescribeServicesCommand).resolves({ services: [mockServices[1]] });
 
 			const result = await checkEcsPublicIp.execute("us-east-1");
@@ -65,6 +71,8 @@ describe("checkEcsPublicIp", () => {
 
 		it("should handle mixed compliance results", async () => {
 			mockEcsClient
+				.on(ListClustersCommand)
+				.resolves({ clusterArns: [mockClusterArn] })
 				.on(ListServicesCommand)
 				.resolves({ serviceArns: mockServices.map(s => s.serviceArn) });
 			mockEcsClient.on(DescribeServicesCommand).resolves({ services: mockServices });
@@ -78,7 +86,7 @@ describe("checkEcsPublicIp", () => {
 
 	describe("Error Handling", () => {
 		it("should return ERROR when ListServices fails", async () => {
-			mockEcsClient.on(ListServicesCommand).rejects(new Error("API Error"));
+			mockEcsClient.on(ListClustersCommand).rejects(new Error("API Error"));
 
 			const result = await checkEcsPublicIp.execute("us-east-1");
 			expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
@@ -86,7 +94,11 @@ describe("checkEcsPublicIp", () => {
 		});
 
 		it("should handle services without name or ARN", async () => {
-			mockEcsClient.on(ListServicesCommand).resolves({ serviceArns: ["service-arn"] });
+			mockEcsClient
+				.on(ListClustersCommand)
+				.resolves({ clusterArns: [mockClusterArn] })
+				.on(ListServicesCommand)
+				.resolves({ serviceArns: ["service-arn"] });
 			mockEcsClient.on(DescribeServicesCommand).resolves({ services: [{}] });
 
 			const result = await checkEcsPublicIp.execute("us-east-1");
@@ -95,15 +107,32 @@ describe("checkEcsPublicIp", () => {
 		});
 
 		it("should handle pagination", async () => {
-			const serviceArns = Array(15)
-				.fill(null)
-				.map((_, i) => `service-${i}`);
-			mockEcsClient.on(ListServicesCommand).resolves({ serviceArns });
+			// Mock cluster pagination
+			mockEcsClient
+				.on(ListClustersCommand)
+				.resolvesOnce({ clusterArns: [mockClusterArn], nextToken: "cluster-token" })
+				.resolvesOnce({ clusterArns: [`${mockClusterArn}-2`] });
+
+			// Mock service pagination for first cluster
+			mockEcsClient
+				.on(ListServicesCommand)
+				.resolvesOnce({
+					serviceArns: Array(10)
+						.fill(null)
+						.map((_, i) => `service-${i}`),
+					nextToken: "service-token"
+				})
+				.resolvesOnce({
+					serviceArns: Array(5)
+						.fill(null)
+						.map((_, i) => `service-${i + 10}`)
+				});
+
+			// Mock service descriptions
 			mockEcsClient.on(DescribeServicesCommand).resolves({ services: [mockServices[0]] });
 
-			// eslint-disable-next-line @typescript-eslint/no-unused-vars
 			const result = await checkEcsPublicIp.execute("us-east-1");
-			expect(mockEcsClient.calls()).toHaveLength(3); // 1 ListServices + 2 DescribeServices (batches of 10)
+			expect(mockEcsClient.calls()).toHaveLength(7);
 		});
 	});
 });

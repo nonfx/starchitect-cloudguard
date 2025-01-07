@@ -19,6 +19,8 @@
     "@aws-sdk/client-apigatewayv2": "^3.723.0",
     "@aws-sdk/client-application-auto-scaling": "^3.721.0",
     "@aws-sdk/client-apprunner": "^3.721.0",
+    "@aws-sdk/client-appsync": "^3.723.0",
+    "@aws-sdk/client-athena": "^3.721.0",
     "@aws-sdk/client-auto-scaling": "^3.716.0",
     "@aws-sdk/client-backup": "^3.723.0",
     "@aws-sdk/client-cloudformation": "^3.723.0",
@@ -45,6 +47,7 @@
     "@aws-sdk/client-macie2": "^3.717.0",
     "@aws-sdk/client-neptune": "^3.716.0",
     "@aws-sdk/client-organizations": "^3.716.0",
+    "@aws-sdk/client-qldb": "^3.721.0",
     "@aws-sdk/client-rds": "^3.716.0",
     "@aws-sdk/client-s3": "^3.717.0",
     "@aws-sdk/client-s3-control": "^3.716.0",
@@ -53,6 +56,7 @@
     "@aws-sdk/client-sts": "^3.716.0",
     "@aws-sdk/client-waf-regional": "^3.723.0",
     "@aws-sdk/client-wafv2": "^3.723.0",
+    "@aws-sdk/client-timestream-write": "^3.723.0",
     "@aws-sdk/credential-providers": "^3.716.0"
   },
   "devDependencies": {

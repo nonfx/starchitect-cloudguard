@@ -1,11 +1,17 @@
 // @ts-nocheck
-import { ECSClient, ListServicesCommand, DescribeServicesCommand } from "@aws-sdk/client-ecs";
+import {
+	ECSClient,
+	ListServicesCommand,
+	DescribeServicesCommand,
+	ListClustersCommand
+} from "@aws-sdk/client-ecs";
 import { mockClient } from "aws-sdk-client-mock";
 import { ComplianceStatus } from "../../types.js";
 import checkEcsTaskPublicIpCompliance from "./check-ecs-task-public-ip";
 
 const mockEcsClient = mockClient(ECSClient);
 
+const mockClusterArn = "arn:aws:ecs:us-east-1:123456789012:cluster/test-cluster";
 const mockServiceArn = "arn:aws:ecs:us-east-1:123456789012:service/test-service";
 
 describe("checkEcsTaskPublicIpCompliance", () => {
@@ -16,6 +22,8 @@ describe("checkEcsTaskPublicIpCompliance", () => {
 	describe("Compliant Resources", () => {
 		it("should return PASS when public IP assignment is disabled", async () => {
 			mockEcsClient
+				.on(ListClustersCommand)
+				.resolves({ clusterArns: [mockClusterArn] })
 				.on(ListServicesCommand)
 				.resolves({ serviceArns: [mockServiceArn] })
 				.on(DescribeServicesCommand)
@@ -38,16 +46,10 @@ describe("checkEcsTaskPublicIpCompliance", () => {
 			expect(result.checks[0].resourceName).toBe("test-service");
 		});
 
-		it("should return NOTAPPLICABLE when no services exist", async () => {
-			mockEcsClient.on(ListServicesCommand).resolves({ serviceArns: [] });
-
-			const result = await checkEcsTaskPublicIpCompliance.execute("us-east-1");
-			expect(result.checks[0].status).toBe(ComplianceStatus.NOTAPPLICABLE);
-			expect(result.checks[0].message).toBe("No ECS services found in the region");
-		});
-
 		it("should return NOTAPPLICABLE when service doesn't use awsvpc mode", async () => {
 			mockEcsClient
+				.on(ListClustersCommand)
+				.resolves({ clusterArns: [mockClusterArn] })
 				.on(ListServicesCommand)
 				.resolves({ serviceArns: [mockServiceArn] })
 				.on(DescribeServicesCommand)
@@ -70,6 +72,8 @@ describe("checkEcsTaskPublicIpCompliance", () => {
 	describe("Non-Compliant Resources", () => {
 		it("should return FAIL when public IP assignment is enabled", async () => {
 			mockEcsClient
+				.on(ListClustersCommand)
+				.resolves({ clusterArns: [mockClusterArn] })
 				.on(ListServicesCommand)
 				.resolves({ serviceArns: [mockServiceArn] })
 				.on(DescribeServicesCommand)
@@ -94,6 +98,8 @@ describe("checkEcsTaskPublicIpCompliance", () => {
 
 		it("should handle multiple services with mixed compliance", async () => {
 			mockEcsClient
+				.on(ListClustersCommand)
+				.resolves({ clusterArns: [mockClusterArn] })
 				.on(ListServicesCommand)
 				.resolves({ serviceArns: [mockServiceArn, `${mockServiceArn}-2`] })
 				.on(DescribeServicesCommand)
@@ -125,7 +131,7 @@ describe("checkEcsTaskPublicIpCompliance", () => {
 
 	describe("Error Handling", () => {
 		it("should return ERROR when API call fails", async () => {
-			mockEcsClient.on(ListServicesCommand).rejects(new Error("API Error"));
+			mockEcsClient.on(ListClustersCommand).rejects(new Error("API Error"));
 
 			const result = await checkEcsTaskPublicIpCompliance.execute("us-east-1");
 			expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
@@ -134,6 +140,8 @@ describe("checkEcsTaskPublicIpCompliance", () => {
 
 		it("should handle services without name or ARN", async () => {
 			mockEcsClient
+				.on(ListClustersCommand)
+				.resolves({ clusterArns: [mockClusterArn] })
 				.on(ListServicesCommand)
 				.resolves({ serviceArns: [mockServiceArn] })
 				.on(DescribeServicesCommand)

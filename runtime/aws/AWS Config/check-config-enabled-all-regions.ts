@@ -1,6 +1,8 @@
 import {
 	ConfigServiceClient,
-	DescribeConfigurationAggregatorsCommand
+	DescribeConfigurationRecordersCommand,
+	DescribeConfigurationRecorderStatusCommand,
+	GetDiscoveredResourceCountsCommand
 } from "@aws-sdk/client-config-service";
 import { generateSummary, printSummary } from "../../utils/string-utils.js";
 import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "../../types.js";
@@ -14,45 +16,87 @@ async function checkConfigEnabledAllRegions(
 	};
 
 	try {
-		// Get configuration aggregators
-		const command = new DescribeConfigurationAggregatorsCommand({});
-		const response = await client.send(command);
+		// Check configuration recorders
+		const recordersCommand = new DescribeConfigurationRecordersCommand({});
+		const recordersResponse = await client.send(recordersCommand);
 
-		if (!response.ConfigurationAggregators || response.ConfigurationAggregators.length === 0) {
+		if (
+			!recordersResponse.ConfigurationRecorders ||
+			recordersResponse.ConfigurationRecorders.length === 0
+		) {
 			results.checks.push({
 				resourceName: "AWS Config",
 				status: ComplianceStatus.FAIL,
-				message: "No configuration aggregators found. AWS Config might not be enabled."
+				message: "No configuration recorders found. AWS Config is not enabled."
 			});
 			return results;
 		}
 
-		// Check each aggregator
-		for (const aggregator of response.ConfigurationAggregators) {
-			const aggregatorName = aggregator.ConfigurationAggregatorName || "Unknown Aggregator";
+		// Check configuration recorder status
+		const statusCommand = new DescribeConfigurationRecorderStatusCommand({});
+		const statusResponse = await client.send(statusCommand);
 
-			// Check account aggregation source
-			const accountAggregationEnabled = aggregator.AccountAggregationSources?.some(
-				source => source.AllAwsRegions === true
+		if (
+			!statusResponse.ConfigurationRecordersStatus ||
+			statusResponse.ConfigurationRecordersStatus.length === 0
+		) {
+			results.checks.push({
+				resourceName: "AWS Config",
+				status: ComplianceStatus.FAIL,
+				message: "Configuration recorder status not found."
+			});
+			return results;
+		}
+
+		// Check each recorder
+		for (const recorder of recordersResponse.ConfigurationRecorders) {
+			const recorderName = recorder.name || "Unknown Recorder";
+			const recorderStatus = statusResponse.ConfigurationRecordersStatus.find(
+				status => status.name === recorder.name
 			);
 
-			// Check organization aggregation source
-			const orgAggregationEnabled =
-				aggregator.OrganizationAggregationSource?.AllAwsRegions === true;
+			// Check if recorder is recording all resource types
+			const recordingAllResources = recorder.recordingGroup?.allSupported === true;
 
-			if (accountAggregationEnabled || orgAggregationEnabled) {
+			// Check if recorder is recording global resources
+			const recordingGlobalResources = recorder.recordingGroup?.includeGlobalResourceTypes === true;
+
+			// Check if recorder is active
+			const isRecorderActive = recorderStatus?.recording === true;
+
+			if (recordingAllResources && recordingGlobalResources && isRecorderActive) {
 				results.checks.push({
-					resourceName: aggregatorName,
+					resourceName: recorderName,
 					status: ComplianceStatus.PASS,
-					message: "Config aggregator is properly configured for all regions"
+					message: "Configuration recorder is properly configured and active"
 				});
 			} else {
+				const issues = [];
+				if (!recordingAllResources) issues.push("not recording all resource types");
+				if (!recordingGlobalResources) issues.push("not recording global resources");
+				if (!isRecorderActive) issues.push("recorder is not active");
+
 				results.checks.push({
-					resourceName: aggregatorName,
+					resourceName: recorderName,
 					status: ComplianceStatus.FAIL,
-					message: "Config aggregator is not configured to collect data from all regions"
+					message: `Configuration recorder issues: ${issues.join(", ")}`
 				});
 			}
+		}
+
+		// Check if resources are being recorded
+		const resourceCountCommand = new GetDiscoveredResourceCountsCommand({});
+		const resourceCountResponse = await client.send(resourceCountCommand);
+
+		if (
+			!resourceCountResponse.totalDiscoveredResources ||
+			resourceCountResponse.totalDiscoveredResources === 0
+		) {
+			results.checks.push({
+				resourceName: "AWS Config",
+				status: ComplianceStatus.FAIL,
+				message: "No resources are being recorded by AWS Config"
+			});
 		}
 	} catch (error) {
 		results.checks.push({

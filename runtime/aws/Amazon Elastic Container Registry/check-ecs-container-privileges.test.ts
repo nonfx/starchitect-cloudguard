@@ -97,7 +97,7 @@ describe("checkEcsContainerPrivileges", () => {
 
 			const result = await checkEcsContainerPrivileges.execute("us-east-1");
 			expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
-			expect(result.checks[0].message).toContain("Error checking ECS task definitions");
+			expect(result.checks[0].message).toContain("Error listing task definitions: API Error");
 		});
 
 		it("should handle task definitions without container definitions", async () => {

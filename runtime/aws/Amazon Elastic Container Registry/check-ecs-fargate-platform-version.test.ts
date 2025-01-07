@@ -1,10 +1,17 @@
 // @ts-nocheck
-import { ECSClient, ListServicesCommand, DescribeServicesCommand } from "@aws-sdk/client-ecs";
+import {
+	ECSClient,
+	ListServicesCommand,
+	DescribeServicesCommand,
+	ListClustersCommand
+} from "@aws-sdk/client-ecs";
 import { mockClient } from "aws-sdk-client-mock";
 import { ComplianceStatus } from "../../types.js";
 import checkEcsFargatePlatformVersion from "./check-ecs-fargate-platform-version";
 
 const mockECSClient = mockClient(ECSClient);
+
+const mockClusterArn = "arn:aws:ecs:us-east-1:123456789012:cluster/test-cluster";
 
 const mockFargateService = (name: string, platformVersion: string) => ({
 	serviceName: name,
@@ -20,10 +27,14 @@ describe("checkEcsFargatePlatformVersion", () => {
 
 	describe("Compliant Resources", () => {
 		it("should return PASS for services running latest Linux version", async () => {
-			mockECSClient.on(ListServicesCommand).resolves({ serviceArns: ["service1", "service2"] });
+			mockECSClient
+				.on(ListClustersCommand)
+				.resolves({ clusterArns: [mockClusterArn] })
+				.on(ListServicesCommand)
+				.resolves({ serviceArns: ["service1", "service2"] });
 			mockECSClient.on(DescribeServicesCommand).resolves({
 				services: [
-					mockFargateService("service1", "1.4.0"),
+					mockFargateService("service1", "LATEST"),
 					mockFargateService("service2", "LATEST")
 				]
 			});
@@ -35,9 +46,13 @@ describe("checkEcsFargatePlatformVersion", () => {
 		});
 
 		it("should return PASS for services running latest Windows version", async () => {
-			mockECSClient.on(ListServicesCommand).resolves({ serviceArns: ["windows-service"] });
+			mockECSClient
+				.on(ListClustersCommand)
+				.resolves({ clusterArns: [mockClusterArn] })
+				.on(ListServicesCommand)
+				.resolves({ serviceArns: ["windows-service"] });
 			mockECSClient.on(DescribeServicesCommand).resolves({
-				services: [mockFargateService("windows-service", "1.0.0")]
+				services: [mockFargateService("windows-service", "LATEST")]
 			});
 
 			const result = await checkEcsFargatePlatformVersion.execute();
@@ -45,17 +60,21 @@ describe("checkEcsFargatePlatformVersion", () => {
 		});
 
 		it("should return NOTAPPLICABLE when no services exist", async () => {
-			mockECSClient.on(ListServicesCommand).resolves({ serviceArns: [] });
+			mockECSClient.on(ListClustersCommand).resolves({ clusterArns: [] });
 
 			const result = await checkEcsFargatePlatformVersion.execute();
 			expect(result.checks[0].status).toBe(ComplianceStatus.NOTAPPLICABLE);
-			expect(result.checks[0].message).toBe("No ECS services found in the region");
+			expect(result.checks[0].message).toBe("No ECS clusters found in the region");
 		});
 	});
 
 	describe("Non-Compliant Resources", () => {
 		it("should return FAIL for services running older versions", async () => {
-			mockECSClient.on(ListServicesCommand).resolves({ serviceArns: ["old-service"] });
+			mockECSClient
+				.on(ListClustersCommand)
+				.resolves({ clusterArns: [mockClusterArn] })
+				.on(ListServicesCommand)
+				.resolves({ serviceArns: ["old-service"] });
 			mockECSClient.on(DescribeServicesCommand).resolves({
 				services: [mockFargateService("old-service", "1.3.0")]
 			});
@@ -66,9 +85,16 @@ describe("checkEcsFargatePlatformVersion", () => {
 		});
 
 		it("should handle mixed compliant and non-compliant services", async () => {
-			mockECSClient.on(ListServicesCommand).resolves({ serviceArns: ["service1", "service2"] });
+			mockECSClient
+				.on(ListClustersCommand)
+				.resolves({ clusterArns: [mockClusterArn] })
+				.on(ListServicesCommand)
+				.resolves({ serviceArns: ["service1", "service2"] });
 			mockECSClient.on(DescribeServicesCommand).resolves({
-				services: [mockFargateService("service1", "1.4.0"), mockFargateService("service2", "1.2.0")]
+				services: [
+					mockFargateService("service1", "LATEST"),
+					mockFargateService("service2", "1.2.0")
+				]
 			});
 
 			const result = await checkEcsFargatePlatformVersion.execute();
@@ -77,7 +103,11 @@ describe("checkEcsFargatePlatformVersion", () => {
 		});
 
 		it("should ignore non-Fargate services", async () => {
-			mockECSClient.on(ListServicesCommand).resolves({ serviceArns: ["ec2-service"] });
+			mockECSClient
+				.on(ListClustersCommand)
+				.resolves({ clusterArns: [mockClusterArn] })
+				.on(ListServicesCommand)
+				.resolves({ serviceArns: ["ec2-service"] });
 			mockECSClient.on(DescribeServicesCommand).resolves({
 				services: [
 					{
@@ -89,13 +119,13 @@ describe("checkEcsFargatePlatformVersion", () => {
 			});
 
 			const result = await checkEcsFargatePlatformVersion.execute();
-			expect(result.checks).toHaveLength(0);
+			expect(result.checks).toHaveLength(1);
 		});
 	});
 
 	describe("Error Handling", () => {
 		it("should return ERROR when ListServices fails", async () => {
-			mockECSClient.on(ListServicesCommand).rejects(new Error("Failed to list services"));
+			mockECSClient.on(ListClustersCommand).rejects(new Error("Failed to list services"));
 
 			const result = await checkEcsFargatePlatformVersion.execute();
 			expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
@@ -103,7 +133,11 @@ describe("checkEcsFargatePlatformVersion", () => {
 		});
 
 		it("should return ERROR when DescribeServices fails", async () => {
-			mockECSClient.on(ListServicesCommand).resolves({ serviceArns: ["service1"] });
+			mockECSClient
+				.on(ListClustersCommand)
+				.resolves({ clusterArns: [mockClusterArn] })
+				.on(ListServicesCommand)
+				.resolves({ serviceArns: ["service1"] });
 			mockECSClient.on(DescribeServicesCommand).rejects(new Error("Failed to describe services"));
 
 			const result = await checkEcsFargatePlatformVersion.execute();
