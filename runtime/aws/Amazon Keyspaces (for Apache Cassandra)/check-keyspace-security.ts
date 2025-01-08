@@ -1,8 +1,5 @@
-import {
-	KeyspacesClient,
-	ListKeyspacesCommand,
-	GetKeyspaceCommand
-} from "@aws-sdk/client-keyspaces";
+import { KeyspacesClient, GetKeyspaceCommand } from "@aws-sdk/client-keyspaces";
+import { getAllKeyspaces } from "./get-all-keyspaces.js";
 import { CloudWatchLogsClient, DescribeLogGroupsCommand } from "@aws-sdk/client-cloudwatch-logs";
 import { printSummary, generateSummary } from "../../utils/string-utils.js";
 import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "../../types.js";
@@ -23,9 +20,9 @@ async function checkKeyspaceSecurityConfiguration(
 	};
 
 	try {
-		const keyspaces = await keyspacesClient.send(new ListKeyspacesCommand({}));
+		const keyspaces = await getAllKeyspaces(keyspacesClient);
 
-		if (!keyspaces.keyspaces || keyspaces.keyspaces.length === 0) {
+		if (!keyspaces || keyspaces.length === 0) {
 			results.checks.push({
 				resourceName: "No Keyspaces",
 				status: ComplianceStatus.NOTAPPLICABLE,
@@ -34,7 +31,7 @@ async function checkKeyspaceSecurityConfiguration(
 			return results;
 		}
 
-		for (const keyspace of keyspaces.keyspaces) {
+		for (const keyspace of keyspaces) {
 			if (!keyspace.keyspaceName) continue;
 
 			try {

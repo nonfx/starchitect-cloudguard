@@ -1,4 +1,5 @@
-import { KeyspacesClient, ListKeyspacesCommand } from "@aws-sdk/client-keyspaces";
+import { KeyspacesClient } from "@aws-sdk/client-keyspaces";
+import { getAllKeyspaces } from "./get-all-keyspaces.js";
 import {
 	EC2Client,
 	DescribeVpcEndpointsCommand,
@@ -19,9 +20,9 @@ async function checkKeyspacesNetworkSecurity(
 	};
 
 	try {
-		const keyspaces = await keyspacesClient.send(new ListKeyspacesCommand({}));
+		const keyspaces = await getAllKeyspaces(keyspacesClient);
 
-		if (!keyspaces.keyspaces || keyspaces.keyspaces.length === 0) {
+		if (!keyspaces || keyspaces.length === 0) {
 			results.checks.push({
 				resourceName: "Keyspaces",
 				status: ComplianceStatus.NOTAPPLICABLE,
@@ -42,7 +43,7 @@ async function checkKeyspacesNetworkSecurity(
 			})
 		);
 
-		for (const keyspace of keyspaces.keyspaces) {
+		for (const keyspace of keyspaces) {
 			if (!keyspace.keyspaceName) {
 				results.checks.push({
 					resourceName: "Unknown Keyspace",

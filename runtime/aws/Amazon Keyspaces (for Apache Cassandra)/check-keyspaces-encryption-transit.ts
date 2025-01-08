@@ -1,8 +1,5 @@
-import {
-	KeyspacesClient,
-	ListKeyspacesCommand,
-	GetKeyspaceCommand
-} from "@aws-sdk/client-keyspaces";
+import { KeyspacesClient, GetKeyspaceCommand } from "@aws-sdk/client-keyspaces";
+import { getAllKeyspaces } from "./get-all-keyspaces.js";
 import { printSummary, generateSummary } from "../../utils/string-utils.js";
 import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "../../types.js";
 
@@ -18,9 +15,9 @@ async function checkKeyspaceEncryption(region: string = "us-east-1"): Promise<Co
 	};
 
 	try {
-		const keyspaces = await keyspacesClient.send(new ListKeyspacesCommand({}));
+		const keyspaces = await getAllKeyspaces(keyspacesClient);
 
-		if (!keyspaces.keyspaces || keyspaces.keyspaces.length === 0) {
+		if (!keyspaces || keyspaces.length === 0) {
 			results.checks.push({
 				resourceName: "Keyspaces",
 				status: ComplianceStatus.NOTAPPLICABLE,
@@ -29,7 +26,7 @@ async function checkKeyspaceEncryption(region: string = "us-east-1"): Promise<Co
 			return results;
 		}
 
-		for (const keyspace of keyspaces.keyspaces) {
+		for (const keyspace of keyspaces) {
 			if (!keyspace.keyspaceName) continue;
 
 			try {
