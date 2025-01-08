@@ -1,9 +1,9 @@
 import {
 	BackupClient,
 	ListRecoveryPointsByBackupVaultCommand,
-	ListBackupVaultsCommand,
 	type RecoveryPointByBackupVault
 } from "@aws-sdk/client-backup";
+import { getAllBackupVaults } from "./get-all-backup-vaults.js";
 
 // Extend the RecoveryPointByBackupVault type to include Tags
 interface RecoveryPointWithTags extends RecoveryPointByBackupVault {
@@ -26,10 +26,10 @@ async function checkBackupRecoveryPointTags(
 	};
 
 	try {
-		// Get all backup vaults
-		const vaults = await client.send(new ListBackupVaultsCommand({}));
+		// Get all backup vaults using helper
+		const vaults = await getAllBackupVaults(client);
 
-		if (!vaults.BackupVaultList || vaults.BackupVaultList.length === 0) {
+		if (!vaults || vaults.length === 0) {
 			results.checks = [
 				{
 					resourceName: "No Backup Vaults",
@@ -41,7 +41,7 @@ async function checkBackupRecoveryPointTags(
 		}
 
 		// Check recovery points in each vault
-		for (const vault of vaults.BackupVaultList) {
+		for (const vault of vaults) {
 			if (!vault.BackupVaultName) continue;
 
 			try {

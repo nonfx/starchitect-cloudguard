@@ -13,8 +13,24 @@ export async function getAllBackupPlans(
 	client: BackupClient
 ): Promise<NonNullable<ListBackupPlansCommandOutput["BackupPlansList"]> | undefined> {
 	try {
-		const response = await client.send(new ListBackupPlansCommand({}));
-		return response.BackupPlansList;
+		const backupPlans: NonNullable<ListBackupPlansCommandOutput["BackupPlansList"]> = [];
+		let nextToken: string | undefined;
+
+		do {
+			const response = await client.send(
+				new ListBackupPlansCommand({
+					NextToken: nextToken
+				})
+			);
+
+			if (response.BackupPlansList) {
+				backupPlans.push(...response.BackupPlansList);
+			}
+
+			nextToken = response.NextToken;
+		} while (nextToken);
+
+		return backupPlans.length > 0 ? backupPlans : undefined;
 	} catch (error) {
 		console.error("Error listing backup plans:", error);
 		throw error;

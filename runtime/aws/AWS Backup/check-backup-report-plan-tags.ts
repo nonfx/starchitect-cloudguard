@@ -1,4 +1,5 @@
-import { BackupClient, ListReportPlansCommand, ListTagsCommand } from "@aws-sdk/client-backup";
+import { BackupClient, ListTagsCommand } from "@aws-sdk/client-backup";
+import { getAllReportPlans } from "./get-all-report-plans.js";
 import { printSummary, generateSummary } from "../../utils/string-utils.js";
 import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "../../types.js";
 
@@ -9,10 +10,10 @@ async function checkBackupReportPlanTags(region: string = "us-east-1"): Promise<
 	};
 
 	try {
-		// Get all backup report plans
-		const reportPlans = await client.send(new ListReportPlansCommand({}));
+		// Get all backup report plans using helper with pagination
+		const reportPlans = await getAllReportPlans(client);
 
-		if (!reportPlans.ReportPlans || reportPlans.ReportPlans.length === 0) {
+		if (!reportPlans || reportPlans.length === 0) {
 			results.checks = [
 				{
 					resourceName: "No Backup Report Plans",
@@ -24,7 +25,7 @@ async function checkBackupReportPlanTags(region: string = "us-east-1"): Promise<
 		}
 
 		// Check each report plan for tags
-		for (const plan of reportPlans.ReportPlans) {
+		for (const plan of reportPlans) {
 			if (!plan.ReportPlanName || !plan.ReportPlanArn) {
 				results.checks.push({
 					resourceName: "Unknown Report Plan",

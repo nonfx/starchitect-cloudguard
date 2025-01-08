@@ -1,9 +1,9 @@
 import {
 	BackupClient,
-	ListBackupVaultsCommand,
 	ListRecoveryPointsByBackupVaultCommand,
 	DescribeRecoveryPointCommand
 } from "@aws-sdk/client-backup";
+import { getAllBackupVaults } from "./get-all-backup-vaults.js";
 import { printSummary, generateSummary } from "../../utils/string-utils.js";
 import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "../../types.js";
 
@@ -16,10 +16,10 @@ async function checkBackupRecoveryPointEncryption(
 	};
 
 	try {
-		// Get all backup vaults first
-		const vaults = await client.send(new ListBackupVaultsCommand({}));
+		// Get all backup vaults using helper
+		const vaults = await getAllBackupVaults(client);
 
-		if (!vaults.BackupVaultList || vaults.BackupVaultList.length === 0) {
+		if (!vaults || vaults.length === 0) {
 			results.checks = [
 				{
 					resourceName: "No Backup Vaults",
@@ -31,7 +31,7 @@ async function checkBackupRecoveryPointEncryption(
 		}
 
 		// Check recovery points in each vault
-		for (const vault of vaults.BackupVaultList) {
+		for (const vault of vaults) {
 			if (!vault.BackupVaultName) {
 				results.checks.push({
 					resourceName: "Unknown Vault",
