@@ -15,6 +15,8 @@
   },
   "dependencies": {
     "@aws-sdk/client-accessanalyzer": "^3.716.0",
+    "@aws-sdk/client-api-gateway": "^3.723.0",
+    "@aws-sdk/client-apigatewayv2": "^3.723.0",
     "@aws-sdk/client-application-auto-scaling": "^3.721.0",
     "@aws-sdk/client-auto-scaling": "^3.716.0",
     "@aws-sdk/client-cloudfront": "^3.721.0",
@@ -41,6 +43,8 @@
     "@aws-sdk/client-secrets-manager": "^3.716.0",
     "@aws-sdk/client-securityhub": "^3.719.0",
     "@aws-sdk/client-sts": "^3.716.0",
+    "@aws-sdk/client-waf-regional": "^3.723.0",
+    "@aws-sdk/client-wafv2": "^3.723.0",
     "@aws-sdk/credential-providers": "^3.716.0"
   },
   "devDependencies": {
