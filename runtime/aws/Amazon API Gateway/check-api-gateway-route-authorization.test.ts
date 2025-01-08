@@ -1,10 +1,10 @@
 //@ts-nocheck
-import { APIGatewayV2Client, GetApisCommand, GetRoutesCommand } from "@aws-sdk/client-apigatewayv2";
+import { ApiGatewayV2Client, GetApisCommand, GetRoutesCommand } from "@aws-sdk/client-apigatewayv2";
 import { mockClient } from "aws-sdk-client-mock";
 import { ComplianceStatus } from "../../types.js";
 import checkApiGatewayRouteAuthorization from "./check-api-gateway-route-authorization";
 
-const mockApiGatewayClient = mockClient(APIGatewayV2Client);
+const mockApiGatewayClient = mockClient(ApiGatewayV2Client);
 
 const mockApi = {
 	ApiId: "test-api-1",
@@ -35,7 +35,7 @@ describe("checkApiGatewayRouteAuthorization", () => {
 			expect(result.checks).toHaveLength(3);
 			result.checks.forEach(check => {
 				expect(check.status).toBe(ComplianceStatus.PASS);
-				expect(check.resourceArn).toBe(mockApi.Arn);
+				expect(check.resourceArn).toBe(`${mockApi.Arn}/routes/undefined`);
 			});
 		});
 
@@ -123,7 +123,9 @@ describe("checkApiGatewayRouteAuthorization", () => {
 
 			const result = await checkApiGatewayRouteAuthorization.execute("us-east-1");
 			expect(result.checks[0].status).toBe(ComplianceStatus.NOTAPPLICABLE);
-			expect(result.checks[0].message).toBe("No API Gateway APIs found in the region");
+			expect(result.checks[0].message).toBe(
+				"No API Gateway HTTP/WebSocket APIs found in the region"
+			);
 		});
 	});
 });

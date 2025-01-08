@@ -35,7 +35,7 @@ describe("checkApiGatewayV2AccessLogging", () => {
 			mockApiGatewayV2Client.on(GetApisCommand).resolves({ Items: [mockApi] });
 			mockApiGatewayV2Client.on(GetStagesCommand).resolves({ Items: [mockStageWithLogging] });
 
-			const result = await checkApiGatewayV2AccessLogging("us-east-1");
+			const result = await checkApiGatewayV2AccessLogging.execute("us-east-1");
 			expect(result.checks[0].status).toBe(ComplianceStatus.PASS);
 			expect(result.checks[0].resourceName).toBe("TestAPI/prod");
 		});
@@ -43,7 +43,7 @@ describe("checkApiGatewayV2AccessLogging", () => {
 		it("should return NOTAPPLICABLE when no APIs exist", async () => {
 			mockApiGatewayV2Client.on(GetApisCommand).resolves({ Items: [] });
 
-			const result = await checkApiGatewayV2AccessLogging("us-east-1");
+			const result = await checkApiGatewayV2AccessLogging.execute("us-east-1");
 			expect(result.checks[0].status).toBe(ComplianceStatus.NOTAPPLICABLE);
 			expect(result.checks[0].message).toBe("No API Gateway V2 APIs found in the region");
 		});
@@ -52,7 +52,7 @@ describe("checkApiGatewayV2AccessLogging", () => {
 			mockApiGatewayV2Client.on(GetApisCommand).resolves({ Items: [mockApi] });
 			mockApiGatewayV2Client.on(GetStagesCommand).resolves({ Items: [] });
 
-			const result = await checkApiGatewayV2AccessLogging("us-east-1");
+			const result = await checkApiGatewayV2AccessLogging.execute("us-east-1");
 			expect(result.checks[0].status).toBe(ComplianceStatus.NOTAPPLICABLE);
 			expect(result.checks[0].message).toBe("No stages found for this API");
 		});
@@ -63,7 +63,7 @@ describe("checkApiGatewayV2AccessLogging", () => {
 			mockApiGatewayV2Client.on(GetApisCommand).resolves({ Items: [mockApi] });
 			mockApiGatewayV2Client.on(GetStagesCommand).resolves({ Items: [mockStageWithoutLogging] });
 
-			const result = await checkApiGatewayV2AccessLogging("us-east-1");
+			const result = await checkApiGatewayV2AccessLogging.execute("us-east-1");
 			expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
 			expect(result.checks[0].message).toBe("Stage does not have access logging configured");
 		});
@@ -74,7 +74,7 @@ describe("checkApiGatewayV2AccessLogging", () => {
 				.on(GetStagesCommand)
 				.resolves({ Items: [mockStageWithLogging, mockStageWithoutLogging] });
 
-			const result = await checkApiGatewayV2AccessLogging("us-east-1");
+			const result = await checkApiGatewayV2AccessLogging.execute("us-east-1");
 			expect(result.checks).toHaveLength(2);
 			expect(result.checks[0].status).toBe(ComplianceStatus.PASS);
 			expect(result.checks[1].status).toBe(ComplianceStatus.FAIL);
@@ -85,7 +85,7 @@ describe("checkApiGatewayV2AccessLogging", () => {
 		it("should return ERROR when GetApis fails", async () => {
 			mockApiGatewayV2Client.on(GetApisCommand).rejects(new Error("Failed to get APIs"));
 
-			const result = await checkApiGatewayV2AccessLogging("us-east-1");
+			const result = await checkApiGatewayV2AccessLogging.execute("us-east-1");
 			expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
 			expect(result.checks[0].message).toContain("Error checking API Gateway V2");
 		});
@@ -94,7 +94,7 @@ describe("checkApiGatewayV2AccessLogging", () => {
 			mockApiGatewayV2Client.on(GetApisCommand).resolves({ Items: [mockApi] });
 			mockApiGatewayV2Client.on(GetStagesCommand).rejects(new Error("Failed to get stages"));
 
-			const result = await checkApiGatewayV2AccessLogging("us-east-1");
+			const result = await checkApiGatewayV2AccessLogging.execute("us-east-1");
 			expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
 			expect(result.checks[0].message).toContain("Error checking stages");
 		});

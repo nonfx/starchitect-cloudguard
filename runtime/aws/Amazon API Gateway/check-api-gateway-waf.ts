@@ -61,12 +61,46 @@ async function checkApiGatewayWafCompliance(
 					const resourceArn = `arn:aws:apigateway:${region}::/restapis/${api.id}/stages/${stage.stageName}`;
 
 					try {
+						// If no WAF ACL is configured, fail immediately
+						if (!stage.webAclArn) {
+							results.checks.push({
+								resourceName,
+								resourceArn,
+								status: ComplianceStatus.FAIL,
+								message: "API Gateway stage is not associated with a WAF Web ACL (Regional or v2)"
+							});
+							continue;
+						}
+
 						let hasWafAssociation = false;
 						let hasCheckedRegional = false;
 						let hasCheckedV2 = false;
 
-						// Check WAF Regional association if webAclArn is present
-						if (stage.webAclArn) {
+						// Determine if this is a WAFv2 or WAF Regional ACL based on the ARN
+						const isWafv2 = stage.webAclArn.includes(":wafv2:");
+
+						if (isWafv2) {
+							try {
+								const wafv2Response = await wafv2Client.send(
+									new ListWAFV2ResourcesCommand({
+										WebACLArn: stage.webAclArn,
+										ResourceType: "API_GATEWAY"
+									})
+								);
+								hasCheckedV2 = true;
+								if (wafv2Response.ResourceArns && wafv2Response.ResourceArns.length > 0) {
+									hasWafAssociation = true;
+								}
+							} catch (error) {
+								if (
+									error instanceof Error &&
+									!error.message.includes("AccessDenied") &&
+									!error.message.includes("UnrecognizedClient")
+								) {
+									throw error;
+								}
+							}
+						} else {
 							try {
 								const wafRegionalResponse = await wafRegionalClient.send(
 									new ListResourcesForWebACLCommand({
@@ -81,31 +115,6 @@ async function checkApiGatewayWafCompliance(
 									hasWafAssociation = true;
 								}
 							} catch (error) {
-								// If error is not access denied, ignore it as we'll try WAFv2
-								if (
-									error instanceof Error &&
-									!error.message.includes("AccessDenied") &&
-									!error.message.includes("UnrecognizedClient")
-								) {
-								}
-							}
-						}
-
-						// Try WAFv2 if no WAF Regional association found
-						if (!hasWafAssociation && stage.webAclArn) {
-							try {
-								const wafv2Response = await wafv2Client.send(
-									new ListWAFV2ResourcesCommand({
-										WebACLArn: stage.webAclArn,
-										ResourceType: "API_GATEWAY"
-									})
-								);
-								hasCheckedV2 = true;
-								if (wafv2Response.ResourceArns && wafv2Response.ResourceArns.length > 0) {
-									hasWafAssociation = true;
-								}
-							} catch (error) {
-								// If error is not access denied, ignore it as we've already tried WAF Regional
 								if (
 									error instanceof Error &&
 									!error.message.includes("AccessDenied") &&
@@ -116,17 +125,21 @@ async function checkApiGatewayWafCompliance(
 							}
 						}
 
-						// Only fail if we've checked at least one WAF type and found no association
-						const shouldFail = (hasCheckedRegional || hasCheckedV2) && !hasWafAssociation;
-
-						results.checks.push({
-							resourceName,
-							resourceArn,
-							status: shouldFail ? ComplianceStatus.FAIL : ComplianceStatus.PASS,
-							message: hasWafAssociation
-								? undefined
-								: "API Gateway stage is not associated with a WAF Web ACL (Regional or v2)"
-						});
+						// Determine final status - fail if we checked WAF types but found no association
+						if (hasWafAssociation) {
+							results.checks.push({
+								resourceName,
+								resourceArn,
+								status: ComplianceStatus.PASS
+							});
+						} else {
+							results.checks.push({
+								resourceName,
+								resourceArn,
+								status: ComplianceStatus.FAIL,
+								message: "API Gateway stage is not associated with a WAF Web ACL (Regional or v2)"
+							});
+						}
 					} catch (error) {
 						results.checks.push({
 							resourceName,
