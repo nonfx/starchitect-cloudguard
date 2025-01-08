@@ -1,8 +1,14 @@
 import {
 	BackupClient,
 	ListRecoveryPointsByBackupVaultCommand,
-	ListBackupVaultsCommand
+	ListBackupVaultsCommand,
+	type RecoveryPointByBackupVault
 } from "@aws-sdk/client-backup";
+
+// Extend the RecoveryPointByBackupVault type to include Tags
+interface RecoveryPointWithTags extends RecoveryPointByBackupVault {
+	Tags?: Record<string, string>;
+}
 import { printSummary, generateSummary } from "../../utils/string-utils.js";
 import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "../../types.js";
 
@@ -55,7 +61,7 @@ async function checkBackupRecoveryPointTags(
 					continue;
 				}
 
-				for (const point of recoveryPoints.RecoveryPoints) {
+				for (const point of (recoveryPoints.RecoveryPoints || []) as RecoveryPointWithTags[]) {
 					if (!point.RecoveryPointArn) continue;
 
 					const hasTags = hasUserDefinedTags(point.Tags);
