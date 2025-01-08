@@ -1,4 +1,5 @@
-import { BackupClient, ListBackupPlansCommand, ListTagsCommand } from "@aws-sdk/client-backup";
+import { BackupClient, ListTagsCommand } from "@aws-sdk/client-backup";
+import { getAllBackupPlans } from "./get-all-backup-plans.js";
 import { printSummary, generateSummary } from "../../utils/string-utils.js";
 import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "../../types.js";
 
@@ -9,10 +10,10 @@ async function checkBackupPlanTagging(region: string = "us-east-1"): Promise<Com
 	};
 
 	try {
-		// Get all backup plans
-		const response = await client.send(new ListBackupPlansCommand({}));
+		// Get all backup plans using helper
+		const backupPlans = await getAllBackupPlans(client);
 
-		if (!response.BackupPlansList || response.BackupPlansList.length === 0) {
+		if (!backupPlans || backupPlans.length === 0) {
 			results.checks = [
 				{
 					resourceName: "No Backup Plans",
@@ -24,7 +25,7 @@ async function checkBackupPlanTagging(region: string = "us-east-1"): Promise<Com
 		}
 
 		// Check each backup plan for user-defined tags
-		for (const plan of response.BackupPlansList) {
+		for (const plan of backupPlans) {
 			if (!plan.BackupPlanName || !plan.BackupPlanArn) {
 				results.checks.push({
 					resourceName: "Unknown Backup Plan",

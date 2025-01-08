@@ -1,4 +1,5 @@
-import { BackupClient, ListBackupVaultsCommand, ListTagsCommand } from "@aws-sdk/client-backup";
+import { BackupClient, ListTagsCommand } from "@aws-sdk/client-backup";
+import { getAllBackupVaults } from "./get-all-backup-vaults.js";
 import { printSummary, generateSummary } from "../../utils/string-utils.js";
 import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "../../types.js";
 
@@ -9,10 +10,10 @@ async function checkBackupVaultTags(region: string = "us-east-1"): Promise<Compl
 	};
 
 	try {
-		// Get all backup vaults
-		const vaultsResponse = await client.send(new ListBackupVaultsCommand({}));
+		// Get all backup vaults using helper
+		const vaults = await getAllBackupVaults(client);
 
-		if (!vaultsResponse.BackupVaultList || vaultsResponse.BackupVaultList.length === 0) {
+		if (!vaults || vaults.length === 0) {
 			results.checks = [
 				{
 					resourceName: "No Backup Vaults",
@@ -24,7 +25,7 @@ async function checkBackupVaultTags(region: string = "us-east-1"): Promise<Compl
 		}
 
 		// Check tags for each vault
-		for (const vault of vaultsResponse.BackupVaultList) {
+		for (const vault of vaults) {
 			if (!vault.BackupVaultName || !vault.BackupVaultArn) {
 				results.checks.push({
 					resourceName: "Unknown Vault",
