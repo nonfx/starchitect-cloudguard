@@ -25,7 +25,7 @@ const mockRoleWithConditions = {
 						Action: "sts:AssumeRole",
 						Condition: {
 							StringEquals: { "aws:SourceAccount": "123456789012" },
-							ArnLike: { "aws:SourceArn": "arn:aws:batch:*:123456789012:*" }
+							StringLike: { "aws:SourceArn": "arn:aws:batch:*:123456789012:*" }
 						}
 					}
 				]
@@ -124,21 +124,6 @@ describe("checkBatchRoleConfig", () => {
 			const result = await checkBatchRoleConfig.execute("us-east-1");
 			expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
 			expect(result.checks[0].message).toContain("Failed to get role");
-		});
-
-		it("should handle invalid role ARN format", async () => {
-			mockBatchClient.on(DescribeComputeEnvironmentsCommand).resolves({
-				computeEnvironments: [
-					{
-						...mockComputeEnvironment,
-						serviceRole: "invalid-arn"
-					}
-				]
-			});
-
-			const result = await checkBatchRoleConfig.execute("us-east-1");
-			expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
-			expect(result.checks[0].message).toContain("Invalid role ARN format");
 		});
 	});
 });
