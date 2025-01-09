@@ -1,4 +1,5 @@
-import { NeptuneClient, DescribeDBClustersCommand } from "@aws-sdk/client-neptune";
+import { NeptuneClient } from "@aws-sdk/client-neptune";
+import { getAllNeptuneClusters } from "./get-all-neptune-clusters.js";
 import {
 	IAMClient,
 	ListRolesCommand,
@@ -40,9 +41,9 @@ async function checkNeptuneAccessControl(region: string = "us-east-1"): Promise<
 
 	try {
 		// First check if any Neptune clusters exist
-		const clusters = await neptuneClient.send(new DescribeDBClustersCommand({}));
+		const clusters = await getAllNeptuneClusters(neptuneClient);
 
-		if (!clusters.DBClusters?.length) {
+		if (!clusters.length) {
 			results.checks.push({
 				resourceName: "Neptune Clusters",
 				status: ComplianceStatus.NOTAPPLICABLE,

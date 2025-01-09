@@ -1,4 +1,5 @@
-import { NeptuneClient, DescribeDBClustersCommand } from "@aws-sdk/client-neptune";
+import { NeptuneClient } from "@aws-sdk/client-neptune";
+import { getAllNeptuneClusters } from "./get-all-neptune-clusters.js";
 import { printSummary, generateSummary } from "../../utils/string-utils.js";
 import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "../../types.js";
 
@@ -10,10 +11,9 @@ async function checkNeptuneEncryption(region: string = "us-east-1"): Promise<Com
 
 	try {
 		// Get all Neptune clusters
-		const command = new DescribeDBClustersCommand({});
-		const response = await client.send(command);
+		const clusters = await getAllNeptuneClusters(client);
 
-		if (!response.DBClusters || response.DBClusters.length === 0) {
+		if (clusters.length === 0) {
 			results.checks = [
 				{
 					resourceName: "No Neptune Clusters",
@@ -25,7 +25,7 @@ async function checkNeptuneEncryption(region: string = "us-east-1"): Promise<Com
 		}
 
 		// Check encryption for each cluster
-		for (const cluster of response.DBClusters) {
+		for (const cluster of clusters) {
 			if (!cluster.DBClusterIdentifier || !cluster.DBClusterArn) {
 				results.checks.push({
 					resourceName: "Unknown Cluster",

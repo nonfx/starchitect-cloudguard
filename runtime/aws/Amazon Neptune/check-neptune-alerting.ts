@@ -1,5 +1,6 @@
 import { CloudWatchClient, DescribeAlarmsCommand } from "@aws-sdk/client-cloudwatch";
-import { NeptuneClient, DescribeDBClustersCommand } from "@aws-sdk/client-neptune";
+import { NeptuneClient } from "@aws-sdk/client-neptune";
+import { getAllNeptuneClusters } from "./get-all-neptune-clusters.js";
 import { printSummary, generateSummary } from "../../utils/string-utils.js";
 import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "../../types.js";
 
@@ -14,9 +15,9 @@ async function checkNeptuneAlertingCompliance(
 
 	try {
 		// Get all Neptune clusters
-		const clusters = await neptuneClient.send(new DescribeDBClustersCommand({}));
+		const clusters = await getAllNeptuneClusters(neptuneClient);
 
-		if (!clusters.DBClusters || clusters.DBClusters.length === 0) {
+		if (clusters.length === 0) {
 			results.checks = [
 				{
 					resourceName: "No Neptune Clusters",
@@ -30,7 +31,7 @@ async function checkNeptuneAlertingCompliance(
 		// Get all CloudWatch alarms
 		const alarms = await cloudwatchClient.send(new DescribeAlarmsCommand({}));
 
-		for (const cluster of clusters.DBClusters) {
+		for (const cluster of clusters) {
 			if (!cluster.DBClusterIdentifier) {
 				results.checks.push({
 					resourceName: "Unknown Cluster",
