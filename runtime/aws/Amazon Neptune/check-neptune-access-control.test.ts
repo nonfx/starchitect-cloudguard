@@ -142,7 +142,7 @@ describe("checkNeptuneAccessControl", () => {
 			const result = await checkNeptuneAccessControl.execute("us-east-1");
 			expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
 			expect(result.checks[0].message).toBe(
-				"Error checking IAM roles: Failed to describe clusters"
+				"Error checking IAM roles: Failed to get Neptune clusters: Failed to describe clusters"
 			);
 		});
 

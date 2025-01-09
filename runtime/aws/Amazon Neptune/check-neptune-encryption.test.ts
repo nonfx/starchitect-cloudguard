@@ -85,7 +85,9 @@ describe("checkNeptuneEncryption", () => {
 
 			const result = await checkNeptuneEncryption.execute("us-east-1");
 			expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
-			expect(result.checks[0].message).toBe("Error checking Neptune clusters: API Error");
+			expect(result.checks[0].message).toBe(
+				"Error checking Neptune clusters: Failed to get Neptune clusters: API Error"
+			);
 		});
 
 		it("should handle undefined DBClusters response", async () => {
