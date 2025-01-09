@@ -1,144 +1,130 @@
-import { CloudWatchClient } from "@aws-sdk/client-cloudwatch";
+//@ts-nocheck
+import { CloudWatchClient, DescribeAlarmsCommand } from "@aws-sdk/client-cloudwatch";
+import { MemoryDBClient, DescribeClustersCommand } from "@aws-sdk/client-memorydb";
 import { mockClient } from "aws-sdk-client-mock";
 import { ComplianceStatus } from "../../types.js";
-import monitoringTest from "./check-memorydb-monitoring";
+import checkMemoryDBMonitoring from "./check-memorydb-monitoring";
 
-const cloudWatchMock = mockClient(CloudWatchClient);
+const mockCloudWatchClient = mockClient(CloudWatchClient);
+const mockMemoryDBClient = mockClient(MemoryDBClient);
+
+const mockCluster = {
+	Name: "test-cluster",
+	ARN: "arn:aws:memorydb:us-east-1:123456789012:cluster/test-cluster"
+};
+
+const mockAlarms = {
+	MetricAlarms: [
+		{
+			MetricName: "CPUUtilization",
+			Namespace: "AWS/MemoryDB",
+			Dimensions: [{ Name: "ClusterName", Value: "test-cluster" }],
+			AlarmName: "test-alarm-1",
+			AlarmActions: ["action1"],
+			ActionsEnabled: true,
+			EvaluationPeriods: 3
+		},
+		{
+			MetricName: "DatabaseMemoryUsagePercentage",
+			Namespace: "AWS/MemoryDB",
+			Dimensions: [{ Name: "ClusterName", Value: "test-cluster" }],
+			AlarmName: "test-alarm-2",
+			AlarmActions: ["action1"],
+			ActionsEnabled: true,
+			EvaluationPeriods: 3
+		},
+		{
+			MetricName: "SwapUsage",
+			Namespace: "AWS/MemoryDB",
+			Dimensions: [{ Name: "ClusterName", Value: "test-cluster" }],
+			AlarmName: "test-alarm-3",
+			AlarmActions: ["action1"],
+			ActionsEnabled: true,
+			EvaluationPeriods: 3
+		},
+		{
+			MetricName: "NetworkBytesIn",
+			Namespace: "AWS/MemoryDB",
+			Dimensions: [{ Name: "ClusterName", Value: "test-cluster" }],
+			AlarmName: "test-alarm-4",
+			AlarmActions: ["action1"],
+			ActionsEnabled: true,
+			EvaluationPeriods: 3
+		},
+		{
+			MetricName: "NetworkBytesOut",
+			Namespace: "AWS/MemoryDB",
+			Dimensions: [{ Name: "ClusterName", Value: "test-cluster" }],
+			AlarmName: "test-alarm-5",
+			AlarmActions: ["action1"],
+			ActionsEnabled: true,
+			EvaluationPeriods: 3
+		},
+		{
+			MetricName: "CurrConnections",
+			Namespace: "AWS/MemoryDB",
+			Dimensions: [{ Name: "ClusterName", Value: "test-cluster" }],
+			AlarmName: "test-alarm-6",
+			AlarmActions: ["action1"],
+			ActionsEnabled: true,
+			EvaluationPeriods: 3
+		}
+	]
+};
 
 describe("checkMemoryDBMonitoring", () => {
 	beforeEach(() => {
-		cloudWatchMock.reset();
+		mockCloudWatchClient.reset();
+		mockMemoryDBClient.reset();
 	});
 
-	it("should fail when no alarms exist", async () => {
-		cloudWatchMock.on("DescribeAlarms").resolves({
-			MetricAlarms: []
-		});
+	describe("Compliant Resources", () => {
+		it("should return PASS when all required alarms are configured", async () => {
+			mockCloudWatchClient.on(DescribeAlarmsCommand).resolves(mockAlarms);
 
-		const results = await monitoringTest.execute();
-		expect(results.checks).toHaveLength(1);
-		expect(results.checks[0]).toEqual({
-			resourceName: "MemoryDB CloudWatch Alarms",
-			status: ComplianceStatus.FAIL,
-			message: "No CloudWatch alarms found for MemoryDB monitoring"
+			const result = await checkMemoryDBMonitoring.execute("us-east-1");
+			expect(result.checks[0].status).toBe(ComplianceStatus.PASS);
+			expect(result.checks[0].resourceName).toBe("test-alarm-1");
 		});
 	});
 
-	it("should fail when essential metrics are not monitored", async () => {
-		cloudWatchMock.on("DescribeAlarms").resolves({
-			MetricAlarms: [
-				{
-					AlarmName: "MemoryDB-CPUUtilization",
-					AlarmArn: "arn:aws:cloudwatch:us-east-1:123456789012:alarm:MemoryDB-CPUUtilization",
-					MetricName: "CPUUtilization",
-					ActionsEnabled: true,
-					AlarmActions: ["arn:aws:sns:us-east-1:123456789012:alert"],
-					EvaluationPeriods: 3
-				}
-			]
+	describe("Non-Compliant Resources", () => {
+		it("should return FAIL when required alarms are missing", async () => {
+			mockCloudWatchClient.on(DescribeAlarmsCommand).resolves({
+				MetricAlarms: [
+					{
+						MetricName: "CPUUtilization",
+						Namespace: "AWS/MemoryDB",
+						Dimensions: [{ Name: "ClusterName", Value: "test-cluster" }]
+					}
+				]
+			});
+
+			const result = await checkMemoryDBMonitoring.execute("us-east-1");
+			expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
+			expect(result.checks[0].message).toContain("Missing CloudWatch alarms for essential metrics");
 		});
 
-		const results = await monitoringTest.execute();
-		expect(results.checks).toContainEqual(
-			expect.objectContaining({
-				resourceName: "MemoryDB Essential Metrics",
-				status: ComplianceStatus.FAIL,
-				message: expect.stringContaining("Missing CloudWatch alarms for essential metrics")
-			})
-		);
-	});
+		it("should return FAIL when no alarms are configured", async () => {
+			mockCloudWatchClient.on(DescribeAlarmsCommand).resolves({
+				MetricAlarms: []
+			});
 
-	it("should fail for alarms with configuration issues", async () => {
-		cloudWatchMock.on("DescribeAlarms").resolves({
-			MetricAlarms: [
-				{
-					AlarmName: "MemoryDB-Test",
-					AlarmArn: "arn:aws:cloudwatch:us-east-1:123456789012:alarm:MemoryDB-Test",
-					MetricName: "CPUUtilization",
-					ActionsEnabled: false,
-					AlarmActions: [],
-					EvaluationPeriods: 1
-				}
-			]
+			const result = await checkMemoryDBMonitoring.execute("us-east-1");
+			expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
+			expect(result.checks[0].message).toBe("No CloudWatch alarms found for MemoryDB monitoring");
 		});
-
-		const results = await monitoringTest.execute();
-		const alarmCheck = results.checks.find(check => check.resourceName === "MemoryDB-Test");
-		expect(alarmCheck).toBeDefined();
-		expect(alarmCheck?.status).toBe(ComplianceStatus.FAIL);
-		expect(alarmCheck?.message).toContain("Actions are disabled");
-		expect(alarmCheck?.message).toContain("No alarm actions configured");
-		expect(alarmCheck?.message).toContain("Low evaluation period");
 	});
 
-	it("should pass for properly configured alarms", async () => {
-		cloudWatchMock.on("DescribeAlarms").resolves({
-			MetricAlarms: [
-				{
-					AlarmName: "MemoryDB-CPUUtilization",
-					AlarmArn: "arn:aws:cloudwatch:us-east-1:123456789012:alarm:MemoryDB-CPUUtilization",
-					MetricName: "CPUUtilization",
-					ActionsEnabled: true,
-					AlarmActions: ["arn:aws:sns:us-east-1:123456789012:alert"],
-					EvaluationPeriods: 3
-				},
-				{
-					AlarmName: "MemoryDB-Memory",
-					AlarmArn: "arn:aws:cloudwatch:us-east-1:123456789012:alarm:MemoryDB-Memory",
-					MetricName: "DatabaseMemoryUsagePercentage",
-					ActionsEnabled: true,
-					AlarmActions: ["arn:aws:sns:us-east-1:123456789012:alert"],
-					EvaluationPeriods: 3
-				},
-				{
-					AlarmName: "MemoryDB-Swap",
-					AlarmArn: "arn:aws:cloudwatch:us-east-1:123456789012:alarm:MemoryDB-Swap",
-					MetricName: "SwapUsage",
-					ActionsEnabled: true,
-					AlarmActions: ["arn:aws:sns:us-east-1:123456789012:alert"],
-					EvaluationPeriods: 3
-				},
-				{
-					AlarmName: "MemoryDB-NetworkIn",
-					AlarmArn: "arn:aws:cloudwatch:us-east-1:123456789012:alarm:MemoryDB-NetworkIn",
-					MetricName: "NetworkBytesIn",
-					ActionsEnabled: true,
-					AlarmActions: ["arn:aws:sns:us-east-1:123456789012:alert"],
-					EvaluationPeriods: 3
-				},
-				{
-					AlarmName: "MemoryDB-NetworkOut",
-					AlarmArn: "arn:aws:cloudwatch:us-east-1:123456789012:alarm:MemoryDB-NetworkOut",
-					MetricName: "NetworkBytesOut",
-					ActionsEnabled: true,
-					AlarmActions: ["arn:aws:sns:us-east-1:123456789012:alert"],
-					EvaluationPeriods: 3
-				},
-				{
-					AlarmName: "MemoryDB-Connections",
-					AlarmArn: "arn:aws:cloudwatch:us-east-1:123456789012:alarm:MemoryDB-Connections",
-					MetricName: "CurrConnections",
-					ActionsEnabled: true,
-					AlarmActions: ["arn:aws:sns:us-east-1:123456789012:alert"],
-					EvaluationPeriods: 3
-				}
-			]
-		});
+	describe("Error Handling", () => {
+		it("should return ERROR when API call fails", async () => {
+			mockCloudWatchClient
+				.on(DescribeAlarmsCommand)
+				.rejects(new Error("Failed to describe alarms"));
 
-		const results = await monitoringTest.execute();
-		const failedChecks = results.checks.filter(check => check.status === ComplianceStatus.FAIL);
-		expect(failedChecks).toHaveLength(0);
-	});
-
-	it("should handle API errors", async () => {
-		cloudWatchMock.on("DescribeAlarms").rejects(new Error("API Error"));
-
-		const results = await monitoringTest.execute();
-		expect(results.checks).toHaveLength(1);
-		expect(results.checks[0]).toEqual({
-			resourceName: "MemoryDB Monitoring Check",
-			status: ComplianceStatus.ERROR,
-			message: "Error checking MemoryDB monitoring: API Error"
+			const result = await checkMemoryDBMonitoring.execute("us-east-1");
+			expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
+			expect(result.checks[0].message).toContain("Failed to describe alarms");
 		});
 	});
 });

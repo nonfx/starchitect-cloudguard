@@ -2,7 +2,7 @@
 import { MemoryDBClient, DescribeClustersCommand } from "@aws-sdk/client-memorydb";
 import { mockClient } from "aws-sdk-client-mock";
 import { ComplianceStatus } from "../../types.js";
-import checkMemoryDBEncryption from "./check-memorydb-encryption";
+import checkMemoryDBEncryption from "./check-memorydb-encryption-in-transit";
 
 const mockMemoryDBClient = mockClient(MemoryDBClient);
 

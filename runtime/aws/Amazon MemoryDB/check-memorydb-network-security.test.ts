@@ -9,14 +9,14 @@ const mockMemoryDBClient = mockClient(MemoryDBClient);
 const mockCompliantCluster = {
 	Name: "test-cluster-1",
 	ARN: "arn:aws:memorydb:us-east-1:123456789012:cluster/test-cluster-1",
-	SubnetGroup: "subnet-group-1",
+	SubnetGroupName: "subnet-group-1",
 	SecurityGroups: ["sg-12345678"]
 };
 
 const mockNonCompliantCluster = {
 	Name: "test-cluster-2",
 	ARN: "arn:aws:memorydb:us-east-1:123456789012:cluster/test-cluster-2",
-	SubnetGroup: null,
+	SubnetGroupName: null,
 	SecurityGroups: []
 };
 

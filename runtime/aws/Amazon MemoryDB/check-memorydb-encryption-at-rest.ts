@@ -32,7 +32,7 @@ async function checkMemoryDBEncryption(region: string = "us-east-1"): Promise<Co
 				continue;
 			}
 
-			const isEncrypted = cluster.KmsKeyId === undefined || cluster.KmsKeyId !== "";
+			const isEncrypted = cluster.KmsKeyId !== undefined && cluster.KmsKeyId !== "";
 
 			results.checks.push({
 				resourceName: cluster.Name,

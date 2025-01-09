@@ -25,12 +25,12 @@ const mockACL = {
 const mockUsers = [
 	{
 		Name: "user1",
-		AuthenticationMode: { Type: "password" },
+		Authentication: { Type: "password" },
 		AccessString: "on ~* +@read"
 	},
 	{
 		Name: "user2",
-		AuthenticationMode: { Type: "iam" },
+		Authentication: { Type: "iam" },
 		AccessString: "on ~* +@write"
 	}
 ];
@@ -83,7 +83,7 @@ describe("checkMemoryDBACL", () => {
 		it("should return FAIL when users have overly permissive access", async () => {
 			const permissiveUser = {
 				Name: "user1",
-				AuthenticationMode: { Type: "password" },
+				Authentication: { Type: "password" },
 				AccessString: "all"
 			};
 
@@ -97,13 +97,15 @@ describe("checkMemoryDBACL", () => {
 
 			const result = await checkMemoryDBACL.execute("us-east-1");
 			expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
-			expect(result.checks[0].message).toContain("User has overly permissive access string");
+			expect(result.checks[0].message).toContain(
+				"ACL configuration issue: User has overly permissive access string"
+			);
 		});
 
 		it("should return FAIL when users have invalid authentication type", async () => {
 			const invalidAuthUser = {
 				Name: "user1",
-				AuthenticationMode: { Type: "invalid" },
+				Authentication: { Type: "invalid" },
 				AccessString: "on ~* +@read"
 			};
 
@@ -117,7 +119,9 @@ describe("checkMemoryDBACL", () => {
 
 			const result = await checkMemoryDBACL.execute("us-east-1");
 			expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
-			expect(result.checks[0].message).toContain("User has invalid authentication type");
+			expect(result.checks[0].message).toContain(
+				"ACL configuration issue: User has invalid authentication type"
+			);
 		});
 	});
 
@@ -132,7 +136,13 @@ describe("checkMemoryDBACL", () => {
 
 		it("should handle clusters without names", async () => {
 			const invalidCluster = { ARN: "test-arn" };
-			mockMemoryDBClient.on(DescribeClustersCommand).resolves({ Clusters: [invalidCluster] });
+			mockMemoryDBClient
+				.on(DescribeClustersCommand)
+				.resolves({ Clusters: [invalidCluster] })
+				.on(DescribeACLsCommand)
+				.resolves({ ACLs: [mockACL] })
+				.on(DescribeUsersCommand)
+				.resolves({ Users: mockUsers });
 
 			const result = await checkMemoryDBACL.execute("us-east-1");
 			expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
