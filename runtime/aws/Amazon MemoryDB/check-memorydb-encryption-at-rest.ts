@@ -1,4 +1,5 @@
 import { MemoryDBClient, DescribeClustersCommand } from "@aws-sdk/client-memorydb";
+import { getAllMemoryDBClusters } from "./get-all-memorydb-clusters.js";
 import { printSummary, generateSummary } from "../../utils/string-utils.js";
 import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "../../types.js";
 async function checkMemoryDBEncryption(region: string = "us-east-1"): Promise<ComplianceReport> {
@@ -8,10 +9,9 @@ async function checkMemoryDBEncryption(region: string = "us-east-1"): Promise<Co
 	};
 
 	try {
-		const command = new DescribeClustersCommand({});
-		const response = await client.send(command);
-
-		if (!response.Clusters || response.Clusters.length === 0) {
+		// Get all MemoryDB clusters
+		const clusters = await getAllMemoryDBClusters(client);
+		if (clusters.length === 0) {
 			results.checks = [
 				{
 					resourceName: "No MemoryDB Clusters",
@@ -22,7 +22,7 @@ async function checkMemoryDBEncryption(region: string = "us-east-1"): Promise<Co
 			return results;
 		}
 
-		for (const cluster of response.Clusters) {
+		for (const cluster of clusters) {
 			if (!cluster.Name || !cluster.ARN) {
 				results.checks.push({
 					resourceName: "Unknown Cluster",

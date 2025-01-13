@@ -2,8 +2,11 @@ import {
 	MemoryDBClient,
 	DescribeClustersCommand,
 	DescribeUsersCommand,
-	DescribeACLsCommand
+	DescribeACLsCommand,
+	type ACL,
+	type User
 } from "@aws-sdk/client-memorydb";
+import { getAllMemoryDBClusters } from "./get-all-memorydb-clusters.js";
 import { printSummary, generateSummary } from "../../utils/string-utils.js";
 import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "../../types.js";
 
@@ -15,9 +18,8 @@ async function checkMemoryDBACLCompliance(region: string = "us-east-1"): Promise
 
 	try {
 		// Get all MemoryDB clusters
-		const clusters = await client.send(new DescribeClustersCommand({}));
-
-		if (!clusters.Clusters || clusters.Clusters.length === 0) {
+		const clusters = await getAllMemoryDBClusters(client);
+		if (clusters.length === 0) {
 			results.checks.push({
 				resourceName: "No MemoryDB Clusters",
 				status: ComplianceStatus.NOTAPPLICABLE,
@@ -28,13 +30,13 @@ async function checkMemoryDBACLCompliance(region: string = "us-east-1"): Promise
 
 		// Get all ACLs
 		const acls = await client.send(new DescribeACLsCommand({}));
-		const aclMap = new Map(acls.ACLs?.map(acl => [acl.Name, acl]) || []);
+		const aclMap = new Map(acls.ACLs?.map((acl: ACL) => [acl.Name, acl]) || []);
 
 		// Get all users
 		const users = await client.send(new DescribeUsersCommand({}));
-		const userMap = new Map(users.Users?.map(user => [user.Name, user]) || []);
+		const userMap = new Map(users.Users?.map((user: User) => [user.Name, user]) || []);
 
-		for (const cluster of clusters.Clusters) {
+		for (const cluster of clusters) {
 			if (!cluster.Name) {
 				results.checks.push({
 					resourceName: "Unknown Cluster",
