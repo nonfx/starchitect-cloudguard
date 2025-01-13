@@ -1,5 +1,6 @@
-import { DescribeRepositoriesCommand, ECRClient } from "@aws-sdk/client-ecr";
+import { ECRClient } from "@aws-sdk/client-ecr";
 import { generateSummary, printSummary } from "../../utils/string-utils.js";
+import { fetchECRRepositories } from "./ecr-utils.js";
 import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "../../types.js";
 
 async function checkEcrImageScanningCompliance(
@@ -11,23 +12,7 @@ async function checkEcrImageScanningCompliance(
 	};
 
 	try {
-		// Get all ECR repositories with pagination
-		let nextToken: string | undefined;
-		let repositories: any[] = [];
-
-		do {
-			const response = await client.send(
-				new DescribeRepositoriesCommand({
-					nextToken
-				})
-			);
-
-			if (response.repositories) {
-				repositories = repositories.concat(response.repositories);
-			}
-
-			nextToken = response.nextToken;
-		} while (nextToken);
+		const repositories = await fetchECRRepositories(client);
 
 		if (repositories.length === 0) {
 			results.checks = [

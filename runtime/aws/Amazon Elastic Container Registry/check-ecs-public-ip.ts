@@ -1,4 +1,9 @@
-import { ECSClient, ListServicesCommand, DescribeServicesCommand } from "@aws-sdk/client-ecs";
+import {
+	ECSClient,
+	ListServicesCommand,
+	DescribeServicesCommand,
+	ListClustersCommand
+} from "@aws-sdk/client-ecs";
 import { printSummary, generateSummary } from "../../utils/string-utils.js";
 import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "../../types.js";
 
@@ -9,66 +14,89 @@ async function checkEcsPublicIpCompliance(region: string = "us-east-1"): Promise
 	};
 
 	try {
-		let nextToken: string | undefined;
-		let allServiceArns: string[] = [];
+		// First, list all clusters
+		let clusterNextToken: string | undefined;
+		let allClusters: string[] = [];
 
-		// Paginate through all ECS services
 		do {
-			const listServicesResponse = await client.send(
-				new ListServicesCommand({
-					nextToken
+			const listClustersResponse = await client.send(
+				new ListClustersCommand({
+					nextToken: clusterNextToken
 				})
 			);
 
-			if (listServicesResponse.serviceArns) {
-				allServiceArns = allServiceArns.concat(listServicesResponse.serviceArns);
+			if (listClustersResponse.clusterArns) {
+				allClusters = allClusters.concat(listClustersResponse.clusterArns);
 			}
 
-			nextToken = listServicesResponse.nextToken;
-		} while (nextToken);
+			clusterNextToken = listClustersResponse.nextToken;
+		} while (clusterNextToken);
 
-		if (allServiceArns.length === 0) {
+		if (allClusters.length === 0) {
 			results.checks.push({
-				resourceName: "No ECS Services",
+				resourceName: "No ECS Clusters",
 				status: ComplianceStatus.NOTAPPLICABLE,
-				message: "No ECS services found in the region"
+				message: "No ECS clusters found in the region"
 			});
 			return results;
 		}
 
-		// Check services in batches of 10 (AWS API limit for DescribeServicesCommand)
-		for (let i = 0; i < allServiceArns.length; i += 10) {
-			const batch = allServiceArns.slice(i, i + 10);
+		// For each cluster, list and check its services
+		for (const clusterArn of allClusters) {
+			let serviceNextToken: string | undefined;
+			let allServiceArns: string[] = [];
 
-			const describeServicesResponse = await client.send(
-				new DescribeServicesCommand({
-					services: batch
-				})
-			);
+			// Paginate through all ECS services in this cluster
+			do {
+				const listServicesResponse = await client.send(
+					new ListServicesCommand({
+						cluster: clusterArn,
+						nextToken: serviceNextToken
+					})
+				);
 
-			if (!describeServicesResponse.services) continue;
-
-			for (const service of describeServicesResponse.services) {
-				if (!service.serviceName || !service.serviceArn) {
-					results.checks.push({
-						resourceName: "Unknown Service",
-						status: ComplianceStatus.ERROR,
-						message: "Service found without name or ARN"
-					});
-					continue;
+				if (listServicesResponse.serviceArns) {
+					allServiceArns = allServiceArns.concat(listServicesResponse.serviceArns);
 				}
 
-				const hasPublicIp =
-					service.networkConfiguration?.awsvpcConfiguration?.assignPublicIp === "ENABLED";
+				serviceNextToken = listServicesResponse.nextToken;
+			} while (serviceNextToken);
 
-				results.checks.push({
-					resourceName: service.serviceName,
-					resourceArn: service.serviceArn,
-					status: !hasPublicIp ? ComplianceStatus.PASS : ComplianceStatus.FAIL,
-					message: hasPublicIp
-						? "ECS service has automatic public IP assignment enabled"
-						: undefined
-				});
+			// Check services in batches of 10 (AWS API limit for DescribeServicesCommand)
+			for (let i = 0; i < allServiceArns.length; i += 10) {
+				const batch = allServiceArns.slice(i, i + 10);
+
+				const describeServicesResponse = await client.send(
+					new DescribeServicesCommand({
+						cluster: clusterArn,
+						services: batch
+					})
+				);
+
+				if (!describeServicesResponse.services) continue;
+
+				for (const service of describeServicesResponse.services) {
+					if (!service.serviceName || !service.serviceArn) {
+						results.checks.push({
+							resourceName: "Unknown Service",
+							status: ComplianceStatus.ERROR,
+							message: "Service found without name or ARN"
+						});
+						continue;
+					}
+
+					const hasPublicIp =
+						service.networkConfiguration?.awsvpcConfiguration?.assignPublicIp === "ENABLED";
+
+					results.checks.push({
+						resourceName: service.serviceName,
+						resourceArn: service.serviceArn,
+						status: !hasPublicIp ? ComplianceStatus.PASS : ComplianceStatus.FAIL,
+						message: hasPublicIp
+							? "ECS service has automatic public IP assignment enabled"
+							: undefined
+					});
+				}
 			}
 		}
 	} catch (error) {

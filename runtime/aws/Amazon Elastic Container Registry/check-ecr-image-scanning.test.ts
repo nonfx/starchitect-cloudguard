@@ -50,10 +50,16 @@ describe("checkEcrImageScanningCompliance", () => {
 			expect(result.checks[0].message).toBe("No ECR repositories found in the region");
 		});
 
-		it("should handle multiple compliant repositories", async () => {
-			mockEcrClient.on(DescribeRepositoriesCommand).resolves({
-				repositories: [mockCompliantRepo, mockCompliantRepo]
-			});
+		it("should handle multiple compliant repositories with pagination", async () => {
+			mockEcrClient
+				.on(DescribeRepositoriesCommand)
+				.resolvesOnce({
+					repositories: [mockCompliantRepo],
+					nextToken: "next-page"
+				})
+				.resolvesOnce({
+					repositories: [mockCompliantRepo]
+				});
 
 			const result = await checkEcrImageScanningCompliance.execute("us-east-1");
 			expect(result.checks).toHaveLength(2);
@@ -72,10 +78,16 @@ describe("checkEcrImageScanningCompliance", () => {
 			expect(result.checks[0].message).toBe("Image scanning is not enabled for this repository");
 		});
 
-		it("should handle mixed compliance status", async () => {
-			mockEcrClient.on(DescribeRepositoriesCommand).resolves({
-				repositories: [mockCompliantRepo, mockNonCompliantRepo]
-			});
+		it("should handle mixed compliance status with pagination", async () => {
+			mockEcrClient
+				.on(DescribeRepositoriesCommand)
+				.resolvesOnce({
+					repositories: [mockCompliantRepo],
+					nextToken: "next-page"
+				})
+				.resolvesOnce({
+					repositories: [mockNonCompliantRepo]
+				});
 
 			const result = await checkEcrImageScanningCompliance.execute("us-east-1");
 			expect(result.checks).toHaveLength(2);
@@ -105,7 +117,9 @@ describe("checkEcrImageScanningCompliance", () => {
 
 			const result = await checkEcrImageScanningCompliance.execute("us-east-1");
 			expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
-			expect(result.checks[0].message).toContain("Error checking ECR repositories: API Error");
+			expect(result.checks[0].message).toContain(
+				"Error checking ECR repositories: Error fetching ECR repositories: API Error"
+			);
 		});
 
 		it("should handle repository without name or ARN", async () => {

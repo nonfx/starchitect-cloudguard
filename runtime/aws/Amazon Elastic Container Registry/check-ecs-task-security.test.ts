@@ -99,10 +99,11 @@ describe("checkEcsTaskSecurity", () => {
 			expect(result.checks[0].message).toContain("must use non-root users");
 		});
 
-		it("should handle multiple task definitions with mixed compliance", async () => {
+		it("should handle multiple task definitions with mixed compliance and pagination", async () => {
 			mockEcsClient
 				.on(ListTaskDefinitionsCommand)
-				.resolves({ taskDefinitionArns: mockTaskDefinitionArns });
+				.resolvesOnce({ taskDefinitionArns: [mockTaskDefinitionArns[0]], nextToken: "next-token" })
+				.resolvesOnce({ taskDefinitionArns: [mockTaskDefinitionArns[1]] });
 			mockEcsClient
 				.on(DescribeTaskDefinitionCommand)
 				.resolvesOnce(mockSecureTaskDefinition)
@@ -116,18 +117,22 @@ describe("checkEcsTaskSecurity", () => {
 	});
 
 	describe("Error Handling", () => {
-		it("should return ERROR when ListTaskDefinitions fails", async () => {
-			mockEcsClient.on(ListTaskDefinitionsCommand).rejects(new Error("API Error"));
+		it("should handle pagination errors", async () => {
+			mockEcsClient
+				.on(ListTaskDefinitionsCommand)
+				.resolvesOnce({ taskDefinitionArns: [mockTaskDefinitionArns[0]], nextToken: "next-token" })
+				.rejectsOnce(new Error("API Error"));
 
 			const result = await checkEcsTaskSecurity.execute("us-east-1");
 			expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
-			expect(result.checks[0].message).toContain("Error checking ECS task definitions");
+			expect(result.checks[0].message).toContain("Error listing task definitions: API Error");
 		});
 
-		it("should return ERROR when DescribeTaskDefinition fails", async () => {
+		it("should handle DescribeTaskDefinition failures", async () => {
 			mockEcsClient
 				.on(ListTaskDefinitionsCommand)
-				.resolves({ taskDefinitionArns: [mockTaskDefinitionArns[0]] });
+				.resolvesOnce({ taskDefinitionArns: [mockTaskDefinitionArns[0]], nextToken: "next-token" })
+				.resolvesOnce({ taskDefinitionArns: [mockTaskDefinitionArns[1]] });
 			mockEcsClient.on(DescribeTaskDefinitionCommand).rejects(new Error("Access Denied"));
 
 			const result = await checkEcsTaskSecurity.execute("us-east-1");

@@ -1,10 +1,7 @@
-import {
-	DescribeRepositoriesCommand,
-	ECRClient,
-	GetLifecyclePolicyCommand
-} from "@aws-sdk/client-ecr";
+import { ECRClient, GetLifecyclePolicyCommand } from "@aws-sdk/client-ecr";
 import { generateSummary, printSummary } from "../../utils/string-utils.js";
 import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "../../types.js";
+import { fetchECRRepositories, type ECRRepository } from "./ecr-utils.js";
 
 interface EcrRepository {
 	name: string;
@@ -35,23 +32,7 @@ async function checkEcrLifecyclePolicyCompliance(
 	};
 
 	try {
-		// Get all ECR repositories with pagination
-		let nextToken: string | undefined;
-		let repositories: any[] = [];
-
-		do {
-			const response = await client.send(
-				new DescribeRepositoriesCommand({
-					nextToken
-				})
-			);
-
-			if (response.repositories) {
-				repositories = repositories.concat(response.repositories);
-			}
-
-			nextToken = response.nextToken;
-		} while (nextToken);
+		const repositories = await fetchECRRepositories(client);
 
 		if (repositories.length === 0) {
 			results.checks = [

@@ -1,6 +1,7 @@
-import { DescribeRepositoriesCommand, ECRClient } from "@aws-sdk/client-ecr";
+import { ECRClient } from "@aws-sdk/client-ecr";
 import { generateSummary, printSummary } from "../../utils/string-utils.js";
 import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "../../types.js";
+import { fetchECRRepositories } from "./ecr-utils.js";
 
 async function checkEcrTagImmutability(region: string = "us-east-1"): Promise<ComplianceReport> {
 	const client = new ECRClient({ region });
@@ -9,23 +10,7 @@ async function checkEcrTagImmutability(region: string = "us-east-1"): Promise<Co
 	};
 
 	try {
-		// Get all ECR repositories with pagination
-		let nextToken: string | undefined;
-		let allRepositories: any[] = [];
-
-		do {
-			const response = await client.send(
-				new DescribeRepositoriesCommand({
-					nextToken
-				})
-			);
-
-			if (response.repositories) {
-				allRepositories = allRepositories.concat(response.repositories);
-			}
-
-			nextToken = response.nextToken;
-		} while (nextToken);
+		const allRepositories = await fetchECRRepositories(client);
 
 		if (allRepositories.length === 0) {
 			results.checks = [

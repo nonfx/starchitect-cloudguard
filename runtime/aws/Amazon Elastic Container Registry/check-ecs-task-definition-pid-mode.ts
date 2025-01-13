@@ -1,8 +1,5 @@
-import {
-	ECSClient,
-	DescribeTaskDefinitionCommand,
-	ListTaskDefinitionsCommand
-} from "@aws-sdk/client-ecs";
+import { ECSClient, DescribeTaskDefinitionCommand } from "@aws-sdk/client-ecs";
+import { listAllTaskDefinitions } from "./ecr-utils.js";
 import { printSummary, generateSummary } from "../../utils/string-utils.js";
 import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "../../types.js";
 
@@ -15,31 +12,9 @@ async function checkEcsTaskDefinitionPidMode(
 	};
 
 	try {
-		let nextToken: string | undefined;
-		let taskDefinitionArns: string[] = [];
-
-		do {
-			// List all task definitions
-			const listCommand = new ListTaskDefinitionsCommand({
-				nextToken
-			});
-			const response = await client.send(listCommand);
-
-			if (response.taskDefinitionArns) {
-				taskDefinitionArns = taskDefinitionArns.concat(response.taskDefinitionArns);
-			}
-			nextToken = response.nextToken;
-		} while (nextToken);
-
-		if (taskDefinitionArns.length === 0) {
-			results.checks = [
-				{
-					resourceName: "No Task Definitions",
-					status: ComplianceStatus.NOTAPPLICABLE,
-					message: "No ECS task definitions found in the region"
-				}
-			];
-			return results;
+		const { taskDefinitionArns, baseReport } = await listAllTaskDefinitions(client);
+		if (baseReport) {
+			return baseReport;
 		}
 
 		// Check each task definition
