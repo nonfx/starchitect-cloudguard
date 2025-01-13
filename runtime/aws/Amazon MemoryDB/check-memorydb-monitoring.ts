@@ -1,27 +1,33 @@
 import { CloudWatchClient, DescribeAlarmsCommand } from "@aws-sdk/client-cloudwatch";
+import { MemoryDBClient } from "@aws-sdk/client-memorydb";
 import { printSummary, generateSummary } from "../../utils/string-utils.js";
 import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "../../types.js";
+import { getAllMemoryDBClusters } from "./get-all-memorydb-clusters.js";
 
 async function checkMemoryDBMonitoring(region: string = "us-east-1"): Promise<ComplianceReport> {
-	const client = new CloudWatchClient({ region });
+	const cloudwatchClient = new CloudWatchClient({ region });
+	const memorydbClient = new MemoryDBClient({ region });
 	const results: ComplianceReport = {
 		checks: []
 	};
 
 	try {
-		const command = new DescribeAlarmsCommand({});
-		const response = await client.send(command);
-
-		if (!response.MetricAlarms || response.MetricAlarms.length === 0) {
+		// Get all MemoryDB clusters
+		const clusters = await getAllMemoryDBClusters(memorydbClient);
+		if (clusters.length === 0) {
 			results.checks = [
 				{
-					resourceName: "MemoryDB CloudWatch Alarms",
-					status: ComplianceStatus.FAIL,
-					message: "No CloudWatch alarms found for MemoryDB monitoring"
+					resourceName: "MemoryDB Clusters",
+					status: ComplianceStatus.PASS,
+					message: "No MemoryDB clusters found in the region"
 				}
 			];
 			return results;
 		}
+
+		// Get all CloudWatch alarms
+		const command = new DescribeAlarmsCommand({});
+		const response = await cloudwatchClient.send(command);
 
 		// Essential metrics that should be monitored
 		const essentialMetrics = [
@@ -33,48 +39,45 @@ async function checkMemoryDBMonitoring(region: string = "us-east-1"): Promise<Co
 			"CurrConnections"
 		];
 
-		const memoryDBAlarms = response.MetricAlarms.filter(
-			alarm => alarm.Namespace === "AWS/MemoryDB"
-		);
+		// Check monitoring for each cluster
+		for (const cluster of clusters) {
+			if (!cluster.Name) continue;
 
-		const monitoredMetrics = new Set(memoryDBAlarms.map(alarm => alarm.MetricName));
-		const unmonitoredMetrics = essentialMetrics.filter(metric => !monitoredMetrics.has(metric));
+			const clusterAlarms =
+				response.MetricAlarms?.filter(
+					alarm =>
+						alarm.Namespace === "AWS/MemoryDB" &&
+						alarm.Dimensions?.some(d => d.Name === "ClusterName" && d.Value === cluster.Name)
+				) || [];
 
-		// Check for missing essential metrics
-		if (unmonitoredMetrics.length > 0) {
-			results.checks.push({
-				resourceName: "MemoryDB Essential Metrics",
-				status: ComplianceStatus.FAIL,
-				message: `Missing CloudWatch alarms for essential metrics: ${unmonitoredMetrics.join(", ")}`
+			const issues: string[] = [];
+
+			// Check for missing essential metrics
+			const monitoredMetrics = new Set(clusterAlarms.map(alarm => alarm.MetricName));
+			const unmonitoredMetrics = essentialMetrics.filter(metric => !monitoredMetrics.has(metric));
+
+			if (unmonitoredMetrics.length > 0) {
+				issues.push(`Missing metrics: ${unmonitoredMetrics.join(", ")}`);
+			}
+
+			// Check alarm configurations
+			const configurationIssues = clusterAlarms.filter(alarm => {
+				const alarmIssues = [];
+				if (alarm.ActionsEnabled === false) alarmIssues.push("Actions disabled");
+				if (!alarm.AlarmActions?.length) alarmIssues.push("No actions configured");
+				if ((alarm.EvaluationPeriods || 0) < 3) alarmIssues.push("Low evaluation period");
+				return alarmIssues.length > 0;
 			});
-		}
 
-		// Check individual alarm configurations
-		for (const alarm of response.MetricAlarms) {
-			if (!alarm.AlarmName) continue;
-
-			const alarmIssues: string[] = [];
-
-			if (alarm.ActionsEnabled === false) {
-				alarmIssues.push("Actions are disabled");
-			}
-
-			if (!alarm.AlarmActions || alarm.AlarmActions.length === 0) {
-				alarmIssues.push("No alarm actions configured");
-			}
-
-			if (alarm.EvaluationPeriods && alarm.EvaluationPeriods < 3) {
-				alarmIssues.push(`Low evaluation period (${alarm.EvaluationPeriods})`);
+			if (configurationIssues.length > 0) {
+				issues.push("Some alarms have configuration issues");
 			}
 
 			results.checks.push({
-				resourceName: alarm.AlarmName,
-				resourceArn: alarm.AlarmArn,
-				status: alarmIssues.length > 0 ? ComplianceStatus.FAIL : ComplianceStatus.PASS,
-				message:
-					alarmIssues.length > 0
-						? `Alarm configuration issues: ${alarmIssues.join(", ")}`
-						: undefined
+				resourceName: cluster.Name,
+				resourceArn: cluster.ARN,
+				status: issues.length > 0 ? ComplianceStatus.FAIL : ComplianceStatus.PASS,
+				message: issues.length > 0 ? issues.join("; ") : undefined
 			});
 		}
 	} catch (error) {
