@@ -6,11 +6,10 @@ import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "../..
 function hasValidFlowLogs(subnet: any): boolean {
 	return (
 		subnet.logConfig &&
-		Array.isArray(subnet.logConfig) &&
-		subnet.logConfig.length > 0 &&
-		subnet.logConfig.every((config: any) => {
-			return config.aggregationInterval && config.flowSampling === 1 && config.metadata;
-		})
+		typeof subnet.logConfig === "object" &&
+		subnet.logConfig.aggregationInterval === "INTERVAL_5_SEC" &&
+		subnet.logConfig.flowSampling === 1 &&
+		subnet.logConfig.metadata === "INCLUDE_ALL_METADATA"
 	);
 }
 
@@ -30,7 +29,8 @@ async function getRegions(projectId: string): Promise<string[]> {
 
 		return regions
 			.filter(region => region.name && region.status === "UP")
-			.map(region => region.name);
+			.map(region => region.name!)
+			.filter((name): name is string => name !== null);
 	} catch (error) {
 		console.error("Error fetching regions:", error);
 		return [];

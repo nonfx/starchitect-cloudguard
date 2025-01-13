@@ -39,7 +39,7 @@ export async function checkOsLoginEnabled(
 			const osLoginEnabled = isOsLoginEnabled(project.commonInstanceMetadata.items);
 			results.checks.push({
 				resourceName: `Project ${projectId} Metadata`,
-				resourceArn: project.selfLink,
+				resourceArn: project.selfLink || undefined,
 				status: osLoginEnabled ? ComplianceStatus.PASS : ComplianceStatus.FAIL,
 				message: osLoginEnabled
 					? undefined
@@ -76,7 +76,7 @@ export async function checkOsLoginEnabled(
 
 			results.checks.push({
 				resourceName: instanceName,
-				resourceArn: instance.selfLink,
+				resourceArn: instance.selfLink || undefined,
 				status: osLoginEnabled ? ComplianceStatus.PASS : ComplianceStatus.FAIL,
 				message: osLoginEnabled
 					? undefined

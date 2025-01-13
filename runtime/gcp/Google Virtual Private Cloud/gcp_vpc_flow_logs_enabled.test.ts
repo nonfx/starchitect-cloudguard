@@ -4,18 +4,17 @@ import { ComplianceStatus } from "../../types.js";
 import checkVPCFlowLogs from "./gcp_vpc_flow_logs_enabled.js";
 
 describe("checkVPCFlowLogs", () => {
-	// Mock the clients with proper return types
+	// Mock the clients
 	const mockList = mock(() => Promise.resolve([[], null, {}]));
 	const mockRegionsList = mock(() =>
 		Promise.resolve([[{ name: "us-central1", status: "UP" }], null, {}])
 	);
 
-	// Override the client constructors
-	SubnetworksClient.prototype.list = mockList as any;
-	RegionsClient.prototype.list = mockRegionsList as any;
-
 	beforeEach(() => {
-		// Reset mocks before each test
+		// Set up client mocks before each test
+		SubnetworksClient.prototype.list = mockList as any;
+		RegionsClient.prototype.list = mockRegionsList as any;
+		// Reset mock call history
 		mockList.mockClear();
 		mockRegionsList.mockClear();
 	});
@@ -25,13 +24,11 @@ describe("checkVPCFlowLogs", () => {
 			const mockSubnet = {
 				name: "test-subnet-1",
 				selfLink: "projects/test-project/regions/us-central1/subnetworks/test-subnet-1",
-				logConfig: [
-					{
-						aggregationInterval: 5,
-						flowSampling: 1,
-						metadata: true
-					}
-				]
+				logConfig: {
+					aggregationInterval: "INTERVAL_5_SEC",
+					flowSampling: 1,
+					metadata: "INCLUDE_ALL_METADATA"
+				}
 			};
 
 			mockList.mockImplementation(() => Promise.resolve([[mockSubnet], null, {}]));
@@ -47,24 +44,20 @@ describe("checkVPCFlowLogs", () => {
 				{
 					name: "test-subnet-1",
 					selfLink: "projects/test-project/regions/us-central1/subnetworks/test-subnet-1",
-					logConfig: [
-						{
-							aggregationInterval: 5,
-							flowSampling: 1,
-							metadata: true
-						}
-					]
+					logConfig: {
+						aggregationInterval: "INTERVAL_5_SEC",
+						flowSampling: 1,
+						metadata: "INCLUDE_ALL_METADATA"
+					}
 				},
 				{
 					name: "test-subnet-2",
 					selfLink: "projects/test-project/regions/us-central1/subnetworks/test-subnet-2",
-					logConfig: [
-						{
-							aggregationInterval: 5,
-							flowSampling: 1,
-							metadata: true
-						}
-					]
+					logConfig: {
+						aggregationInterval: "INTERVAL_5_SEC",
+						flowSampling: 1,
+						metadata: "INCLUDE_ALL_METADATA"
+					}
 				}
 			];
 
@@ -95,13 +88,11 @@ describe("checkVPCFlowLogs", () => {
 			const mockSubnet = {
 				name: "test-subnet-1",
 				selfLink: "projects/test-project/regions/us-central1/subnetworks/test-subnet-1",
-				logConfig: [
-					{
-						aggregationInterval: 60,
-						flowSampling: 0.5,
-						metadata: false
-					}
-				]
+				logConfig: {
+					aggregationInterval: "INTERVAL_300_SEC",
+					flowSampling: 0.5,
+					metadata: "EXCLUDE_ALL_METADATA"
+				}
 			};
 
 			mockList.mockImplementation(() => Promise.resolve([[mockSubnet], null, {}]));
@@ -139,12 +130,11 @@ describe("checkVPCFlowLogs", () => {
 	});
 
 	describe("Error Handling", () => {
-		it("should return NOTAPPLICABLE when API is not enabled", async () => {
+		it("should return ERROR when API is not enabled", async () => {
 			const apiError = new Error(
 				"API has not been used in project test-project before or it is disabled"
 			);
 			mockRegionsList.mockImplementation(() => Promise.reject(apiError));
-			mockList.mockImplementation(() => Promise.reject(apiError));
 
 			const result = await checkVPCFlowLogs.execute("test-project");
 			expect(result.checks).toHaveLength(1);
@@ -155,7 +145,6 @@ describe("checkVPCFlowLogs", () => {
 		it("should return ERROR for non-API errors", async () => {
 			const error = new Error("Network Error");
 			mockRegionsList.mockImplementation(() => Promise.reject(error));
-			mockList.mockImplementation(() => Promise.reject(error));
 
 			const result = await checkVPCFlowLogs.execute("test-project");
 			expect(result.checks).toHaveLength(1);
