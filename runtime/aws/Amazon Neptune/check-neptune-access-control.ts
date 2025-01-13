@@ -52,6 +52,20 @@ async function checkNeptuneAccessControl(region: string = "us-east-1"): Promise<
 			return results;
 		}
 
+		// Check IAM Database Authentication for each cluster
+		for (const cluster of clusters) {
+			results.checks.push({
+				resourceName: cluster.DBClusterIdentifier || "Unknown Cluster",
+				resourceArn: cluster.DBClusterArn,
+				status: cluster.IAMDatabaseAuthenticationEnabled
+					? ComplianceStatus.PASS
+					: ComplianceStatus.FAIL,
+				message: cluster.IAMDatabaseAuthenticationEnabled
+					? "IAM Database Authentication is enabled"
+					: "IAM Database Authentication is not enabled"
+			});
+		}
+
 		// Check all IAM roles since clusters exist
 		const roles = await iamClient.send(new ListRolesCommand({}));
 
