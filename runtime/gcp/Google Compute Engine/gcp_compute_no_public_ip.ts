@@ -1,5 +1,4 @@
-import { InstancesClient } from "@google-cloud/compute";
-import { listAllInstances } from "./list-utils.js";
+import { listAllInstances } from "./list-compute-resources-utils.js";
 import { printSummary, generateSummary } from "../../utils/string-utils.js";
 import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "../../types.js";
 
@@ -20,7 +19,6 @@ export async function checkComputeInstancePublicIPs(
 	projectId: string = process.env.GCP_PROJECT_ID || "",
 	zone: string = process.env.GCP_ZONE || "us-central1-a" // Default to us-central1-a if not specified
 ): Promise<ComplianceReport> {
-	const client = new InstancesClient();
 	const results: ComplianceReport = {
 		checks: []
 	};
