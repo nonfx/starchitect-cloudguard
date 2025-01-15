@@ -45,7 +45,7 @@ export async function checkVPCFlowLogs(
 			results.checks.push({
 				resourceName: "GCP VPC Subnets",
 				status: ComplianceStatus.NOTAPPLICABLE,
-				message: `No VPC subnets found in region ${region}`
+				message: "No VPC subnets found in any region of the project"
 			});
 			return results;
 		}
