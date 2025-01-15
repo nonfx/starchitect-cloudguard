@@ -1,22 +1,17 @@
 import { expect, describe, it, beforeEach, mock } from "bun:test";
-import { SubnetworksClient, RegionsClient } from "@google-cloud/compute";
+import { SubnetworksClient } from "@google-cloud/compute";
 import { ComplianceStatus } from "../../types.js";
 import checkVPCFlowLogs from "./gcp_vpc_flow_logs_enabled.js";
 
 describe("checkVPCFlowLogs", () => {
-	// Mock the clients
+	// Mock the client
 	const mockList = mock(() => Promise.resolve([[], null, {}]));
-	const mockRegionsList = mock(() =>
-		Promise.resolve([[{ name: "us-central1", status: "UP" }], null, {}])
-	);
 
 	beforeEach(() => {
-		// Set up client mocks before each test
+		// Set up client mock before each test
 		SubnetworksClient.prototype.list = mockList as any;
-		RegionsClient.prototype.list = mockRegionsList as any;
 		// Reset mock call history
 		mockList.mockClear();
-		mockRegionsList.mockClear();
 	});
 
 	describe("Compliant Resources", () => {
@@ -134,22 +129,22 @@ describe("checkVPCFlowLogs", () => {
 			const apiError = new Error(
 				"API has not been used in project test-project before or it is disabled"
 			);
-			mockRegionsList.mockImplementation(() => Promise.reject(apiError));
+			mockList.mockImplementation(() => Promise.reject(apiError));
 
 			const result = await checkVPCFlowLogs.execute("test-project");
 			expect(result.checks).toHaveLength(1);
 			expect(result.checks[0]?.status).toBe(ComplianceStatus.ERROR);
-			expect(result.checks[0]?.message).toBe("Unable to fetch regions for the project");
+			expect(result.checks[0]?.message).toContain("Error checking VPC flow logs");
 		});
 
 		it("should return ERROR for non-API errors", async () => {
 			const error = new Error("Network Error");
-			mockRegionsList.mockImplementation(() => Promise.reject(error));
+			mockList.mockImplementation(() => Promise.reject(error));
 
 			const result = await checkVPCFlowLogs.execute("test-project");
 			expect(result.checks).toHaveLength(1);
 			expect(result.checks[0]?.status).toBe(ComplianceStatus.ERROR);
-			expect(result.checks[0]?.message).toBe("Unable to fetch regions for the project");
+			expect(result.checks[0]?.message).toContain("Error checking VPC flow logs");
 		});
 	});
 });

@@ -1,25 +1,29 @@
-import * as compute from "@google-cloud/compute";
+import { InstancesClient } from "@google-cloud/compute";
+import { listAllInstances } from "./list-utils.js";
 import { printSummary, generateSummary } from "../../utils/string-utils.js";
 import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "../../types.js";
 
-// Helper function to check if Confidential Computing is enabled
-function isConfidentialComputingEnabled(instance: any): boolean {
-	return instance.confidentialInstanceConfig?.enableConfidentialCompute === true;
+// Helper function to check if project-wide SSH keys are blocked
+function isProjectSSHKeysBlocked(instance: any): boolean {
+	return (
+		instance.metadata?.items?.some(
+			(item: any) => item.key === "block-project-ssh-keys" && item.value === "true"
+		) ?? false
+	);
 }
 
 // Main compliance check function
-export async function checkConfidentialComputing(
+export async function checkBlockProjectSSHKeys(
 	projectId: string = process.env.GCP_PROJECT_ID || "",
-	zone: string = process.env.GCP_ZONE || "us-central1-a" // Default to us-central1-a if not specified
+	zone: string = process.env.GCP_ZONE || "us-central1-a"
 ): Promise<ComplianceReport> {
-	const instancesClient = new compute.v1.InstancesClient();
 	const results: ComplianceReport = {
 		checks: []
 	};
 
 	if (!projectId) {
 		results.checks.push({
-			resourceName: "Confidential Computing Check",
+			resourceName: "Block Project SSH Keys Check",
 			status: ComplianceStatus.ERROR,
 			message: "Project ID is not provided"
 		});
@@ -27,11 +31,8 @@ export async function checkConfidentialComputing(
 	}
 
 	try {
-		// Get instances in the specified zone
-		const [instances] = await instancesClient.list({
-			project: projectId,
-			zone: zone
-		});
+		// List all compute instances in the specified zone using pagination
+		const instances = await listAllInstances(projectId, zone);
 
 		// No instances found
 		if (!instances || instances.length === 0) {
@@ -43,7 +44,7 @@ export async function checkConfidentialComputing(
 			return results;
 		}
 
-		// Check each instance for Confidential Computing
+		// Check each instance for blocked project SSH keys
 		for (const instance of instances) {
 			const instanceName = instance.name || "Unknown Instance";
 			const selfLink = instance.selfLink || undefined;
@@ -51,19 +52,17 @@ export async function checkConfidentialComputing(
 			results.checks.push({
 				resourceName: instanceName,
 				resourceArn: selfLink,
-				status: isConfidentialComputingEnabled(instance)
-					? ComplianceStatus.PASS
-					: ComplianceStatus.FAIL,
-				message: !isConfidentialComputingEnabled(instance)
-					? `Instance ${instanceName} in zone ${zone} does not have Confidential Computing enabled. Enable confidential_instance_config for enhanced data security.`
+				status: isProjectSSHKeysBlocked(instance) ? ComplianceStatus.PASS : ComplianceStatus.FAIL,
+				message: !isProjectSSHKeysBlocked(instance)
+					? `Instance ${instanceName} in zone ${zone} does not block project-wide SSH keys. Set block-project-ssh-keys metadata to true for enhanced security.`
 					: undefined
 			});
 		}
 	} catch (error) {
 		results.checks.push({
-			resourceName: "Confidential Computing Check",
+			resourceName: "Block Project SSH Keys Check",
 			status: ComplianceStatus.ERROR,
-			message: `Error checking Confidential Computing: ${error instanceof Error ? error.message : String(error)}`
+			message: `Error checking blocked project SSH keys: ${error instanceof Error ? error.message : String(error)}`
 		});
 	}
 
@@ -73,24 +72,24 @@ export async function checkConfidentialComputing(
 // Main execution if run directly
 if (import.meta.main) {
 	const projectId = process.env.GCP_PROJECT_ID;
-	const zone = process.env.GCP_ZONE; // Optional: will use default if not provided
-	const results = await checkConfidentialComputing(projectId, zone);
+	const zone = process.env.GCP_ZONE;
+	const results = await checkBlockProjectSSHKeys(projectId, zone);
 	printSummary(generateSummary(results));
 }
 
 // Export default with compliance check metadata
 export default {
-	title: "Ensure That Compute Instances Have Confidential Computing Enabled",
+	title: "Ensure Block Project-Wide SSH Keys Is Enabled for VM Instances",
 	description:
-		"Compute instances must have Confidential Computing enabled to encrypt data during processing using AMD EPYC CPUs' SEV feature.",
+		"Block project-wide SSH keys to ensure that SSH access is controlled at the instance level, providing better security and access control.",
 	controls: [
 		{
-			id: "CIS-Google-Cloud-Platform-Foundation-Benchmark_v3.0.0_4.11",
+			id: "CIS-Google-Cloud-Platform-Foundation-Benchmark_v3.0.0_4.3",
 			document: "CIS-Google-Cloud-Platform-Foundation-Benchmark_v3.0.0"
 		}
 	],
 	severity: "HIGH",
-	execute: checkConfidentialComputing,
 	serviceName: "Google Compute Engine",
-	shortServiceName: "compute"
+	shortServiceName: "compute",
+	execute: checkBlockProjectSSHKeys
 } satisfies RuntimeTest;

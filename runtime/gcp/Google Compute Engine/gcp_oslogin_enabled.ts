@@ -1,4 +1,4 @@
-import * as compute from "@google-cloud/compute";
+import { listAllInstances, getProject } from "./list-utils.js";
 import { printSummary, generateSummary } from "../../utils/string-utils.js";
 import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "../../types.js";
 
@@ -13,8 +13,6 @@ export async function checkOsLoginEnabled(
 	projectId: string = process.env.GCP_PROJECT_ID || "",
 	zone: string = process.env.GCP_ZONE || "us-central1-a" // Default zone
 ): Promise<ComplianceReport> {
-	const projectsClient = new compute.v1.ProjectsClient();
-	const instancesClient = new compute.v1.InstancesClient();
 	const results: ComplianceReport = {
 		checks: []
 	};
@@ -30,9 +28,7 @@ export async function checkOsLoginEnabled(
 
 	try {
 		// Get project metadata
-		const [project] = await projectsClient.get({
-			project: projectId
-		});
+		const project = await getProject(projectId);
 
 		// Check project-level OS login setting
 		if (project?.commonInstanceMetadata?.items) {
@@ -52,11 +48,8 @@ export async function checkOsLoginEnabled(
 			}
 		}
 
-		// Get instances in the specified zone
-		const [instances] = await instancesClient.list({
-			project: projectId,
-			zone: zone
-		});
+		// Get all instances in the specified zone using pagination
+		const instances = await listAllInstances(projectId, zone);
 
 		if (!instances || instances.length === 0) {
 			results.checks.push({

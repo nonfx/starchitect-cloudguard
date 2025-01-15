@@ -1,4 +1,5 @@
 import { InstancesClient } from "@google-cloud/compute";
+import { listAllInstances } from "./list-utils.js";
 import { printSummary, generateSummary } from "../../utils/string-utils.js";
 import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "../../types.js";
 
@@ -34,11 +35,8 @@ export async function checkComputeInstancePublicIPs(
 	}
 
 	try {
-		// List all compute instances in the specified zone
-		const [instances] = await client.list({
-			project: projectId,
-			zone: zone
-		});
+		// List all compute instances in the specified zone using pagination
+		const instances = await listAllInstances(projectId, zone);
 
 		// No instances found
 		if (!instances || instances.length === 0) {

@@ -1,4 +1,4 @@
-import { SubnetworksClient, RegionsClient } from "@google-cloud/compute";
+import { listAllSubnets } from "./list-utils.js";
 import { printSummary, generateSummary } from "../../utils/string-utils.js";
 import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "../../types.js";
 
@@ -18,28 +18,10 @@ function isEligibleSubnet(subnet: any): boolean {
 	return subnet.purpose !== "REGIONAL_MANAGED_PROXY" && subnet.purpose !== "GLOBAL_MANAGED_PROXY";
 }
 
-// Function to get all available regions
-async function getRegions(projectId: string): Promise<string[]> {
-	const regionsClient = new RegionsClient();
-	try {
-		const [regions] = await regionsClient.list({
-			project: projectId,
-			maxResults: 500
-		});
-
-		return regions
-			.filter(region => region.name && region.status === "UP")
-			.map(region => region.name!)
-			.filter((name): name is string => name !== null);
-	} catch (error) {
-		console.error("Error fetching regions:", error);
-		return [];
-	}
-}
-
 // Main compliance check function
 export async function checkVPCFlowLogs(
-	projectId: string = process.env.GCP_PROJECT_ID || ""
+	projectId: string = process.env.GCP_PROJECT_ID || "",
+	region: string = process.env.GCP_REGION || "us-central1"
 ): Promise<ComplianceReport> {
 	const results: ComplianceReport = {
 		checks: []
@@ -54,70 +36,42 @@ export async function checkVPCFlowLogs(
 		return results;
 	}
 
-	const subnetworksClient = new SubnetworksClient();
-	const regions = await getRegions(projectId);
-
-	if (regions.length === 0) {
-		results.checks.push({
-			resourceName: "VPC Flow Logs Check",
-			status: ComplianceStatus.ERROR,
-			message: "Unable to fetch regions for the project"
-		});
-		return results;
-	}
-
 	try {
-		let totalSubnets = 0;
+		// Get subnets for the specified region
+		const subnets = await listAllSubnets(projectId, region);
 
-		// Check subnets in each region
-		for (const region of regions) {
-			try {
-				const [subnets] = await subnetworksClient.list({
-					project: projectId,
-					region: region,
-					maxResults: 500
-				});
-
-				if (subnets && subnets.length > 0) {
-					totalSubnets += subnets.length;
-
-					// Process each subnet in the region
-					for (const subnet of subnets) {
-						const subnetName = subnet.name || "Unknown Subnet";
-						const selfLink = subnet.selfLink || undefined;
-
-						if (!isEligibleSubnet(subnet)) {
-							results.checks.push({
-								resourceName: subnetName,
-								resourceArn: selfLink,
-								status: ComplianceStatus.NOTAPPLICABLE,
-								message: "Subnet is not eligible for flow logs configuration"
-							});
-							continue;
-						}
-
-						results.checks.push({
-							resourceName: subnetName,
-							resourceArn: selfLink,
-							status: hasValidFlowLogs(subnet) ? ComplianceStatus.PASS : ComplianceStatus.FAIL,
-							message: !hasValidFlowLogs(subnet)
-								? "VPC Flow Logs must be enabled with 5-second aggregation interval, 100% sampling rate, and include all metadata"
-								: undefined
-						});
-					}
-				}
-			} catch (error) {
-				console.error(`Error checking subnets in region ${region}:`, error);
-				// Continue with other regions if one fails
-				continue;
-			}
-		}
-
-		if (totalSubnets === 0) {
+		// No subnets found
+		if (!subnets || subnets.length === 0) {
 			results.checks.push({
 				resourceName: "GCP VPC Subnets",
 				status: ComplianceStatus.NOTAPPLICABLE,
-				message: "No VPC subnets found in any region of the project"
+				message: `No VPC subnets found in region ${region}`
+			});
+			return results;
+		}
+
+		// Process each subnet in the region
+		for (const subnet of subnets) {
+			const subnetName = subnet.name || "Unknown Subnet";
+			const selfLink = subnet.selfLink || undefined;
+
+			if (!isEligibleSubnet(subnet)) {
+				results.checks.push({
+					resourceName: subnetName,
+					resourceArn: selfLink,
+					status: ComplianceStatus.NOTAPPLICABLE,
+					message: "Subnet is not eligible for flow logs configuration"
+				});
+				continue;
+			}
+
+			results.checks.push({
+				resourceName: subnetName,
+				resourceArn: selfLink,
+				status: hasValidFlowLogs(subnet) ? ComplianceStatus.PASS : ComplianceStatus.FAIL,
+				message: !hasValidFlowLogs(subnet)
+					? "VPC Flow Logs must be enabled with 5-second aggregation interval, 100% sampling rate, and include all metadata"
+					: undefined
 			});
 		}
 	} catch (error) {
@@ -134,7 +88,8 @@ export async function checkVPCFlowLogs(
 // Main execution if run directly
 if (import.meta.main) {
 	const projectId = process.env.GCP_PROJECT_ID;
-	const results = await checkVPCFlowLogs(projectId);
+	const region = process.env.GCP_REGION;
+	const results = await checkVPCFlowLogs(projectId, region);
 	printSummary(generateSummary(results));
 }
 

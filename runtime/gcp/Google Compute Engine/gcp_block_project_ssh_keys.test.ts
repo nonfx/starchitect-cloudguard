@@ -1,30 +1,34 @@
-// @ts-nocheck
+import { expect, describe, it, beforeEach, mock } from "bun:test";
 import { InstancesClient } from "@google-cloud/compute";
 import { ComplianceStatus } from "../../types.js";
-import checkConfidentialComputing from "./gcp_confidential_computing.js";
+import checkBlockProjectSSHKeys from "./gcp_block_project_ssh_keys.js";
 
-describe("checkConfidentialComputing", () => {
+describe("checkBlockProjectSSHKeys", () => {
+	// Mock the client
+	const mockList = mock(() => Promise.resolve([[], null, {}]));
+
 	beforeEach(() => {
-		// Reset the mock
-		InstancesClient.prototype.list = async () => [[]];
+		// Set up client mock before each test
+		InstancesClient.prototype.list = mockList as any;
+		// Reset mock call history
+		mockList.mockClear();
 	});
 
 	describe("Compliant Resources", () => {
-		it("should return PASS when instance has Confidential Computing enabled", async () => {
+		it("should return PASS when instance blocks project SSH keys", async () => {
 			const mockInstance = {
 				name: "test-instance-1",
 				selfLink: "projects/test-project/zones/us-central1-a/instances/test-instance-1",
-				confidentialInstanceConfig: {
-					enableConfidentialCompute: true
+				metadata: {
+					items: [{ key: "block-project-ssh-keys", value: "true" }]
 				}
 			};
 
-			InstancesClient.prototype.list = async () => [[mockInstance]];
+			mockList.mockImplementation(() => Promise.resolve([[mockInstance], null, {}]));
 
-			const result = await checkConfidentialComputing.execute("test-project", "us-central1-a");
+			const result = await checkBlockProjectSSHKeys.execute("test-project", "us-central1-a");
 			expect(result.checks).toHaveLength(1);
 			expect(result.checks[0]?.status).toBe(ComplianceStatus.PASS);
-			expect(result.checks[0]?.resourceName).toBe("test-instance-1");
 		});
 
 		it("should handle multiple compliant instances", async () => {
@@ -32,54 +36,54 @@ describe("checkConfidentialComputing", () => {
 				{
 					name: "test-instance-1",
 					selfLink: "projects/test-project/zones/us-central1-a/instances/test-instance-1",
-					confidentialInstanceConfig: {
-						enableConfidentialCompute: true
+					metadata: {
+						items: [{ key: "block-project-ssh-keys", value: "true" }]
 					}
 				},
 				{
 					name: "test-instance-2",
 					selfLink: "projects/test-project/zones/us-central1-a/instances/test-instance-2",
-					confidentialInstanceConfig: {
-						enableConfidentialCompute: true
+					metadata: {
+						items: [{ key: "block-project-ssh-keys", value: "true" }]
 					}
 				}
 			];
 
-			InstancesClient.prototype.list = async () => [mockInstances];
+			mockList.mockImplementation(() => Promise.resolve([mockInstances, null, {}]));
 
-			const result = await checkConfidentialComputing.execute("test-project", "us-central1-a");
+			const result = await checkBlockProjectSSHKeys.execute("test-project", "us-central1-a");
 			expect(result.checks).toHaveLength(2);
 			expect(result.checks.every(check => check.status === ComplianceStatus.PASS)).toBe(true);
 		});
 	});
 
 	describe("Non-Compliant Resources", () => {
-		it("should return FAIL when instance has Confidential Computing disabled", async () => {
+		it("should return FAIL when instance does not block project SSH keys", async () => {
 			const mockInstance = {
 				name: "test-instance-1",
 				selfLink: "projects/test-project/zones/us-central1-a/instances/test-instance-1",
-				confidentialInstanceConfig: {
-					enableConfidentialCompute: false
+				metadata: {
+					items: []
 				}
 			};
 
-			InstancesClient.prototype.list = async () => [[mockInstance]];
+			mockList.mockImplementation(() => Promise.resolve([[mockInstance], null, {}]));
 
-			const result = await checkConfidentialComputing.execute("test-project", "us-central1-a");
+			const result = await checkBlockProjectSSHKeys.execute("test-project", "us-central1-a");
 			expect(result.checks).toHaveLength(1);
 			expect(result.checks[0]?.status).toBe(ComplianceStatus.FAIL);
-			expect(result.checks[0]?.message).toContain("does not have Confidential Computing enabled");
+			expect(result.checks[0]?.message).toContain("does not block project-wide SSH keys");
 		});
 
-		it("should return FAIL when confidentialInstanceConfig is missing", async () => {
+		it("should return FAIL when metadata is missing", async () => {
 			const mockInstance = {
 				name: "test-instance-1",
 				selfLink: "projects/test-project/zones/us-central1-a/instances/test-instance-1"
 			};
 
-			InstancesClient.prototype.list = async () => [[mockInstance]];
+			mockList.mockImplementation(() => Promise.resolve([[mockInstance], null, {}]));
 
-			const result = await checkConfidentialComputing.execute("test-project", "us-central1-a");
+			const result = await checkBlockProjectSSHKeys.execute("test-project", "us-central1-a");
 			expect(result.checks).toHaveLength(1);
 			expect(result.checks[0]?.status).toBe(ComplianceStatus.FAIL);
 		});
@@ -87,9 +91,9 @@ describe("checkConfidentialComputing", () => {
 
 	describe("Edge Cases", () => {
 		it("should return NOTAPPLICABLE when no instances exist", async () => {
-			InstancesClient.prototype.list = async () => [[]];
+			mockList.mockImplementation(() => Promise.resolve([[], null, {}]));
 
-			const result = await checkConfidentialComputing.execute("test-project", "us-central1-a");
+			const result = await checkBlockProjectSSHKeys.execute("test-project", "us-central1-a");
 			expect(result.checks).toHaveLength(1);
 			expect(result.checks[0]?.status).toBe(ComplianceStatus.NOTAPPLICABLE);
 			expect(result.checks[0]?.message).toBe("No compute instances found in zone us-central1-a");
@@ -97,63 +101,54 @@ describe("checkConfidentialComputing", () => {
 
 		it("should handle instance without name", async () => {
 			const mockInstance = {
-				selfLink: "projects/test-project/zones/us-central1-a/instances/unnamed-instance",
-				confidentialInstanceConfig: {
-					enableConfidentialCompute: true
+				selfLink: "projects/test-project/zones/us-central1-a/instances/test-instance-1",
+				metadata: {
+					items: [{ key: "block-project-ssh-keys", value: "true" }]
 				}
 			};
 
-			InstancesClient.prototype.list = async () => [[mockInstance]];
+			mockList.mockImplementation(() => Promise.resolve([[mockInstance], null, {}]));
 
-			const result = await checkConfidentialComputing.execute("test-project", "us-central1-a");
+			const result = await checkBlockProjectSSHKeys.execute("test-project", "us-central1-a");
 			expect(result.checks).toHaveLength(1);
 			expect(result.checks[0]?.resourceName).toBe("Unknown Instance");
 		});
 
 		it("should use default zone when none provided", async () => {
-			const mockInstance = {
-				name: "test-instance-1",
-				selfLink: "projects/test-project/zones/us-central1-a/instances/test-instance-1"
-			};
+			mockList.mockImplementation(() => Promise.resolve([[], null, {}]));
 
-			InstancesClient.prototype.list = async params => {
-				expect(params.zone).toBe("us-central1-a"); // Default zone
-				return [[mockInstance]];
-			};
-
-			await checkConfidentialComputing.execute("test-project");
+			const result = await checkBlockProjectSSHKeys.execute("test-project");
+			expect(result.checks).toHaveLength(1);
+			expect(result.checks[0]?.message).toContain("us-central1-a");
 		});
 	});
 
 	describe("Error Handling", () => {
 		it("should return ERROR when project ID is not provided", async () => {
-			const result = await checkConfidentialComputing.execute("");
+			const result = await checkBlockProjectSSHKeys.execute("");
 			expect(result.checks).toHaveLength(1);
 			expect(result.checks[0]?.status).toBe(ComplianceStatus.ERROR);
 			expect(result.checks[0]?.message).toBe("Project ID is not provided");
 		});
 
 		it("should return ERROR when API call fails", async () => {
-			InstancesClient.prototype.list = async () => {
-				throw new Error("API Error");
-			};
+			const apiError = new Error("API Error");
+			mockList.mockImplementation(() => Promise.reject(apiError));
 
-			const result = await checkConfidentialComputing.execute("test-project", "us-central1-a");
+			const result = await checkBlockProjectSSHKeys.execute("test-project", "us-central1-a");
 			expect(result.checks).toHaveLength(1);
 			expect(result.checks[0]?.status).toBe(ComplianceStatus.ERROR);
-			expect(result.checks[0]?.message).toBe("Error checking Confidential Computing: API Error");
+			expect(result.checks[0]?.message).toBe("Error checking blocked project SSH keys: API Error");
 		});
 
 		it("should handle non-Error exceptions", async () => {
-			InstancesClient.prototype.list = async () => {
-				throw "Unknown error";
-			};
+			mockList.mockImplementation(() => Promise.reject("Unknown error"));
 
-			const result = await checkConfidentialComputing.execute("test-project", "us-central1-a");
+			const result = await checkBlockProjectSSHKeys.execute("test-project", "us-central1-a");
 			expect(result.checks).toHaveLength(1);
 			expect(result.checks[0]?.status).toBe(ComplianceStatus.ERROR);
 			expect(result.checks[0]?.message).toBe(
-				"Error checking Confidential Computing: Unknown error"
+				"Error checking blocked project SSH keys: Unknown error"
 			);
 		});
 	});

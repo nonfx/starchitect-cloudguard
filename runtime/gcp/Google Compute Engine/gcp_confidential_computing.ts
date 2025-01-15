@@ -1,4 +1,5 @@
-import * as compute from "@google-cloud/compute";
+import { InstancesClient } from "@google-cloud/compute";
+import { listAllInstances } from "./list-utils.js";
 import { printSummary, generateSummary } from "../../utils/string-utils.js";
 import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "../../types.js";
 
@@ -12,7 +13,6 @@ export async function checkConfidentialComputing(
 	projectId: string = process.env.GCP_PROJECT_ID || "",
 	zone: string = process.env.GCP_ZONE || "us-central1-a" // Default to us-central1-a if not specified
 ): Promise<ComplianceReport> {
-	const instancesClient = new compute.v1.InstancesClient();
 	const results: ComplianceReport = {
 		checks: []
 	};
@@ -27,11 +27,8 @@ export async function checkConfidentialComputing(
 	}
 
 	try {
-		// Get instances in the specified zone
-		const [instances] = await instancesClient.list({
-			project: projectId,
-			zone: zone
-		});
+		// Get all instances in the specified zone using pagination
+		const instances = await listAllInstances(projectId, zone);
 
 		// No instances found
 		if (!instances || instances.length === 0) {

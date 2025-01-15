@@ -1,4 +1,5 @@
 import { FirewallsClient } from "@google-cloud/compute";
+import { listAllFirewalls } from "./list-utils.js";
 import { printSummary, generateSummary } from "../../utils/string-utils.js";
 import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "../../types.js";
 
@@ -71,10 +72,8 @@ export async function checkSSHRestrictions(
 	};
 
 	try {
-		// List all firewall rules in the project
-		const [rules] = await client.list({
-			project: projectId
-		});
+		// List all firewall rules in the project using pagination
+		const rules = await listAllFirewalls(projectId);
 
 		// No rules found
 		if (!rules || rules.length === 0) {

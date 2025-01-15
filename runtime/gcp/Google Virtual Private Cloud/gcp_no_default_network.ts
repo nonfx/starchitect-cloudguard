@@ -1,4 +1,5 @@
 import { NetworksClient } from "@google-cloud/compute";
+import { listAllNetworks } from "./list-utils.js";
 import { printSummary, generateSummary } from "../../utils/string-utils.js";
 import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "../../types.js";
 
@@ -23,10 +24,8 @@ export async function checkDefaultNetwork(
 	const client = new NetworksClient();
 
 	try {
-		// List all networks in the project
-		const [networks] = await client.list({
-			project: projectId
-		});
+		// List all networks in the project using pagination
+		const networks = await listAllNetworks(projectId);
 
 		// No networks found
 		if (!networks || networks.length === 0) {

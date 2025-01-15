@@ -1,4 +1,4 @@
-import { ApiKeysClient } from "@google-cloud/apikeys";
+import { listAllKeys } from "./list-utils.js";
 import { printSummary, generateSummary } from "../../utils/string-utils.js";
 import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "../../types.js";
 
@@ -22,16 +22,13 @@ function hasApiRestrictions(key: any): boolean {
 export async function checkApiKeyRestrictions(
 	projectId: string = process.env.GCP_PROJECT_ID || ""
 ): Promise<ComplianceReport> {
-	const client = new ApiKeysClient();
 	const results: ComplianceReport = {
 		checks: []
 	};
 
 	try {
-		// List API keys for the project
-		const [keys] = await client.listKeys({
-			parent: `projects/${projectId}`
-		});
+		// List all API keys for the project using pagination
+		const keys = await listAllKeys(projectId);
 
 		// No keys found
 		if (!keys || keys.length === 0) {
