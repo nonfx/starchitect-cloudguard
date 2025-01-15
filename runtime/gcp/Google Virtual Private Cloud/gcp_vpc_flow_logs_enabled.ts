@@ -2,12 +2,29 @@ import { listAllSubnets } from "./list-utils.js";
 import { printSummary, generateSummary } from "../../utils/string-utils.js";
 import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "../../types.js";
 
+// Valid VPC Flow Log intervals
+const VALID_INTERVALS = [
+	"INTERVAL_5_SEC",
+	"INTERVAL_30_SEC",
+	"INTERVAL_1_MIN",
+	"INTERVAL_5_MIN",
+	"INTERVAL_10_MIN",
+	"INTERVAL_15_MIN"
+] as const;
+
+type FlowLogInterval = (typeof VALID_INTERVALS)[number];
+
+// Helper function to check if interval is valid
+function isValidInterval(interval: string): interval is FlowLogInterval {
+	return VALID_INTERVALS.includes(interval as FlowLogInterval);
+}
+
 // Helper function to check if subnet has valid flow log configuration
 function hasValidFlowLogs(subnet: any): boolean {
 	return (
 		subnet.logConfig &&
 		typeof subnet.logConfig === "object" &&
-		subnet.logConfig.aggregationInterval === "INTERVAL_5_SEC" &&
+		isValidInterval(subnet.logConfig.aggregationInterval) &&
 		subnet.logConfig.flowSampling === 1 &&
 		subnet.logConfig.metadata === "INCLUDE_ALL_METADATA"
 	);
@@ -70,7 +87,7 @@ export async function checkVPCFlowLogs(
 				resourceArn: selfLink,
 				status: hasValidFlowLogs(subnet) ? ComplianceStatus.PASS : ComplianceStatus.FAIL,
 				message: !hasValidFlowLogs(subnet)
-					? "VPC Flow Logs must be enabled with 5-second aggregation interval, 100% sampling rate, and include all metadata"
+					? "VPC Flow Logs must be enabled with a valid aggregation interval (5s to 15m), 100% sampling rate, and include all metadata"
 					: undefined
 			});
 		}

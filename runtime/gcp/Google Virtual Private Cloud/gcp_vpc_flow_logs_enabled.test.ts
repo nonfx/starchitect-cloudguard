@@ -15,7 +15,7 @@ describe("checkVPCFlowLogs", () => {
 	});
 
 	describe("Compliant Resources", () => {
-		it("should return PASS when subnet has valid flow logs", async () => {
+		it("should return PASS when subnet has valid flow logs with 5s interval", async () => {
 			const mockSubnet = {
 				name: "test-subnet-1",
 				selfLink: "projects/test-project/regions/us-central1/subnetworks/test-subnet-1",
@@ -34,7 +34,25 @@ describe("checkVPCFlowLogs", () => {
 			expect(result.checks[0]?.resourceName).toBe("test-subnet-1");
 		});
 
-		it("should handle multiple subnets with valid flow logs", async () => {
+		it("should return PASS when subnet has valid flow logs with 15m interval", async () => {
+			const mockSubnet = {
+				name: "test-subnet-1",
+				selfLink: "projects/test-project/regions/us-central1/subnetworks/test-subnet-1",
+				logConfig: {
+					aggregationInterval: "INTERVAL_15_MIN",
+					flowSampling: 1,
+					metadata: "INCLUDE_ALL_METADATA"
+				}
+			};
+
+			mockList.mockImplementation(() => Promise.resolve([[mockSubnet], null, {}]));
+
+			const result = await checkVPCFlowLogs.execute("test-project");
+			expect(result.checks).toHaveLength(1);
+			expect(result.checks[0]?.status).toBe(ComplianceStatus.PASS);
+		});
+
+		it("should handle multiple subnets with different valid intervals", async () => {
 			const mockSubnets = [
 				{
 					name: "test-subnet-1",
@@ -49,7 +67,7 @@ describe("checkVPCFlowLogs", () => {
 					name: "test-subnet-2",
 					selfLink: "projects/test-project/regions/us-central1/subnetworks/test-subnet-2",
 					logConfig: {
-						aggregationInterval: "INTERVAL_5_SEC",
+						aggregationInterval: "INTERVAL_1_MIN",
 						flowSampling: 1,
 						metadata: "INCLUDE_ALL_METADATA"
 					}
@@ -79,12 +97,31 @@ describe("checkVPCFlowLogs", () => {
 			expect(result.checks[0]?.message).toContain("VPC Flow Logs must be enabled");
 		});
 
+		it("should return FAIL when flow logs have invalid interval", async () => {
+			const mockSubnet = {
+				name: "test-subnet-1",
+				selfLink: "projects/test-project/regions/us-central1/subnetworks/test-subnet-1",
+				logConfig: {
+					aggregationInterval: "INTERVAL_1_HOUR",
+					flowSampling: 1,
+					metadata: "INCLUDE_ALL_METADATA"
+				}
+			};
+
+			mockList.mockImplementation(() => Promise.resolve([[mockSubnet], null, {}]));
+
+			const result = await checkVPCFlowLogs.execute("test-project");
+			expect(result.checks).toHaveLength(1);
+			expect(result.checks[0]?.status).toBe(ComplianceStatus.FAIL);
+			expect(result.checks[0]?.message).toContain("valid aggregation interval (5s to 15m)");
+		});
+
 		it("should return FAIL when flow logs do not meet all criteria", async () => {
 			const mockSubnet = {
 				name: "test-subnet-1",
 				selfLink: "projects/test-project/regions/us-central1/subnetworks/test-subnet-1",
 				logConfig: {
-					aggregationInterval: "INTERVAL_300_SEC",
+					aggregationInterval: "INTERVAL_5_SEC",
 					flowSampling: 0.5,
 					metadata: "EXCLUDE_ALL_METADATA"
 				}
