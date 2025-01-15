@@ -1,4 +1,4 @@
-import { DNS } from "@google-cloud/dns";
+import { listAllZones } from "./get-all-zones-utils.js";
 import { printSummary, generateSummary } from "../../utils/string-utils.js";
 import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "../../types.js";
 
@@ -16,7 +16,6 @@ function usesRSASHA1(dnssecConfig: any): boolean {
 export async function checkDNSSECAlgorithm(
 	projectId: string = process.env.GCP_PROJECT_ID || ""
 ): Promise<ComplianceReport> {
-	const client = new DNS();
 	const results: ComplianceReport = {
 		checks: []
 	};
@@ -31,8 +30,8 @@ export async function checkDNSSECAlgorithm(
 	}
 
 	try {
-		// List all zones
-		const [zones] = await client.getZones();
+		// List all zones using pagination
+		const zones = await listAllZones(projectId);
 
 		// No zones found
 		if (!zones || zones.length === 0) {

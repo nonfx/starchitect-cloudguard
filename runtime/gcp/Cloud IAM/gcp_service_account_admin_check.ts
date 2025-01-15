@@ -1,16 +1,26 @@
-import { v2 } from "@google-cloud/iam";
 import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "../../types.js";
 import { printSummary, generateSummary } from "../../utils/string-utils.js";
+import { getIAMPolicy } from "./get-iam-policies-utils.js";
 
 // Helper function to check if role is administrative
 function isAdminRole(role: string): boolean {
 	const adminRoles = ["roles/editor", "roles/owner"];
-	return adminRoles.includes(role) || role.toLowerCase().includes("admin");
+	const roleLower = role.toLowerCase();
+	return adminRoles.includes(role) || roleLower.includes("admin");
 }
 
-// Helper function to check if member is a service account
-function isServiceAccount(member: string): boolean {
-	return member.startsWith("serviceAccount:");
+// Helper function to check if member is a user-managed service account
+function isUserManagedServiceAccount(member: string, projectId: string): boolean {
+	// Check for pattern: SERVICE_ACCOUNT_NAME@PROJECT_ID.iam.gserviceaccount.com
+	return (
+		member.startsWith("serviceAccount:") &&
+		member.endsWith(".iam.gserviceaccount.com") &&
+		member.includes(projectId) &&
+		!member.includes("@developer.gserviceaccount.com") && // Exclude Google-managed compute service account
+		!member.includes("@appspot.gserviceaccount.com") && // Exclude Google-managed App Engine service account
+		!member.includes("@cloudservices.gserviceaccount.com") && // Exclude Google-managed Cloud Services service account
+		!member.includes("@system.gserviceaccount.com") // Exclude Google-managed system service accounts
+	);
 }
 
 // Main compliance check function
@@ -34,16 +44,9 @@ export async function checkServiceAccountAdminPrivileges(
 		};
 	}
 
-	const client = new v2.PoliciesClient();
-
 	try {
 		// Get project IAM policy
-		const response = await client.getPolicy({
-			request: {
-				resource: `projects/${projectId}/policies`
-			}
-		});
-		const policy = response?.[0];
+		const policy = await getIAMPolicy(projectId);
 
 		if (!policy || !policy.bindings) {
 			results.checks.push({
@@ -54,28 +57,44 @@ export async function checkServiceAccountAdminPrivileges(
 			return results;
 		}
 
+		let foundServiceAccounts = false;
+
 		// Check each binding
 		for (const binding of policy.bindings) {
 			if (!binding.members || !binding.role) continue;
 
-			const serviceAccounts = binding.members.filter(isServiceAccount);
+			const serviceAccounts = binding.members.filter((member: string) =>
+				isUserManagedServiceAccount(member, projectId)
+			);
 
-			if (serviceAccounts.length > 0 && isAdminRole(binding.role)) {
-				for (const sa of serviceAccounts) {
-					results.checks.push({
-						resourceName: sa,
-						status: ComplianceStatus.FAIL,
-						message: `Service account has administrative role: ${binding.role}`
-					});
-				}
-			} else if (serviceAccounts.length > 0) {
-				for (const sa of serviceAccounts) {
-					results.checks.push({
-						resourceName: sa,
-						status: ComplianceStatus.PASS
-					});
+			if (serviceAccounts.length > 0) {
+				foundServiceAccounts = true;
+				if (isAdminRole(binding.role)) {
+					for (const sa of serviceAccounts) {
+						results.checks.push({
+							resourceName: sa.replace("serviceAccount:", ""),
+							status: ComplianceStatus.FAIL,
+							message: `Service account has administrative role: ${binding.role}`
+						});
+					}
+				} else {
+					for (const sa of serviceAccounts) {
+						results.checks.push({
+							resourceName: sa.replace("serviceAccount:", ""),
+							status: ComplianceStatus.PASS
+						});
+					}
 				}
 			}
+		}
+
+		// If no service accounts found, return NOTAPPLICABLE
+		if (!foundServiceAccounts) {
+			results.checks.push({
+				resourceName: "GCP Service Accounts",
+				status: ComplianceStatus.NOTAPPLICABLE,
+				message: "No user-managed service accounts found in the project"
+			});
 		}
 	} catch (error) {
 		results.checks.push({

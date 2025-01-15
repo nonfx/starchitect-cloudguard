@@ -1,5 +1,5 @@
-import { ProjectsClient } from "@google-cloud/resource-manager";
 import { printSummary, generateSummary } from "../../utils/string-utils.js";
+import { getProjectPolicy } from "./get-iam-policies-utils.js";
 import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "../../types.js";
 
 // Required audit log types that should be enabled
@@ -28,16 +28,22 @@ function hasRequiredLogTypes(auditConfigs: any[]): boolean {
 export async function checkAuditLoggingConfiguration(
 	projectId: string = process.env.GCP_PROJECT_ID || ""
 ): Promise<ComplianceReport> {
-	const client = new ProjectsClient();
 	const results: ComplianceReport = {
 		checks: []
 	};
 
-	try {
-		// Get project IAM policy
-		const [policy] = await client.getIamPolicy({
-			resource: `projects/${projectId}`
+	if (!projectId?.trim()) {
+		results.checks.push({
+			resourceName: "Cloud Audit Logging",
+			status: ComplianceStatus.ERROR,
+			message: "Project ID is not provided"
 		});
+		return results;
+	}
+
+	try {
+		// Get project IAM policy using utility function
+		const policy = await getProjectPolicy(projectId);
 
 		if (!policy) {
 			results.checks.push({

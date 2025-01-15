@@ -1,4 +1,4 @@
-import { ApiKeysClient } from "@google-cloud/apikeys";
+import { listAllKeys } from "./get-all-api-keys-utils.js";
 import { printSummary, generateSummary } from "../../utils/string-utils.js";
 import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "../../types.js";
 
@@ -26,16 +26,13 @@ export async function checkActiveApiKeys(
 		};
 	}
 
-	const client = new ApiKeysClient();
 	const results: ComplianceReport = {
 		checks: []
 	};
 
 	try {
-		// List API keys for the project
-		const [keys] = await client.listKeys({
-			parent: `projects/${projectId}`
-		});
+		// List all API keys for the project using pagination
+		const keys = await listAllKeys(projectId);
 
 		// No keys found
 		if (!keys || keys.length === 0) {

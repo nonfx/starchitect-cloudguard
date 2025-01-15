@@ -1,5 +1,5 @@
-import { DNS } from "@google-cloud/dns";
 import { printSummary, generateSummary } from "../../utils/string-utils.js";
+import { listAllZones } from "./get-all-zones-utils.js";
 import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "../../types.js";
 
 // Helper function to check if RSASHA1 is used for key signing
@@ -16,7 +16,6 @@ function isRSASHA1KeySigning(keySpecs: any[]): boolean {
 export async function checkDNSSECKeyAlgorithm(
 	projectId: string = process.env.GCP_PROJECT_ID || ""
 ): Promise<ComplianceReport> {
-	const client = new DNS();
 	const results: ComplianceReport = {
 		checks: []
 	};
@@ -31,8 +30,8 @@ export async function checkDNSSECKeyAlgorithm(
 	}
 
 	try {
-		// Get all zones
-		const [zones] = await client.getZones();
+		// Get all zones using pagination
+		const zones = await listAllZones(projectId);
 
 		if (!zones || zones.length === 0) {
 			results.checks.push({

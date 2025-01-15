@@ -1,5 +1,5 @@
-import { DNS } from "@google-cloud/dns";
 import { printSummary, generateSummary } from "../../utils/string-utils.js";
+import { listAllZones } from "./get-all-zones-utils.js";
 import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "../../types.js";
 
 // Helper function to check if DNSSEC is enabled
@@ -30,13 +30,8 @@ export async function checkDnssecEnabled(
 	}
 
 	try {
-		// Initialize DNS client
-		const dns = new DNS({
-			projectId: projectId
-		});
-
-		// Get all zones
-		const [zones] = await dns.getZones();
+		// Get all zones using pagination
+		const zones = await listAllZones(projectId);
 
 		// No zones found
 		if (!zones || zones.length === 0) {
