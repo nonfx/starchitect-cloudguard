@@ -1,5 +1,4 @@
-import { DisksClient } from "@google-cloud/compute";
-import { listAllDisks } from "./list-utils.js";
+import { listAllDisks } from "./list-compute-resources-utils.js";
 import { printSummary, generateSummary } from "../../utils/string-utils.js";
 import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "../../types.js";
 
@@ -13,7 +12,6 @@ export async function checkDiskCSEKEncryption(
 	projectId: string = process.env.GCP_PROJECT_ID || "",
 	zone: string = process.env.GCP_ZONE || "us-central1-a"
 ): Promise<ComplianceReport> {
-	const client = new DisksClient();
 	const results: ComplianceReport = {
 		checks: []
 	};

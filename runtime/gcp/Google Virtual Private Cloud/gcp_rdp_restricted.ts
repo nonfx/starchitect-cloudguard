@@ -1,5 +1,4 @@
-import { FirewallsClient } from "@google-cloud/compute";
-import { listAllFirewalls } from "./list-utils.js";
+import { listAllFirewalls } from "./list-vpc-resources-utils.js";
 import { printSummary, generateSummary } from "../../utils/string-utils.js";
 import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "../../types.js";
 
@@ -66,7 +65,6 @@ export function isPortInRange(port: number, range: string): boolean {
 export async function checkRDPRestrictions(
 	projectId: string = process.env.GCP_PROJECT_ID || ""
 ): Promise<ComplianceReport> {
-	const client = new FirewallsClient();
 	const results: ComplianceReport = {
 		checks: []
 	};

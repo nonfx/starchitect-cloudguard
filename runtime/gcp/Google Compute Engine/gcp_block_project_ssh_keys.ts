@@ -1,5 +1,4 @@
-import { InstancesClient } from "@google-cloud/compute";
-import { listAllInstances } from "./list-utils.js";
+import { listAllInstances } from "./list-compute-resources-utils.js";
 import { printSummary, generateSummary } from "../../utils/string-utils.js";
 import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "../../types.js";
 
