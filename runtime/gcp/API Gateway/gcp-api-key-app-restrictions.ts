@@ -1,5 +1,5 @@
 import { ApiKeysClient } from "@google-cloud/apikeys";
-import { listAllKeys } from "./get-api-gateway-utils.js";
+import { listAllKeys } from "../../utils/gcp/get-api-gateway-utils.js";
 import { printSummary, generateSummary } from "../../utils/string-utils.js";
 import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "../../types.js";
 

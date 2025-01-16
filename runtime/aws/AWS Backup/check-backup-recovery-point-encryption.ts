@@ -3,7 +3,7 @@ import {
 	ListRecoveryPointsByBackupVaultCommand,
 	DescribeRecoveryPointCommand
 } from "@aws-sdk/client-backup";
-import { getAllBackupVaults } from "./get-all-backup-vaults.js";
+import { getAllBackupVaults } from "../../utils/aws/get-all-backup-vaults.js";
 import { printSummary, generateSummary } from "../../utils/string-utils.js";
 import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "../../types.js";
 

@@ -1,5 +1,5 @@
 import { printSummary, generateSummary } from "../../utils/string-utils.js";
-import { getProjectPolicy } from "./get-iam-policies-utils.js";
+import { getProjectPolicy } from "../../utils/gcp/get-iam-policies-utils.js";
 import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "../../types.js";
 
 // Required audit log types that should be enabled

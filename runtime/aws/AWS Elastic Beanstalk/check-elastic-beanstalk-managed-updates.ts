@@ -2,7 +2,7 @@ import {
 	ElasticBeanstalkClient,
 	DescribeConfigurationSettingsCommand
 } from "@aws-sdk/client-elastic-beanstalk";
-import { getAllBeanstalkEnvironments } from "./get-all-elastic-beanstalk-environments.js";
+import { getAllBeanstalkEnvironments } from "../../utils/aws/get-all-elastic-beanstalk-environments.js";
 import { printSummary, generateSummary } from "../../utils/string-utils.js";
 import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "../../types.js";
 

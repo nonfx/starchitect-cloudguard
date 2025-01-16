@@ -1,4 +1,4 @@
-import { listAllInstances } from "./list-compute-resources-utils.js";
+import { listAllInstances } from "../../utils/gcp/list-compute-resources-utils.js";
 import { printSummary, generateSummary } from "../../utils/string-utils.js";
 import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "../../types.js";
 

@@ -16,7 +16,7 @@ import {
 import { S3Client, GetBucketLoggingCommand, GetBucketEncryptionCommand } from "@aws-sdk/client-s3";
 import { printSummary, generateSummary } from "../../utils/string-utils.js";
 import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "../../types.js";
-import { getAllTimestreamDatabases } from "./get-all-timestream-databases.js";
+import { getAllTimestreamDatabases } from "../../utils/aws/get-all-timestream-databases.js";
 
 async function checkTimestreamAuditLogging(
 	region: string = "us-east-1"

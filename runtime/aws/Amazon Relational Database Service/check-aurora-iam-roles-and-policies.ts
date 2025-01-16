@@ -1,5 +1,5 @@
 import { IAMClient, GetPolicyVersionCommand } from "@aws-sdk/client-iam";
-import { getAllIAMPolicies } from "../Amazon Identity and Access Management/get-all-iam-policies.js";
+import { getAllIAMPolicies } from "../../utils/aws/get-all-iam-policies.js";
 import { RDSClient, DescribeDBClustersCommand } from "@aws-sdk/client-rds";
 import { generateSummary, printSummary } from "../../utils/string-utils.js";
 import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "../../types.js";

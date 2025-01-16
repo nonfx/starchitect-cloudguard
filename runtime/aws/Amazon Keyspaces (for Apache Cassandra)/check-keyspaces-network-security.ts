@@ -1,5 +1,5 @@
 import { KeyspacesClient } from "@aws-sdk/client-keyspaces";
-import { getAllKeyspaces } from "./get-all-keyspaces.js";
+import { getAllKeyspaces } from "../../utils/aws/get-all-keyspaces.js";
 import {
 	EC2Client,
 	DescribeVpcEndpointsCommand,

@@ -1,5 +1,5 @@
 import { APIGatewayClient, GetStagesCommand } from "@aws-sdk/client-api-gateway";
-import { getAllRestApis } from "./get-all-rest-apis.js";
+import { getAllRestApis } from "../../utils/aws/get-all-rest-apis.js";
 import { printSummary, generateSummary } from "../../utils/string-utils.js";
 import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "../../types.js";
 

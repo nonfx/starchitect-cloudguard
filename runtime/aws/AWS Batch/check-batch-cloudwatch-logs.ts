@@ -1,7 +1,7 @@
 import { BatchClient } from "@aws-sdk/client-batch";
 import { printSummary, generateSummary } from "../../utils/string-utils.js";
 import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "../../types.js";
-import { getAllJobDefinitions } from "./get-all-job-definations.js";
+import { getAllJobDefinitions } from "../../utils/aws/get-all-job-definations.js";
 
 interface ContainerProperties {
 	logConfiguration?: {

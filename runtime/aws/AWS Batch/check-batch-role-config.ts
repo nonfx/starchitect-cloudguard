@@ -2,7 +2,7 @@ import { BatchClient } from "@aws-sdk/client-batch";
 import { IAMClient, GetRoleCommand } from "@aws-sdk/client-iam";
 import { printSummary, generateSummary } from "../../utils/string-utils.js";
 import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "../../types.js";
-import { getAllComputeEnvironments } from "./get-all-compute-envs.js";
+import { getAllComputeEnvironments } from "../../utils/aws/get-all-compute-envs.js";
 
 interface TrustPolicy {
 	Version: string;

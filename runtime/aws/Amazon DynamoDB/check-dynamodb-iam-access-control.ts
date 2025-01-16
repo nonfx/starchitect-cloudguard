@@ -1,7 +1,7 @@
 import { IAMClient, GetPolicyVersionCommand } from "@aws-sdk/client-iam";
 import { printSummary, generateSummary } from "../../utils/string-utils.js";
 import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "../../types.js";
-import { getAllIAMPolicies } from "../Amazon Identity and Access Management/get-all-iam-policies.js";
+import { getAllIAMPolicies } from "../../utils/aws/get-all-iam-policies.js";
 
 async function checkDynamoDBIAMAccessControl(
 	region: string = "us-east-1"

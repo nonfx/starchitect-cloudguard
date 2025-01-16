@@ -1,5 +1,5 @@
 import { BackupClient, ListTagsCommand } from "@aws-sdk/client-backup";
-import { getAllReportPlans } from "./get-all-report-plans.js";
+import { getAllReportPlans } from "../../utils/aws/get-all-report-plans.js";
 import { printSummary, generateSummary } from "../../utils/string-utils.js";
 import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "../../types.js";
 

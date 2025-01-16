@@ -1,5 +1,5 @@
 import { KeyspacesClient, GetKeyspaceCommand } from "@aws-sdk/client-keyspaces";
-import { getAllKeyspaces } from "./get-all-keyspaces.js";
+import { getAllKeyspaces } from "../../utils/aws/get-all-keyspaces.js";
 import { printSummary, generateSummary } from "../../utils/string-utils.js";
 import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "../../types.js";
 

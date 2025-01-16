@@ -1,6 +1,6 @@
 import { ECRClient } from "@aws-sdk/client-ecr";
 import { generateSummary, printSummary } from "../../utils/string-utils.js";
-import { fetchECRRepositories } from "./ecr-utils.js";
+import { fetchECRRepositories } from "../../utils/aws/ecr-utils.js";
 import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "../../types.js";
 
 async function checkEcrImageScanningCompliance(

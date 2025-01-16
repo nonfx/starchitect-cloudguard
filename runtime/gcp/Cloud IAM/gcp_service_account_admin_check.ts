@@ -1,6 +1,6 @@
 import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "../../types.js";
 import { printSummary, generateSummary } from "../../utils/string-utils.js";
-import { getIAMPolicy } from "./get-iam-policies-utils.js";
+import { getIAMPolicy } from "../../utils/gcp/get-iam-policies-utils.js";
 
 // Helper function to check if role is administrative
 function isAdminRole(role: string): boolean {

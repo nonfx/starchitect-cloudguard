@@ -1,5 +1,5 @@
 import { ElastiCacheClient, type CacheCluster } from "@aws-sdk/client-elasticache";
-import { getCacheClusters } from "./elasticache-utils.js";
+import { getCacheClusters } from "../../utils/aws/elasticache-utils.js";
 import { printSummary, generateSummary } from "../../utils/string-utils.js";
 import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "../../types.js";
 

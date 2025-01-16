@@ -1,5 +1,5 @@
 import { ApiGatewayV2Client, GetRoutesCommand } from "@aws-sdk/client-apigatewayv2";
-import { getAllHttpApis } from "./get-all-http-apis.js";
+import { getAllHttpApis } from "../../utils/aws/get-all-http-apis.js";
 import { printSummary, generateSummary } from "../../utils/string-utils.js";
 import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "../../types.js";
 
