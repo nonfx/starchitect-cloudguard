@@ -2,7 +2,7 @@ import { CloudWatchClient, DescribeAlarmsCommand } from "@aws-sdk/client-cloudwa
 import { MemoryDBClient } from "@aws-sdk/client-memorydb";
 import { printSummary, generateSummary } from "../../utils/string-utils.js";
 import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "../../types.js";
-import { getAllMemoryDBClusters } from "./get-all-memorydb-clusters.js";
+import { getAllMemoryDBClusters } from "../../utils/aws/get-all-memorydb-clusters.js";
 
 async function checkMemoryDBMonitoring(region: string = "us-east-1"): Promise<ComplianceReport> {
 	const cloudwatchClient = new CloudWatchClient({ region });

@@ -1,5 +1,5 @@
 import { NeptuneClient } from "@aws-sdk/client-neptune";
-import { getAllNeptuneClusters } from "./get-all-neptune-clusters.js";
+import { getAllNeptuneClusters } from "../../utils/aws/get-all-neptune-clusters.js";
 import {
 	IAMClient,
 	ListRolesCommand,

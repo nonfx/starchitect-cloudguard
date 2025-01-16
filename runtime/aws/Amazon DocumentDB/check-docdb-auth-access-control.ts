@@ -1,5 +1,5 @@
 import { DocDBClient, DescribeDBClusterParameterGroupsCommand } from "@aws-sdk/client-docdb";
-import { getAllDocDBClusters } from "./get-all-docdb-clusters.js";
+import { getAllDocDBClusters } from "../../utils/aws/get-all-docdb-clusters.js";
 import {
 	IAMClient,
 	ListRolesCommand,

@@ -1,5 +1,5 @@
 import { ElastiCacheClient, type CacheCluster } from "@aws-sdk/client-elasticache";
-import { getCacheClusters } from "./elasticache-utils.js";
+import { getCacheClusters } from "../../utils/aws/elasticache-utils.js";
 import {
 	EC2Client,
 	DescribeSecurityGroupsCommand,

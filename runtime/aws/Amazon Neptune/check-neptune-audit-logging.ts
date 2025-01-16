@@ -1,5 +1,5 @@
 import { NeptuneClient } from "@aws-sdk/client-neptune";
-import { getAllNeptuneClusters } from "./get-all-neptune-clusters.js";
+import { getAllNeptuneClusters } from "../../utils/aws/get-all-neptune-clusters.js";
 import { printSummary, generateSummary } from "../../utils/string-utils.js";
 import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "../../types.js";
 

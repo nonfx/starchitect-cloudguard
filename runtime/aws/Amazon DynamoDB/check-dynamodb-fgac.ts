@@ -1,9 +1,9 @@
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import { IAMClient, GetPolicyVersionCommand } from "@aws-sdk/client-iam";
-import { getAllIAMPolicies } from "../Amazon Identity and Access Management/get-all-iam-policies.js";
+import { getAllIAMPolicies } from "../../utils/aws/get-all-iam-policies.js";
 import { printSummary, generateSummary } from "../../utils/string-utils.js";
 import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "../../types.js";
-import { getAllDynamoDBTables } from "./get-all-dynamodb-tables.js";
+import { getAllDynamoDBTables } from "../../utils/aws/get-all-dynamodb-tables.js";
 
 interface PolicyDocument {
 	Version: string;

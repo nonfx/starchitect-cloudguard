@@ -1,5 +1,5 @@
 import { DocDBClient, DescribeDBSubnetGroupsCommand } from "@aws-sdk/client-docdb";
-import { getAllDocDBClusters } from "./get-all-docdb-clusters.js";
+import { getAllDocDBClusters } from "../../utils/aws/get-all-docdb-clusters.js";
 import { EC2Client, DescribeNetworkAclsCommand, DescribeSubnetsCommand } from "@aws-sdk/client-ec2";
 import { printSummary, generateSummary } from "../../utils/string-utils.js";
 import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "../../types.js";

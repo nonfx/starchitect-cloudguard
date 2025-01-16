@@ -1,5 +1,5 @@
 import { CloudFrontClient, GetDistributionCommand } from "@aws-sdk/client-cloudfront";
-import { getAllCloudFrontDistributions } from "./get-all-cloudfront-distributions.js";
+import { getAllCloudFrontDistributions } from "../../utils/aws/get-all-cloudfront-distributions.js";
 import { S3Client, ListBucketsCommand } from "@aws-sdk/client-s3";
 import { printSummary, generateSummary } from "../../utils/string-utils.js";
 import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "../../types.js";

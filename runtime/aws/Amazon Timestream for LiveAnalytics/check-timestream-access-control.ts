@@ -1,5 +1,5 @@
 import { IAMClient, ListPoliciesCommand, GetPolicyVersionCommand } from "@aws-sdk/client-iam";
-import { getAllTimestreamDatabases } from "./get-all-timestream-databases.js";
+import { getAllTimestreamDatabases } from "../../utils/aws/get-all-timestream-databases.js";
 import { printSummary, generateSummary } from "../../utils/string-utils.js";
 import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "../../types.js";
 

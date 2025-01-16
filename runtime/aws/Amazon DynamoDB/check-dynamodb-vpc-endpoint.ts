@@ -2,7 +2,7 @@ import { EC2Client, DescribeVpcEndpointsCommand } from "@aws-sdk/client-ec2";
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import { printSummary, generateSummary } from "../../utils/string-utils.js";
 import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "../../types.js";
-import { getAllDynamoDBTables } from "./get-all-dynamodb-tables.js";
+import { getAllDynamoDBTables } from "../../utils/aws/get-all-dynamodb-tables.js";
 
 async function checkDynamoDBVPCEndpointCompliance(
 	region: string = "us-east-1"

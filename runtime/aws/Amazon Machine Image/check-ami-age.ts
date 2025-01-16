@@ -1,5 +1,5 @@
 import { EC2Client } from "@aws-sdk/client-ec2";
-import { getAllAmis } from "./get-all-amis.js";
+import { getAllAmis } from "../../utils/aws/get-all-amis.js";
 import { printSummary, generateSummary } from "../../utils/string-utils.js";
 import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "../../types.js";
 

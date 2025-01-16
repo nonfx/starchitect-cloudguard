@@ -3,7 +3,7 @@ import {
 	ListRecoveryPointsByBackupVaultCommand,
 	type RecoveryPointByBackupVault
 } from "@aws-sdk/client-backup";
-import { getAllBackupVaults } from "./get-all-backup-vaults.js";
+import { getAllBackupVaults } from "../../utils/aws/get-all-backup-vaults.js";
 
 // Extend the RecoveryPointByBackupVault type to include Tags
 interface RecoveryPointWithTags extends RecoveryPointByBackupVault {

@@ -1,5 +1,5 @@
 import { ECSClient, DescribeTaskDefinitionCommand } from "@aws-sdk/client-ecs";
-import { listAllTaskDefinitions } from "./ecr-utils.js";
+import { listAllTaskDefinitions } from "../../utils/aws/ecr-utils.js";
 import { printSummary, generateSummary } from "../../utils/string-utils.js";
 import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "../../types.js";
 

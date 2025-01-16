@@ -1,4 +1,4 @@
-import { listAllSubnets } from "./list-vpc-resources-utils.js";
+import { listAllSubnets } from "../../utils/gcp/list-vpc-resources-utils.js";
 import { printSummary, generateSummary } from "../../utils/string-utils.js";
 import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "../../types.js";
 

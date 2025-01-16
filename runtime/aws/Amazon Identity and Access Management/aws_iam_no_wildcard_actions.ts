@@ -1,5 +1,5 @@
 import { IAMClient, GetPolicyVersionCommand } from "@aws-sdk/client-iam";
-import { getAllIAMPolicies } from "./get-all-iam-policies.js";
+import { getAllIAMPolicies } from "../../utils/aws/get-all-iam-policies.js";
 
 import { printSummary, generateSummary } from "../../utils/string-utils.js";
 import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "../../types.js";

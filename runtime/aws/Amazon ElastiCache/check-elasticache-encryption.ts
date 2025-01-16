@@ -1,5 +1,5 @@
 import { ElastiCacheClient, type ReplicationGroup } from "@aws-sdk/client-elasticache";
-import { getReplicationGroups } from "./elasticache-utils.js";
+import { getReplicationGroups } from "../../utils/aws/elasticache-utils.js";
 import { printSummary, generateSummary } from "../../utils/string-utils.js";
 import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "../../types.js";
 

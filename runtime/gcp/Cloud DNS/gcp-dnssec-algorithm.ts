@@ -1,4 +1,4 @@
-import { listAllZones } from "./get-all-zones-utils.js";
+import { listAllZones } from "../../utils/gcp/get-all-zones-utils.js";
 import { printSummary, generateSummary } from "../../utils/string-utils.js";
 import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "../../types.js";
 

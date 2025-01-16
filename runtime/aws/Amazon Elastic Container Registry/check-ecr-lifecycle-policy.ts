@@ -1,7 +1,7 @@
 import { ECRClient, GetLifecyclePolicyCommand } from "@aws-sdk/client-ecr";
 import { generateSummary, printSummary } from "../../utils/string-utils.js";
 import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "../../types.js";
-import { fetchECRRepositories, type ECRRepository } from "./ecr-utils.js";
+import { fetchECRRepositories, type ECRRepository } from "../../utils/aws/ecr-utils.js";
 
 interface EcrRepository {
 	name: string;
