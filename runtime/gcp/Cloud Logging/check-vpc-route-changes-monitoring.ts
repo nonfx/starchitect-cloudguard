@@ -1,8 +1,7 @@
-import monitoring from "@google-cloud/monitoring";
-import logging from "@google-cloud/logging";
+import { AlertPolicyServiceClient, protos } from "@google-cloud/monitoring";
+import { v2 } from "@google-cloud/logging";
 import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "../../types.js";
 import { printSummary, generateSummary } from "../../utils/string-utils.js";
-import { protos } from "@google-cloud/monitoring";
 
 type AlertPolicy = protos.google.monitoring.v3.IAlertPolicy;
 type Condition = protos.google.monitoring.v3.AlertPolicy.ICondition;
@@ -22,15 +21,15 @@ interface IMetric {
 async function checkVpcRouteChangesMonitoring(
 	projectId: string = process.env.GCP_PROJECT_ID || ""
 ): Promise<ComplianceReport> {
-	const loggingClient = new logging.v2.MetricsServiceV2Client();
-	const monitoringClient = new monitoring.v3.AlertPolicyServiceClient();
+	const loggingClient = new v2.MetricsServiceV2Client();
+	const monitoringClient = new AlertPolicyServiceClient();
 	const results: ComplianceReport = {
 		checks: []
 	};
 
 	try {
 		// Get all metric filters
-		const [metrics] = await loggingClient.listMetrics({
+		const [metrics] = await loggingClient.listLogMetrics({
 			parent: `projects/${projectId}`
 		});
 

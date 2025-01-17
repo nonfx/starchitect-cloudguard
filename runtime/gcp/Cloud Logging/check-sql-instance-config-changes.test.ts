@@ -1,131 +1,150 @@
 // @ts-nocheck
-import { MonitoringClient } from '@google-cloud/monitoring';
-import { LoggingClient } from '@google-cloud/logging';
-import { ComplianceStatus } from '../../types.js';
-import checkSqlInstanceConfigChanges from './check-sql-instance-config-changes';
+import { AlertPolicyServiceClient, protos } from "@google-cloud/monitoring";
+import { v2 } from "@google-cloud/logging";
+import { ComplianceStatus } from "../../types.js";
+import checkSqlInstanceConfigChanges from "./check-sql-instance-config-changes.js";
 
-// Mock GCP clients
-jest.mock('@google-cloud/monitoring');
-jest.mock('@google-cloud/logging');
+describe("checkSqlInstanceConfigChanges", () => {
+	const mockListLogMetrics = jest.fn().mockResolvedValue([[]]);
+	const mockListAlertPolicies = jest.fn().mockResolvedValue([[]]);
 
-describe('checkSqlInstanceConfigChanges', () => {
-    const mockGetMetrics = jest.fn();
-    const mockListAlertPolicies = jest.fn();
-    const projectId = 'test-project';
+	beforeEach(() => {
+		// Reset all mocks
+		mockListLogMetrics.mockClear();
+		mockListAlertPolicies.mockClear();
 
-    beforeEach(() => {
-        jest.resetAllMocks();
-        
-        // Setup LoggingClient mock
-        (LoggingClient as jest.Mock).mockImplementation(() => ({
-            getMetrics: mockGetMetrics
-        }));
+		// Default mock implementations
+		v2.MetricsServiceV2Client.prototype.listLogMetrics = mockListLogMetrics;
+		AlertPolicyServiceClient.prototype.listAlertPolicies = mockListAlertPolicies;
+	});
 
-        // Setup MonitoringClient mock
-        (MonitoringClient as jest.Mock).mockImplementation(() => ({
-            listAlertPolicies: mockListAlertPolicies
-        }));
-    });
+	describe("Compliant Resources", () => {
+		it("should return PASS when metric filter and alert policy are properly configured", async () => {
+			const mockMetric = {
+				name: "sql-config-metric",
+				filter:
+					'resource.type="cloudsql_database" AND protoPayload.methodName="cloudsql.instances.update"'
+			};
 
-    describe('Compliant Resources', () => {
-        it('should return PASS when metric filter and alert policy are properly configured', async () => {
-            const mockMetric = {
-                name: 'sql-config-metric',
-                filter: 'resource.type=\"cloudsql_database\" AND protoPayload.methodName=\"cloudsql.instances.update\"'
-            };
+			const mockAlertPolicy = {
+				conditions: [
+					{
+						displayName: "SQL Instance Configuration Changes",
+						conditionThreshold: {
+							filter: "sql-config-metric",
+							comparison: "COMPARISON_GT",
+							thresholdValue: 0,
+							duration: {
+								seconds: 0,
+								nanos: 0
+							}
+						}
+					}
+				]
+			};
 
-            const mockAlertPolicy = {
-                conditions: [{
-                    displayName: 'SQL Instance Configuration Changes',
-                    conditionThreshold: {
-                        filter: 'sql-config-metric'
-                    }
-                }]
-            };
+			mockListLogMetrics.mockResolvedValueOnce([[mockMetric]]);
+			mockListAlertPolicies.mockResolvedValueOnce([[mockAlertPolicy]]);
 
-            mockGetMetrics.mockResolvedValue([[mockMetric]]);
-            mockListAlertPolicies.mockResolvedValue([[mockAlertPolicy]]);
+			const result = await checkSqlInstanceConfigChanges.execute("test-project");
 
-            const result = await checkSqlInstanceConfigChanges(projectId);
-            
-            expect(result.checks[0].status).toBe(ComplianceStatus.PASS);
-            expect(result.checks[0].message).toBe('Metric filter and alert policy are properly configured');
-        });
-    });
+			expect(result.checks[0].status).toBe(ComplianceStatus.PASS);
+			expect(result.checks[0].message).toBe(
+				"Metric filter and alert policy are properly configured"
+			);
+		});
+	});
 
-    describe('Non-Compliant Resources', () => {
-        it('should return FAIL when metric filter is missing', async () => {
-            mockGetMetrics.mockResolvedValue([[]]);
-            
-            const result = await checkSqlInstanceConfigChanges(projectId);
-            
-            expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
-            expect(result.checks[0].message).toBe('No metric filter found for SQL instance configuration changes');
-        });
+	describe("Non-Compliant Resources", () => {
+		it("should return FAIL when metric filter is missing", async () => {
+			mockListLogMetrics.mockResolvedValueOnce([[]]);
 
-        it('should return FAIL when alert policy is missing', async () => {
-            const mockMetric = {
-                name: 'sql-config-metric',
-                filter: 'resource.type=\"cloudsql_database\" AND protoPayload.methodName=\"cloudsql.instances.update\"'
-            };
+			const result = await checkSqlInstanceConfigChanges.execute("test-project");
 
-            mockGetMetrics.mockResolvedValue([[mockMetric]]);
-            mockListAlertPolicies.mockResolvedValue([[]]);
+			expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
+			expect(result.checks[0].message).toBe(
+				"No metric filter found for SQL instance configuration changes"
+			);
+		});
 
-            const result = await checkSqlInstanceConfigChanges(projectId);
-            
-            expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
-            expect(result.checks[0].message).toBe('No alert policy found for SQL instance configuration changes');
-        });
+		it("should return FAIL when alert policy is missing", async () => {
+			const mockMetric = {
+				name: "sql-config-metric",
+				filter:
+					'resource.type="cloudsql_database" AND protoPayload.methodName="cloudsql.instances.update"'
+			};
 
-        it('should return FAIL when alert policy has incorrect configuration', async () => {
-            const mockMetric = {
-                name: 'sql-config-metric',
-                filter: 'resource.type=\"cloudsql_database\" AND protoPayload.methodName=\"cloudsql.instances.update\"'
-            };
+			mockListLogMetrics.mockResolvedValueOnce([[mockMetric]]);
+			mockListAlertPolicies.mockResolvedValueOnce([[]]);
 
-            const mockAlertPolicy = {
-                conditions: [{
-                    displayName: 'Wrong Display Name',
-                    conditionThreshold: {
-                        filter: 'wrong-metric'
-                    }
-                }]
-            };
+			const result = await checkSqlInstanceConfigChanges.execute("test-project");
 
-            mockGetMetrics.mockResolvedValue([[mockMetric]]);
-            mockListAlertPolicies.mockResolvedValue([[mockAlertPolicy]]);
+			expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
+			expect(result.checks[0].message).toBe(
+				"No alert policy found for SQL instance configuration changes"
+			);
+		});
 
-            const result = await checkSqlInstanceConfigChanges(projectId);
-            
-            expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
-            expect(result.checks[0].message).toBe('No alert policy found for SQL instance configuration changes');
-        });
-    });
+		it("should return FAIL when alert policy has incorrect configuration", async () => {
+			const mockMetric = {
+				name: "sql-config-metric",
+				filter:
+					'resource.type="cloudsql_database" AND protoPayload.methodName="cloudsql.instances.update"'
+			};
 
-    describe('Error Handling', () => {
-        it('should return ERROR when getMetrics fails', async () => {
-            mockGetMetrics.mockRejectedValue(new Error('API Error'));
+			const mockAlertPolicy = {
+				conditions: [
+					{
+						displayName: "Wrong Display Name",
+						conditionThreshold: {
+							filter: "wrong-metric",
+							comparison: "COMPARISON_LT",
+							thresholdValue: 1,
+							duration: {
+								seconds: 60,
+								nanos: 0
+							}
+						}
+					}
+				]
+			};
 
-            const result = await checkSqlInstanceConfigChanges(projectId);
-            
-            expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
-            expect(result.checks[0].message).toContain('Error checking SQL config change monitoring');
-        });
+			mockListLogMetrics.mockResolvedValueOnce([[mockMetric]]);
+			mockListAlertPolicies.mockResolvedValueOnce([[mockAlertPolicy]]);
 
-        it('should return ERROR when listAlertPolicies fails', async () => {
-            const mockMetric = {
-                name: 'sql-config-metric',
-                filter: 'resource.type=\"cloudsql_database\" AND protoPayload.methodName=\"cloudsql.instances.update\"'
-            };
+			const result = await checkSqlInstanceConfigChanges.execute("test-project");
 
-            mockGetMetrics.mockResolvedValue([[mockMetric]]);
-            mockListAlertPolicies.mockRejectedValue(new Error('API Error'));
+			expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
+			expect(result.checks[0].message).toBe(
+				"No alert policy found for SQL instance configuration changes"
+			);
+		});
+	});
 
-            const result = await checkSqlInstanceConfigChanges(projectId);
-            
-            expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
-            expect(result.checks[0].message).toContain('Error checking SQL config change monitoring');
-        });
-    });
+	describe("Error Handling", () => {
+		it("should return ERROR when listLogMetrics fails", async () => {
+			mockListLogMetrics.mockRejectedValueOnce(new Error("API Error"));
+
+			const result = await checkSqlInstanceConfigChanges.execute("test-project");
+
+			expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
+			expect(result.checks[0].message).toContain("Error checking SQL config change monitoring");
+		});
+
+		it("should return ERROR when listAlertPolicies fails", async () => {
+			const mockMetric = {
+				name: "sql-config-metric",
+				filter:
+					'resource.type="cloudsql_database" AND protoPayload.methodName="cloudsql.instances.update"'
+			};
+
+			mockListLogMetrics.mockResolvedValueOnce([[mockMetric]]);
+			mockListAlertPolicies.mockRejectedValueOnce(new Error("API Error"));
+
+			const result = await checkSqlInstanceConfigChanges.execute("test-project");
+
+			expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
+			expect(result.checks[0].message).toContain("Error checking SQL config change monitoring");
+		});
+	});
 });

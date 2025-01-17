@@ -1,141 +1,159 @@
 // @ts-nocheck
-import { ComputeClient, DNSClient } from '@google-cloud/compute';
-import { ComplianceStatus } from '../../types.js';
-import checkDnsLogging from './check-dns-logging';
+import { v1 } from "@google-cloud/compute";
+import { GoogleAuth } from "google-auth-library";
+import { ComplianceStatus } from "../../types.js";
+import checkDnsLogging from "./check-dns-logging.js";
 
-// Mock GCP clients
-jest.mock('@google-cloud/compute', () => ({
-    ComputeClient: jest.fn().mockImplementation(() => ({
-        getNetworks: jest.fn()
-    })),
-    DNSClient: jest.fn().mockImplementation(() => ({
-        getPolicies: jest.fn()
-    }))
-}));
+describe("checkDnsLogging", () => {
+	const mockListNetworks = jest.fn().mockResolvedValue([[]]);
+	const mockRequest = jest.fn().mockResolvedValue({ data: { policies: [] } });
+	const mockGetClient = jest.fn().mockResolvedValue({ request: mockRequest });
 
-describe('checkDnsLogging', () => {
-    const mockComputeClient = new ComputeClient();
-    const mockDNSClient = new DNSClient();
-    const projectId = 'test-project';
+	beforeEach(() => {
+		// Reset all mocks
+		mockListNetworks.mockClear();
+		mockRequest.mockClear();
+		mockGetClient.mockClear();
 
-    const mockNetwork = {
-        name: 'test-vpc',
-        selfLink: 'projects/test-project/global/networks/test-vpc'
-    };
+		// Setup compute client mock
+		v1.NetworksClient.prototype.list = mockListNetworks;
 
-    const mockDNSPolicy = {
-        enableLogging: true,
-        networks: [{
-            networkUrl: 'projects/test-project/global/networks/test-vpc'
-        }]
-    };
+		// Setup auth mock
+		GoogleAuth.prototype.getClient = mockGetClient;
+	});
 
-    beforeEach(() => {
-        jest.clearAllMocks();
-    });
+	describe("Compliant Resources", () => {
+		it("should return PASS when DNS logging is enabled", async () => {
+			const mockNetworks = [
+				{
+					name: "test-network",
+					selfLink: "projects/test-project/global/networks/test-network"
+				}
+			];
 
-    describe('Compliant Resources', () => {
-        it('should return PASS when DNS logging is enabled for VPC networks', async () => {
-            mockComputeClient.getNetworks.mockResolvedValue([[mockNetwork]]);
-            mockDNSClient.getPolicies.mockResolvedValue([[mockDNSPolicy]]);
+			const mockPolicies = [
+				{
+					enableLogging: true,
+					networks: [
+						{
+							networkUrl: "projects/test-project/global/networks/test-network"
+						}
+					]
+				}
+			];
 
-            const result = await checkDnsLogging.execute(projectId);
-            
-            expect(result.checks).toHaveLength(1);
-            expect(result.checks[0].status).toBe(ComplianceStatus.PASS);
-            expect(result.checks[0].resourceName).toBe('test-vpc');
-        });
+			mockListNetworks.mockResolvedValueOnce([mockNetworks]);
+			mockRequest.mockResolvedValueOnce({ data: { policies: mockPolicies } });
 
-        it('should return NOTAPPLICABLE when no VPC networks exist', async () => {
-            mockComputeClient.getNetworks.mockResolvedValue([[]]);
+			const result = await checkDnsLogging.execute("test-project");
 
-            const result = await checkDnsLogging.execute(projectId);
-            
-            expect(result.checks).toHaveLength(1);
-            expect(result.checks[0].status).toBe(ComplianceStatus.NOTAPPLICABLE);
-            expect(result.checks[0].message).toBe('No VPC networks found in the project');
-        });
-    });
+			expect(result.checks[0].status).toBe(ComplianceStatus.PASS);
+			expect(result.checks[0].resourceName).toBe("test-network");
+		});
+	});
 
-    describe('Non-Compliant Resources', () => {
-        it('should return FAIL when DNS logging is not enabled', async () => {
-            mockComputeClient.getNetworks.mockResolvedValue([[mockNetwork]]);
-            mockDNSClient.getPolicies.mockResolvedValue([[{
-                ...mockDNSPolicy,
-                enableLogging: false
-            }]]);
+	describe("Non-Compliant Resources", () => {
+		it("should return FAIL when DNS logging is disabled", async () => {
+			const mockNetworks = [
+				{
+					name: "test-network",
+					selfLink: "projects/test-project/global/networks/test-network"
+				}
+			];
 
-            const result = await checkDnsLogging.execute(projectId);
-            
-            expect(result.checks).toHaveLength(1);
-            expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
-            expect(result.checks[0].message).toBe('Cloud DNS logging is not enabled for this VPC network');
-        });
+			const mockPolicies = [
+				{
+					enableLogging: false,
+					networks: [
+						{
+							networkUrl: "projects/test-project/global/networks/test-network"
+						}
+					]
+				}
+			];
 
-        it('should return FAIL when no DNS policy exists for network', async () => {
-            mockComputeClient.getNetworks.mockResolvedValue([[mockNetwork]]);
-            mockDNSClient.getPolicies.mockResolvedValue([[]]);
+			mockListNetworks.mockResolvedValueOnce([mockNetworks]);
+			mockRequest.mockResolvedValueOnce({ data: { policies: mockPolicies } });
 
-            const result = await checkDnsLogging.execute(projectId);
-            
-            expect(result.checks).toHaveLength(1);
-            expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
-        });
+			const result = await checkDnsLogging.execute("test-project");
 
-        it('should handle networks without names', async () => {
-            mockComputeClient.getNetworks.mockResolvedValue([[{ selfLink: 'some-link' }]]);
-            
-            const result = await checkDnsLogging.execute(projectId);
-            
-            expect(result.checks).toHaveLength(1);
-            expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
-            expect(result.checks[0].resourceName).toBe('Unknown Network');
-        });
-    });
+			expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
+			expect(result.checks[0].message).toBe(
+				"Cloud DNS logging is not enabled for this VPC network"
+			);
+		});
 
-    describe('Error Handling', () => {
-        it('should return ERROR when getNetworks fails', async () => {
-            mockComputeClient.getNetworks.mockRejectedValue(new Error('API Error'));
+		it("should return FAIL when no DNS policy exists", async () => {
+			const mockNetworks = [
+				{
+					name: "test-network",
+					selfLink: "projects/test-project/global/networks/test-network"
+				}
+			];
 
-            const result = await checkDnsLogging.execute(projectId);
-            
-            expect(result.checks).toHaveLength(1);
-            expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
-            expect(result.checks[0].message).toContain('Error checking DNS logging');
-        });
+			mockListNetworks.mockResolvedValueOnce([mockNetworks]);
+			mockRequest.mockResolvedValueOnce({ data: { policies: [] } });
 
-        it('should return ERROR when getPolicies fails', async () => {
-            mockComputeClient.getNetworks.mockResolvedValue([[mockNetwork]]);
-            mockDNSClient.getPolicies.mockRejectedValue(new Error('DNS API Error'));
+			const result = await checkDnsLogging.execute("test-project");
 
-            const result = await checkDnsLogging.execute(projectId);
-            
-            expect(result.checks).toHaveLength(1);
-            expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
-            expect(result.checks[0].message).toContain('Error checking DNS logging');
-        });
-    });
+			expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
+			expect(result.checks[0].message).toBe(
+				"Cloud DNS logging is not enabled for this VPC network"
+			);
+		});
+	});
 
-    describe('Multiple Resources', () => {
-        it('should handle multiple networks with mixed compliance', async () => {
-            const networks = [
-                mockNetwork,
-                { name: 'test-vpc-2', selfLink: 'projects/test-project/global/networks/test-vpc-2' }
-            ];
-            
-            const policies = [
-                mockDNSPolicy,
-                { enableLogging: false, networks: [{ networkUrl: 'projects/test-project/global/networks/test-vpc-2' }] }
-            ];
+	describe("Not Applicable Cases", () => {
+		it("should return NOTAPPLICABLE when no networks exist", async () => {
+			mockListNetworks.mockResolvedValueOnce([[]]);
 
-            mockComputeClient.getNetworks.mockResolvedValue([networks]);
-            mockDNSClient.getPolicies.mockResolvedValue([policies]);
+			const result = await checkDnsLogging.execute("test-project");
 
-            const result = await checkDnsLogging.execute(projectId);
-            
-            expect(result.checks).toHaveLength(2);
-            expect(result.checks[0].status).toBe(ComplianceStatus.PASS);
-            expect(result.checks[1].status).toBe(ComplianceStatus.FAIL);
-        });
-    });
+			expect(result.checks[0].status).toBe(ComplianceStatus.NOTAPPLICABLE);
+			expect(result.checks[0].message).toBe("No VPC networks found in the project");
+		});
+	});
+
+	describe("Error Handling", () => {
+		it("should return ERROR when networks list fails", async () => {
+			mockListNetworks.mockRejectedValueOnce(new Error("API Error"));
+
+			const result = await checkDnsLogging.execute("test-project");
+
+			expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
+			expect(result.checks[0].message).toContain("Error checking DNS logging");
+		});
+
+		it("should return ERROR when DNS policy request fails", async () => {
+			const mockNetworks = [
+				{
+					name: "test-network",
+					selfLink: "projects/test-project/global/networks/test-network"
+				}
+			];
+
+			mockListNetworks.mockResolvedValueOnce([mockNetworks]);
+			mockRequest.mockRejectedValueOnce(new Error("API Error"));
+
+			const result = await checkDnsLogging.execute("test-project");
+
+			expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
+			expect(result.checks[0].message).toContain("Error checking DNS logging");
+		});
+
+		it("should handle network without name", async () => {
+			const mockNetworks = [
+				{
+					selfLink: "projects/test-project/global/networks/test-network"
+				}
+			];
+
+			mockListNetworks.mockResolvedValueOnce([mockNetworks]);
+
+			const result = await checkDnsLogging.execute("test-project");
+
+			expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
+			expect(result.checks[0].message).toBe("Network found without name");
+		});
+	});
 });

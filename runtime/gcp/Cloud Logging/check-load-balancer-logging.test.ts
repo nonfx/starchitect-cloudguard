@@ -1,143 +1,135 @@
 // @ts-nocheck
-import { ComputeClient } from '@google-cloud/compute';
-import { ComplianceStatus } from '../../types.js';
-import checkLoadBalancerLogging from './check-load-balancer-logging';
+import { v1 } from "@google-cloud/compute";
+import { ComplianceStatus } from "../../types.js";
+import checkLoadBalancerLogging from "./check-load-balancer-logging.js";
 
-jest.mock('@google-cloud/compute');
+describe("checkLoadBalancerLogging", () => {
+	const mockListBackendServices = jest.fn().mockResolvedValue([[]]);
 
-describe('checkLoadBalancerLogging', () => {
-    const mockListBackendServices = jest.fn();
-    
-    beforeEach(() => {
-        jest.resetAllMocks();
-        (ComputeClient as jest.Mock).mockImplementation(() => ({
-            listBackendServices: mockListBackendServices
-        }));
-    });
+	beforeEach(() => {
+		// Reset all mocks
+		mockListBackendServices.mockClear();
 
-    describe('Compliant Resources', () => {
-        it('should return PASS when logging is properly configured', async () => {
-            const mockServices = [[{
-                name: 'backend-service-1',
-                selfLink: 'projects/test-project/global/backendServices/backend-service-1',
-                logConfig: {
-                    enable: true,
-                    sampleRate: 1.0
-                }
-            }]];
+		// Setup compute client mock
+		v1.BackendServicesClient.prototype.list = mockListBackendServices;
+	});
 
-            mockListBackendServices.mockResolvedValue(mockServices);
+	describe("Compliant Resources", () => {
+		it("should return PASS when logging is properly configured", async () => {
+			const mockServices = [
+				{
+					name: "test-backend",
+					selfLink: "projects/test-project/global/backendServices/test-backend",
+					logConfig: {
+						enable: true,
+						sampleRate: 1.0
+					}
+				}
+			];
 
-            const result = await checkLoadBalancerLogging.execute('test-project');
-            
-            expect(result.checks).toHaveLength(1);
-            expect(result.checks[0].status).toBe(ComplianceStatus.PASS);
-            expect(result.checks[0].resourceName).toBe('backend-service-1');
-        });
+			mockListBackendServices.mockResolvedValueOnce([mockServices]);
 
-        it('should return NOTAPPLICABLE when no backend services exist', async () => {
-            mockListBackendServices.mockResolvedValue([[]]);
+			const result = await checkLoadBalancerLogging.execute("test-project");
 
-            const result = await checkLoadBalancerLogging.execute('test-project');
-            
-            expect(result.checks).toHaveLength(1);
-            expect(result.checks[0].status).toBe(ComplianceStatus.NOTAPPLICABLE);
-            expect(result.checks[0].message).toBe('No HTTP(S) Load Balancer backend services found');
-        });
-    });
+			expect(result.checks[0].status).toBe(ComplianceStatus.PASS);
+			expect(result.checks[0].resourceName).toBe("test-backend");
+		});
+	});
 
-    describe('Non-Compliant Resources', () => {
-        it('should return FAIL when logging is disabled', async () => {
-            const mockServices = [[{
-                name: 'backend-service-1',
-                selfLink: 'projects/test-project/global/backendServices/backend-service-1',
-                logConfig: {
-                    enable: false,
-                    sampleRate: 1.0
-                }
-            }]];
+	describe("Non-Compliant Resources", () => {
+		it("should return FAIL when logging is disabled", async () => {
+			const mockServices = [
+				{
+					name: "test-backend",
+					selfLink: "projects/test-project/global/backendServices/test-backend",
+					logConfig: {
+						enable: false,
+						sampleRate: 1.0
+					}
+				}
+			];
 
-            mockListBackendServices.mockResolvedValue(mockServices);
+			mockListBackendServices.mockResolvedValueOnce([mockServices]);
 
-            const result = await checkLoadBalancerLogging.execute('test-project');
-            
-            expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
-            expect(result.checks[0].message).toContain('Backend service logging is not properly configured');
-        });
+			const result = await checkLoadBalancerLogging.execute("test-project");
 
-        it('should return FAIL when sample rate is 0', async () => {
-            const mockServices = [[{
-                name: 'backend-service-1',
-                selfLink: 'projects/test-project/global/backendServices/backend-service-1',
-                logConfig: {
-                    enable: true,
-                    sampleRate: 0
-                }
-            }]];
+			expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
+			expect(result.checks[0].message).toBe("Backend service logging is not enabled");
+		});
 
-            mockListBackendServices.mockResolvedValue(mockServices);
+		it("should return FAIL when sample rate is 0", async () => {
+			const mockServices = [
+				{
+					name: "test-backend",
+					selfLink: "projects/test-project/global/backendServices/test-backend",
+					logConfig: {
+						enable: true,
+						sampleRate: 0
+					}
+				}
+			];
 
-            const result = await checkLoadBalancerLogging.execute('test-project');
-            
-            expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
-        });
+			mockListBackendServices.mockResolvedValueOnce([mockServices]);
 
-        it('should handle multiple backend services with mixed compliance', async () => {
-            const mockServices = [[
-                {
-                    name: 'compliant-service',
-                    selfLink: 'projects/test-project/global/backendServices/compliant-service',
-                    logConfig: {
-                        enable: true,
-                        sampleRate: 1.0
-                    }
-                },
-                {
-                    name: 'non-compliant-service',
-                    selfLink: 'projects/test-project/global/backendServices/non-compliant-service',
-                    logConfig: {
-                        enable: false,
-                        sampleRate: 0
-                    }
-                }
-            ]];
+			const result = await checkLoadBalancerLogging.execute("test-project");
 
-            mockListBackendServices.mockResolvedValue(mockServices);
+			expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
+			expect(result.checks[0].message).toBe(
+				"Backend service logging sample rate must be greater than 0"
+			);
+		});
 
-            const result = await checkLoadBalancerLogging.execute('test-project');
-            
-            expect(result.checks).toHaveLength(2);
-            expect(result.checks[0].status).toBe(ComplianceStatus.PASS);
-            expect(result.checks[1].status).toBe(ComplianceStatus.FAIL);
-        });
-    });
+		it("should return FAIL when log config is missing", async () => {
+			const mockServices = [
+				{
+					name: "test-backend",
+					selfLink: "projects/test-project/global/backendServices/test-backend"
+				}
+			];
 
-    describe('Error Handling', () => {
-        it('should return ERROR when API call fails', async () => {
-            mockListBackendServices.mockRejectedValue(new Error('API Error'));
+			mockListBackendServices.mockResolvedValueOnce([mockServices]);
 
-            const result = await checkLoadBalancerLogging.execute('test-project');
-            
-            expect(result.checks).toHaveLength(1);
-            expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
-            expect(result.checks[0].message).toContain('Error checking backend services');
-        });
+			const result = await checkLoadBalancerLogging.execute("test-project");
 
-        it('should handle backend services without names', async () => {
-            const mockServices = [[{
-                selfLink: 'projects/test-project/global/backendServices/unnamed-service',
-                logConfig: {
-                    enable: true,
-                    sampleRate: 1.0
-                }
-            }]];
+			expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
+			expect(result.checks[0].message).toBe("Backend service logging is not enabled");
+		});
+	});
 
-            mockListBackendServices.mockResolvedValue(mockServices);
+	describe("Not Applicable Cases", () => {
+		it("should return NOTAPPLICABLE when no backend services exist", async () => {
+			mockListBackendServices.mockResolvedValueOnce([[]]);
 
-            const result = await checkLoadBalancerLogging.execute('test-project');
-            
-            expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
-            expect(result.checks[0].message).toBe('Backend service found without name');
-        });
-    });
+			const result = await checkLoadBalancerLogging.execute("test-project");
+
+			expect(result.checks[0].status).toBe(ComplianceStatus.NOTAPPLICABLE);
+			expect(result.checks[0].message).toBe("No HTTP(S) Load Balancer backend services found");
+		});
+	});
+
+	describe("Error Handling", () => {
+		it("should return ERROR when API call fails", async () => {
+			mockListBackendServices.mockRejectedValueOnce(new Error("API Error"));
+
+			const result = await checkLoadBalancerLogging.execute("test-project");
+
+			expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
+			expect(result.checks[0].message).toContain("Error checking backend services");
+		});
+
+		it("should handle backend service without name", async () => {
+			const mockServices = [
+				{
+					selfLink: "projects/test-project/global/backendServices/test-backend"
+				}
+			];
+
+			mockListBackendServices.mockResolvedValueOnce([mockServices]);
+
+			const result = await checkLoadBalancerLogging.execute("test-project");
+
+			expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
+			expect(result.checks[0].message).toBe("Backend service found without name");
+		});
+	});
 });

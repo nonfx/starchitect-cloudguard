@@ -1,8 +1,7 @@
-import monitoring from "@google-cloud/monitoring";
-import logging from "@google-cloud/logging";
+import { AlertPolicyServiceClient, protos } from "@google-cloud/monitoring";
+import { v2 } from "@google-cloud/logging";
 import { printSummary, generateSummary } from "../../utils/string-utils.js";
 import { ComplianceStatus, type ComplianceReport, type RuntimeTest } from "../../types.js";
-import { protos } from "@google-cloud/monitoring";
 
 type IAlertPolicy = protos.google.monitoring.v3.IAlertPolicy;
 type ICondition = protos.google.monitoring.v3.AlertPolicy.ICondition;
@@ -22,15 +21,15 @@ interface IMetric {
 async function checkProjectOwnershipMonitoring(
 	projectId: string = process.env.GCP_PROJECT_ID || ""
 ): Promise<ComplianceReport> {
-	const monitoringClient = new monitoring.v3.AlertPolicyServiceClient();
-	const loggingClient = new logging.v2.MetricsServiceV2Client();
+	const monitoringClient = new AlertPolicyServiceClient();
+	const loggingClient = new v2.MetricsServiceV2Client();
 	const results: ComplianceReport = {
 		checks: []
 	};
 
 	try {
 		// Check log metric filter
-		const [metrics] = await loggingClient.listMetrics({
+		const [metrics] = await loggingClient.listLogMetrics({
 			parent: `projects/${projectId}`
 		});
 

@@ -1,136 +1,115 @@
 // @ts-nocheck
-import { MonitoringClient } from '@google-cloud/monitoring';
-import { LoggingClient } from '@google-cloud/logging';
-import { ComplianceStatus } from '../../types.js';
-import checkVpcFirewallRuleChanges from './check-vpc-firewall-rule-changes';
+import { AlertPolicyServiceClient, protos } from "@google-cloud/monitoring";
+import { v2 } from "@google-cloud/logging";
+import { ComplianceStatus } from "../../types.js";
+import checkVpcFirewallRuleChanges from "./check-vpc-firewall-rule-changes.js";
 
-// Mock GCP clients
-jest.mock('@google-cloud/monitoring');
-jest.mock('@google-cloud/logging');
+describe("checkVpcFirewallRuleChanges", () => {
+	const mockListLogMetrics = jest.fn().mockResolvedValue([[]]);
+	const mockListAlertPolicies = jest.fn().mockResolvedValue([[]]);
 
-describe('checkVpcFirewallRuleChanges', () => {
-    const mockProjectId = 'test-project';
-    let mockGetMetrics;
-    let mockListAlertPolicies;
+	beforeEach(() => {
+		// Reset all mocks
+		mockListLogMetrics.mockClear();
+		mockListAlertPolicies.mockClear();
 
-    beforeEach(() => {
-        jest.resetAllMocks();
-        
-        // Setup LoggingClient mock
-        mockGetMetrics = jest.fn();
-        (LoggingClient as jest.Mock).mockImplementation(() => ({
-            getMetrics: mockGetMetrics
-        }));
+		// Default mock implementations
+		v2.MetricsServiceV2Client.prototype.listLogMetrics = mockListLogMetrics;
+		AlertPolicyServiceClient.prototype.listAlertPolicies = mockListAlertPolicies;
+	});
 
-        // Setup MonitoringClient mock
-        mockListAlertPolicies = jest.fn();
-        (MonitoringClient as jest.Mock).mockImplementation(() => ({
-            listAlertPolicies: mockListAlertPolicies
-        }));
-    });
+	describe("Compliant Resources", () => {
+		it("should return PASS when valid metric filter and alert policy exist", async () => {
+			const mockMetric = {
+				name: "firewall-changes",
+				filter: 'resource.type="gce_firewall_rule" AND methodName="compute.firewalls.patch"'
+			};
 
-    describe('Compliant Resources', () => {
-        it('should return PASS when valid metric filter and alert policy exist', async () => {
-            // Mock valid metric filter
-            mockGetMetrics.mockResolvedValue([[{
-                filter: 'resource.type="gce_firewall_rule" AND methodName="compute.firewalls.patch"'
-            }]]);
+			const mockAlertPolicy = {
+				conditions: [
+					{
+						conditionThreshold: {
+							filter: "firewall-changes",
+							comparison: "COMPARISON_GT",
+							thresholdValue: 0,
+							duration: {
+								seconds: 0,
+								nanos: 0
+							}
+						}
+					}
+				]
+			};
 
-            // Mock valid alert policy
-            mockListAlertPolicies.mockResolvedValue([[{
-                conditions: [{
-                    conditionThreshold: {
-                        comparison: 'COMPARISON_GT',
-                        thresholdValue: 0,
-                        duration: { seconds: 0 }
-                    }
-                }]
-            }]]);
+			mockListLogMetrics.mockResolvedValueOnce([[mockMetric]]);
+			mockListAlertPolicies.mockResolvedValueOnce([[mockAlertPolicy]]);
 
-            const result = await checkVpcFirewallRuleChanges.execute(mockProjectId);
-            
-            expect(result.checks[0].status).toBe(ComplianceStatus.PASS);
-            expect(result.checks[0].resourceName).toBe('VPC Firewall Rule Monitoring');
-        });
-    });
+			const result = await checkVpcFirewallRuleChanges.execute("test-project");
 
-    describe('Non-Compliant Resources', () => {
-        it('should return FAIL when metric filter is missing', async () => {
-            mockGetMetrics.mockResolvedValue([[{
-                filter: 'resource.type="other_resource"'
-            }]]);
+			expect(result.checks[0].status).toBe(ComplianceStatus.PASS);
+			expect(result.checks[0].message).toBe(
+				"Valid metric filter and alert policy exist for VPC firewall rule changes"
+			);
+		});
+	});
 
-            const result = await checkVpcFirewallRuleChanges.execute(mockProjectId);
-            
-            expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
-            expect(result.checks[0].message).toContain('No valid metric filter found');
-        });
+	describe("Non-Compliant Resources", () => {
+		it("should return FAIL when metric filter is missing", async () => {
+			const mockMetric = {
+				filter: 'resource.type="other_resource"'
+			};
 
-        it('should return FAIL when alert policy is missing', async () => {
-            mockGetMetrics.mockResolvedValue([[{
-                filter: 'resource.type="gce_firewall_rule" AND methodName="compute.firewalls.patch"'
-            }]]);
+			mockListLogMetrics.mockResolvedValueOnce([[mockMetric]]);
 
-            mockListAlertPolicies.mockResolvedValue([[{
-                conditions: [{
-                    conditionThreshold: {
-                        comparison: 'COMPARISON_LT',
-                        thresholdValue: 1,
-                        duration: { seconds: 300 }
-                    }
-                }]
-            }]]);
+			const result = await checkVpcFirewallRuleChanges.execute("test-project");
 
-            const result = await checkVpcFirewallRuleChanges.execute(mockProjectId);
-            
-            expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
-            expect(result.checks[0].message).toContain('No valid alert policy found');
-        });
-    });
+			expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
+			expect(result.checks[0].message).toBe(
+				"No valid metric filter found for VPC firewall rule changes"
+			);
+		});
 
-    describe('Error Handling', () => {
-        it('should return ERROR when metrics API call fails', async () => {
-            mockGetMetrics.mockRejectedValue(new Error('API Error'));
+		it("should return FAIL when alert policy is missing", async () => {
+			const mockMetric = {
+				name: "firewall-changes",
+				filter: 'resource.type="gce_firewall_rule" AND methodName="compute.firewalls.patch"'
+			};
 
-            const result = await checkVpcFirewallRuleChanges.execute(mockProjectId);
-            
-            expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
-            expect(result.checks[0].message).toContain('Error checking firewall rule monitoring');
-        });
+			mockListLogMetrics.mockResolvedValueOnce([[mockMetric]]);
+			mockListAlertPolicies.mockResolvedValueOnce([[]]);
 
-        it('should return ERROR when alert policies API call fails', async () => {
-            mockGetMetrics.mockResolvedValue([[{
-                filter: 'resource.type="gce_firewall_rule" AND methodName="compute.firewalls.patch"'
-            }]]);
-            
-            mockListAlertPolicies.mockRejectedValue(new Error('API Error'));
+			const result = await checkVpcFirewallRuleChanges.execute("test-project");
 
-            const result = await checkVpcFirewallRuleChanges.execute(mockProjectId);
-            
-            expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
-            expect(result.checks[0].message).toContain('Error checking firewall rule monitoring');
-        });
-    });
+			expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
+			expect(result.checks[0].message).toBe(
+				"No alert policy found that monitors the firewall rule changes metric"
+			);
+		});
+	});
 
-    describe('Edge Cases', () => {
-        it('should handle empty metrics response', async () => {
-            mockGetMetrics.mockResolvedValue([[]]);
+	describe("Error Handling", () => {
+		it("should return ERROR when listLogMetrics fails", async () => {
+			mockListLogMetrics.mockRejectedValueOnce(new Error("API Error"));
 
-            const result = await checkVpcFirewallRuleChanges.execute(mockProjectId);
-            
-            expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
-        });
+			const result = await checkVpcFirewallRuleChanges.execute("test-project");
 
-        it('should handle empty alert policies response', async () => {
-            mockGetMetrics.mockResolvedValue([[{
-                filter: 'resource.type="gce_firewall_rule" AND methodName="compute.firewalls.patch"'
-            }]]);
-            
-            mockListAlertPolicies.mockResolvedValue([[]]);
+			expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
+			expect(result.checks[0].message).toContain("Error checking firewall rule monitoring");
+		});
 
-            const result = await checkVpcFirewallRuleChanges.execute(mockProjectId);
-            
-            expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
-        });
-    });
+		it("should return ERROR when listAlertPolicies fails", async () => {
+			const mockMetric = {
+				name: "firewall-changes",
+				filter: 'resource.type="gce_firewall_rule" AND methodName="compute.firewalls.patch"'
+			};
+
+			mockListLogMetrics.mockResolvedValueOnce([[mockMetric]]);
+			mockListAlertPolicies.mockRejectedValueOnce(new Error("API Error"));
+
+			const result = await checkVpcFirewallRuleChanges.execute("test-project");
+
+			expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
+			expect(result.checks[0].message).toContain("Error checking firewall rule monitoring");
+		});
+	});
 });

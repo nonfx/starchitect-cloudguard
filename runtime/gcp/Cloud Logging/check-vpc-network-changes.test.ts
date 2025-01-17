@@ -1,125 +1,154 @@
 // @ts-nocheck
-import { CloudWatchLogsClient, DescribeMetricFiltersCommand } from "@aws-sdk/client-cloudwatch-logs";
-import { CloudWatchClient, DescribeAlarmsCommand } from "@aws-sdk/client-cloudwatch";
-import { mockClient } from "aws-sdk-client-mock";
+import { AlertPolicyServiceClient, protos } from "@google-cloud/monitoring";
+import { v2 } from "@google-cloud/logging";
 import { ComplianceStatus } from "../../types.js";
-import checkVpcNetworkChanges from "./check-vpc-network-changes";
-
-const mockCloudWatchLogsClient = mockClient(CloudWatchLogsClient);
-const mockCloudWatchClient = mockClient(CloudWatchClient);
-
-const validFilterPattern = '{ $.eventName = CreateVpc || $.eventName = DeleteVpc || $.eventName = ModifyVpcAttribute || $.eventName = AcceptVpcPeeringConnection || $.eventName = CreateVpcPeeringConnection || $.eventName = DeleteVpcPeeringConnection || $.eventName = RejectVpcPeeringConnection || $.eventName = AttachClassicLinkVpc || $.eventName = DetachClassicLinkVpc || $.eventName = DisableVpcClassicLink || $.eventName = EnableVpcClassicLink }';
+import checkVpcNetworkChanges from "./check-vpc-network-changes.js";
 
 describe("checkVpcNetworkChanges", () => {
-    beforeEach(() => {
-        mockCloudWatchLogsClient.reset();
-        mockCloudWatchClient.reset();
-    });
+	const mockListLogMetrics = jest.fn().mockResolvedValue([[]]);
+	const mockListAlertPolicies = jest.fn().mockResolvedValue([[]]);
 
-    describe("Compliant Resources", () => {
-        it("should return PASS when valid metric filter and alarm exist", async () => {
-            mockCloudWatchLogsClient.on(DescribeMetricFiltersCommand).resolves({
-                metricFilters: [{
-                    filterPattern: validFilterPattern,
-                    metricTransformations: [{
-                        metricName: "VpcNetworkChanges"
-                    }]
-                }]
-            });
+	beforeEach(() => {
+		// Reset all mocks
+		mockListLogMetrics.mockClear();
+		mockListAlertPolicies.mockClear();
 
-            mockCloudWatchClient.on(DescribeAlarmsCommand).resolves({
-                MetricAlarms: [{
-                    MetricName: "VpcNetworkChanges",
-                    AlarmActions: ["arn:aws:sns:us-east-1:123456789012:AlertTopic"]
-                }]
-            });
+		// Default mock implementations
+		v2.MetricsServiceV2Client.prototype.listLogMetrics = mockListLogMetrics;
+		AlertPolicyServiceClient.prototype.listAlertPolicies = mockListAlertPolicies;
+	});
 
-            const result = await checkVpcNetworkChanges.execute("us-east-1");
-            expect(result.checks[0].status).toBe(ComplianceStatus.PASS);
-            expect(result.checks[0].message).toBe("Valid metric filter and alarm exist for VPC network changes");
-        });
-    });
+	describe("Compliant Resources", () => {
+		it("should return PASS when valid metric filter and alert policy exist", async () => {
+			const mockMetric = {
+				name: "projects/test-project/metrics/vpc-network-metric",
+				filter: 'resource.type="gce_network" AND methodName="compute.networks.insert"'
+			};
 
-    describe("Non-Compliant Resources", () => {
-        it("should return FAIL when metric filter is missing", async () => {
-            mockCloudWatchLogsClient.on(DescribeMetricFiltersCommand).resolves({
-                metricFilters: []
-            });
+			const mockAlertPolicy = {
+				conditions: [
+					{
+						displayName: "VPC Network Changes",
+						conditionThreshold: {
+							filter: "projects/test-project/metrics/vpc-network-metric",
+							comparison: "COMPARISON_GT",
+							thresholdValue: 0,
+							duration: {
+								seconds: 0,
+								nanos: 0
+							}
+						}
+					}
+				]
+			};
 
-            const result = await checkVpcNetworkChanges.execute("us-east-1");
-            expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
-            expect(result.checks[0].message).toBe("No valid metric filter found for monitoring VPC network changes");
-        });
+			mockListLogMetrics.mockResolvedValueOnce([[mockMetric]]);
+			mockListAlertPolicies.mockResolvedValueOnce([[mockAlertPolicy]]);
 
-        it("should return FAIL when alarm is missing", async () => {
-            mockCloudWatchLogsClient.on(DescribeMetricFiltersCommand).resolves({
-                metricFilters: [{
-                    filterPattern: validFilterPattern,
-                    metricTransformations: [{
-                        metricName: "VpcNetworkChanges"
-                    }]
-                }]
-            });
+			const result = await checkVpcNetworkChanges.execute("test-project");
 
-            mockCloudWatchClient.on(DescribeAlarmsCommand).resolves({
-                MetricAlarms: []
-            });
+			expect(result.checks[0].status).toBe(ComplianceStatus.PASS);
+			expect(result.checks[0].message).toBe(
+				"Valid metric filter and alert policy exist for VPC network changes"
+			);
+		});
+	});
 
-            const result = await checkVpcNetworkChanges.execute("us-east-1");
-            expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
-            expect(result.checks[0].message).toBe("No valid alarm configured for VPC network changes metric");
-        });
+	describe("Non-Compliant Resources", () => {
+		it("should return FAIL when metric filter is missing", async () => {
+			mockListLogMetrics.mockResolvedValueOnce([[]]);
 
-        it("should return FAIL when alarm has no actions", async () => {
-            mockCloudWatchLogsClient.on(DescribeMetricFiltersCommand).resolves({
-                metricFilters: [{
-                    filterPattern: validFilterPattern,
-                    metricTransformations: [{
-                        metricName: "VpcNetworkChanges"
-                    }]
-                }]
-            });
+			const result = await checkVpcNetworkChanges.execute("test-project");
 
-            mockCloudWatchClient.on(DescribeAlarmsCommand).resolves({
-                MetricAlarms: [{
-                    MetricName: "VpcNetworkChanges",
-                    AlarmActions: []
-                }]
-            });
+			expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
+			expect(result.checks[0].message).toBe("No metric filter found for VPC network changes");
+		});
 
-            const result = await checkVpcNetworkChanges.execute("us-east-1");
-            expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
-        });
-    });
+		it("should return FAIL when metric filter has wrong pattern", async () => {
+			const mockMetric = {
+				name: "projects/test-project/metrics/vpc-network-metric",
+				filter: 'resource.type="gce_instance"'
+			};
 
-    describe("Error Handling", () => {
-        it("should return ERROR when CloudWatch Logs API call fails", async () => {
-            mockCloudWatchLogsClient.on(DescribeMetricFiltersCommand).rejects(
-                new Error("CloudWatch Logs API error")
-            );
+			mockListLogMetrics.mockResolvedValueOnce([[mockMetric]]);
 
-            const result = await checkVpcNetworkChanges.execute("us-east-1");
-            expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
-            expect(result.checks[0].message).toContain("CloudWatch Logs API error");
-        });
+			const result = await checkVpcNetworkChanges.execute("test-project");
 
-        it("should return ERROR when CloudWatch API call fails", async () => {
-            mockCloudWatchLogsClient.on(DescribeMetricFiltersCommand).resolves({
-                metricFilters: [{
-                    filterPattern: validFilterPattern,
-                    metricTransformations: [{
-                        metricName: "VpcNetworkChanges"
-                    }]
-                }]
-            });
+			expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
+			expect(result.checks[0].message).toBe("No metric filter found for VPC network changes");
+		});
 
-            mockCloudWatchClient.on(DescribeAlarmsCommand).rejects(
-                new Error("CloudWatch API error")
-            );
+		it("should return FAIL when alert policy is missing", async () => {
+			const mockMetric = {
+				name: "projects/test-project/metrics/vpc-network-metric",
+				filter: 'resource.type="gce_network" AND methodName="compute.networks.insert"'
+			};
 
-            const result = await checkVpcNetworkChanges.execute("us-east-1");
-            expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
-            expect(result.checks[0].message).toContain("CloudWatch API error");
-        });
-    });
+			mockListLogMetrics.mockResolvedValueOnce([[mockMetric]]);
+			mockListAlertPolicies.mockResolvedValueOnce([[]]);
+
+			const result = await checkVpcNetworkChanges.execute("test-project");
+
+			expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
+			expect(result.checks[0].message).toBe("No valid alert policy found for VPC network changes");
+		});
+
+		it("should return FAIL when alert policy has incorrect configuration", async () => {
+			const mockMetric = {
+				name: "projects/test-project/metrics/vpc-network-metric",
+				filter: 'resource.type="gce_network" AND methodName="compute.networks.insert"'
+			};
+
+			const mockAlertPolicy = {
+				conditions: [
+					{
+						displayName: "Wrong Policy",
+						conditionThreshold: {
+							filter: "wrong-metric",
+							comparison: "COMPARISON_LT",
+							thresholdValue: 1,
+							duration: {
+								seconds: 60,
+								nanos: 0
+							}
+						}
+					}
+				]
+			};
+
+			mockListLogMetrics.mockResolvedValueOnce([[mockMetric]]);
+			mockListAlertPolicies.mockResolvedValueOnce([[mockAlertPolicy]]);
+
+			const result = await checkVpcNetworkChanges.execute("test-project");
+
+			expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
+			expect(result.checks[0].message).toBe("No valid alert policy found for VPC network changes");
+		});
+	});
+
+	describe("Error Handling", () => {
+		it("should return ERROR when listLogMetrics fails", async () => {
+			mockListLogMetrics.mockRejectedValueOnce(new Error("API Error"));
+
+			const result = await checkVpcNetworkChanges.execute("test-project");
+
+			expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
+			expect(result.checks[0].message).toContain("Error checking VPC network changes monitoring");
+		});
+
+		it("should return FAIL when listAlertPolicies fails", async () => {
+			const mockMetric = {
+				name: "projects/test-project/metrics/vpc-network-metric",
+				filter: 'resource.type="gce_network" AND methodName="compute.networks.insert"'
+			};
+
+			mockListLogMetrics.mockResolvedValueOnce([[mockMetric]]);
+			mockListAlertPolicies.mockRejectedValueOnce(new Error("API Error"));
+
+			const result = await checkVpcNetworkChanges.execute("test-project");
+
+			expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
+			expect(result.checks[0].message).toContain("Error checking VPC network changes monitoring");
+		});
+	});
 });

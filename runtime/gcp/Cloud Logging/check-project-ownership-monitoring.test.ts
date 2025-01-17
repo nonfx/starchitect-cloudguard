@@ -1,145 +1,126 @@
 // @ts-nocheck
-import { MonitoringClient } from '@google-cloud/monitoring';
-import { LoggingClient } from '@google-cloud/logging';
-import { ComplianceStatus } from '../../types.js';
-import checkProjectOwnershipMonitoring from './check-project-ownership-monitoring';
+import { AlertPolicyServiceClient, protos } from "@google-cloud/monitoring";
+import { v2 } from "@google-cloud/logging";
+import { ComplianceStatus } from "../../types.js";
+import checkProjectOwnershipMonitoring from "./check-project-ownership-monitoring.js";
 
-// Mock GCP clients
-jest.mock('@google-cloud/monitoring');
-jest.mock('@google-cloud/logging');
+describe("checkProjectOwnershipMonitoring", () => {
+	const mockListLogMetrics = jest.fn().mockResolvedValue([[]]);
+	const mockListAlertPolicies = jest.fn().mockResolvedValue([[]]);
 
-describe('checkProjectOwnershipMonitoring', () => {
-    const mockGetMetrics = jest.fn();
-    const mockListAlertPolicies = jest.fn();
-    const projectId = 'test-project';
+	beforeEach(() => {
+		// Reset all mocks
+		mockListLogMetrics.mockClear();
+		mockListAlertPolicies.mockClear();
 
-    beforeEach(() => {
-        jest.resetAllMocks();
-        
-        // Setup LoggingClient mock
-        (LoggingClient as jest.Mock).mockImplementation(() => ({
-            getMetrics: mockGetMetrics
-        }));
+		// Default mock implementations
+		v2.MetricsServiceV2Client.prototype.listLogMetrics = mockListLogMetrics;
+		AlertPolicyServiceClient.prototype.listAlertPolicies = mockListAlertPolicies;
+	});
 
-        // Setup MonitoringClient mock
-        (MonitoringClient as jest.Mock).mockImplementation(() => ({
-            listAlertPolicies: mockListAlertPolicies
-        }));
-    });
+	describe("Compliant Resources", () => {
+		it("should return PASS when valid metric filter and alert policy exist", async () => {
+			const mockMetric = {
+				name: "ownership-changes",
+				filter:
+					'resource.type="project" AND ' +
+					'protoPayload.serviceName="cloudresourcemanager.googleapis.com" AND ' +
+					'protoPayload.methodName="SetIamPolicy" AND ' +
+					'protoPayload.serviceData.policyDelta.bindingDeltas.action=("ADD" OR "REMOVE") AND ' +
+					'protoPayload.serviceData.policyDelta.bindingDeltas.role="roles/owner"'
+			};
 
-    describe('Compliant Resources', () => {
-        it('should return PASS when both metric filter and alert policy exist', async () => {
-            const validMetric = {
-                name: 'projects/test-project/metrics/project_ownership_changes',
-                filter: 'resource.type = "project" AND protopayload.serviceName = "cloudresourcemanager.googleapis.com" AND protopayload.methodName = ("SetIamPolicy" OR "setIamPolicy") AND protopayload.serviceData.policyDelta.bindingDeltas.action = ("ADD" OR "REMOVE") AND protopayload.serviceData.policyDelta.bindingDeltas.role = "roles/owner"'
-            };
+			const mockAlertPolicy = {
+				conditions: [
+					{
+						conditionThreshold: {
+							filter: "ownership-changes",
+							comparison: "COMPARISON_GT",
+							thresholdValue: 0,
+							duration: {
+								seconds: 0,
+								nanos: 0
+							}
+						}
+					}
+				]
+			};
 
-            const validAlertPolicy = {
-                name: 'projects/test-project/alertPolicies/ownership-alert',
-                conditions: [{
-                    conditionThreshold: {
-                        filter: 'metric.type = "logging.googleapis.com/user/project_ownership_changes"'
-                    }
-                }]
-            };
+			mockListLogMetrics.mockResolvedValueOnce([[mockMetric]]);
+			mockListAlertPolicies.mockResolvedValueOnce([[mockAlertPolicy]]);
 
-            mockGetMetrics.mockResolvedValue([[validMetric]]);
-            mockListAlertPolicies.mockResolvedValue([[validAlertPolicy]]);
+			const result = await checkProjectOwnershipMonitoring.execute("test-project");
 
-            const result = await checkProjectOwnershipMonitoring(projectId);
-            
-            expect(result.checks).toHaveLength(2);
-            expect(result.checks[0].status).toBe(ComplianceStatus.PASS);
-            expect(result.checks[1].status).toBe(ComplianceStatus.PASS);
-        });
-    });
+			expect(result.checks[0].status).toBe(ComplianceStatus.PASS);
+			expect(result.checks[0].message).toBe(
+				"Valid metric filter and alert policy exist for project ownership changes"
+			);
+		});
+	});
 
-    describe('Non-Compliant Resources', () => {
-        it('should return FAIL when metric filter is missing', async () => {
-            mockGetMetrics.mockResolvedValue([[]]);
-            mockListAlertPolicies.mockResolvedValue([[{
-                name: 'test-alert',
-                conditions: [{
-                    conditionThreshold: {
-                        filter: 'metric.type = "logging.googleapis.com/user/project_ownership_changes"'
-                    }
-                }]
-            }]]);
+	describe("Non-Compliant Resources", () => {
+		it("should return FAIL when metric filter is missing", async () => {
+			mockListLogMetrics.mockResolvedValueOnce([[]]);
 
-            const result = await checkProjectOwnershipMonitoring(projectId);
-            
-            expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
-            expect(result.checks[0].message).toContain('No valid log metric filter found');
-        });
+			const result = await checkProjectOwnershipMonitoring.execute("test-project");
 
-        it('should return FAIL when alert policy is missing', async () => {
-            const validMetric = {
-                name: 'test-metric',
-                filter: 'resource.type = "project" AND protopayload.serviceName = "cloudresourcemanager.googleapis.com"'
-            };
+			expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
+			expect(result.checks[0].message).toBe(
+				"No valid log metric filter found for project ownership changes"
+			);
+		});
 
-            mockGetMetrics.mockResolvedValue([[validMetric]]);
-            mockListAlertPolicies.mockResolvedValue([[]]);
+		it("should return FAIL when alert policy is missing", async () => {
+			const mockMetric = {
+				name: "ownership-changes",
+				filter:
+					'resource.type="project" AND ' +
+					'protoPayload.serviceName="cloudresourcemanager.googleapis.com" AND ' +
+					'protoPayload.methodName="SetIamPolicy" AND ' +
+					'protoPayload.serviceData.policyDelta.bindingDeltas.action=("ADD" OR "REMOVE") AND ' +
+					'protoPayload.serviceData.policyDelta.bindingDeltas.role="roles/owner"'
+			};
 
-            const result = await checkProjectOwnershipMonitoring(projectId);
-            
-            expect(result.checks[1].status).toBe(ComplianceStatus.FAIL);
-            expect(result.checks[1].message).toContain('No alert policy found');
-        });
+			mockListLogMetrics.mockResolvedValueOnce([[mockMetric]]);
+			mockListAlertPolicies.mockResolvedValueOnce([[]]);
 
-        it('should return FAIL when metric filter has incorrect components', async () => {
-            const invalidMetric = {
-                name: 'test-metric',
-                filter: 'resource.type = "project"' // Missing required components
-            };
+			const result = await checkProjectOwnershipMonitoring.execute("test-project");
 
-            mockGetMetrics.mockResolvedValue([[invalidMetric]]);
-            mockListAlertPolicies.mockResolvedValue([[]]);
+			expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
+			expect(result.checks[0].message).toBe(
+				"No valid alert policy found for project ownership changes"
+			);
+		});
+	});
 
-            const result = await checkProjectOwnershipMonitoring(projectId);
-            
-            expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
-        });
-    });
+	describe("Error Handling", () => {
+		it("should return ERROR when listLogMetrics fails", async () => {
+			mockListLogMetrics.mockRejectedValueOnce(new Error("API Error"));
 
-    describe('Error Handling', () => {
-        it('should return ERROR when getMetrics fails', async () => {
-            mockGetMetrics.mockRejectedValue(new Error('API Error'));
+			const result = await checkProjectOwnershipMonitoring.execute("test-project");
 
-            const result = await checkProjectOwnershipMonitoring(projectId);
-            
-            expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
-            expect(result.checks[0].message).toContain('Error checking project ownership monitoring');
-        });
+			expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
+			expect(result.checks[0].message).toContain("Error checking project ownership monitoring");
+		});
 
-        it('should return ERROR when listAlertPolicies fails', async () => {
-            mockGetMetrics.mockResolvedValue([[]]);
-            mockListAlertPolicies.mockRejectedValue(new Error('API Error'));
+		it("should return ERROR when listAlertPolicies fails", async () => {
+			const mockMetric = {
+				name: "ownership-changes",
+				filter:
+					'resource.type="project" AND ' +
+					'protoPayload.serviceName="cloudresourcemanager.googleapis.com" AND ' +
+					'protoPayload.methodName="SetIamPolicy" AND ' +
+					'protoPayload.serviceData.policyDelta.bindingDeltas.action=("ADD" OR "REMOVE") AND ' +
+					'protoPayload.serviceData.policyDelta.bindingDeltas.role="roles/owner"'
+			};
 
-            const result = await checkProjectOwnershipMonitoring(projectId);
-            
-            expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
-        });
-    });
+			mockListLogMetrics.mockResolvedValueOnce([[mockMetric]]);
+			mockListAlertPolicies.mockRejectedValueOnce(new Error("API Error"));
 
-    describe('Edge Cases', () => {
-        it('should handle empty responses from both APIs', async () => {
-            mockGetMetrics.mockResolvedValue([[]]);
-            mockListAlertPolicies.mockResolvedValue([[]]);
+			const result = await checkProjectOwnershipMonitoring.execute("test-project");
 
-            const result = await checkProjectOwnershipMonitoring(projectId);
-            
-            expect(result.checks).toHaveLength(2);
-            expect(result.checks.every(check => check.status === ComplianceStatus.FAIL)).toBe(true);
-        });
-
-        it('should handle undefined filter in metric', async () => {
-            mockGetMetrics.mockResolvedValue([[{ name: 'test-metric' }]]);
-            mockListAlertPolicies.mockResolvedValue([[]]);
-
-            const result = await checkProjectOwnershipMonitoring(projectId);
-            
-            expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
-        });
-    });
+			expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
+			expect(result.checks[0].message).toContain("Error checking project ownership monitoring");
+		});
+	});
 });

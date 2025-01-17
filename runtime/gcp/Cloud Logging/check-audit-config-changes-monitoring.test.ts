@@ -1,151 +1,150 @@
 // @ts-nocheck
-import { MonitoringClient } from '@google-cloud/monitoring';
-import { LoggingClient } from '@google-cloud/logging';
-import { ComplianceStatus } from '../../types.js';
-import checkAuditConfigChangesMonitoring from './check-audit-config-changes-monitoring';
+import { AlertPolicyServiceClient, protos } from "@google-cloud/monitoring";
+import { v2 } from "@google-cloud/logging";
+import { ComplianceStatus } from "../../types.js";
+import checkAuditConfigChangesMonitoring from "./check-audit-config-changes-monitoring.js";
 
-// Mock GCP clients
-jest.mock('@google-cloud/monitoring');
-jest.mock('@google-cloud/logging');
+describe("checkAuditConfigChangesMonitoring", () => {
+	const mockListLogMetrics = jest.fn().mockResolvedValue([[]]);
+	const mockListAlertPolicies = jest.fn().mockResolvedValue([[]]);
 
-describe('checkAuditConfigChangesMonitoring', () => {
-    const mockListMetrics = jest.fn();
-    const mockListAlertPolicies = jest.fn();
+	beforeEach(() => {
+		// Reset all mocks
+		mockListLogMetrics.mockClear();
+		mockListAlertPolicies.mockClear();
 
-    beforeEach(() => {
-        jest.resetAllMocks();
-        
-        // Setup LoggingClient mock
-        (LoggingClient as jest.Mock).mockImplementation(() => ({
-            listMetrics: mockListMetrics
-        }));
+		// Default mock implementations
+		v2.MetricsServiceV2Client.prototype.listLogMetrics = mockListLogMetrics;
+		AlertPolicyServiceClient.prototype.listAlertPolicies = mockListAlertPolicies;
+	});
 
-        // Setup MonitoringClient mock
-        (MonitoringClient as jest.Mock).mockImplementation(() => ({
-            listAlertPolicies: mockListAlertPolicies
-        }));
-    });
+	describe("Compliant Resources", () => {
+		it("should return PASS when valid metric filter and alert policy exist", async () => {
+			const mockMetric = {
+				name: "audit-config-changes",
+				filter:
+					'protoPayload.methodName="SetIamPolicy" AND protoPayload.serviceData.policyDelta.auditConfigDeltas:*'
+			};
 
-    describe('Compliant Resources', () => {
-        it('should return PASS when valid metric filter and alert policy exist', async () => {
-            const validMetric = {
-                filter: 'protoPayload.methodName="SetIamPolicy" AND protoPayload.serviceData.policyDelta.auditConfigDeltas:*'
-            };
+			const mockAlertPolicy = {
+				conditions: [
+					{
+						displayName: "Audit Config Changes",
+						conditionThreshold: {
+							filter: "audit-config-changes",
+							comparison: "COMPARISON_GT",
+							thresholdValue: 0,
+							duration: {
+								seconds: 0,
+								nanos: 0
+							}
+						}
+					}
+				]
+			};
 
-            const validAlertPolicy = {
-                conditions: [{
-                    conditionThreshold: {
-                        comparison: 'COMPARISON_GT',
-                        thresholdValue: 0,
-                        duration: {
-                            seconds: 0,
-                            nanos: 0
-                        }
-                    }
-                }]
-            };
+			mockListLogMetrics.mockResolvedValueOnce([[mockMetric]]);
+			mockListAlertPolicies.mockResolvedValueOnce([[mockAlertPolicy]]);
 
-            mockListMetrics.mockResolvedValue([[validMetric]]);
-            mockListAlertPolicies.mockResolvedValue([[validAlertPolicy]]);
+			const result = await checkAuditConfigChangesMonitoring.execute("test-project");
 
-            const result = await checkAuditConfigChangesMonitoring('test-project');
-            
-            expect(result.checks[0].status).toBe(ComplianceStatus.PASS);
-            expect(result.checks[0].message).toContain('Valid metric filter and alert policy found');
-        });
-    });
+			expect(result.checks[0].status).toBe(ComplianceStatus.PASS);
+			expect(result.checks[0].message).toBe(
+				"Valid metric filter and alert policy found for audit configuration changes"
+			);
+		});
+	});
 
-    describe('Non-Compliant Resources', () => {
-        it('should return FAIL when metric filter is missing', async () => {
-            mockListMetrics.mockResolvedValue([[]]);
-            mockListAlertPolicies.mockResolvedValue([[{}]]);
+	describe("Non-Compliant Resources", () => {
+		it("should return FAIL when metric filter is missing", async () => {
+			mockListLogMetrics.mockResolvedValueOnce([[]]);
 
-            const result = await checkAuditConfigChangesMonitoring('test-project');
-            
-            expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
-            expect(result.checks[0].message).toContain('No metric filter found');
-        });
+			const result = await checkAuditConfigChangesMonitoring.execute("test-project");
 
-        it('should return FAIL when alert policy is invalid', async () => {
-            const validMetric = {
-                filter: 'protoPayload.methodName="SetIamPolicy" AND protoPayload.serviceData.policyDelta.auditConfigDeltas:*'
-            };
+			expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
+			expect(result.checks[0].message).toBe(
+				"No metric filter found for audit configuration changes"
+			);
+		});
 
-            const invalidAlertPolicy = {
-                conditions: [{
-                    conditionThreshold: {
-                        comparison: 'COMPARISON_LT',
-                        thresholdValue: 1
-                    }
-                }]
-            };
+		it("should return FAIL when alert policy is missing", async () => {
+			const mockMetric = {
+				name: "audit-config-changes",
+				filter:
+					'protoPayload.methodName="SetIamPolicy" AND protoPayload.serviceData.policyDelta.auditConfigDeltas:*'
+			};
 
-            mockListMetrics.mockResolvedValue([[validMetric]]);
-            mockListAlertPolicies.mockResolvedValue([[invalidAlertPolicy]]);
+			mockListLogMetrics.mockResolvedValueOnce([[mockMetric]]);
+			mockListAlertPolicies.mockResolvedValueOnce([[]]);
 
-            const result = await checkAuditConfigChangesMonitoring('test-project');
-            
-            expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
-            expect(result.checks[0].message).toContain('No valid alert policy found');
-        });
-    });
+			const result = await checkAuditConfigChangesMonitoring.execute("test-project");
 
-    describe('Error Handling', () => {
-        it('should return ERROR when logging API call fails', async () => {
-            mockListMetrics.mockRejectedValue(new Error('API Error'));
+			expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
+			expect(result.checks[0].message).toBe(
+				"No valid alert policy found for audit configuration changes"
+			);
+		});
 
-            const result = await checkAuditConfigChangesMonitoring('test-project');
-            
-            expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
-            expect(result.checks[0].message).toContain('Error checking audit config monitoring');
-        });
+		it("should return FAIL when alert policy has incorrect configuration", async () => {
+			const mockMetric = {
+				name: "audit-config-changes",
+				filter:
+					'protoPayload.methodName="SetIamPolicy" AND protoPayload.serviceData.policyDelta.auditConfigDeltas:*'
+			};
 
-        it('should return ERROR when monitoring API call fails', async () => {
-            const validMetric = {
-                filter: 'protoPayload.methodName="SetIamPolicy" AND protoPayload.serviceData.policyDelta.auditConfigDeltas:*'
-            };
+			const mockAlertPolicy = {
+				conditions: [
+					{
+						displayName: "Wrong Policy",
+						conditionThreshold: {
+							filter: "wrong-metric",
+							comparison: "COMPARISON_LT",
+							thresholdValue: 1,
+							duration: {
+								seconds: 60,
+								nanos: 0
+							}
+						}
+					}
+				]
+			};
 
-            mockListMetrics.mockResolvedValue([[validMetric]]);
-            mockListAlertPolicies.mockRejectedValue(new Error('API Error'));
+			mockListLogMetrics.mockResolvedValueOnce([[mockMetric]]);
+			mockListAlertPolicies.mockResolvedValueOnce([[mockAlertPolicy]]);
 
-            const result = await checkAuditConfigChangesMonitoring('test-project');
-            
-            expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
-            expect(result.checks[0].message).toContain('Error checking audit config monitoring');
-        });
-    });
+			const result = await checkAuditConfigChangesMonitoring.execute("test-project");
 
-    describe('Edge Cases', () => {
-        it('should handle empty alert policies response', async () => {
-            const validMetric = {
-                filter: 'protoPayload.methodName="SetIamPolicy" AND protoPayload.serviceData.policyDelta.auditConfigDeltas:*'
-            };
+			expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
+			expect(result.checks[0].message).toBe(
+				"No valid alert policy found for audit configuration changes"
+			);
+		});
+	});
 
-            mockListMetrics.mockResolvedValue([[validMetric]]);
-            mockListAlertPolicies.mockResolvedValue([[]]);
+	describe("Error Handling", () => {
+		it("should return ERROR when listLogMetrics fails", async () => {
+			mockListLogMetrics.mockRejectedValueOnce(new Error("API Error"));
 
-            const result = await checkAuditConfigChangesMonitoring('test-project');
-            
-            expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
-            expect(result.checks[0].message).toContain('No valid alert policy found');
-        });
+			const result = await checkAuditConfigChangesMonitoring.execute("test-project");
 
-        it('should handle null or undefined conditions in alert policies', async () => {
-            const validMetric = {
-                filter: 'protoPayload.methodName="SetIamPolicy" AND protoPayload.serviceData.policyDelta.auditConfigDeltas:*'
-            };
+			expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
+			expect(result.checks[0].message).toContain("Error checking audit config monitoring");
+		});
 
-            const invalidAlertPolicy = {
-                conditions: null
-            };
+		it("should return ERROR when listAlertPolicies fails", async () => {
+			const mockMetric = {
+				name: "audit-config-changes",
+				filter:
+					'protoPayload.methodName="SetIamPolicy" AND protoPayload.serviceData.policyDelta.auditConfigDeltas:*'
+			};
 
-            mockListMetrics.mockResolvedValue([[validMetric]]);
-            mockListAlertPolicies.mockResolvedValue([[invalidAlertPolicy]]);
+			mockListLogMetrics.mockResolvedValueOnce([[mockMetric]]);
+			mockListAlertPolicies.mockRejectedValueOnce(new Error("API Error"));
 
-            const result = await checkAuditConfigChangesMonitoring('test-project');
-            
-            expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
-            expect(result.checks[0].message).toContain('No valid alert policy found');
-        });
-    });
+			const result = await checkAuditConfigChangesMonitoring.execute("test-project");
+
+			expect(result.checks[0].status).toBe(ComplianceStatus.ERROR);
+			expect(result.checks[0].message).toContain("Error checking audit config monitoring");
+		});
+	});
 });
