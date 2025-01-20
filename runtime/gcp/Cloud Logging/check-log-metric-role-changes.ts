@@ -33,11 +33,12 @@ async function checkLogMetricRoleChanges(
 			parent: `projects/${projectId}`
 		});
 
-		const roleMetric = metrics.find(
-			(metric: IMetric) =>
-				metric.filter ===
-				'protoPayload.methodName="CreateRole" OR protoPayload.methodName="DeleteRole" OR protoPayload.methodName="UpdateRole"'
-		);
+		const expectedFilter =
+			'resource.type="iam_role" AND (protoPayload.methodName="google.iam.admin.v1.CreateRole" OR protoPayload.methodName="google.iam.admin.v1.DeleteRole" OR protoPayload.methodName="google.iam.admin.v1.UpdateRole")';
+		const roleMetric = metrics.find((metric: IMetric) => {
+			const currentFilter = metric.filter?.trim() || "";
+			return currentFilter === expectedFilter;
+		});
 
 		if (!roleMetric) {
 			results.checks.push({
@@ -53,16 +54,19 @@ async function checkLogMetricRoleChanges(
 			name: `projects/${projectId}`
 		});
 
+		console.log("Alert Policies:", alertPolicies);
 		const validAlertPolicy = alertPolicies.find((policy: AlertPolicy) => {
 			return policy.conditions?.some((condition: Condition) => {
 				const threshold = condition.conditionThreshold;
-				return (
-					threshold?.filter?.includes(roleMetric.name || "") &&
-					threshold?.comparison === "COMPARISON_GT" &&
-					threshold?.thresholdValue === 0 &&
-					threshold?.duration?.seconds === 0 &&
-					threshold?.duration?.nanos === 0
-				);
+				const expectedMetricType = `logging.googleapis.com/user/${roleMetric.name?.split("/").pop()}`;
+
+				const hasValidFilter = threshold?.filter?.includes(expectedMetricType);
+				const hasValidComparison = threshold?.comparison === "COMPARISON_GT";
+				const hasValidThreshold = Number(threshold?.thresholdValue) === 0;
+				const hasValidDuration =
+					Number(threshold?.duration?.seconds) === 0 && Number(threshold?.duration?.nanos) === 0;
+
+				return hasValidFilter && hasValidComparison && hasValidThreshold && hasValidDuration;
 			});
 		});
 

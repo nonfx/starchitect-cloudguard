@@ -21,24 +21,55 @@ describe("checkVpcFirewallRuleChanges", () => {
 	describe("Compliant Resources", () => {
 		it("should return PASS when valid metric filter and alert policy exist", async () => {
 			const mockMetric = {
-				name: "firewall-changes",
-				filter: 'resource.type="gce_firewall_rule" AND methodName="compute.firewalls.patch"'
+				name: "projects/test-project/metrics/firewall-rule-changes",
+				filter:
+					'resource.type="gce_firewall_rule" AND (protoPayload.methodName:"compute.firewalls.patch" OR protoPayload.methodName:"compute.firewalls.insert" OR protoPayload.methodName:"compute.firewalls.delete")',
+				labelExtractors: {},
+				valueExtractor: "",
+				bucketOptions: null,
+				createTime: {
+					seconds: "1737348538",
+					nanos: 59758449
+				},
+				updateTime: {
+					seconds: "1737348538",
+					nanos: 59758449
+				},
+				version: "V2",
+				disabled: false,
+				metricDescriptor: {
+					name: "projects/test-project/metricDescriptors/logging.googleapis.com/user/firewall-rule-changes",
+					metricKind: "DELTA",
+					valueType: "INT64",
+					unit: "1",
+					description: "",
+					type: "logging.googleapis.com/user/firewall-rule-changes"
+				}
 			};
 
 			const mockAlertPolicy = {
+				displayName: "Firewall Rule Changes Alert",
 				conditions: [
 					{
+						displayName: "Firewall Rule Changes",
 						conditionThreshold: {
-							filter: "firewall-changes",
+							filter: 'metric.type="logging.googleapis.com/user/firewall-rule-changes"',
 							comparison: "COMPARISON_GT",
 							thresholdValue: 0,
 							duration: {
-								seconds: 0,
+								seconds: "0",
 								nanos: 0
+							},
+							trigger: {
+								count: 1,
+								type: "count"
 							}
 						}
 					}
-				]
+				],
+				enabled: {
+					value: true
+				}
 			};
 
 			mockListLogMetrics.mockResolvedValueOnce([[mockMetric]]);
@@ -56,7 +87,19 @@ describe("checkVpcFirewallRuleChanges", () => {
 	describe("Non-Compliant Resources", () => {
 		it("should return FAIL when metric filter is missing", async () => {
 			const mockMetric = {
-				filter: 'resource.type="other_resource"'
+				name: "projects/test-project/metrics/wrong-metric",
+				filter: 'resource.type="other_resource"',
+				labelExtractors: {},
+				valueExtractor: "",
+				bucketOptions: null,
+				version: "V2",
+				metricDescriptor: {
+					name: "projects/test-project/metricDescriptors/logging.googleapis.com/user/wrong-metric",
+					metricKind: "DELTA",
+					valueType: "INT64",
+					unit: "1",
+					type: "logging.googleapis.com/user/wrong-metric"
+				}
 			};
 
 			mockListLogMetrics.mockResolvedValueOnce([[mockMetric]]);
@@ -71,12 +114,71 @@ describe("checkVpcFirewallRuleChanges", () => {
 
 		it("should return FAIL when alert policy is missing", async () => {
 			const mockMetric = {
-				name: "firewall-changes",
-				filter: 'resource.type="gce_firewall_rule" AND methodName="compute.firewalls.patch"'
+				name: "projects/test-project/metrics/firewall-rule-changes",
+				filter:
+					'resource.type="gce_firewall_rule" AND (protoPayload.methodName:"compute.firewalls.patch" OR protoPayload.methodName:"compute.firewalls.insert" OR protoPayload.methodName:"compute.firewalls.delete")',
+				labelExtractors: {},
+				valueExtractor: "",
+				bucketOptions: null,
+				version: "V2",
+				metricDescriptor: {
+					name: "projects/test-project/metricDescriptors/logging.googleapis.com/user/firewall-rule-changes",
+					metricKind: "DELTA",
+					valueType: "INT64",
+					unit: "1",
+					type: "logging.googleapis.com/user/firewall-rule-changes"
+				}
 			};
 
 			mockListLogMetrics.mockResolvedValueOnce([[mockMetric]]);
 			mockListAlertPolicies.mockResolvedValueOnce([[]]);
+
+			const result = await checkVpcFirewallRuleChanges.execute("test-project");
+
+			expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
+			expect(result.checks[0].message).toBe(
+				"No alert policy found that monitors the firewall rule changes metric"
+			);
+		});
+
+		it("should return FAIL when alert policy has incorrect configuration", async () => {
+			const mockMetric = {
+				name: "projects/test-project/metrics/firewall-rule-changes",
+				filter:
+					'resource.type="gce_firewall_rule" AND (protoPayload.methodName:"compute.firewalls.patch" OR protoPayload.methodName:"compute.firewalls.insert" OR protoPayload.methodName:"compute.firewalls.delete")',
+				labelExtractors: {},
+				valueExtractor: "",
+				bucketOptions: null,
+				version: "V2",
+				metricDescriptor: {
+					name: "projects/test-project/metricDescriptors/logging.googleapis.com/user/firewall-rule-changes",
+					metricKind: "DELTA",
+					valueType: "INT64",
+					unit: "1",
+					type: "logging.googleapis.com/user/firewall-rule-changes"
+				}
+			};
+
+			const mockAlertPolicy = {
+				displayName: "Wrong Alert",
+				conditions: [
+					{
+						displayName: "Wrong Condition",
+						conditionThreshold: {
+							filter: 'metric.type="logging.googleapis.com/user/wrong-metric"',
+							comparison: "COMPARISON_LT",
+							thresholdValue: 1,
+							duration: {
+								seconds: "60",
+								nanos: 0
+							}
+						}
+					}
+				]
+			};
+
+			mockListLogMetrics.mockResolvedValueOnce([[mockMetric]]);
+			mockListAlertPolicies.mockResolvedValueOnce([[mockAlertPolicy]]);
 
 			const result = await checkVpcFirewallRuleChanges.execute("test-project");
 
@@ -99,8 +201,20 @@ describe("checkVpcFirewallRuleChanges", () => {
 
 		it("should return ERROR when listAlertPolicies fails", async () => {
 			const mockMetric = {
-				name: "firewall-changes",
-				filter: 'resource.type="gce_firewall_rule" AND methodName="compute.firewalls.patch"'
+				name: "projects/test-project/metrics/firewall-rule-changes",
+				filter:
+					'resource.type="gce_firewall_rule" AND (protoPayload.methodName:"compute.firewalls.patch" OR protoPayload.methodName:"compute.firewalls.insert" OR protoPayload.methodName:"compute.firewalls.delete")',
+				labelExtractors: {},
+				valueExtractor: "",
+				bucketOptions: null,
+				version: "V2",
+				metricDescriptor: {
+					name: "projects/test-project/metricDescriptors/logging.googleapis.com/user/firewall-rule-changes",
+					metricKind: "DELTA",
+					valueType: "INT64",
+					unit: "1",
+					type: "logging.googleapis.com/user/firewall-rule-changes"
+				}
 			};
 
 			mockListLogMetrics.mockResolvedValueOnce([[mockMetric]]);

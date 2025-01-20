@@ -21,24 +21,22 @@ describe("checkProjectOwnershipMonitoring", () => {
 	describe("Compliant Resources", () => {
 		it("should return PASS when valid metric filter and alert policy exist", async () => {
 			const mockMetric = {
-				name: "ownership-changes",
+				name: "projects/test-project/metrics/project-ownership-changes",
 				filter:
-					'resource.type="project" AND ' +
-					'protoPayload.serviceName="cloudresourcemanager.googleapis.com" AND ' +
-					'protoPayload.methodName="SetIamPolicy" AND ' +
-					'protoPayload.serviceData.policyDelta.bindingDeltas.action=("ADD" OR "REMOVE") AND ' +
-					'protoPayload.serviceData.policyDelta.bindingDeltas.role="roles/owner"'
+					'(protoPayload.serviceName="cloudresourcemanager.googleapis.com") AND (ProjectOwnership OR projectOwnerInvitee) OR (protoPayload.serviceData.policyDelta.bindingDeltas.action="REMOVE" AND protoPayload.serviceData.policyDelta.bindingDeltas.role="roles/owner") OR (protoPayload.serviceData.policyDelta.bindingDeltas.action="ADD" AND protoPayload.serviceData.policyDelta.bindingDeltas.role="roles/owner")'
 			};
 
 			const mockAlertPolicy = {
+				displayName: "Project Ownership Changes Alert",
 				conditions: [
 					{
+						displayName: "Project Ownership Changes",
 						conditionThreshold: {
-							filter: "ownership-changes",
+							filter: 'metric.type="logging.googleapis.com/user/project-ownership-changes"',
 							comparison: "COMPARISON_GT",
 							thresholdValue: 0,
 							duration: {
-								seconds: 0,
+								seconds: "0",
 								nanos: 0
 							}
 						}
@@ -72,17 +70,49 @@ describe("checkProjectOwnershipMonitoring", () => {
 
 		it("should return FAIL when alert policy is missing", async () => {
 			const mockMetric = {
-				name: "ownership-changes",
+				name: "projects/test-project/metrics/project-ownership-changes",
 				filter:
-					'resource.type="project" AND ' +
-					'protoPayload.serviceName="cloudresourcemanager.googleapis.com" AND ' +
-					'protoPayload.methodName="SetIamPolicy" AND ' +
-					'protoPayload.serviceData.policyDelta.bindingDeltas.action=("ADD" OR "REMOVE") AND ' +
-					'protoPayload.serviceData.policyDelta.bindingDeltas.role="roles/owner"'
+					'(protoPayload.serviceName="cloudresourcemanager.googleapis.com") AND (ProjectOwnership OR projectOwnerInvitee) OR (protoPayload.serviceData.policyDelta.bindingDeltas.action="REMOVE" AND protoPayload.serviceData.policyDelta.bindingDeltas.role="roles/owner") OR (protoPayload.serviceData.policyDelta.bindingDeltas.action="ADD" AND protoPayload.serviceData.policyDelta.bindingDeltas.role="roles/owner")'
 			};
 
 			mockListLogMetrics.mockResolvedValueOnce([[mockMetric]]);
 			mockListAlertPolicies.mockResolvedValueOnce([[]]);
+
+			const result = await checkProjectOwnershipMonitoring.execute("test-project");
+
+			expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
+			expect(result.checks[0].message).toBe(
+				"No valid alert policy found for project ownership changes"
+			);
+		});
+
+		it("should return FAIL when alert policy has incorrect configuration", async () => {
+			const mockMetric = {
+				name: "projects/test-project/metrics/project-ownership-changes",
+				filter:
+					'(protoPayload.serviceName="cloudresourcemanager.googleapis.com") AND (ProjectOwnership OR projectOwnerInvitee) OR (protoPayload.serviceData.policyDelta.bindingDeltas.action="REMOVE" AND protoPayload.serviceData.policyDelta.bindingDeltas.role="roles/owner") OR (protoPayload.serviceData.policyDelta.bindingDeltas.action="ADD" AND protoPayload.serviceData.policyDelta.bindingDeltas.role="roles/owner")'
+			};
+
+			const mockAlertPolicy = {
+				displayName: "Wrong Alert",
+				conditions: [
+					{
+						displayName: "Wrong Condition",
+						conditionThreshold: {
+							filter: 'metric.type="logging.googleapis.com/user/wrong-metric"',
+							comparison: "COMPARISON_LT",
+							thresholdValue: 1,
+							duration: {
+								seconds: "60",
+								nanos: 0
+							}
+						}
+					}
+				]
+			};
+
+			mockListLogMetrics.mockResolvedValueOnce([[mockMetric]]);
+			mockListAlertPolicies.mockResolvedValueOnce([[mockAlertPolicy]]);
 
 			const result = await checkProjectOwnershipMonitoring.execute("test-project");
 
@@ -105,13 +135,9 @@ describe("checkProjectOwnershipMonitoring", () => {
 
 		it("should return ERROR when listAlertPolicies fails", async () => {
 			const mockMetric = {
-				name: "ownership-changes",
+				name: "projects/test-project/metrics/project-ownership-changes",
 				filter:
-					'resource.type="project" AND ' +
-					'protoPayload.serviceName="cloudresourcemanager.googleapis.com" AND ' +
-					'protoPayload.methodName="SetIamPolicy" AND ' +
-					'protoPayload.serviceData.policyDelta.bindingDeltas.action=("ADD" OR "REMOVE") AND ' +
-					'protoPayload.serviceData.policyDelta.bindingDeltas.role="roles/owner"'
+					'(protoPayload.serviceName="cloudresourcemanager.googleapis.com") AND (ProjectOwnership OR projectOwnerInvitee) OR (protoPayload.serviceData.policyDelta.bindingDeltas.action="REMOVE" AND protoPayload.serviceData.policyDelta.bindingDeltas.role="roles/owner") OR (protoPayload.serviceData.policyDelta.bindingDeltas.action="ADD" AND protoPayload.serviceData.policyDelta.bindingDeltas.role="roles/owner")'
 			};
 
 			mockListLogMetrics.mockResolvedValueOnce([[mockMetric]]);

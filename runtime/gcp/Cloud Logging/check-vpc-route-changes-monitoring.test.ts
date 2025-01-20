@@ -23,18 +23,20 @@ describe("checkVpcRouteChangesMonitoring", () => {
 			const validMetric = {
 				name: "projects/test-project/metrics/vpc-route-changes",
 				filter:
-					'resource.type="gce_route" AND methodName="compute.routes.delete" AND methodName="compute.routes.insert"'
+					'resource.type="gce_route" AND (protoPayload.methodName:"compute.routes.delete" OR protoPayload.methodName:"compute.routes.insert")'
 			};
 
 			const validAlert = {
+				displayName: "Route Changes Alert",
 				conditions: [
 					{
+						displayName: "Route Changes Condition",
 						conditionThreshold: {
-							filter: "projects/test-project/metrics/vpc-route-changes",
+							filter: 'metric.type="logging.googleapis.com/user/vpc-route-changes"',
 							comparison: "COMPARISON_GT",
 							thresholdValue: 0,
 							duration: {
-								seconds: 0,
+								seconds: "0",
 								nanos: 0
 							}
 						}
@@ -56,7 +58,7 @@ describe("checkVpcRouteChangesMonitoring", () => {
 
 			const result = await checkVpcRouteChangesMonitoring.execute("test-project");
 			expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
-			expect(result.checks[0].message).toBe("No log metric filters found");
+			expect(result.checks[0].message).toBe("No metric filter exists for VPC route changes");
 		});
 
 		it("should return FAIL when metric filter has wrong pattern", async () => {
@@ -76,7 +78,7 @@ describe("checkVpcRouteChangesMonitoring", () => {
 			const validMetric = {
 				name: "projects/test-project/metrics/vpc-route-changes",
 				filter:
-					'resource.type="gce_route" AND methodName="compute.routes.delete" AND methodName="compute.routes.insert"'
+					'resource.type="gce_route" AND (protoPayload.methodName:"compute.routes.delete" OR protoPayload.methodName:"compute.routes.insert")'
 			};
 
 			mockListLogMetrics.mockResolvedValueOnce([[validMetric]]);
@@ -84,9 +86,7 @@ describe("checkVpcRouteChangesMonitoring", () => {
 
 			const result = await checkVpcRouteChangesMonitoring.execute("test-project");
 			expect(result.checks[0].status).toBe(ComplianceStatus.FAIL);
-			expect(result.checks[0].message).toBe(
-				"One or more metrics do not have properly configured alert policies"
-			);
+			expect(result.checks[0].message).toBe("No valid alert policy found for VPC route changes");
 		});
 	});
 
@@ -103,7 +103,7 @@ describe("checkVpcRouteChangesMonitoring", () => {
 			const validMetric = {
 				name: "projects/test-project/metrics/vpc-route-changes",
 				filter:
-					'resource.type="gce_route" AND methodName="compute.routes.delete" AND methodName="compute.routes.insert"'
+					'resource.type="gce_route" AND (protoPayload.methodName:"compute.routes.delete" OR protoPayload.methodName:"compute.routes.insert")'
 			};
 
 			mockListLogMetrics.mockResolvedValueOnce([[validMetric]]);

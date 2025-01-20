@@ -31,11 +31,27 @@ async function checkVpcFirewallRuleChanges(
 			parent: `projects/${projectId}`
 		});
 
+		const expectedFilter =
+			'resource.type="gce_firewall_rule" AND (protoPayload.methodName:"compute.firewalls.patch" OR protoPayload.methodName:"compute.firewalls.insert" OR protoPayload.methodName:"compute.firewalls.delete")';
+
 		const firewallMetric = metrics.find((metric: IMetric) => {
-			const filter = metric.filter?.toLowerCase() || "";
+			const currentFilter = metric.filter?.trim() || "";
+
+			// Check if the filter contains the key components
+			const hasResourceType = currentFilter.includes('resource.type="gce_firewall_rule"');
+			const hasPatchMethod =
+				currentFilter.includes('methodName:"compute.firewalls.patch"') ||
+				currentFilter.includes('methodName="compute.firewalls.patch"');
+			const hasInsertMethod =
+				currentFilter.includes('methodName:"compute.firewalls.insert"') ||
+				currentFilter.includes('methodName="compute.firewalls.insert"');
+			const hasDeleteMethod =
+				currentFilter.includes('methodName:"compute.firewalls.delete"') ||
+				currentFilter.includes('methodName="compute.firewalls.delete"');
+
 			return (
-				filter.includes('resource.type="gce_firewall_rule"') &&
-				/methodname="compute\.firewalls\.(patch|insert|delete)"/.test(filter)
+				currentFilter === expectedFilter ||
+				(hasResourceType && (hasPatchMethod || hasInsertMethod || hasDeleteMethod))
 			);
 		});
 
@@ -56,13 +72,15 @@ async function checkVpcFirewallRuleChanges(
 		const validAlertPolicy = alertPolicies.find((policy: AlertPolicy) => {
 			return policy.conditions?.some((condition: Condition) => {
 				const threshold = condition.conditionThreshold;
-				return (
-					threshold?.filter?.includes(firewallMetric.name || "") &&
-					threshold?.comparison === "COMPARISON_GT" &&
-					threshold?.thresholdValue === 0 &&
-					threshold?.duration?.seconds === 0 &&
-					threshold?.duration?.nanos === 0
-				);
+				const expectedMetricType = `logging.googleapis.com/user/${firewallMetric.name?.split("/").pop()}`;
+
+				const hasValidFilter = threshold?.filter?.includes(expectedMetricType);
+				const hasValidComparison = threshold?.comparison === "COMPARISON_GT";
+				const hasValidThreshold = Number(threshold?.thresholdValue) === 0;
+				const hasValidDuration =
+					Number(threshold?.duration?.seconds) === 0 && Number(threshold?.duration?.nanos) === 0;
+
+				return hasValidFilter && hasValidComparison && hasValidThreshold && hasValidDuration;
 			});
 		});
 

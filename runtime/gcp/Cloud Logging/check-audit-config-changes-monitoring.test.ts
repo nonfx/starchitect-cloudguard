@@ -21,26 +21,55 @@ describe("checkAuditConfigChangesMonitoring", () => {
 	describe("Compliant Resources", () => {
 		it("should return PASS when valid metric filter and alert policy exist", async () => {
 			const mockMetric = {
-				name: "audit-config-changes",
+				name: "projects/test-project/metrics/audit-config-changes",
 				filter:
-					'protoPayload.methodName="SetIamPolicy" AND protoPayload.serviceData.policyDelta.auditConfigDeltas:*'
+					'protoPayload.methodName="SetIamPolicy" AND protoPayload.serviceData.policyDelta.auditConfigDeltas:*',
+				labelExtractors: {},
+				valueExtractor: "",
+				bucketOptions: null,
+				createTime: {
+					seconds: "1737348538",
+					nanos: 59758449
+				},
+				updateTime: {
+					seconds: "1737348538",
+					nanos: 59758449
+				},
+				version: "V2",
+				disabled: false,
+				metricDescriptor: {
+					name: "projects/test-project/metricDescriptors/logging.googleapis.com/user/audit-config-changes",
+					metricKind: "DELTA",
+					valueType: "INT64",
+					unit: "1",
+					description: "",
+					type: "logging.googleapis.com/user/audit-config-changes"
+				}
 			};
 
 			const mockAlertPolicy = {
+				displayName: "Audit Config Changes Alert",
 				conditions: [
 					{
 						displayName: "Audit Config Changes",
 						conditionThreshold: {
-							filter: "audit-config-changes",
+							filter: 'metric.type="logging.googleapis.com/user/audit-config-changes"',
 							comparison: "COMPARISON_GT",
 							thresholdValue: 0,
 							duration: {
-								seconds: 0,
+								seconds: "0",
 								nanos: 0
+							},
+							trigger: {
+								count: 1,
+								type: "count"
 							}
 						}
 					}
-				]
+				],
+				enabled: {
+					value: true
+				}
 			};
 
 			mockListLogMetrics.mockResolvedValueOnce([[mockMetric]]);
@@ -69,9 +98,20 @@ describe("checkAuditConfigChangesMonitoring", () => {
 
 		it("should return FAIL when alert policy is missing", async () => {
 			const mockMetric = {
-				name: "audit-config-changes",
+				name: "projects/test-project/metrics/audit-config-changes",
 				filter:
-					'protoPayload.methodName="SetIamPolicy" AND protoPayload.serviceData.policyDelta.auditConfigDeltas:*'
+					'protoPayload.methodName="SetIamPolicy" AND protoPayload.serviceData.policyDelta.auditConfigDeltas:*',
+				labelExtractors: {},
+				valueExtractor: "",
+				bucketOptions: null,
+				version: "V2",
+				metricDescriptor: {
+					name: "projects/test-project/metricDescriptors/logging.googleapis.com/user/audit-config-changes",
+					metricKind: "DELTA",
+					valueType: "INT64",
+					unit: "1",
+					type: "logging.googleapis.com/user/audit-config-changes"
+				}
 			};
 
 			mockListLogMetrics.mockResolvedValueOnce([[mockMetric]]);
@@ -87,21 +127,33 @@ describe("checkAuditConfigChangesMonitoring", () => {
 
 		it("should return FAIL when alert policy has incorrect configuration", async () => {
 			const mockMetric = {
-				name: "audit-config-changes",
+				name: "projects/test-project/metrics/audit-config-changes",
 				filter:
-					'protoPayload.methodName="SetIamPolicy" AND protoPayload.serviceData.policyDelta.auditConfigDeltas:*'
+					'protoPayload.methodName="SetIamPolicy" AND protoPayload.serviceData.policyDelta.auditConfigDeltas:*',
+				labelExtractors: {},
+				valueExtractor: "",
+				bucketOptions: null,
+				version: "V2",
+				metricDescriptor: {
+					name: "projects/test-project/metricDescriptors/logging.googleapis.com/user/audit-config-changes",
+					metricKind: "DELTA",
+					valueType: "INT64",
+					unit: "1",
+					type: "logging.googleapis.com/user/audit-config-changes"
+				}
 			};
 
 			const mockAlertPolicy = {
+				displayName: "Wrong Alert",
 				conditions: [
 					{
-						displayName: "Wrong Policy",
+						displayName: "Wrong Condition",
 						conditionThreshold: {
-							filter: "wrong-metric",
+							filter: 'metric.type="logging.googleapis.com/user/wrong-metric"',
 							comparison: "COMPARISON_LT",
 							thresholdValue: 1,
 							duration: {
-								seconds: 60,
+								seconds: "60",
 								nanos: 0
 							}
 						}
@@ -133,9 +185,20 @@ describe("checkAuditConfigChangesMonitoring", () => {
 
 		it("should return ERROR when listAlertPolicies fails", async () => {
 			const mockMetric = {
-				name: "audit-config-changes",
+				name: "projects/test-project/metrics/audit-config-changes",
 				filter:
-					'protoPayload.methodName="SetIamPolicy" AND protoPayload.serviceData.policyDelta.auditConfigDeltas:*'
+					'protoPayload.methodName="SetIamPolicy" AND protoPayload.serviceData.policyDelta.auditConfigDeltas:*',
+				labelExtractors: {},
+				valueExtractor: "",
+				bucketOptions: null,
+				version: "V2",
+				metricDescriptor: {
+					name: "projects/test-project/metricDescriptors/logging.googleapis.com/user/audit-config-changes",
+					metricKind: "DELTA",
+					valueType: "INT64",
+					unit: "1",
+					type: "logging.googleapis.com/user/audit-config-changes"
+				}
 			};
 
 			mockListLogMetrics.mockResolvedValueOnce([[mockMetric]]);

@@ -33,11 +33,12 @@ async function checkAuditConfigChangesMonitoring(
 			parent: `projects/${projectId}`
 		});
 
-		const auditMetric = metrics.find(
-			(metric: IMetric) =>
-				metric.filter ===
-				'protoPayload.methodName="SetIamPolicy" AND protoPayload.serviceData.policyDelta.auditConfigDeltas:*'
-		);
+		const expectedFilter =
+			'protoPayload.methodName="SetIamPolicy" AND protoPayload.serviceData.policyDelta.auditConfigDeltas:*';
+		const auditMetric = metrics.find((metric: IMetric) => {
+			const currentFilter = metric.filter?.trim() || "";
+			return currentFilter === expectedFilter;
+		});
 
 		if (!auditMetric) {
 			results.checks.push({
@@ -56,12 +57,15 @@ async function checkAuditConfigChangesMonitoring(
 		const validAlertPolicy = alertPolicies.find((policy: AlertPolicy) => {
 			return policy.conditions?.some((condition: Condition) => {
 				const threshold = condition.conditionThreshold;
-				return (
-					threshold?.comparison === "COMPARISON_GT" &&
-					threshold?.thresholdValue === 0 &&
-					threshold?.duration?.seconds === 0 &&
-					threshold?.duration?.nanos === 0
-				);
+				const metricName = auditMetric.name?.split("/").pop();
+				const expectedMetricType = `logging.googleapis.com/user/${metricName}`;
+				const hasValidFilter = threshold?.filter?.includes(expectedMetricType);
+				const hasValidComparison = threshold?.comparison === "COMPARISON_GT";
+				const hasValidThreshold = Number(threshold?.thresholdValue) === 0;
+				const hasValidDuration =
+					Number(threshold?.duration?.seconds) === 0 && Number(threshold?.duration?.nanos) === 0;
+
+				return hasValidFilter && hasValidComparison && hasValidThreshold && hasValidDuration;
 			});
 		});
 

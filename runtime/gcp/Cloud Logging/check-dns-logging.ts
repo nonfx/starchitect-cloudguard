@@ -74,14 +74,17 @@ async function checkDnsLoggingEnabled(
 			}
 
 			// Check if network has an associated DNS policy with logging enabled
-			const hasLogging =
-				(policies || []).some(
-					(policy: Policy) =>
-						policy.enableLogging === true &&
-						policy.networks?.some(
-							(net: { networkUrl?: string }) => net.networkUrl === network.selfLink
-						)
-				) ?? false;
+			const hasLogging = policies.some((policy: Policy) => {
+				const networkMatches = policy.networks?.some((net: { networkUrl?: string }) => {
+					// Convert both URLs to the same format for comparison
+					const policyUrl =
+						net.networkUrl?.replace("https://compute.googleapis.com/compute/v1/", "") || "";
+					const networkUrl = network.selfLink || "";
+					return networkUrl.endsWith(policyUrl);
+				});
+
+				return networkMatches && policy.enableLogging === true;
+			});
 
 			results.checks.push({
 				resourceName: network.name?.toString() || "Unknown Network",

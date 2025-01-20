@@ -33,15 +33,26 @@ async function checkProjectOwnershipMonitoring(
 			parent: `projects/${projectId}`
 		});
 
+		const expectedFilter =
+			'(protoPayload.serviceName="cloudresourcemanager.googleapis.com") AND (ProjectOwnership OR projectOwnerInvitee) OR (protoPayload.serviceData.policyDelta.bindingDeltas.action="REMOVE" AND protoPayload.serviceData.policyDelta.bindingDeltas.role="roles/owner") OR (protoPayload.serviceData.policyDelta.bindingDeltas.action="ADD" AND protoPayload.serviceData.policyDelta.bindingDeltas.role="roles/owner")';
+
 		const ownershipMetric = metrics.find((metric: IMetric) => {
-			const filter = metric.filter || "";
+			const currentFilter = metric.filter?.trim() || "";
+
+			// Check if the filter contains the key components
+			const hasServiceName = currentFilter.includes(
+				'serviceName="cloudresourcemanager.googleapis.com"'
+			);
+			const hasOwnershipCheck =
+				currentFilter.includes("ProjectOwnership") || currentFilter.includes("projectOwnerInvitee");
+			const hasRemoveAction =
+				currentFilter.includes('action="REMOVE"') && currentFilter.includes('role="roles/owner"');
+			const hasAddAction =
+				currentFilter.includes('action="ADD"') && currentFilter.includes('role="roles/owner"');
+
 			return (
-				filter ===
-				'resource.type="project" AND ' +
-					'protoPayload.serviceName="cloudresourcemanager.googleapis.com" AND ' +
-					'protoPayload.methodName="SetIamPolicy" AND ' +
-					'protoPayload.serviceData.policyDelta.bindingDeltas.action=("ADD" OR "REMOVE") AND ' +
-					'protoPayload.serviceData.policyDelta.bindingDeltas.role="roles/owner"'
+				currentFilter === expectedFilter ||
+				(hasServiceName && (hasOwnershipCheck || hasRemoveAction || hasAddAction))
 			);
 		});
 
@@ -62,13 +73,15 @@ async function checkProjectOwnershipMonitoring(
 		const validAlertPolicy = alertPolicies.find((policy: IAlertPolicy) => {
 			return policy.conditions?.some((condition: ICondition) => {
 				const threshold = condition.conditionThreshold;
-				return (
-					threshold?.filter?.includes(ownershipMetric.name || "") &&
-					threshold?.comparison === "COMPARISON_GT" &&
-					threshold?.thresholdValue === 0 &&
-					threshold?.duration?.seconds === 0 &&
-					threshold?.duration?.nanos === 0
-				);
+				const expectedMetricType = `logging.googleapis.com/user/${ownershipMetric.name?.split("/").pop()}`;
+
+				const hasValidFilter = threshold?.filter?.includes(expectedMetricType);
+				const hasValidComparison = threshold?.comparison === "COMPARISON_GT";
+				const hasValidThreshold = Number(threshold?.thresholdValue) === 0;
+				const hasValidDuration =
+					Number(threshold?.duration?.seconds) === 0 && Number(threshold?.duration?.nanos) === 0;
+
+				return hasValidFilter && hasValidComparison && hasValidThreshold && hasValidDuration;
 			});
 		});
 

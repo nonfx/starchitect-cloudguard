@@ -21,21 +21,22 @@ describe("checkLogMetricRoleChanges", () => {
 	describe("Compliant Resources", () => {
 		it("should return PASS when valid metric filter and alert policy exist", async () => {
 			const mockMetric = {
-				name: "role-changes",
+				name: "projects/test-project/metrics/role-changes",
 				filter:
-					'protoPayload.methodName="CreateRole" OR protoPayload.methodName="DeleteRole" OR protoPayload.methodName="UpdateRole"'
+					'resource.type="iam_role" AND (protoPayload.methodName="google.iam.admin.v1.CreateRole" OR protoPayload.methodName="google.iam.admin.v1.DeleteRole" OR protoPayload.methodName="google.iam.admin.v1.UpdateRole")'
 			};
 
 			const mockAlertPolicy = {
+				displayName: "Role Changes Alert",
 				conditions: [
 					{
 						displayName: "Role Changes",
 						conditionThreshold: {
-							filter: "role-changes",
+							filter: 'metric.type="logging.googleapis.com/user/role-changes"',
 							comparison: "COMPARISON_GT",
 							thresholdValue: 0,
 							duration: {
-								seconds: 0,
+								seconds: "0",
 								nanos: 0
 							}
 						}
@@ -67,9 +68,9 @@ describe("checkLogMetricRoleChanges", () => {
 
 		it("should return FAIL when alert policy is missing", async () => {
 			const mockMetric = {
-				name: "role-changes",
+				name: "projects/test-project/metrics/role-changes",
 				filter:
-					'protoPayload.methodName="CreateRole" OR protoPayload.methodName="DeleteRole" OR protoPayload.methodName="UpdateRole"'
+					'resource.type="iam_role" AND (protoPayload.methodName="google.iam.admin.v1.CreateRole" OR protoPayload.methodName="google.iam.admin.v1.DeleteRole" OR protoPayload.methodName="google.iam.admin.v1.UpdateRole")'
 			};
 
 			mockListLogMetrics.mockResolvedValueOnce([[mockMetric]]);
@@ -83,21 +84,22 @@ describe("checkLogMetricRoleChanges", () => {
 
 		it("should return FAIL when alert policy has incorrect configuration", async () => {
 			const mockMetric = {
-				name: "role-changes",
+				name: "projects/test-project/metrics/role-changes",
 				filter:
-					'protoPayload.methodName="CreateRole" OR protoPayload.methodName="DeleteRole" OR protoPayload.methodName="UpdateRole"'
+					'resource.type="iam_role" AND (protoPayload.methodName="google.iam.admin.v1.CreateRole" OR protoPayload.methodName="google.iam.admin.v1.DeleteRole" OR protoPayload.methodName="google.iam.admin.v1.UpdateRole")'
 			};
 
 			const mockAlertPolicy = {
+				displayName: "Wrong Alert",
 				conditions: [
 					{
-						displayName: "Wrong Policy",
+						displayName: "Wrong Condition",
 						conditionThreshold: {
-							filter: "wrong-metric",
+							filter: 'metric.type="logging.googleapis.com/user/wrong-metric"',
 							comparison: "COMPARISON_LT",
 							thresholdValue: 1,
 							duration: {
-								seconds: 60,
+								seconds: "60",
 								nanos: 0
 							}
 						}
@@ -127,9 +129,9 @@ describe("checkLogMetricRoleChanges", () => {
 
 		it("should return ERROR when listAlertPolicies fails", async () => {
 			const mockMetric = {
-				name: "role-changes",
+				name: "projects/test-project/metrics/role-changes",
 				filter:
-					'protoPayload.methodName="CreateRole" OR protoPayload.methodName="DeleteRole" OR protoPayload.methodName="UpdateRole"'
+					'resource.type="iam_role" AND (protoPayload.methodName="google.iam.admin.v1.CreateRole" OR protoPayload.methodName="google.iam.admin.v1.DeleteRole" OR protoPayload.methodName="google.iam.admin.v1.UpdateRole")'
 			};
 
 			mockListLogMetrics.mockResolvedValueOnce([[mockMetric]]);

@@ -33,13 +33,38 @@ async function checkVpcNetworkChangesMonitoring(
 			parent: `projects/${projectId}`
 		});
 
+		const expectedFilter =
+			'resource.type="gce_network" AND (protoPayload.methodName:"compute.networks.insert" OR protoPayload.methodName:"compute.networks.patch" OR protoPayload.methodName:"compute.networks.delete" OR protoPayload.methodName:"compute.networks.removePeering" OR protoPayload.methodName:"compute.networks.addPeering")';
+
 		const vpcNetworkMetric = metrics.find((metric: IMetric) => {
-			const filter = metric.filter?.toLowerCase() || "";
+			const currentFilter = metric.filter?.trim() || "";
+
+			// Check if the filter contains the key components
+			const hasResourceType = currentFilter.includes('resource.type="gce_network"');
+			const hasInsertMethod =
+				currentFilter.includes('methodName:"compute.networks.insert"') ||
+				currentFilter.includes('methodName="compute.networks.insert"');
+			const hasPatchMethod =
+				currentFilter.includes('methodName:"compute.networks.patch"') ||
+				currentFilter.includes('methodName="compute.networks.patch"');
+			const hasDeleteMethod =
+				currentFilter.includes('methodName:"compute.networks.delete"') ||
+				currentFilter.includes('methodName="compute.networks.delete"');
+			const hasRemovePeeringMethod =
+				currentFilter.includes('methodName:"compute.networks.removePeering"') ||
+				currentFilter.includes('methodName="compute.networks.removePeering"');
+			const hasAddPeeringMethod =
+				currentFilter.includes('methodName:"compute.networks.addPeering"') ||
+				currentFilter.includes('methodName="compute.networks.addPeering"');
+
 			return (
-				filter.includes('resource.type="gce_network"') &&
-				/methodname="compute\.networks\.(insert|delete|patch|addpeering|removepeering)"/.test(
-					filter
-				)
+				currentFilter === expectedFilter ||
+				(hasResourceType &&
+					(hasInsertMethod ||
+						hasPatchMethod ||
+						hasDeleteMethod ||
+						hasRemovePeeringMethod ||
+						hasAddPeeringMethod))
 			);
 		});
 
@@ -60,13 +85,15 @@ async function checkVpcNetworkChangesMonitoring(
 		const validAlertPolicy = alertPolicies.find((policy: AlertPolicy) => {
 			return policy.conditions?.some((condition: Condition) => {
 				const threshold = condition.conditionThreshold;
-				return (
-					threshold?.filter?.includes(vpcNetworkMetric.name || "") &&
-					threshold?.comparison === "COMPARISON_GT" &&
-					threshold?.thresholdValue === 0 &&
-					threshold?.duration?.seconds === 0 &&
-					threshold?.duration?.nanos === 0
-				);
+				const expectedMetricType = `logging.googleapis.com/user/${vpcNetworkMetric.name?.split("/").pop()}`;
+
+				const hasValidFilter = threshold?.filter?.includes(expectedMetricType);
+				const hasValidComparison = threshold?.comparison === "COMPARISON_GT";
+				const hasValidThreshold = Number(threshold?.thresholdValue) === 0;
+				const hasValidDuration =
+					Number(threshold?.duration?.seconds) === 0 && Number(threshold?.duration?.nanos) === 0;
+
+				return hasValidFilter && hasValidComparison && hasValidThreshold && hasValidDuration;
 			});
 		});
 

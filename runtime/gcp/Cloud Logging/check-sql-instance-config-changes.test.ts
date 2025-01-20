@@ -21,21 +21,21 @@ describe("checkSqlInstanceConfigChanges", () => {
 	describe("Compliant Resources", () => {
 		it("should return PASS when metric filter and alert policy are properly configured", async () => {
 			const mockMetric = {
-				name: "sql-config-metric",
-				filter:
-					'resource.type="cloudsql_database" AND protoPayload.methodName="cloudsql.instances.update"'
+				name: "projects/test-project/metrics/sql-config-changes",
+				filter: 'protoPayload.methodName="cloudsql.instances.update"'
 			};
 
 			const mockAlertPolicy = {
+				displayName: "SQL Config Changes Alert",
 				conditions: [
 					{
 						displayName: "SQL Instance Configuration Changes",
 						conditionThreshold: {
-							filter: "sql-config-metric",
+							filter: 'metric.type="logging.googleapis.com/user/sql-config-changes"',
 							comparison: "COMPARISON_GT",
 							thresholdValue: 0,
 							duration: {
-								seconds: 0,
+								seconds: "0",
 								nanos: 0
 							}
 						}
@@ -69,9 +69,8 @@ describe("checkSqlInstanceConfigChanges", () => {
 
 		it("should return FAIL when alert policy is missing", async () => {
 			const mockMetric = {
-				name: "sql-config-metric",
-				filter:
-					'resource.type="cloudsql_database" AND protoPayload.methodName="cloudsql.instances.update"'
+				name: "projects/test-project/metrics/sql-config-changes",
+				filter: 'protoPayload.methodName="cloudsql.instances.update"'
 			};
 
 			mockListLogMetrics.mockResolvedValueOnce([[mockMetric]]);
@@ -87,21 +86,21 @@ describe("checkSqlInstanceConfigChanges", () => {
 
 		it("should return FAIL when alert policy has incorrect configuration", async () => {
 			const mockMetric = {
-				name: "sql-config-metric",
-				filter:
-					'resource.type="cloudsql_database" AND protoPayload.methodName="cloudsql.instances.update"'
+				name: "projects/test-project/metrics/sql-config-changes",
+				filter: 'protoPayload.methodName="cloudsql.instances.update"'
 			};
 
 			const mockAlertPolicy = {
+				displayName: "Wrong Alert",
 				conditions: [
 					{
-						displayName: "Wrong Display Name",
+						displayName: "Wrong Condition",
 						conditionThreshold: {
-							filter: "wrong-metric",
+							filter: 'metric.type="logging.googleapis.com/user/wrong-metric"',
 							comparison: "COMPARISON_LT",
 							thresholdValue: 1,
 							duration: {
-								seconds: 60,
+								seconds: "60",
 								nanos: 0
 							}
 						}
@@ -133,9 +132,8 @@ describe("checkSqlInstanceConfigChanges", () => {
 
 		it("should return ERROR when listAlertPolicies fails", async () => {
 			const mockMetric = {
-				name: "sql-config-metric",
-				filter:
-					'resource.type="cloudsql_database" AND protoPayload.methodName="cloudsql.instances.update"'
+				name: "projects/test-project/metrics/sql-config-changes",
+				filter: 'protoPayload.methodName="cloudsql.instances.update"'
 			};
 
 			mockListLogMetrics.mockResolvedValueOnce([[mockMetric]]);

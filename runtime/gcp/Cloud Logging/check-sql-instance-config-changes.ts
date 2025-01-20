@@ -33,11 +33,15 @@ async function checkSqlInstanceConfigChanges(
 			parent: `projects/${projectId}`
 		});
 
-		const sqlConfigMetric = metrics.find(
-			(metric: IMetric) =>
-				metric.filter ===
-				'resource.type="cloudsql_database" AND protoPayload.methodName="cloudsql.instances.update"'
-		);
+		const expectedFilter = 'protoPayload.methodName="cloudsql.instances.update"';
+		const sqlConfigMetric = metrics.find((metric: IMetric) => {
+			const currentFilter = metric.filter?.trim() || "";
+
+			// Check if the filter contains the key components
+			const hasMethodName = currentFilter.includes('methodName="cloudsql.instances.update"');
+
+			return currentFilter === expectedFilter || hasMethodName;
+		});
 
 		if (!sqlConfigMetric) {
 			results.checks.push({
@@ -56,13 +60,15 @@ async function checkSqlInstanceConfigChanges(
 		const validAlertPolicy = alertPolicies.find((policy: AlertPolicy) => {
 			return policy.conditions?.some((condition: Condition) => {
 				const threshold = condition.conditionThreshold;
-				return (
-					threshold?.filter?.includes(sqlConfigMetric.name || "") &&
-					threshold?.comparison === "COMPARISON_GT" &&
-					threshold?.thresholdValue === 0 &&
-					threshold?.duration?.seconds === 0 &&
-					threshold?.duration?.nanos === 0
-				);
+				const expectedMetricType = `logging.googleapis.com/user/${sqlConfigMetric.name?.split("/").pop()}`;
+
+				const hasValidFilter = threshold?.filter?.includes(expectedMetricType);
+				const hasValidComparison = threshold?.comparison === "COMPARISON_GT";
+				const hasValidThreshold = Number(threshold?.thresholdValue) === 0;
+				const hasValidDuration =
+					Number(threshold?.duration?.seconds) === 0 && Number(threshold?.duration?.nanos) === 0;
+
+				return hasValidFilter && hasValidComparison && hasValidThreshold && hasValidDuration;
 			});
 		});
 
