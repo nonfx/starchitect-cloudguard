@@ -11,22 +11,57 @@ import import4 from "./Cloud Asset Inventory/gcp-cloud-asset-inventory.js";
 import import5 from "./Cloud DNS/gcp-dnssec-algorithm.js";
 import import6 from "./Cloud DNS/gcp-dnssec-enabled.js";
 import import7 from "./Cloud DNS/gcp-dnssec-key-algorithm.js";
-import import8 from "./Cloud IAM/gcp_audit_logging_configured.js";
-import import9 from "./Cloud IAM/gcp_service_account_admin_check.js";
-import import10 from "./Google Compute Engine/gcp-ip-forwarding-disabled.js";
-import import11 from "./Google Compute Engine/gcp_block_project_ssh_keys.js";
-import import12 from "./Google Compute Engine/gcp_compute_default_service_account.js";
-import import13 from "./Google Compute Engine/gcp_compute_no_public_ip.js";
-import import14 from "./Google Compute Engine/gcp_confidential_computing.js";
-import import15 from "./Google Compute Engine/gcp_disk_csek_encryption.js";
-import import16 from "./Google Compute Engine/gcp_ip_forwarding_disabled.js";
-import import17 from "./Google Compute Engine/gcp_oslogin_enabled.js";
-import import18 from "./Google Compute Engine/gcp_shielded_vm_enabled.js";
-import import19 from "./Google Compute Engine/gcp_vm_serial_ports_disabled.js";
-import import20 from "./Google Virtual Private Cloud/gcp_no_default_network.js";
-import import21 from "./Google Virtual Private Cloud/gcp_rdp_restricted.js";
-import import22 from "./Google Virtual Private Cloud/gcp_ssh_restricted.js";
-import import23 from "./Google Virtual Private Cloud/gcp_vpc_flow_logs_enabled.js";
+import import8 from "./Cloud IAM/gcp-access-transparency.js";
+import import9 from "./Cloud IAM/gcp-api-key-rotation.js";
+import import10 from "./Cloud IAM/gcp-essential-contacts.js";
+import import11 from "./Cloud IAM/gcp_audit_logging_configured.js";
+import import12 from "./Cloud IAM/gcp_service_account_admin_check.js";
+import import13 from "./Cloud Logging/check-audit-config-changes-monitoring.js";
+import import14 from "./Cloud Logging/check-dns-logging.js";
+import import15 from "./Cloud Logging/check-load-balancer-logging.js";
+import import16 from "./Cloud Logging/check-log-metric-role-changes.js";
+import import17 from "./Cloud Logging/check-logging-sink.js";
+import import18 from "./Cloud Logging/check-project-ownership-monitoring.js";
+import import19 from "./Cloud Logging/check-sql-instance-config-changes.js";
+import import20 from "./Cloud Logging/check-vpc-firewall-rule-changes.js";
+import import21 from "./Cloud Logging/check-vpc-network-changes.js";
+import import22 from "./Cloud Logging/check-vpc-route-changes-monitoring.js";
+import import23 from "./Cloud SQL/check-cloud-sql-local-infile.js";
+import import24 from "./Cloud SQL/check-cloud-sql-pg-audit.js";
+import import25 from "./Cloud SQL/check-postgres-log-connections.js";
+import import26 from "./Cloud SQL/check-postgres-log-disconnections.js";
+import import27 from "./Cloud SQL/check-postgres-log-error-verbosity.js";
+import import28 from "./Cloud SQL/check-postgres-log-min-duration.js";
+import import29 from "./Cloud SQL/check-postgres-log-min-error.js";
+import import30 from "./Cloud SQL/check-postgres-log-min-messages.js";
+import import31 from "./Cloud SQL/check-postgres-log-statement.js";
+import import32 from "./Cloud SQL/check-skip-show-database-flag.js";
+import import33 from "./Cloud SQL/check-sql-contained-db-auth.js";
+import import34 from "./Cloud SQL/check-sql-cross-db-ownership-chaining.js";
+import import35 from "./Cloud SQL/check-sql-server-external-scripts.js";
+import import36 from "./Cloud SQL/check-sql-server-remote-access.js";
+import import37 from "./Cloud SQL/check-sql-server-trace-flag.js";
+import import38 from "./Cloud SQL/check-sql-server-user-connections.js";
+import import39 from "./Cloud SQL/check-sql-server-user-options.js";
+import import40 from "./Cloud Storage/check-storage-bucket-public-access.js";
+import import41 from "./Cloud Storage/check-storage-bucket-retention.js";
+import import42 from "./Cloud Storage/check-uniform-bucket-level-access.js";
+import import43 from "./Google Compute Engine/gcp-ip-forwarding-disabled.js";
+import import44 from "./Google Compute Engine/gcp_block_project_ssh_keys.js";
+import import45 from "./Google Compute Engine/gcp_compute_default_service_account.js";
+import import46 from "./Google Compute Engine/gcp_compute_no_public_ip.js";
+import import47 from "./Google Compute Engine/gcp_confidential_computing.js";
+import import48 from "./Google Compute Engine/gcp_disk_csek_encryption.js";
+import import49 from "./Google Compute Engine/gcp_ip_forwarding_disabled.js";
+import import50 from "./Google Compute Engine/gcp_oslogin_enabled.js";
+import import51 from "./Google Compute Engine/gcp_shielded_vm_enabled.js";
+import import52 from "./Google Compute Engine/gcp_vm_serial_ports_disabled.js";
+import import53 from "./Google Virtual Private Cloud/gcp-iap-config.js";
+import import54 from "./Google Virtual Private Cloud/gcp-load-balancer-ssl-policies.js";
+import import55 from "./Google Virtual Private Cloud/gcp_no_default_network.js";
+import import56 from "./Google Virtual Private Cloud/gcp_rdp_restricted.js";
+import import57 from "./Google Virtual Private Cloud/gcp_ssh_restricted.js";
+import import58 from "./Google Virtual Private Cloud/gcp_vpc_flow_logs_enabled.js";
 
 export default [
     import0,
@@ -52,5 +87,40 @@ export default [
     import20,
     import21,
     import22,
-    import23
+    import23,
+    import24,
+    import25,
+    import26,
+    import27,
+    import28,
+    import29,
+    import30,
+    import31,
+    import32,
+    import33,
+    import34,
+    import35,
+    import36,
+    import37,
+    import38,
+    import39,
+    import40,
+    import41,
+    import42,
+    import43,
+    import44,
+    import45,
+    import46,
+    import47,
+    import48,
+    import49,
+    import50,
+    import51,
+    import52,
+    import53,
+    import54,
+    import55,
+    import56,
+    import57,
+    import58
 ];
