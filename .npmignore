@@ -1,0 +1,16 @@
+.vscode
+.scripts
+.husky
+.github
+.cache
+assets
+node_modules
+cli
+tsconfig.json
+lint-staged.config.js
+eslint.config.mjs
+CODEOWNERS
+.prettierrc.cjs
+.gitignore
+.prettierignore
+*.tgz
