@@ -1,5 +1,6 @@
 {
   "name": "@nonfx/starchitect-cloudguard",
+  "version": "0.0.1",
   "private": true,
   "type": "module",
   "scripts": {
@@ -73,9 +74,7 @@
     "@google-cloud/service-usage": "^3.4.0",
     "@google-cloud/storage": "^7.15.0",
     "@google-cloud/sql": "^0.19.0",
-    "@googleapis/sqladmin": "^24.0.0"
-  },
-  "devDependencies": {
+    "@googleapis/sqladmin": "^24.0.0",
     "@types/bun": "^1.1.14",
     "@types/jest": "^29.5.14",
     "@types/node": "^22",
