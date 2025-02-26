@@ -1,8 +1,8 @@
 {
   "name": "@nonfx/starchitect-cloudguard",
-  "version": "0.0.1",
-  "private": true,
+  "version": "0.0.3",
   "type": "module",
+  "main": "index.js",
   "scripts": {
     "build": "tsc -b --incremental",
     "test": "bun test",
@@ -14,7 +14,7 @@
     "prettify": "prettier --config .prettierrc.cjs --cache --cache-location .cache/prettier --write .",
     "generate-runtime-index": "bun ./.scripts/generate-runtime-index.ts"
   },
-  "dependencies": {
+  "devDependencies": {
     "@aws-sdk/client-accessanalyzer": "^3.716.0",
     "@aws-sdk/client-account": "^3.726.1",
     "@aws-sdk/client-api-gateway": "^3.723.0",
