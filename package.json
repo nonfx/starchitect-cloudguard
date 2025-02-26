@@ -1,7 +1,8 @@
 {
   "name": "@nonfx/starchitect-cloudguard",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "type": "module",
+  "main": "index.js",
   "scripts": {
     "build": "tsc -b --incremental",
     "test": "bun test",
